@@ -1,0 +1,11 @@
+<component name="CopyrightManager">
+  <settings default="Raphael Cohn.2016.MIT">
+    <module2copyright>
+      <element module="All" copyright="Raphael Cohn.2016.MIT" />
+    </module2copyright>
+    <LanguageOptions name="__TEMPLATE__">
+      <option name="block" value="false" />
+      <option name="prefixLines" value="false" />
+    </LanguageOptions>
+  </settings>
+</component>

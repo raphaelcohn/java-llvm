@@ -1,0 +1,15 @@
+[submodule "library/java-classfile"]
+	path = library/java-classfile
+	url = https://github.com/raphaelcohn/java-classfile.git
+[submodule ".idea"]
+	path = .idea
+	url = https://github.com/raphaelcohn/intellij-project-template.git
+[submodule "library/javaparser"]
+	path = library/javaparser
+	url = https://github.com/raphaelcohn/intellij-library-javaparser.git
+[submodule "library/jchardet"]
+	path = library/jchardet
+	url = https://github.com/raphaelcohn/intellij-library-jchardet.git
+[submodule "library/asm"]
+	path = library/asm
+	url = https://github.com/raphaelcohn/intellij-library-asm.git

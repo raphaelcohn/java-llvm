@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/source/java-classfile-domain/java-classfile-domain.iml" filepath="$PROJECT_DIR$/source/java-classfile-domain/java-classfile-domain.iml" group="library/java-classfile" />
+      <module fileurl="file://$PROJECT_DIR$/source/java-classfile-parsing/java-classfile-parsing.iml" filepath="$PROJECT_DIR$/source/java-classfile-parsing/java-classfile-parsing.iml" group="library/java-classfile" />
+      <module fileurl="file://$PROJECT_DIR$/source/java-parsing-adaptors-asm/java-parsing-adaptors-asm.iml" filepath="$PROJECT_DIR$/source/java-parsing-adaptors-asm/java-parsing-adaptors-asm.iml" />
+      <module fileurl="file://$PROJECT_DIR$/source/java-parsing-adaptors-javac/java-parsing-adaptors-javac.iml" filepath="$PROJECT_DIR$/source/java-parsing-adaptors-javac/java-parsing-adaptors-javac.iml" />
+      <module fileurl="file://$PROJECT_DIR$/source/java-parsing-adaptors-javaparser/java-parsing-adaptors-javaparser.iml" filepath="$PROJECT_DIR$/source/java-parsing-adaptors-javaparser/java-parsing-adaptors-javaparser.iml" />
+      <module fileurl="file://$PROJECT_DIR$/source/java-parsing-application/java-parsing-application.iml" filepath="$PROJECT_DIR$/source/java-parsing-application/java-parsing-application.iml" />
+      <module fileurl="file://$PROJECT_DIR$/source/java-parsing-ast/java-parsing-ast.iml" filepath="$PROJECT_DIR$/source/java-parsing-ast/java-parsing-ast.iml" />
+      <module fileurl="file://$PROJECT_DIR$/source/java-parsing-fileParsers/java-parsing-fileParsers.iml" filepath="$PROJECT_DIR$/source/java-parsing-fileParsers/java-parsing-fileParsers.iml" />
+      <module fileurl="file://$PROJECT_DIR$/source/java-parsing-utilities/java-parsing-utilities.iml" filepath="$PROJECT_DIR$/source/java-parsing-utilities/java-parsing-utilities.iml" group="library/java-classfile" />
+      <module fileurl="file://$PROJECT_DIR$/source/llvm-api/llvm-api.iml" filepath="$PROJECT_DIR$/source/llvm-api/llvm-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/source/llvm-examples/llvm-examples.iml" filepath="$PROJECT_DIR$/source/llvm-examples/llvm-examples.iml" />
+      <module fileurl="file://$PROJECT_DIR$/source/nio/nio.iml" filepath="$PROJECT_DIR$/source/nio/nio.iml" />
+    </modules>
+  </component>
+</project>
