@@ -8,4 +8,4 @@
 The license for this project is MIT.
 
 
-[llvm]: https://github.com/raphaelcohn/java-llvm "java-llvm GitHub page"
+[java-llvm]: https://github.com/raphaelcohn/java-llvm "java-llvm GitHub page"
