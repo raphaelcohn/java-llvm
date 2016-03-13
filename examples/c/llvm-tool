@@ -13,6 +13,24 @@ _llvm_tool()
 	)
 }
 
+_llvm_architecture_help()
+{
+	local architecture="$1"
+	local helpOn="cpu"
+	
+	_llvm_tool llvm-as </dev/null | _llvm_tool llc -march="$architecture" -m${helpOn}=help
+}
+
+_llvm_architecture_help_cpus()
+{
+	_llvm_architecture_help "$1" 'cpu'
+}
+
+_llvm_architecture_help_attributes()
+{
+	_llvm_architecture_help "$1" 'attr'
+}
+
 compileToAssemblyLanguage()
 {
 	local outputFilePath="$baseFilePath".ll
@@ -35,11 +53,18 @@ assembleToBitCode()
 	_llvm_tool llvm-as -o="$outputFilePath" "$baseFilePath".ll
 }
 
-assembleToLocalAssembly()
+assembleToLocalAssemblyAtt()
 {
-	local outputFilePath="$baseFilePath".s
+	local outputFilePath="$baseFilePath".att.s
 	
-	_llvm_tool llc -o="$outputFilePath" "$baseFilePath".ll
+	_llvm_tool llc -o="$outputFilePath" --x86-asm-syntax=att "$baseFilePath".ll
+}
+
+assembleToLocalAssemblyIntel()
+{
+	local outputFilePath="$baseFilePath".intel.s
+	
+	_llvm_tool llc -o="$outputFilePath" --x86-asm-syntax=intel "$baseFilePath".ll
 }
 
 optimiseAssemblyLanguage()
@@ -75,17 +100,46 @@ loop()
 	done
 }
 
+architecture()
+{
+	local architecture
+	for architecture in 'x86' 'x86-64'
+	do
+		_llvm_architecture_help_cpus "$architecture"
+		_llvm_architecture_help_attributes "$architecture"
+	done
+}
+
 main()
 {
-	local force=false
-	if [ "$1" = "--force" ]; then
-		force=true
-	fi
-	if [ "$1" = "-f" ]; then
-		force=true
+	local operation
+	if [ $# -eq 0 ]; then
+		operation=compile
+	else
+		operation="$1"
 	fi
 	
-	loop c compileToAssemblyLanguage assembleToBitCode assembleToLocalAssembly optimiseAssemblyLanguage
+	case "$operation" in
+		
+		compile)
+			local force=false
+			
+			if [ "$2" = "--force" ]; then
+				force=true
+			fi
+			
+			if [ "$2" = "-f" ]; then
+				force=true
+			fi
+			
+			loop c compileToAssemblyLanguage assembleToBitCode assembleToLocalAssemblyAtt assembleToLocalAssemblyIntel optimiseAssemblyLanguage
+		;;
+		
+		architecture)
+			architecture
+		;;
+		
+	esac
 }
 
 main "$@"
