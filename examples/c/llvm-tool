@@ -295,8 +295,13 @@ listSymbols()
 		;;
 		
 	esac
+	shift 1
 	
-	_llvm_tool llvm-nm --format=bsd --print-file-name --print-size --no-sort "$type" "$@" | sed -e 's,\.a:,\.a/,g' -e 's/: / /g' -e 's/        / --------/g' -e 's/  */ /g' | tr ' ' $'\t'
+	_llvm_tool llvm-nm --format=bsd --print-file-name --print-size --no-sort "$type" "$@" | \
+		sed -e 's,\.a:,\.a/,g' -e 's/: / /g' -e 's/        / --------/g' -e 's/  */ /g' | \
+		tr ' ' $'\t' | \
+		awk '{print $5, $4, $1, $3, $2}' | \
+		LC_ALL=en_US.UTF-8 sort -t $'\t' -k 1
 	
 }
 
