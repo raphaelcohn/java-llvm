@@ -39,58 +39,57 @@ compileToAssemblyLanguage()
 {
 	local outputFilePath="$baseFilePath".ll
 	
-	if [ -f "$outputFilePath" ]; then
-		if $force; then
-			rm -rf "$outputFilePath"
-		else
-			return 0
-		fi
-	fi
+	_llvm_tool clang -c -S -emit-llvm --coverage -O0 -g -isystem "$systemHeadersPath" "$filePath"
+	rm -rf "$outFolderPath"/"$baseFilePath".ll
 	
-	_llvm_tool clang -c -S -emit-llvm -isystem "$systemHeadersPath" "$filePath"
+	mv "$baseFilePath".ll "$outFolderPath"
+	rm -rf "$outFolderPath"/"$baseFilePath".gcno
+	
+	mv "$baseFilePath".gcno "$outFolderPath"
+	rm -rf "$outFolderPath"/"$baseFilePath".gcda
 }
 
 assembleToBitCode()
 {
 	local outputFilePath="$baseFilePath".bc
 	
-	_llvm_tool llvm-as -o="$outputFilePath" "$baseFilePath".ll
+	_llvm_tool llvm-as -o="$outFolderPath"/"$outputFilePath" "$outFolderPath"/"$baseFilePath".ll
 }
 
 dissembleBitCodeToAssemblyLanguage()
 {
 	local outputFilePath="$baseFilePath".dis.ll
 	
-	_llvm_tool llvm-dis -o="$outputFilePath" "$baseFilePath".bc
+	_llvm_tool llvm-dis -o="$outFolderPath"/"$outputFilePath" "$outFolderPath"/"$baseFilePath".bc
 }
 
 assembleToLocalAssemblyAtt()
 {
 	local outputFilePath="$baseFilePath".att.s
 	
-	_llvm_tool llc -o="$outputFilePath" --x86-asm-syntax=att "$baseFilePath".ll
+	_llvm_tool llc -o="$outFolderPath"/"$outputFilePath" --x86-asm-syntax=att "$outFolderPath"/"$baseFilePath".ll
 }
 
 assembleToLocalAssemblyIntel()
 {
 	local outputFilePath="$baseFilePath".intel.s
 	
-	_llvm_tool llc -o="$outputFilePath" --x86-asm-syntax=intel "$baseFilePath".ll
+	_llvm_tool llc -o="$outFolderPath"/"$outputFilePath" --x86-asm-syntax=intel "$outFolderPath"/"$baseFilePath".ll
 }
 
 optimiseAssemblyLanguage()
 {
 	local outputFilePath="$baseFilePath".opt.ll
 	
-	_llvm_tool opt -o="$outputFilePath" -S "$baseFilePath".ll
+	_llvm_tool opt -o="$outFolderPath"/"$outputFilePath" -S "$outFolderPath"/"$baseFilePath".ll
 }
 
 justInTime()
 {
-	_llvm_tool lli -relocation-model=pic -fake-argv0="$baseFilePath" "$baseFilePath".bc "$@"
+	_llvm_tool lli -relocation-model=pic -fake-argv0="$baseFilePath" "$outFolderPath"/"$baseFilePath".bc "$@"
 }
 
-loop()
+_loop()
 {
 	local extension="$1"
 	shift 1
@@ -118,20 +117,45 @@ loop()
 
 compile()
 {
-	local force=false
-	
-	if [ $# -ne 0 ]; then
-		if [ "$1" = "--force" ]; then
-			force=true
-		fi
-
-		if [ "$1" = "-f" ]; then
-			force=true
-		fi
+	if [ $# -eq 0 ]; then
+		printf '%s\n' "Please supply at least one .c or .cpp file to compile"
+		exit 1
 	fi
 	
-	loop c   compileToAssemblyLanguage assembleToBitCode dissembleBitCodeToAssemblyLanguage assembleToLocalAssemblyAtt assembleToLocalAssemblyIntel optimiseAssemblyLanguage
-	loop cpp compileToAssemblyLanguage assembleToBitCode dissembleBitCodeToAssemblyLanguage assembleToLocalAssemblyAtt assembleToLocalAssemblyIntel optimiseAssemblyLanguage
+	local filePath
+	for filePath in "$@"
+	do
+		local baseFilePath="${filePath%.*}"
+		
+		local action
+		for action in compileToAssemblyLanguage assembleToBitCode dissembleBitCodeToAssemblyLanguage assembleToLocalAssemblyAtt assembleToLocalAssemblyIntel optimiseAssemblyLanguage
+		do
+			$action
+		done
+	done
+}
+
+assemble()
+{
+	if [ $# -eq 0 ]; then
+		printf '%s\n' "Please supply at least one .ll file to assemble"
+		exit 1
+	fi
+	
+	local filePath
+	for filePath in "$@"
+	do
+		local baseFilePath="${filePath%.*}"
+		
+		rm -rf "$outFolderPath"/"$baseFilePath".ll
+		cp "$baseFilePath".ll "$outFolderPath"/"$baseFilePath".ll
+		
+		local action
+		for action in assembleToBitCode dissembleBitCodeToAssemblyLanguage assembleToLocalAssemblyAtt assembleToLocalAssemblyIntel optimiseAssemblyLanguage
+		do
+			$action
+		done
+	done
 }
 
 jit()
@@ -173,7 +197,7 @@ linkAssemblyCode()
 		exit 1
 	fi
 	
-	_llvm_tool llvm-link -S -o=./"$name".ll "$@"
+	_llvm_tool llvm-link -S -o="$outFolderPath"/"$name".ll "$@"
 }
 
 linkBitCode()
@@ -191,7 +215,7 @@ linkBitCode()
 		exit 1
 	fi
 	
-	local linkFilePath=./"$name".bc
+	local linkFilePath="$outFolderPath"/"$name".bc
 	
 	local index=1
 	local filePath
@@ -213,7 +237,7 @@ linkBitCode()
 		index=$((index+1))
 	done
 	
-	_llvm_tool llvm-link -o="$linkFilePath" "$@"
+	_llvm_tool llvm-link -o="$outFolderPath"/"$linkFilePath" "$@"
 }
 
 archiveBitCodeWithSymbolTable()
@@ -231,7 +255,7 @@ archiveBitCodeWithSymbolTable()
 		exit 1
 	fi
 	
-	local archiveFilePath=./"$name".a
+	local archiveFilePath="$outFolderPath"/"$name".a
 	
 	local index=1
 	local filePath
@@ -309,16 +333,23 @@ main()
 {
 	local operation
 	if [ $# -eq 0 ]; then
-		operation=compile
-	else
-		operation="$1"
+		printf '%s\n' "Please supply an 'operation'"
+		exit 1
 	fi
+	local operation="$1"
 	shift 1
+	
+	local outFolderPath='../../out/examples/c'
+	mkdir -m 0755 -p "$outFolderPath"
 	
 	case "$operation" in
 		
 		compile)
 			compile "$@"
+		;;
+		
+		assemble)
+			assemble "$@"
 		;;
 		
 		jit)
