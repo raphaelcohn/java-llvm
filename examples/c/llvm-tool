@@ -158,6 +158,148 @@ architecture()
 	done
 }
 
+linkAssemblyCode()
+{
+	if [ $# -eq 0 ]; then
+		printf '%s\n' "Please supply a name"
+		exit 1
+	fi
+	
+	local name="$1"
+	shift 1
+	
+	if [ $# -eq 0 ]; then
+		printf '%s\n' "Please supply at least one file to link"
+		exit 1
+	fi
+	
+	_llvm_tool llvm-link -S -o=./"$name".ll "$@"
+}
+
+linkBitCode()
+{
+	if [ $# -eq 0 ]; then
+		printf '%s\n' "Please supply a linked file name (without extension)"
+		exit 1
+	fi
+	
+	local name="$1"
+	shift 1
+	
+	if [ $# -eq 0 ]; then
+		printf '%s\n' "Please supply at least one file to link"
+		exit 1
+	fi
+	
+	local linkFilePath=./"$name".bc
+	
+	local index=1
+	local filePath
+	for filePath in "$@"
+	do
+		local baseFilePath="${filePath%.*}"
+		
+		if [ "$baseFilePath".ll != "$filePath" ]; then
+			printf '%s\n' "Please supply LLVM assembly (.ll) files"
+		fi
+	
+		assembleToBitCode
+		
+		if [ $index -eq 1 ]; then
+			set -- "$baseFilePath".bc
+		else
+			set -- "$@" "$baseFilePath".bc
+		fi
+		index=$((index+1))
+	done
+	
+	_llvm_tool llvm-link -o="$linkFilePath" "$@"
+}
+
+archiveBitCodeWithSymbolTable()
+{
+	if [ $# -eq 0 ]; then
+		printf '%s\n' "Please supply an archive name (without file extension)"
+		exit 1
+	fi
+	
+	local name="$1"
+	shift 1
+	
+	if [ $# -eq 0 ]; then
+		printf '%s\n' "Please supply at least one file to archive"
+		exit 1
+	fi
+	
+	local archiveFilePath=./"$name".a
+	
+	local index=1
+	local filePath
+	for filePath in "$@"
+	do
+		local baseFilePath="${filePath%.*}"
+		
+		if [ "$baseFilePath".ll != "$filePath" ]; then
+			printf '%s\n' "Please supply LLVM assembly (.ll) files"
+		fi
+	
+		assembleToBitCode
+		
+		if [ $index -eq 1 ]; then
+			set -- "$baseFilePath".bc
+		else
+			set -- "$@" "$baseFilePath".bc
+		fi
+		index=$((index+1))
+	done
+	
+	rm -rf "$archiveFilePath"
+	
+	# llvm-ar IGNORES chmod settings, and records all .bc files as 0644
+	_llvm_tool fakeroot llvm-ar csru "$archiveFilePath" "$@"
+}
+
+listSymbols()
+{
+	if [ $# -lt 2 ]; then
+		printf '%s\n' "Please supply one or more .a, .bc or .o (.obj) file paths"
+		exit 1
+	fi
+	
+	local type
+	case "$1" in
+		
+		debug)
+			type='--debug-syms'
+		;;
+		
+		defined)
+			type='--defined-only'
+		;;
+		
+		dynamic)
+			type='--dynamic'
+		;;
+		
+		public)
+			type="--extern-only"
+		;;
+		
+		undefined)
+			type="--undefined-only"
+		;;
+		
+		*)
+			printf '%s\n' "Unknown type '$type'"
+			exit 1
+		;;
+		
+	esac
+	
+	_llvm_tool llvm-nm --format=bsd --print-file-name --print-size --no-sort "$type" "$@" | sed -e 's,\.a:,\.a/,g' -e 's/: / /g' -e 's/        / --------/g' -e 's/  */ /g' | tr ' ' $'\t'
+	
+}
+
 main()
 {
 	local operation
@@ -180,6 +322,19 @@ main()
 		
 		architecture)
 			architecture "$@"
+		;;
+		
+		archive)
+			archiveBitCodeWithSymbolTable "$@"
+		;;
+		
+		link)
+			linkAssemblyCode "$@"
+			linkBitCode "$@"
+		;;
+		
+		nm)
+			listSymbols "$@"
 		;;
 		
 		*)
