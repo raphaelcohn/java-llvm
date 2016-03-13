@@ -1,16 +1,20 @@
 #!/usr/bin/env sh
 # This file is part of java-llvm. It is subject to the licence terms in the COPYRIGHT file found in the top-level directory of this distribution and at https://raw.githubusercontent.com/raphaelcohn/java-llvm/master/COPYRIGHT. No part of java-llvm, including this file, may be copied, modified, propagated, or distributed except according to the terms contained in the COPYRIGHT file.
 # Copyright © 2016 The developers of java-llvm. See the COPYRIGHT file in the top-level directory of this distribution and at https://raw.githubusercontent.com/raphaelcohn/java-llvm/master/COPYRIGHT.
+set -u
+set -e
 
 toolsPath='/usr/local/opt/llvm37/lib/llvm-3.7/bin'
 systemHeadersPath='/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/usr/include'
 
 _llvm_tool()
 {
-	(
-		export PATH="$toolsPath":"$PATH"
-		"$@"
-	)
+	PATH="$toolsPath":"$PATH" "$@"
+}
+
+_llvm_tool_config()
+{
+	_llvm_tool llvm-config "$@"
 }
 
 _llvm_architecture_help()
@@ -53,6 +57,13 @@ assembleToBitCode()
 	_llvm_tool llvm-as -o="$outputFilePath" "$baseFilePath".ll
 }
 
+dissembleBitCodeToAssemblyLanguage()
+{
+	local outputFilePath="$baseFilePath".dis.ll
+	
+	_llvm_tool llvm-dis -o="$outputFilePath" "$baseFilePath".bc
+}
+
 assembleToLocalAssemblyAtt()
 {
 	local outputFilePath="$baseFilePath".att.s
@@ -72,6 +83,11 @@ optimiseAssemblyLanguage()
 	local outputFilePath="$baseFilePath".opt.ll
 	
 	_llvm_tool opt -o="$outputFilePath" -S "$baseFilePath".ll
+}
+
+justInTime()
+{
+	_llvm_tool lli -relocation-model=pic -fake-argv0="$baseFilePath" "$baseFilePath".bc "$@"
 }
 
 loop()
@@ -100,6 +116,38 @@ loop()
 	done
 }
 
+compile()
+{
+	local force=false
+	
+	if [ $# -ne 0 ]; then
+		if [ "$1" = "--force" ]; then
+			force=true
+		fi
+
+		if [ "$1" = "-f" ]; then
+			force=true
+		fi
+	fi
+	
+	loop c   compileToAssemblyLanguage assembleToBitCode dissembleBitCodeToAssemblyLanguage assembleToLocalAssemblyAtt assembleToLocalAssemblyIntel optimiseAssemblyLanguage
+	loop cpp compileToAssemblyLanguage assembleToBitCode dissembleBitCodeToAssemblyLanguage assembleToLocalAssemblyAtt assembleToLocalAssemblyIntel optimiseAssemblyLanguage
+}
+
+jit()
+{
+	if [ $# -eq 0 ]; then
+		printf '%s\n' "Please supply a .ll file (without .ll) to JIT"
+		exit 1
+	fi
+	
+	local filePath="$1".ll
+	local baseFilePath="${filePath%.*}"
+	
+	assembleToBitCode
+	justInTime "$@"
+}
+
 architecture()
 {
 	local architecture
@@ -118,25 +166,25 @@ main()
 	else
 		operation="$1"
 	fi
+	shift 1
 	
 	case "$operation" in
 		
 		compile)
-			local force=false
-			
-			if [ "$2" = "--force" ]; then
-				force=true
-			fi
-			
-			if [ "$2" = "-f" ]; then
-				force=true
-			fi
-			
-			loop c compileToAssemblyLanguage assembleToBitCode assembleToLocalAssemblyAtt assembleToLocalAssemblyIntel optimiseAssemblyLanguage
+			compile "$@"
+		;;
+		
+		jit)
+			jit "$@"
 		;;
 		
 		architecture)
-			architecture
+			architecture "$@"
+		;;
+		
+		*)
+			printf '%s\n' "Unknown operation '$operation'"
+			exit 1
 		;;
 		
 	esac
