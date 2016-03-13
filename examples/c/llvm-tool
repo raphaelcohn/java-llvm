@@ -38,15 +38,18 @@ _llvm_architecture_help_attributes()
 compileToAssemblyLanguage()
 {
 	local outputFilePath="$baseFilePath".ll
-	
-	_llvm_tool clang -c -S -emit-llvm --coverage -O0 -g -isystem "$systemHeadersPath" "$filePath"
+
 	rm -rf "$outFolderPath"/"$baseFilePath".ll
-	
+	_llvm_tool clang -c -S -emit-llvm -O0 -isystem "$systemHeadersPath" "$filePath"
+	mv "$baseFilePath".ll "$outFolderPath"
+	return 0
+
+	rm -rf "$outFolderPath"/"$baseFilePath".ll
+	_llvm_tool clang -c -S -emit-llvm --coverage -O0 -g -isystem "$systemHeadersPath" "$filePath"
 	mv "$baseFilePath".ll "$outFolderPath"
 	rm -rf "$outFolderPath"/"$baseFilePath".gcno
-	
-	mv "$baseFilePath".gcno "$outFolderPath"
 	rm -rf "$outFolderPath"/"$baseFilePath".gcda
+	mv "$baseFilePath".gcno "$outFolderPath"
 }
 
 assembleToBitCode()
@@ -77,11 +80,62 @@ assembleToLocalAssemblyIntel()
 	_llvm_tool llc -o="$outFolderPath"/"$outputFilePath" --x86-asm-syntax=intel "$outFolderPath"/"$baseFilePath".ll
 }
 
+lintBitCode()
+{	
+	_llvm_tool opt -o=/dev/null -lint "$outFolderPath"/"$baseFilePath".bc
+}
+
 optimiseAssemblyLanguage()
 {
 	local outputFilePath="$baseFilePath".opt.ll
 	
-	_llvm_tool opt -o="$outFolderPath"/"$outputFilePath" -S "$outFolderPath"/"$baseFilePath".ll
+	# Not known: -block-placement -deadtypeelim
+	# ?: -mergefunc -mergereturn
+	_llvm_tool opt -o="$outFolderPath"/"$outputFilePath" -S -strip-nondebug -verify-each \
+		-reassociate \
+		-always-inline \
+		-argpromotion \
+		-bb-vectorize \
+		-constmerge \
+		-scalarrepl \
+			-mem2reg \
+		-scalarrepl \
+			-mem2reg \
+		-sccp \
+			-dce \
+		-constprop \
+			-simplifycfg \
+			-adce \
+			-dce \
+			-deadargelim \
+			-die \
+			-dse \
+			-functionattrs \
+			-globaldce \
+			-simplifycfg \
+		-globalopt \
+		-gvn \
+		-lcssa \
+			-instcombine \
+		-indvars \
+			-loop-unroll \
+		-inline \
+		-internalize \
+		-ipconstprop \
+		-ipsccp \
+			-deadargelim \
+		-jump-threading \
+		-licm \
+			-loop-unswitch \
+		-loop-reduce \
+		-loop-rotate \
+		-loop-simplify \
+		-memcpyopt \
+		-partial-inliner \
+		-prune-eh \
+		-sink \
+		-tailcallelim \
+			"$outFolderPath"/"$baseFilePath".ll
 }
 
 justInTime()
@@ -128,7 +182,7 @@ compile()
 		local baseFilePath="${filePath%.*}"
 		
 		local action
-		for action in compileToAssemblyLanguage assembleToBitCode dissembleBitCodeToAssemblyLanguage assembleToLocalAssemblyAtt assembleToLocalAssemblyIntel optimiseAssemblyLanguage
+		for action in compileToAssemblyLanguage assembleToBitCode lintBitCode dissembleBitCodeToAssemblyLanguage assembleToLocalAssemblyAtt assembleToLocalAssemblyIntel optimiseAssemblyLanguage
 		do
 			$action
 		done
@@ -151,7 +205,7 @@ assemble()
 		cp "$baseFilePath".ll "$outFolderPath"/"$baseFilePath".ll
 		
 		local action
-		for action in assembleToBitCode dissembleBitCodeToAssemblyLanguage assembleToLocalAssemblyAtt assembleToLocalAssemblyIntel optimiseAssemblyLanguage
+		for action in assembleToBitCode lintBitCode dissembleBitCodeToAssemblyLanguage assembleToLocalAssemblyAtt assembleToLocalAssemblyIntel optimiseAssemblyLanguage
 		do
 			$action
 		done
@@ -326,7 +380,15 @@ listSymbols()
 		tr ' ' $'\t' | \
 		awk '{print $5, $4, $1, $3, $2}' | \
 		LC_ALL=en_US.UTF-8 sort -t $'\t' -k 1
-	
+}
+
+bcanalyzer()
+{
+	if [ $# -ne 1 ]; then
+		printf '%s\n' "Please supply exactly one bit code '.bc' file"
+		exit 1
+	fi
+	_llvm_tool llvm-bcanalyzer -dump "$1"
 }
 
 main()
@@ -371,6 +433,10 @@ main()
 		
 		nm)
 			listSymbols "$@"
+		;;
+		
+		bcanalyzer)
+			bcanalyzer "$@"
 		;;
 		
 		*)
