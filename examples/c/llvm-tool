@@ -145,28 +145,26 @@ justInTime()
 
 _loop()
 {
-	local extension="$1"
+	local actions="$1"
 	shift 1
 	
 	local filePath
-	for filePath in *."$extension"; do
-		if [ ! -f "$filePath" ]; then
-			continue
-		fi
-		
-		local withoutPeriods="${filePath%%.*}"
-		if [ "$withoutPeriods"."$extension" != "$filePath" ]; then
-			continue
-		fi
-		
+	for filePath in "$@"
+	do
 		local baseFilePath="${filePath%.*}"
 		
-		local action
-		for action in "$@"
-		do
-			$action  "$filePath" "$baseFilePath"
-		done
+		$actions
 	done
+}
+
+_common_actions()
+{
+	assembleToBitCode
+	lintBitCode
+	dissembleBitCodeToAssemblyLanguage
+	assembleToLocalAssemblyAtt
+	assembleToLocalAssemblyIntel
+	optimiseAssemblyLanguage
 }
 
 compile()
@@ -176,17 +174,12 @@ compile()
 		exit 1
 	fi
 	
-	local filePath
-	for filePath in "$@"
-	do
-		local baseFilePath="${filePath%.*}"
-		
-		local action
-		for action in compileToAssemblyLanguage assembleToBitCode lintBitCode dissembleBitCodeToAssemblyLanguage assembleToLocalAssemblyAtt assembleToLocalAssemblyIntel optimiseAssemblyLanguage
-		do
-			$action
-		done
-	done
+	_compile_actions()
+	{
+		compileToAssemblyLanguage
+		_common_actions
+	}
+	_loop _compile_actions
 }
 
 assemble()
@@ -196,20 +189,13 @@ assemble()
 		exit 1
 	fi
 	
-	local filePath
-	for filePath in "$@"
-	do
-		local baseFilePath="${filePath%.*}"
-		
+	_assemble_actions()
+	{
 		rm -rf "$outFolderPath"/"$baseFilePath".ll
 		cp "$baseFilePath".ll "$outFolderPath"/"$baseFilePath".ll
-		
-		local action
-		for action in assembleToBitCode lintBitCode dissembleBitCodeToAssemblyLanguage assembleToLocalAssemblyAtt assembleToLocalAssemblyIntel optimiseAssemblyLanguage
-		do
-			$action
-		done
-	done
+		_common_actions
+	}
+	_loop _compile_actions
 }
 
 jit()
