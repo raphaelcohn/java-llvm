@@ -18,3 +18,9 @@ signed int example(struct MyClassExample* ref, _Bool aa, signed char bb, unsigne
 {
 	return gg + gg;
 }
+
+_Bool example2(_Bool left, _Bool right)
+{
+	_Bool result = left || right;
+	return result;
+}

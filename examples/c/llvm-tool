@@ -37,19 +37,35 @@ _llvm_architecture_help_attributes()
 
 compileToAssemblyLanguage()
 {
-	local outputFilePath="$baseFilePath".ll
-
-	rm -rf "$outFolderPath"/"$baseFilePath".ll
-	_llvm_tool clang -c -S -emit-llvm -O0 -isystem "$systemHeadersPath" "$filePath"
-	mv "$baseFilePath".ll "$outFolderPath"
-	return 0
-
+	local outputFilePath="$outFolderPath"/"$baseFilePath".ll
+	_llvm_tool clang -o"$outputFilePath" -c -S -emit-llvm -O0 -isystem "$systemHeadersPath" "$filePath"
+	
 	rm -rf "$outFolderPath"/"$baseFilePath".ll
 	_llvm_tool clang -c -S -emit-llvm --coverage -O0 -g -isystem "$systemHeadersPath" "$filePath"
 	mv "$baseFilePath".ll "$outFolderPath"
 	rm -rf "$outFolderPath"/"$baseFilePath".gcno
 	rm -rf "$outFolderPath"/"$baseFilePath".gcda
 	mv "$baseFilePath".gcno "$outFolderPath"
+}
+
+compileWithDebuggingToAssemblyLanguage()
+{
+	local outputFilePath="$outFolderPath"/"$baseFilePath".debug.ll
+	_llvm_tool clang -o"$outputFilePath" -c -S -emit-llvm -O0 -isystem "$systemHeadersPath" "$filePath"
+}
+
+compileWithCoverageToAssemblyLanguage()
+{
+	local outputBaseFilePath="$outFolderPath"/"$baseFilePath".coverage
+	
+	local gcnoFilePath="$outputBaseFilePath".gcno
+	rm -rf "$gcnoFilePath"
+	
+	local gcdaFilePath="$outputBaseFilePath".gcda
+	rm -rf "$gcdaFilePath"
+	
+	local outputFilePath="$outputBaseFilePath".ll
+	_llvm_tool clang -o"$outputFilePath" -c -S -emit-llvm -O0 -isystem "$systemHeadersPath" "$filePath"
 }
 
 assembleToBitCode()
@@ -177,9 +193,11 @@ compile()
 	_compile_actions()
 	{
 		compileToAssemblyLanguage
+		compileWithDebuggingToAssemblyLanguage
+		compileWithCoverageToAssemblyLanguage
 		_common_actions
 	}
-	_loop _compile_actions
+	_loop _compile_actions "$@"
 }
 
 assemble()
@@ -195,7 +213,7 @@ assemble()
 		cp "$baseFilePath".ll "$outFolderPath"/"$baseFilePath".ll
 		_common_actions
 	}
-	_loop _compile_actions
+	_loop _compile_actions "$@"
 }
 
 jit()
