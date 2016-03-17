@@ -206,7 +206,7 @@ assemble()
 		cp "$baseFilePath".ll "$outFolderPath"/"$baseFilePath".ll
 		_common_actions
 	}
-	_loop _compile_actions "$@"
+	_loop _assemble_actions "$@"
 }
 
 jit()
