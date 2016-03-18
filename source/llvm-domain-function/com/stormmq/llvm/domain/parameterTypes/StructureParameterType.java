@@ -23,50 +23,50 @@
 package com.stormmq.llvm.domain.parameterTypes;
 
 import com.stormmq.byteWriters.ByteWriter;
-import com.stormmq.llvm.domain.attributes.Attribute;
-import com.stormmq.llvm.domain.attributes.AttributeGroup;
-import com.stormmq.llvm.domain.attributes.parameterAttributes.ParameterAttribute;
-import com.stormmq.llvm.domain.attributes.writers.ByteWriterFunctionAttributeGroupWriter;
 import org.jetbrains.annotations.NotNull;
 
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
 
-public final class VectorParameterType implements ParameterType
+public final class StructureParameterType implements ParameterType
 {
 	@NotNull private static final byte[] Middle = encodeUtf8BytesWithCertaintyValueIsValid(" x ");
+	@NotNull private static final byte[] Start = {'{', ' '};
+	@NotNull private static final byte[] CommaSpace = {',', ' '};
+	@NotNull private static final byte[] End = {' ', '}'};
 
-	private final int length;
-	@NotNull private final SingleValueParameterType singleValueParameterType;
-	@NotNull private final AttributeGroup<ParameterAttribute> parameterAttributesGroup;
+	private final boolean isPacked;
+	@NotNull private final ParameterType[] list;
 
-	public VectorParameterType(final int length, @NotNull final SingleValueParameterType singleValueParameterType, @NotNull final AttributeGroup<ParameterAttribute> parameterAttributesGroup)
+	public StructureParameterType(final boolean isPacked, @NotNull final ParameterType... list)
 	{
-		this.length = length;
-		this.singleValueParameterType = singleValueParameterType;
-		this.parameterAttributesGroup = parameterAttributesGroup;
+		this.isPacked = isPacked;
+		this.list = list;
 	}
 
 	@Override
 	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
 	{
-		byteWriter.writeByte('<');
-
-		byteWriter.writeUtf8EncodedStringWithCertainty(Integer.toString(length));
-
-		byteWriter.writeBytes(Middle);
-
-		singleValueParameterType.write(byteWriter);
-
-		byteWriter.writeByte('>');
-
-		final ByteWriterFunctionAttributeGroupWriter<X> attributeWriter = new ByteWriterFunctionAttributeGroupWriter<>(byteWriter);
-		parameterAttributesGroup.write(attributes ->
+		if (isPacked)
 		{
-			for (final Attribute attribute : attributes)
+			byteWriter.writeByte('<');
+		}
+		byteWriter.writeBytes(Start);
+
+		final int length = list.length;
+		for (int index = 0; index < length; index++)
+		{
+			final ParameterType parameterType = list[index];
+			if (index != 0)
 			{
-				byteWriter.writeByte(' ');
-				attribute.write(attributeWriter);
+				byteWriter.writeBytes(CommaSpace);
 			}
-		});
+			parameterType.write(byteWriter);
+		}
+
+		byteWriter.writeBytes(End);
+		if (isPacked)
+		{
+			byteWriter.writeByte('>');
+		}
 	}
 }

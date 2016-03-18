@@ -20,19 +20,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.function;
+package com.stormmq.llvm.domain.attributes.functionAttributes;
 
-import com.stormmq.llvm.domain.attributes.AttributeGroup;
-import com.stormmq.llvm.domain.attributes.parameterAttributes.ParameterAttribute;
-import com.stormmq.llvm.domain.parameterTypes.ParameterType;
-import org.jetbrains.annotations.NotNull;
-
-public abstract class AbstractFunctionParameter implements FunctionParameter
+public enum TargetCpu
 {
-	@NotNull private final AttributeGroup<ParameterAttribute> attributes;
-
-	protected AbstractFunctionParameter(final ParameterType parameterType, @NotNull final AttributeGroup<ParameterAttribute> attributes)
-	{
-		this.attributes = attributes;
-	}
+	core2,
+	;
 }

@@ -20,19 +20,36 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.function;
+package com.stormmq.llvm.domain.target.writers;
 
-import com.stormmq.llvm.domain.attributes.AttributeGroup;
-import com.stormmq.llvm.domain.attributes.parameterAttributes.ParameterAttribute;
-import com.stormmq.llvm.domain.parameterTypes.ParameterType;
+import com.stormmq.byteWriters.ByteWriter;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractFunctionParameter implements FunctionParameter
+public final class ByteWriterDataLayoutSpecificationFieldWriter<X extends Exception> implements DataLayoutSpecificationFieldWriter<X>
 {
-	@NotNull private final AttributeGroup<ParameterAttribute> attributes;
+	private static final char Hyphen = '-';
+	@NotNull private final ByteWriter<X> byteWriter;
+	private boolean isAfterFirst;
 
-	protected AbstractFunctionParameter(final ParameterType parameterType, @NotNull final AttributeGroup<ParameterAttribute> attributes)
+	public ByteWriterDataLayoutSpecificationFieldWriter(@NotNull final ByteWriter<X> byteWriter)
 	{
-		this.attributes = attributes;
+		this.byteWriter = byteWriter;
+		isAfterFirst = false;
+	}
+
+	@Override
+	public void writeField(@NonNls @NotNull final String value) throws X
+	{
+		if (isAfterFirst)
+		{
+			byteWriter.writeByte(Hyphen);
+		}
+		else
+		{
+			isAfterFirst = false;
+		}
+
+		byteWriter.writeUtf8EncodedStringWithCertainty(value);
 	}
 }

@@ -23,10 +23,10 @@
 package com.stormmq.llvm.domain.function;
 
 import com.stormmq.byteWriters.ByteWriter;
-import com.stormmq.llvm.attributes.Attribute;
-import com.stormmq.llvm.attributes.AttributeGroup;
-import com.stormmq.llvm.attributes.functionAttributes.FunctionAttribute;
-import com.stormmq.llvm.attributes.writers.ByteWriterFunctionAttributeGroupWriter;
+import com.stormmq.llvm.domain.attributes.Attribute;
+import com.stormmq.llvm.domain.attributes.AttributeGroup;
+import com.stormmq.llvm.domain.attributes.functionAttributes.FunctionAttribute;
+import com.stormmq.llvm.domain.attributes.writers.ByteWriterFunctionAttributeGroupWriter;
 import com.stormmq.llvm.domain.parameterTypes.ParameterType;
 import org.jetbrains.annotations.*;
 

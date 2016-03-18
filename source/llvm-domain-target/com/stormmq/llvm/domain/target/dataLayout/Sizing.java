@@ -20,19 +20,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.function;
+package com.stormmq.llvm.domain.target.dataLayout;
 
-import com.stormmq.llvm.domain.attributes.AttributeGroup;
-import com.stormmq.llvm.domain.attributes.parameterAttributes.ParameterAttribute;
-import com.stormmq.llvm.domain.parameterTypes.ParameterType;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractFunctionParameter implements FunctionParameter
-{
-	@NotNull private final AttributeGroup<ParameterAttribute> attributes;
+import java.util.Locale;
 
-	protected AbstractFunctionParameter(final ParameterType parameterType, @NotNull final AttributeGroup<ParameterAttribute> attributes)
+public final class Sizing
+{
+	private final int abi;
+	private final int pref;
+	@NonNls @NotNull public final String dataLayoutEncoding;
+
+	public Sizing(final int abi)
 	{
-		this.attributes = attributes;
+		this(abi, abi);
+	}
+
+	public Sizing(final int abi, final int pref)
+	{
+		this.abi = abi;
+		this.pref = pref;
+		dataLayoutEncoding = String.format(Locale.ENGLISH, ":%1$s:%2$s", Integer.toString(abi), Integer.toString(pref));
 	}
 }

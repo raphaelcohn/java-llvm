@@ -20,19 +20,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.function;
+package com.stormmq.llvm.domain.attributes.functionAttributes;
 
-import com.stormmq.llvm.domain.attributes.AttributeGroup;
-import com.stormmq.llvm.domain.attributes.parameterAttributes.ParameterAttribute;
-import com.stormmq.llvm.domain.parameterTypes.ParameterType;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractFunctionParameter implements FunctionParameter
-{
-	@NotNull private final AttributeGroup<ParameterAttribute> attributes;
+import static com.stormmq.llvm.domain.attributes.functionAttributes.TargetCpu.core2;
 
-	protected AbstractFunctionParameter(final ParameterType parameterType, @NotNull final AttributeGroup<ParameterAttribute> attributes)
+public final class EnumKeyValueFunctionAttribute<E extends Enum<E>> extends AbstractKeyValueFunctionAttribute
+{
+	@NotNull
+	public static FunctionAttribute TargetCpu(@NotNull final TargetCpu targetCpu)
 	{
-		this.attributes = attributes;
+		return new EnumKeyValueFunctionAttribute<>("target-cpu", targetCpu);
+	}
+
+	@NotNull public static final FunctionAttribute TargetCpu_core2 = TargetCpu(core2);
+
+	public EnumKeyValueFunctionAttribute(@NonNls @NotNull final String key, @NotNull final E value)
+	{
+		super(key, value.name());
 	}
 }

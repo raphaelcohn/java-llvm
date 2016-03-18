@@ -23,14 +23,14 @@
 package com.stormmq.llvm.domain.parameterTypes;
 
 import com.stormmq.byteWriters.ByteWriter;
-import com.stormmq.llvm.attributes.Attribute;
-import com.stormmq.llvm.attributes.AttributeGroup;
-import com.stormmq.llvm.attributes.parameterAttributes.ParameterAttribute;
-import com.stormmq.llvm.attributes.writers.ByteWriterFunctionAttributeGroupWriter;
+import com.stormmq.llvm.domain.attributes.Attribute;
+import com.stormmq.llvm.domain.attributes.AttributeGroup;
+import com.stormmq.llvm.domain.attributes.parameterAttributes.ParameterAttribute;
+import com.stormmq.llvm.domain.attributes.writers.ByteWriterFunctionAttributeGroupWriter;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import static com.stormmq.llvm.attributes.AttributeGroup.*;
+import static com.stormmq.llvm.domain.attributes.AttributeGroup.*;
 
 public final class SingleValueParameterType implements ParameterType
 {

@@ -1,12 +1,13 @@
 package com.stormmq.llvm.api;
 
-import com.stormmq.llvm.api.CallingConvention;
-import org.jetbrains.annotations.NotNull;
 
-import static com.stormmq.llvm.api.CallingConvention.ccc;
-import static com.stormmq.llvm.api.LinkageType.external;
-import static com.stormmq.llvm.api.VisibilityStyle._default;
-import static com.stormmq.llvm.api.DllStorageClass.none;
+import com.stormmq.llvm.domain.function.*;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import static com.stormmq.llvm.domain.function.CallingConvention.ccc;
+import static com.stormmq.llvm.domain.function.LinkageType.external;
+import static com.stormmq.llvm.domain.function.VisibilityStyle._default;
 
 public @interface LlvmFunction
 {
@@ -16,5 +17,5 @@ public @interface LlvmFunction
 
 	@NotNull VisibilityStyle visibility() default _default;
 
-	@NotNull DllStorageClass dllStorageClass() default none;
+	@Nullable DllStorageClass dllStorageClass();
 }

@@ -20,19 +20,41 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.function;
+package com.stormmq.llvm.domain.target.triple;
 
-import com.stormmq.llvm.domain.attributes.AttributeGroup;
-import com.stormmq.llvm.domain.attributes.parameterAttributes.ParameterAttribute;
-import com.stormmq.llvm.domain.parameterTypes.ParameterType;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractFunctionParameter implements FunctionParameter
+public enum Architecture
 {
-	@NotNull private final AttributeGroup<ParameterAttribute> attributes;
+	x86_64(8, 16, 32, 64),
+	;
 
-	protected AbstractFunctionParameter(final ParameterType parameterType, @NotNull final AttributeGroup<ParameterAttribute> attributes)
+	@NonNls @NotNull public final String nativeIntegerWidths;
+
+	Architecture(@NotNull final int... nativeIntegerWidths)
 	{
-		this.attributes = attributes;
+		this.nativeIntegerWidths = calculateNativeIntegerWidths(nativeIntegerWidths);
+	}
+
+	@NotNull
+	@NonNls
+	private static String calculateNativeIntegerWidths(@NotNull final int[] nativeIntegerWidths)
+	{
+		final int length = nativeIntegerWidths.length;
+		if (length == 0)
+		{
+			throw new IllegalArgumentException("nativeIntegerWidths can not be empty");
+		}
+		final StringBuilder stringBuilder = new StringBuilder(16);
+		for(int index = 0; index < length; index++)
+		{
+			if (index != 0)
+			{
+				stringBuilder.append(':');
+			}
+			stringBuilder.append(Integer.toString(index));
+		}
+		return stringBuilder.toString();
 	}
 }

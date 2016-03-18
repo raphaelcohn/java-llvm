@@ -20,19 +20,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.function;
+package com.stormmq.llvm.domain.target.dataLayout;
 
-import com.stormmq.llvm.domain.attributes.AttributeGroup;
-import com.stormmq.llvm.domain.attributes.parameterAttributes.ParameterAttribute;
-import com.stormmq.llvm.domain.parameterTypes.ParameterType;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractFunctionParameter implements FunctionParameter
+public enum Mangling
 {
-	@NotNull private final AttributeGroup<ParameterAttribute> attributes;
+	ELF('e'),
+	MIPS('m'),
+	MachO('o'),
+	WindowsCOFF('w'),
+	WindowsCOFFPrefix('x'),
+	;
 
-	protected AbstractFunctionParameter(final ParameterType parameterType, @NotNull final AttributeGroup<ParameterAttribute> attributes)
+	@NotNull public final String dataLayoutEncoding;
+
+	Mangling(final char dataLayoutEncoding)
 	{
-		this.attributes = attributes;
+		this.dataLayoutEncoding = String.valueOf(dataLayoutEncoding);
 	}
 }

@@ -20,19 +20,60 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.function;
+package com.stormmq.llvm.domain.attributes.functionAttributes;
 
-import com.stormmq.llvm.domain.attributes.AttributeGroup;
-import com.stormmq.llvm.domain.attributes.parameterAttributes.ParameterAttribute;
-import com.stormmq.llvm.domain.parameterTypes.ParameterType;
+import com.stormmq.llvm.domain.attributes.AttributeKind;
+import com.stormmq.llvm.domain.attributes.writers.AttributeWriter;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractFunctionParameter implements FunctionParameter
+public enum FixedFunctionAttribute implements FunctionAttribute
 {
-	@NotNull private final AttributeGroup<ParameterAttribute> attributes;
+	alwaysinline,
+	builtin,
+	cold,
+	convergent,
+	inaccessiblememonly,
+	inaccessiblemem_or_argmemonly,
+	inlinehint,
+	jumptable,
+	minsize,
+	naked,
+	nobuiltin,
+	noduplicate,
+	noimplicitfloat,
+	noinline,
+	nonlazybind,
+	noredzone,
+	noreturn,
+	norecurse,
+	nounwind,
+	optnone,
+	optsize,
+	readnone,
+	readonly,
+	argmemonly,
+	returns_twice,
+	safestack,
+	sanitize_address,
+	sanitize_memory,
+	sanitize_thread,
+	ssp,
+	sspreq,
+	sspstrong,
+	thunk,
+	uwtable,
+	;
 
-	protected AbstractFunctionParameter(final ParameterType parameterType, @NotNull final AttributeGroup<ParameterAttribute> attributes)
+	@NotNull
+	@Override
+	public AttributeKind attributeKind()
 	{
-		this.attributes = attributes;
+		return AttributeKind.Defined;
+	}
+
+	@Override
+	public <X extends Exception> void write(@NotNull final AttributeWriter<X> attributeWriter) throws X
+	{
+		attributeWriter.write(name());
 	}
 }

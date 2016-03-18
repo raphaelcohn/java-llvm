@@ -22,31 +22,60 @@
 
 package com.stormmq.llvm.domain.parameterTypes;
 
-import com.stormmq.llvm.attributes.AttributeGroup;
-import com.stormmq.llvm.attributes.parameterAttributes.ParameterAttribute;
+import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.llvm.domain.attributes.Attribute;
+import com.stormmq.llvm.domain.attributes.AttributeGroup;
+import com.stormmq.llvm.domain.attributes.parameterAttributes.ParameterAttribute;
+import com.stormmq.llvm.domain.attributes.writers.ByteWriterFunctionAttributeGroupWriter;
 import org.jetbrains.annotations.NotNull;
 
-public final class ArrayParameterType extends AbstractMultipleParameterType
+import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+
+public final class ArrayParameterType implements ParameterType
 {
-	public ArrayParameterType(final int length, @NotNull final SingleValueParameterType singleValueParameterType, @NotNull final AttributeGroup<ParameterAttribute> parameterAttributesGroup)
-	{
-		super(length, singleValueParameterType, parameterAttributesGroup);
-	}
+	@NotNull private static final byte[] Middle = encodeUtf8BytesWithCertaintyValueIsValid(" x ");
 
-	public ArrayParameterType(final int length, @NotNull final ArrayParameterType arrayParameterType, @NotNull final AttributeGroup<ParameterAttribute> parameterAttributesGroup)
+	@NotNull private final SingleValueParameterType singleValueParameterType;
+	@NotNull private final AttributeGroup<ParameterAttribute> parameterAttributesGroup;
+	private final int[] dimensionLengths;
+	private final int length;
+
+	public ArrayParameterType(@NotNull final SingleValueParameterType singleValueParameterType, @NotNull final AttributeGroup<ParameterAttribute> parameterAttributesGroup, final int... dimensionLengths)
 	{
-		super(length, arrayParameterType, parameterAttributesGroup);
+		this.singleValueParameterType = singleValueParameterType;
+		this.parameterAttributesGroup = parameterAttributesGroup;
+		this.dimensionLengths = dimensionLengths;
+		length = dimensionLengths.length;
 	}
 
 	@Override
-	protected byte start()
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
 	{
-		return '[';
-	}
+		for (int index = 0; index < length; index++)
+		{
+			final int dimensionLength = dimensionLengths[index];
+			byteWriter.writeByte('[');
 
-	@Override
-	protected byte end()
-	{
-		return ']';
+			byteWriter.writeUtf8EncodedStringWithCertainty(Integer.toString(dimensionLength));
+
+			byteWriter.writeBytes(Middle);
+		}
+
+		singleValueParameterType.write(byteWriter);
+
+		for(int index = 0; index < length; index++)
+		{
+			byteWriter.writeByte(']');
+		}
+
+		final ByteWriterFunctionAttributeGroupWriter<X> attributeWriter = new ByteWriterFunctionAttributeGroupWriter<>(byteWriter);
+		parameterAttributesGroup.write(attributes ->
+		{
+			for (final Attribute attribute : attributes)
+			{
+				byteWriter.writeByte(' ');
+				attribute.write(attributeWriter);
+			}
+		});
 	}
 }

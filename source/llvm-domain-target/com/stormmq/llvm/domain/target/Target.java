@@ -20,19 +20,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.function;
+package com.stormmq.llvm.domain.target;
 
-import com.stormmq.llvm.domain.attributes.AttributeGroup;
-import com.stormmq.llvm.domain.attributes.parameterAttributes.ParameterAttribute;
-import com.stormmq.llvm.domain.parameterTypes.ParameterType;
+import com.stormmq.llvm.domain.target.dataLayout.DataLayoutSpecification;
+import com.stormmq.llvm.domain.target.triple.TargetTriple;
+import com.stormmq.llvm.domain.target.writers.TargetWriter;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractFunctionParameter implements FunctionParameter
+public final class Target
 {
-	@NotNull private final AttributeGroup<ParameterAttribute> attributes;
+	@NotNull private final DataLayoutSpecification dataLayoutSpecification;
+	@NotNull private final TargetTriple targetTriple;
 
-	protected AbstractFunctionParameter(final ParameterType parameterType, @NotNull final AttributeGroup<ParameterAttribute> attributes)
+	public Target(@NotNull final DataLayoutSpecification dataLayoutSpecification, @NotNull final TargetTriple targetTriple)
 	{
-		this.attributes = attributes;
+		this.dataLayoutSpecification = dataLayoutSpecification;
+		this.targetTriple = targetTriple;
+	}
+
+	public <X extends Exception> void write(@NotNull final TargetWriter<X> targetWriter) throws X
+	{
+		targetWriter.writeTarget(dataLayoutSpecification, targetTriple);
 	}
 }

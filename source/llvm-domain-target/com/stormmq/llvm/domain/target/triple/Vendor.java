@@ -20,19 +20,37 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.function;
+package com.stormmq.llvm.domain.target.triple;
 
-import com.stormmq.llvm.domain.attributes.AttributeGroup;
-import com.stormmq.llvm.domain.attributes.parameterAttributes.ParameterAttribute;
-import com.stormmq.llvm.domain.parameterTypes.ParameterType;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractFunctionParameter implements FunctionParameter
-{
-	@NotNull private final AttributeGroup<ParameterAttribute> attributes;
+import static com.stormmq.llvm.domain.target.triple.Architecture.x86_64;
 
-	protected AbstractFunctionParameter(final ParameterType parameterType, @NotNull final AttributeGroup<ParameterAttribute> attributes)
+public enum Vendor
+{
+	apple(x86_64),
+	;
+
+	@NotNull private final Architecture[] validArchitectures;
+
+	Vendor(@NotNull final Architecture... validArchitectures)
 	{
-		this.attributes = attributes;
+		if (validArchitectures.length == 0)
+		{
+			throw new IllegalArgumentException("A vendor must support at least one architecture");
+		}
+		this.validArchitectures = validArchitectures;
+	}
+
+	public boolean doesNotSupport(@NotNull final Architecture architecture)
+	{
+		for (final Architecture validArchitecture : validArchitectures)
+		{
+			if (validArchitecture == architecture)
+			{
+				return false;
+			}
+		}
+		return true;
 	}
 }

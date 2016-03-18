@@ -20,19 +20,39 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.function;
+package com.stormmq.llvm.domain.attributes.parameterAttributes;
 
-import com.stormmq.llvm.domain.attributes.AttributeGroup;
-import com.stormmq.llvm.domain.attributes.parameterAttributes.ParameterAttribute;
-import com.stormmq.llvm.domain.parameterTypes.ParameterType;
+import com.stormmq.llvm.domain.attributes.AttributeKind;
+import com.stormmq.llvm.domain.attributes.writers.AttributeWriter;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractFunctionParameter implements FunctionParameter
-{
-	@NotNull private final AttributeGroup<ParameterAttribute> attributes;
+import static com.stormmq.llvm.domain.attributes.AttributeKind.Defined;
 
-	protected AbstractFunctionParameter(final ParameterType parameterType, @NotNull final AttributeGroup<ParameterAttribute> attributes)
+public enum FixedParameterAttribute implements ParameterAttribute
+{
+	zeroext,
+	signext,
+	inreg,
+	byval,
+	inalloca,
+	sret,
+	noalias,
+	nocapture,
+	nest,
+	returned,
+	nonnull,
+	;
+
+	@NotNull
+	@Override
+	public AttributeKind attributeKind()
 	{
-		this.attributes = attributes;
+		return Defined;
+	}
+
+	@Override
+	public <X extends Exception> void write(@NotNull final AttributeWriter<X> attributeWriter) throws X
+	{
+		attributeWriter.write(name());
 	}
 }

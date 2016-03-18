@@ -20,19 +20,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.function;
+package com.stormmq.llvm.domain.attributes.writers;
 
-import com.stormmq.llvm.domain.attributes.AttributeGroup;
-import com.stormmq.llvm.domain.attributes.parameterAttributes.ParameterAttribute;
-import com.stormmq.llvm.domain.parameterTypes.ParameterType;
+import com.stormmq.llvm.domain.attributes.Attribute;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractFunctionParameter implements FunctionParameter
-{
-	@NotNull private final AttributeGroup<ParameterAttribute> attributes;
+import java.util.SortedSet;
 
-	protected AbstractFunctionParameter(final ParameterType parameterType, @NotNull final AttributeGroup<ParameterAttribute> attributes)
-	{
-		this.attributes = attributes;
-	}
+@FunctionalInterface
+public interface AttributeGroupWriter<X extends Exception>
+{
+	void write(@NotNull final SortedSet<? extends Attribute> attributes) throws X;
 }
