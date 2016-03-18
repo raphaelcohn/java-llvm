@@ -22,7 +22,6 @@
 
 package com.stormmq.llvm.metadata;
 
-import com.stormmq.llvm.api.writing.metadataWriters.*;
 import com.stormmq.llvm.metadata.writers.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -60,7 +59,7 @@ public final class CollectionMetadata<M extends Metadata> extends AbstractAnonym
 	{
 		for (final Metadata metadata : metadataNodes)
 		{
-			anonymousFieldsMetadataWriter.writeAnonymousFieldMetadataNode(metadataNodeIndexProvider.assignedReference(metadata));
+			anonymousFieldsMetadataWriter.writeMetadataNode(metadataNodeIndexProvider.assignedReference(metadata));
 		}
 	}
 

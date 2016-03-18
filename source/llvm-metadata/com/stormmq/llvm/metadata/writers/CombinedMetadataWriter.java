@@ -22,19 +22,19 @@
 
 package com.stormmq.llvm.metadata.writers;
 
-import com.stormmq.java.parsing.utilities.string.InvalidUtf16StringException;
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.metadata.Metadata;
+import com.stormmq.string.InvalidUtf16StringException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-import static com.stormmq.java.parsing.utilities.string.StringUtilities.encodeUtf8Bytes;
+import static com.stormmq.string.StringUtilities.encodeUtf8Bytes;
 import static java.lang.Integer.toHexString;
 import static java.util.Locale.ENGLISH;
 
-public final class CombinedMetadataWriter<X extends Exception> implements MetadataWriter<X>, SpecializedLabelledFieldsMetadataWriter<X>, AnonymousFieldsMetadataWriter<X>
+public final class CombinedMetadataWriter<X extends Exception> implements MetadataWriter<X>, KeyedFieldsMetadataWriter<X>, AnonymousFieldsMetadataWriter<X>
 {
 	private static final byte ExclamationMark = '!';
 	private static final byte Comma = ',';
@@ -119,7 +119,7 @@ public final class CombinedMetadataWriter<X extends Exception> implements Metada
 
 	@NotNull
 	@Override
-	public SpecializedLabelledFieldsMetadataWriter<X> writeSpecializedNodeStart(final int metadataNodeIndex, @NonNls @NotNull final String specializedNodeName) throws X
+	public KeyedFieldsMetadataWriter<X> writeSpecializedNodeStart(final int metadataNodeIndex, @NonNls @NotNull final String specializedNodeName) throws X
 	{
 		state.guardDoingNothing();
 		state = State.WritingLabelledFields;
@@ -171,35 +171,35 @@ public final class CombinedMetadataWriter<X extends Exception> implements Metada
 
 	// eg <label: "value">
 	@Override
-	public void writeLabelledField(@NonNls @NotNull final String label, @NonNls @NotNull final String value) throws X
+	public void write(@NonNls @NotNull final String label, @NonNls @NotNull final String value) throws X
 	{
 		writeLabelledFieldExceptForValue(label);
 		writeDoubleQuotedString(value);
 	}
 
 	@Override
-	public <E extends Enum<E>> void writeLabelledField(@NonNls @NotNull final String label, @NonNls @NotNull final E value) throws X
+	public <E extends Enum<E>> void write(@NonNls @NotNull final String label, @NonNls @NotNull final E value) throws X
 	{
 		writeLabelledFieldExceptForValue(label);
 		writeString(value.name());
 	}
 
 	@Override
-	public void writeLabelledField(@NonNls @NotNull final String label, final boolean value) throws X
+	public void write(@NonNls @NotNull final String label, final boolean value) throws X
 	{
 		writeLabelledFieldExceptForValue(label);
 		writeString(value ? "true" : "false");
 	}
 
 	@Override
-	public void writeLabelledField(@NonNls @NotNull final String label, final int value) throws X
+	public void write(@NonNls @NotNull final String label, final int value) throws X
 	{
 		writeLabelledFieldExceptForValue(label);
 		writeInteger(value);
 	}
 
 	@Override
-	public <E extends Enum<E>> void writeLabelledField(@NonNls @NotNull final String label, @NotNull final Set<E> values) throws X
+	public <E extends Enum<E>> void write(@NonNls @NotNull final String label, @NotNull final Set<E> values) throws X
 	{
 		final int size = values.size();
 		if (size == 0)
@@ -227,21 +227,21 @@ public final class CombinedMetadataWriter<X extends Exception> implements Metada
 	}
 
 	@Override
-	public void writeLabelledField(@NonNls @NotNull final String label, @NotNull final Metadata reference, @NotNull final MetadataNodeIndexProvider metadataNodeIndexProvider) throws X
+	public void write(@NonNls @NotNull final String label, @NotNull final Metadata reference, @NotNull final MetadataNodeIndexProvider metadataNodeIndexProvider) throws X
 	{
 		final int metadataNodeIndex = metadataNodeIndexProvider.assignedReference(reference);
 		writeLabelledFieldMetadataNode(label, metadataNodeIndex);
 	}
 
 	@Override
-	public void writeLabelledFieldUnquotedString(@NonNls @NotNull final String label, @NonNls @NotNull final String value) throws X
+	public void writeUnquotedString(@NonNls @NotNull final String label, @NonNls @NotNull final String value) throws X
 	{
 		writeLabelledFieldExceptForValue(label);
 		writeString(value);
 	}
 
 	@Override
-	public void writeAnonymousField(@NonNls @NotNull final String value) throws X
+	public void write(@NonNls @NotNull final String value) throws X
 	{
 		writeAnonymousFieldExceptForValue();
 		writeByte(ExclamationMark);
@@ -249,7 +249,7 @@ public final class CombinedMetadataWriter<X extends Exception> implements Metada
 	}
 
 	@Override
-	public void writeAnonymousField_i32(@NonNls final int value) throws X
+	public void write(@NonNls final int value) throws X
 	{
 		writeAnonymousFieldExceptForValue();
 		writeBytes(i32Space);
@@ -257,21 +257,21 @@ public final class CombinedMetadataWriter<X extends Exception> implements Metada
 	}
 
 	@Override
-	public void writeAnonymousFieldMetadataNode(final int metadataNodeIndex) throws X
+	public void writeMetadataNode(final int metadataNodeIndex) throws X
 	{
 		writeAnonymousFieldExceptForValue();
 		writeMetadataNodeReference(metadataNodeIndex);
 	}
 
 	@Override
-	public void writeAnonymousFieldUnquotedString(@NonNls @NotNull final String value) throws X
+	public void writeUnquotedString(@NonNls @NotNull final String value) throws X
 	{
 		writeAnonymousFieldExceptForValue();
 		writeString(value);
 	}
 
 	@Override
-	public void writeAnonymousField_i64(final long value) throws X
+	public void write_i64(final long value) throws X
 	{
 		writeAnonymousFieldExceptForValue();
 		writeBytes(i64Space);

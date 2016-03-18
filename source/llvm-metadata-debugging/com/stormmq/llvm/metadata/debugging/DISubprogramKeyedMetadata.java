@@ -25,9 +25,8 @@ package com.stormmq.llvm.metadata.debugging;
 import com.stormmq.llvm.metadata.Metadata;
 import com.stormmq.llvm.metadata.CollectionMetadata;
 import com.stormmq.llvm.metadata.AbstractKeyedMetadata;
-import com.stormmq.llvm.api.writing.metadataWriters.*;
 import com.stormmq.llvm.metadata.writers.MetadataNodeIndexProvider;
-import com.stormmq.llvm.metadata.writers.SpecializedLabelledFieldsMetadataWriter;
+import com.stormmq.llvm.metadata.writers.KeyedFieldsMetadataWriter;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -77,24 +76,24 @@ public final class DISubprogramKeyedMetadata extends AbstractKeyedMetadata imple
 	}
 
 	@Override
-	protected <X extends Exception> void writeLabelledFields(@NotNull final MetadataNodeIndexProvider metadataNodeIndexProvider, @NotNull final SpecializedLabelledFieldsMetadataWriter<X> specializedLabelledFieldsMetadataWriter) throws X
+	protected <X extends Exception> void writeLabelledFields(@NotNull final MetadataNodeIndexProvider metadataNodeIndexProvider, @NotNull final KeyedFieldsMetadataWriter<X> keyedFieldsMetadataWriter) throws X
 	{
-		specializedLabelledFieldsMetadataWriter.writeLabelledField(name, functionName);
-		specializedLabelledFieldsMetadataWriter.writeLabelledField(AbstractKeyedMetadata.linkageName, linkageName);
-		specializedLabelledFieldsMetadataWriter.writeLabelledField(AbstractKeyedMetadata.scope, scope, metadataNodeIndexProvider);
-		specializedLabelledFieldsMetadataWriter.writeLabelledField(AbstractKeyedMetadata.file, file, metadataNodeIndexProvider);
-		specializedLabelledFieldsMetadataWriter.writeLabelledField(AbstractKeyedMetadata.lineNumber, lineNumber);
-		specializedLabelledFieldsMetadataWriter.writeLabelledField(AbstractKeyedMetadata.type, type, metadataNodeIndexProvider);
-		specializedLabelledFieldsMetadataWriter.writeLabelledField("isLocal", isLocal);
-		specializedLabelledFieldsMetadataWriter.writeLabelledField("isDefinition", isDefinition);
-		specializedLabelledFieldsMetadataWriter.writeLabelledField("scopeLine", scopeLine);
-		specializedLabelledFieldsMetadataWriter.writeLabelledField("containingType", containingType, metadataNodeIndexProvider);
-		specializedLabelledFieldsMetadataWriter.writeLabelledField("virtuality", virtuality);
-		specializedLabelledFieldsMetadataWriter.writeLabelledField("virtualIndex", virtualIndex);
-		specializedLabelledFieldsMetadataWriter.writeLabelledField(AbstractKeyedMetadata.flags, flags);
-		specializedLabelledFieldsMetadataWriter.writeLabelledField(AbstractKeyedMetadata.isOptimized, isOptimized);
-		specializedLabelledFieldsMetadataWriter.writeLabelledField("templateParams", templateParameters, metadataNodeIndexProvider);
-		specializedLabelledFieldsMetadataWriter.writeLabelledField(AbstractKeyedMetadata.declaration, declaration, metadataNodeIndexProvider);
-		specializedLabelledFieldsMetadataWriter.writeLabelledField("variables", variables, metadataNodeIndexProvider);
+		keyedFieldsMetadataWriter.write(name, functionName);
+		keyedFieldsMetadataWriter.write(AbstractKeyedMetadata.linkageName, linkageName);
+		keyedFieldsMetadataWriter.write(AbstractKeyedMetadata.scope, scope, metadataNodeIndexProvider);
+		keyedFieldsMetadataWriter.write(AbstractKeyedMetadata.file, file, metadataNodeIndexProvider);
+		keyedFieldsMetadataWriter.write(AbstractKeyedMetadata.lineNumber, lineNumber);
+		keyedFieldsMetadataWriter.write(AbstractKeyedMetadata.type, type, metadataNodeIndexProvider);
+		keyedFieldsMetadataWriter.write("isLocal", isLocal);
+		keyedFieldsMetadataWriter.write("isDefinition", isDefinition);
+		keyedFieldsMetadataWriter.write("scopeLine", scopeLine);
+		keyedFieldsMetadataWriter.write("containingType", containingType, metadataNodeIndexProvider);
+		keyedFieldsMetadataWriter.write("virtuality", virtuality);
+		keyedFieldsMetadataWriter.write("virtualIndex", virtualIndex);
+		keyedFieldsMetadataWriter.write(AbstractKeyedMetadata.flags, flags);
+		keyedFieldsMetadataWriter.write(AbstractKeyedMetadata.isOptimized, isOptimized);
+		keyedFieldsMetadataWriter.write("templateParams", templateParameters, metadataNodeIndexProvider);
+		keyedFieldsMetadataWriter.write(AbstractKeyedMetadata.declaration, declaration, metadataNodeIndexProvider);
+		keyedFieldsMetadataWriter.write("variables", variables, metadataNodeIndexProvider);
 	}
 }

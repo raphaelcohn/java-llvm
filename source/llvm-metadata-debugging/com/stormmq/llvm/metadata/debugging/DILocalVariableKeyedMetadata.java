@@ -24,9 +24,8 @@ package com.stormmq.llvm.metadata.debugging;
 
 import com.stormmq.llvm.metadata.Metadata;
 import com.stormmq.llvm.metadata.AbstractKeyedMetadata;
-import com.stormmq.llvm.api.writing.metadataWriters.*;
 import com.stormmq.llvm.metadata.writers.MetadataNodeIndexProvider;
-import com.stormmq.llvm.metadata.writers.SpecializedLabelledFieldsMetadataWriter;
+import com.stormmq.llvm.metadata.writers.KeyedFieldsMetadataWriter;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -57,14 +56,14 @@ public final class DILocalVariableKeyedMetadata extends AbstractKeyedMetadata
 	}
 
 	@Override
-	protected <X extends Exception> void writeLabelledFields(@NotNull final MetadataNodeIndexProvider metadataNodeIndexProvider, @NotNull final SpecializedLabelledFieldsMetadataWriter<X> specializedLabelledFieldsMetadataWriter) throws X
+	protected <X extends Exception> void writeLabelledFields(@NotNull final MetadataNodeIndexProvider metadataNodeIndexProvider, @NotNull final KeyedFieldsMetadataWriter<X> keyedFieldsMetadataWriter) throws X
 	{
-		specializedLabelledFieldsMetadataWriter.writeLabelledField(name, variableName);
-		specializedLabelledFieldsMetadataWriter.writeLabelledField("arg", oneBasedIndex);
-		specializedLabelledFieldsMetadataWriter.writeLabelledField(AbstractKeyedMetadata.scope, scope, metadataNodeIndexProvider);
-		specializedLabelledFieldsMetadataWriter.writeLabelledField(AbstractKeyedMetadata.file, file, metadataNodeIndexProvider);
-		specializedLabelledFieldsMetadataWriter.writeLabelledField(AbstractKeyedMetadata.lineNumber, lineNumber);
-		specializedLabelledFieldsMetadataWriter.writeLabelledField(AbstractKeyedMetadata.type, type, metadataNodeIndexProvider);
-		specializedLabelledFieldsMetadataWriter.writeLabelledField(AbstractKeyedMetadata.flags, flags);
+		keyedFieldsMetadataWriter.write(name, variableName);
+		keyedFieldsMetadataWriter.write("arg", oneBasedIndex);
+		keyedFieldsMetadataWriter.write(AbstractKeyedMetadata.scope, scope, metadataNodeIndexProvider);
+		keyedFieldsMetadataWriter.write(AbstractKeyedMetadata.file, file, metadataNodeIndexProvider);
+		keyedFieldsMetadataWriter.write(AbstractKeyedMetadata.lineNumber, lineNumber);
+		keyedFieldsMetadataWriter.write(AbstractKeyedMetadata.type, type, metadataNodeIndexProvider);
+		keyedFieldsMetadataWriter.write(AbstractKeyedMetadata.flags, flags);
 	}
 }

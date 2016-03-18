@@ -32,6 +32,6 @@ public final class LlvmDbgCuNamedMetadata extends AbstractNamedMetadata
 {
 	public LlvmDbgCuNamedMetadata(@NotNull final Collection<DICompileUnitKeyedMetadata> compileUnits)
 	{
-		super("llvm.dbg.cu", new CollectionMetadata(compileUnits));
+		super("llvm.dbg.cu", new CollectionMetadata<>(compileUnits));
 	}
 }

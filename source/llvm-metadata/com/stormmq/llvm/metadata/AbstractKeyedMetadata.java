@@ -22,8 +22,6 @@
 
 package com.stormmq.llvm.metadata;
 
-import com.stormmq.java.parsing.utilities.StringConstants;
-import com.stormmq.llvm.api.writing.metadataWriters.*;
 import com.stormmq.llvm.metadata.writers.*;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -44,7 +42,7 @@ public abstract class AbstractKeyedMetadata extends AbstractMetadata
 	@NonNls @NotNull public static final String size = "size";
 	@NonNls @NotNull public static final String scope = "scope";
 	@NonNls @NotNull public static final String type = "type";
-	@NonNls @NotNull public static final String value = StringConstants.value;
+	@NonNls @NotNull public static final String value = "value";
 	private static final int length = "KeyedMetadata".length();
 
 	@NotNull @NonNls private final String nodeName;
@@ -76,8 +74,8 @@ public abstract class AbstractKeyedMetadata extends AbstractMetadata
 	protected final <X extends Exception> void writeX(@NotNull final MetadataNodeIndexProvider metadataNodeIndexProvider, @NotNull final MetadataWriter<X> metadataWriter) throws X
 	{
 		final int metadataNodeIndex = metadataNodeIndexProvider.assignedReference(this);
-		final SpecializedLabelledFieldsMetadataWriter<X> specializedLabelledFieldsMetadataWriter = metadataWriter.writeSpecializedNodeStart(metadataNodeIndex, nodeName);
-		writeLabelledFields(metadataNodeIndexProvider, specializedLabelledFieldsMetadataWriter);
+		final KeyedFieldsMetadataWriter<X> keyedFieldsMetadataWriter = metadataWriter.writeSpecializedNodeStart(metadataNodeIndex, nodeName);
+		writeLabelledFields(metadataNodeIndexProvider, keyedFieldsMetadataWriter);
 		metadataWriter.writeSpecializedNodeEnd();
 	}
 
@@ -90,5 +88,5 @@ public abstract class AbstractKeyedMetadata extends AbstractMetadata
 		}
 	}
 
-	protected abstract <X extends Exception> void writeLabelledFields(@NotNull final MetadataNodeIndexProvider metadataNodeIndexProvider, @NotNull final SpecializedLabelledFieldsMetadataWriter<X> specializedLabelledFieldsMetadataWriter) throws X;
+	protected abstract <X extends Exception> void writeLabelledFields(@NotNull final MetadataNodeIndexProvider metadataNodeIndexProvider, @NotNull final KeyedFieldsMetadataWriter<X> keyedFieldsMetadataWriter) throws X;
 }

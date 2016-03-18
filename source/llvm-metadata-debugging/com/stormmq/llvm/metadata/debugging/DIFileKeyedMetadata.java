@@ -23,9 +23,8 @@
 package com.stormmq.llvm.metadata.debugging;
 
 import com.stormmq.llvm.metadata.AbstractKeyedMetadata;
-import com.stormmq.llvm.api.writing.metadataWriters.*;
 import com.stormmq.llvm.metadata.writers.MetadataNodeIndexProvider;
-import com.stormmq.llvm.metadata.writers.SpecializedLabelledFieldsMetadataWriter;
+import com.stormmq.llvm.metadata.writers.KeyedFieldsMetadataWriter;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -43,9 +42,9 @@ public final class DIFileKeyedMetadata extends AbstractKeyedMetadata
 	}
 
 	@Override
-	protected <X extends Exception> void writeLabelledFields(@NotNull final MetadataNodeIndexProvider metadataNodeIndexProvider, @NotNull final SpecializedLabelledFieldsMetadataWriter<X> specializedLabelledFieldsMetadataWriter) throws X
+	protected <X extends Exception> void writeLabelledFields(@NotNull final MetadataNodeIndexProvider metadataNodeIndexProvider, @NotNull final KeyedFieldsMetadataWriter<X> keyedFieldsMetadataWriter) throws X
 	{
-		specializedLabelledFieldsMetadataWriter.writeLabelledField("filename", simpleSourceFileName);
-		specializedLabelledFieldsMetadataWriter.writeLabelledField("directory", directoryUsageOfSimpleSourceFileEncounteredIn.toString());
+		keyedFieldsMetadataWriter.write("filename", simpleSourceFileName);
+		keyedFieldsMetadataWriter.write("directory", directoryUsageOfSimpleSourceFileEncounteredIn.toString());
 	}
 }

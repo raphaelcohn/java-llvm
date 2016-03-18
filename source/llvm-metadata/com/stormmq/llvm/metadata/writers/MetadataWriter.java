@@ -33,7 +33,7 @@ public interface MetadataWriter<X extends Exception> extends AutoCloseable
 	int writeNamedMetadataNodeForwardReference(final int metadataNodeIndex, @NotNull @NonNls final String metadataNodeName) throws X;
 
 	@NotNull
-	SpecializedLabelledFieldsMetadataWriter<X> writeSpecializedNodeStart(final int metadataNodeIndex, @NonNls @NotNull final String specializedNodeName) throws X;
+	KeyedFieldsMetadataWriter<X> writeSpecializedNodeStart(final int metadataNodeIndex, @NonNls @NotNull final String specializedNodeName) throws X;
 
 	void writeSpecializedNodeEnd() throws X;
 

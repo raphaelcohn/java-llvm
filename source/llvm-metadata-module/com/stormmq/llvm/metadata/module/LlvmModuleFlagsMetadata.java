@@ -27,11 +27,12 @@ import com.stormmq.llvm.metadata.CollectionMetadata;
 import org.jetbrains.annotations.NotNull;
 
 import static com.stormmq.llvm.metadata.CollectionMetadata.collectionAnonymousMetadataNode;
+import static com.stormmq.llvm.metadata.module.LlvmBehaviourMetadata.armCTypeWidthEnum;
 import static com.stormmq.llvm.metadata.module.WcharWidth.Wide;
 
 public final class LlvmModuleFlagsMetadata extends AbstractNamedMetadata
 {
-	@NotNull public static final LlvmModuleFlagsMetadata TypicalLlvmModuleFlags = llvmModuleFlagsNamedMetadataNode(LlvmBehaviourMetadata.DwarfVersion2, LlvmBehaviourMetadata.DebugInfoVersion, LlvmBehaviourMetadata.PicLevel2, armCTypeWidthEnum(Wide), LlvmBehaviourMetadata.armCTypeWidthEnum(EnumWidth.AtLeastAsLargeAsInt));
+	@NotNull public static final LlvmModuleFlagsMetadata TypicalLlvmModuleFlags = llvmModuleFlagsNamedMetadataNode(LlvmBehaviourMetadata.DwarfVersion2, LlvmBehaviourMetadata.DebugInfoVersion, LlvmBehaviourMetadata.PicLevel2, armCTypeWidthEnum(Wide), armCTypeWidthEnum(EnumWidth.AtLeastAsLargeAsInt));
 
 	@NotNull
 	public static LlvmModuleFlagsMetadata llvmModuleFlagsNamedMetadataNode(@NotNull final LlvmBehaviourMetadata... nodes)

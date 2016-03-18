@@ -23,7 +23,6 @@
 package com.stormmq.llvm.metadata.module;
 
 import com.stormmq.llvm.metadata.AbstractAnonymousMetadata;
-import com.stormmq.llvm.api.writing.metadataWriters.*;
 import com.stormmq.llvm.metadata.writers.*;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +30,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.Map.Entry;
 
+import static com.stormmq.llvm.metadata.module.LlvmModuleFlagsBehaviourFlag.AppendUnique;
 import static com.stormmq.llvm.metadata.module.LlvmModuleFlagsBehaviourFlag.Error;
+import static com.stormmq.llvm.metadata.module.LlvmModuleFlagsBehaviourFlag.Warning;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyMap;
@@ -128,9 +129,9 @@ public class LlvmBehaviourMetadata extends AbstractAnonymousMetadata
 	@Override
 	protected final <X extends Exception> void writeAnonymousFields(@NotNull final MetadataNodeIndexProvider metadataNodeIndexProvider, @NotNull final AnonymousFieldsMetadataWriter<X> anonymousFieldsMetadataWriter) throws X
 	{
-		anonymousFieldsMetadataWriter.writeAnonymousField_i32(behaviourFlag.value);
-		anonymousFieldsMetadataWriter.writeAnonymousField(key);
-		anonymousFieldsMetadataWriter.writeAnonymousFieldUnquotedString(encodedValue);
+		anonymousFieldsMetadataWriter.write(behaviourFlag.value);
+		anonymousFieldsMetadataWriter.write(key);
+		anonymousFieldsMetadataWriter.writeUnquotedString(encodedValue);
 	}
 
 	@Override

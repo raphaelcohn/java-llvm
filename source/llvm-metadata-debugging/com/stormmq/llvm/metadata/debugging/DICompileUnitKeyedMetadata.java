@@ -22,15 +22,13 @@
 
 package com.stormmq.llvm.metadata.debugging;
 
-import com.stormmq.llvm.metadata.CollectionMetadata;
-import com.stormmq.llvm.metadata.AbstractKeyedMetadata;
-import com.stormmq.llvm.api.writing.metadataWriters.*;
+import com.stormmq.llvm.metadata.*;
 import com.stormmq.llvm.metadata.writers.MetadataNodeIndexProvider;
-import com.stormmq.llvm.metadata.writers.SpecializedLabelledFieldsMetadataWriter;
+import com.stormmq.llvm.metadata.writers.KeyedFieldsMetadataWriter;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import static com.stormmq.llvm.metadata.module.LlvmIdentNamedMetadata.Producer;
+import static com.stormmq.llvm.metadata.StringConstants.Producer;
 
 public final class DICompileUnitKeyedMetadata extends AbstractKeyedMetadata
 {
@@ -57,22 +55,22 @@ public final class DICompileUnitKeyedMetadata extends AbstractKeyedMetadata
 	}
 
 	@Override
-	protected <X extends Exception> void writeLabelledFields(@NotNull final MetadataNodeIndexProvider metadataNodeIndexProvider, @NotNull final SpecializedLabelledFieldsMetadataWriter<X> specializedLabelledFieldsMetadataWriter) throws X
+	protected <X extends Exception> void writeLabelledFields(@NotNull final MetadataNodeIndexProvider metadataNodeIndexProvider, @NotNull final KeyedFieldsMetadataWriter<X> keyedFieldsMetadataWriter) throws X
 	{
-		specializedLabelledFieldsMetadataWriter.writeLabelledField("language", llvmDebugLanguage);
-		specializedLabelledFieldsMetadataWriter.writeLabelledField(AbstractKeyedMetadata.file, file, metadataNodeIndexProvider);
-		specializedLabelledFieldsMetadataWriter.writeLabelledField("producer", Producer);
-		specializedLabelledFieldsMetadataWriter.writeLabelledField(isOptimized, false);
-		specializedLabelledFieldsMetadataWriter.writeLabelledField(flags, "-00"); // where '-g' and '-coverage' go
-		specializedLabelledFieldsMetadataWriter.writeLabelledField("runtimeVersion", 0);
+		keyedFieldsMetadataWriter.write("language", llvmDebugLanguage);
+		keyedFieldsMetadataWriter.write(AbstractKeyedMetadata.file, file, metadataNodeIndexProvider);
+		keyedFieldsMetadataWriter.write("producer", Producer);
+		keyedFieldsMetadataWriter.write(isOptimized, false);
+		keyedFieldsMetadataWriter.write(flags, "-00"); // where '-g' and '-coverage' go
+		keyedFieldsMetadataWriter.write("runtimeVersion", 0);
 		//specializedLabelledFieldsMetadataWriter.writeLabelledField("splitDebugFilename", "abc.debug");
-		specializedLabelledFieldsMetadataWriter.writeLabelledField("emissionKind", 1);
-		specializedLabelledFieldsMetadataWriter.writeLabelledField("enums", enums, metadataNodeIndexProvider);
-		specializedLabelledFieldsMetadataWriter.writeLabelledField("retainedTypes", retainedTypes, metadataNodeIndexProvider);
-		specializedLabelledFieldsMetadataWriter.writeLabelledField("subprograms", subprograms, metadataNodeIndexProvider);
-		specializedLabelledFieldsMetadataWriter.writeLabelledField("globals", globals, metadataNodeIndexProvider);
-		specializedLabelledFieldsMetadataWriter.writeLabelledField("imports", imports, metadataNodeIndexProvider);
-		specializedLabelledFieldsMetadataWriter.writeLabelledField("macros", macros, metadataNodeIndexProvider);
-		specializedLabelledFieldsMetadataWriter.writeLabelledFieldUnquotedString("dwoId", "0x0abcd");
+		keyedFieldsMetadataWriter.write("emissionKind", 1);
+		keyedFieldsMetadataWriter.write("enums", enums, metadataNodeIndexProvider);
+		keyedFieldsMetadataWriter.write("retainedTypes", retainedTypes, metadataNodeIndexProvider);
+		keyedFieldsMetadataWriter.write("subprograms", subprograms, metadataNodeIndexProvider);
+		keyedFieldsMetadataWriter.write("globals", globals, metadataNodeIndexProvider);
+		keyedFieldsMetadataWriter.write("imports", imports, metadataNodeIndexProvider);
+		keyedFieldsMetadataWriter.write("macros", macros, metadataNodeIndexProvider);
+		keyedFieldsMetadataWriter.writeUnquotedString("dwoId", "0x0abcd");
 	}
 }

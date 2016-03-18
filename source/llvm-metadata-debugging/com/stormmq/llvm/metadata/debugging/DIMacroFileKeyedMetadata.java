@@ -25,7 +25,7 @@ package com.stormmq.llvm.metadata.debugging;
 import com.stormmq.llvm.metadata.CollectionMetadata;
 import com.stormmq.llvm.metadata.AbstractKeyedMetadata;
 import com.stormmq.llvm.metadata.writers.MetadataNodeIndexProvider;
-import com.stormmq.llvm.metadata.writers.SpecializedLabelledFieldsMetadataWriter;
+import com.stormmq.llvm.metadata.writers.KeyedFieldsMetadataWriter;
 import org.jetbrains.annotations.NotNull;
 
 public final class DIMacroFileKeyedMetadata extends AbstractKeyedMetadata implements MacroMetadata
@@ -45,11 +45,11 @@ public final class DIMacroFileKeyedMetadata extends AbstractKeyedMetadata implem
 	}
 
 	@Override
-	protected <X extends Exception> void writeLabelledFields(@NotNull final MetadataNodeIndexProvider metadataNodeIndexProvider, @NotNull final SpecializedLabelledFieldsMetadataWriter<X> specializedLabelledFieldsMetadataWriter) throws X
+	protected <X extends Exception> void writeLabelledFields(@NotNull final MetadataNodeIndexProvider metadataNodeIndexProvider, @NotNull final KeyedFieldsMetadataWriter<X> keyedFieldsMetadataWriter) throws X
 	{
-		specializedLabelledFieldsMetadataWriter.writeLabelledField(AbstractKeyedMetadata.macinfo, macinfo);
-		specializedLabelledFieldsMetadataWriter.writeLabelledField(AbstractKeyedMetadata.line, lineNumber);
-		specializedLabelledFieldsMetadataWriter.writeLabelledField(AbstractKeyedMetadata.file, file, metadataNodeIndexProvider);
-		specializedLabelledFieldsMetadataWriter.writeLabelledField("nodes", nodes, metadataNodeIndexProvider);
+		keyedFieldsMetadataWriter.write(AbstractKeyedMetadata.macinfo, macinfo);
+		keyedFieldsMetadataWriter.write(AbstractKeyedMetadata.line, lineNumber);
+		keyedFieldsMetadataWriter.write(AbstractKeyedMetadata.file, file, metadataNodeIndexProvider);
+		keyedFieldsMetadataWriter.write("nodes", nodes, metadataNodeIndexProvider);
 	}
 }

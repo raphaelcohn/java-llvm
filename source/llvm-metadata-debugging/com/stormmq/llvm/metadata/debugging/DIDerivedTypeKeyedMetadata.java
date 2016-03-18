@@ -23,9 +23,8 @@
 package com.stormmq.llvm.metadata.debugging;
 
 import com.stormmq.llvm.metadata.AbstractKeyedMetadata;
-import com.stormmq.llvm.api.writing.metadataWriters.*;
 import com.stormmq.llvm.metadata.writers.MetadataNodeIndexProvider;
-import com.stormmq.llvm.metadata.writers.SpecializedLabelledFieldsMetadataWriter;
+import com.stormmq.llvm.metadata.writers.KeyedFieldsMetadataWriter;
 import org.jetbrains.annotations.NotNull;
 
 import static java.lang.String.format;
@@ -52,11 +51,11 @@ public final class DIDerivedTypeKeyedMetadata extends AbstractKeyedMetadata impl
 	}
 
 	@Override
-	protected <X extends Exception> void writeLabelledFields(@NotNull final MetadataNodeIndexProvider metadataNodeIndexProvider, @NotNull final SpecializedLabelledFieldsMetadataWriter<X> specializedLabelledFieldsMetadataWriter) throws X
+	protected <X extends Exception> void writeLabelledFields(@NotNull final MetadataNodeIndexProvider metadataNodeIndexProvider, @NotNull final KeyedFieldsMetadataWriter<X> keyedFieldsMetadataWriter) throws X
 	{
-		specializedLabelledFieldsMetadataWriter.writeLabelledField("tag", tag);
-		specializedLabelledFieldsMetadataWriter.writeLabelledField("baseType", baseType, metadataNodeIndexProvider);
-		specializedLabelledFieldsMetadataWriter.writeLabelledField(size, sizeInBits);
-		specializedLabelledFieldsMetadataWriter.writeLabelledField(align, alignmentInBits);
+		keyedFieldsMetadataWriter.write("tag", tag);
+		keyedFieldsMetadataWriter.write("baseType", baseType, metadataNodeIndexProvider);
+		keyedFieldsMetadataWriter.write(size, sizeInBits);
+		keyedFieldsMetadataWriter.write(align, alignmentInBits);
 	}
 }

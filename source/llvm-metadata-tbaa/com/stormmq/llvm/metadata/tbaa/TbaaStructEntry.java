@@ -22,7 +22,6 @@
 
 package com.stormmq.llvm.metadata.tbaa;
 
-import com.stormmq.llvm.api.writing.metadataWriters.*;
 import com.stormmq.llvm.metadata.writers.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,9 +29,9 @@ public final class TbaaStructEntry
 {
 	private final long offset;
 	private final long length;
-	@NotNull private final TbaaTagMetadata tbaaTagMetadataNode;
+	@NotNull private final com.stormmq.llvm.metadata.tbaa.TbaaTagMetadata tbaaTagMetadataNode;
 
-	public TbaaStructEntry(final long offset, final long length, @NotNull final TbaaTagMetadata tbaaTagMetadataNode)
+	public TbaaStructEntry(final long offset, final long length, @NotNull final com.stormmq.llvm.metadata.tbaa.TbaaTagMetadata tbaaTagMetadataNode)
 	{
 		this.offset = offset;
 		this.length = length;
@@ -46,9 +45,9 @@ public final class TbaaStructEntry
 
 	public <X extends Exception> void writeAnonymousFields(@NotNull final MetadataNodeIndexProvider metadataNodeIndexProvider, @NotNull final AnonymousFieldsMetadataWriter<X> anonymousFieldsMetadataWriter) throws X
 	{
-		anonymousFieldsMetadataWriter.writeAnonymousField_i64(offset);
-		anonymousFieldsMetadataWriter.writeAnonymousField_i64(length);
-		anonymousFieldsMetadataWriter.writeAnonymousFieldMetadataNode(metadataNodeIndexProvider.assignedReference(tbaaTagMetadataNode));
+		anonymousFieldsMetadataWriter.write_i64(offset);
+		anonymousFieldsMetadataWriter.write_i64(length);
+		anonymousFieldsMetadataWriter.writeMetadataNode(metadataNodeIndexProvider.assignedReference(tbaaTagMetadataNode));
 	}
 
 	public int assignedMetadataNodeIndex(@NotNull final MetadataNodeIndexProvider metadataNodeIndexProvider)

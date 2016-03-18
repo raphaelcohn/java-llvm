@@ -20,30 +20,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.metadata.debugging;
+package com.stormmq.llvm.metadata;
 
-import com.stormmq.llvm.metadata.AbstractKeyedMetadata;
-import com.stormmq.llvm.metadata.writers.MetadataNodeIndexProvider;
-import com.stormmq.llvm.metadata.writers.KeyedFieldsMetadataWriter;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-public final class DITemplateTypeParameterKeyedMetadata extends AbstractKeyedMetadata implements TemplateParameterMetadata
+public final class StringConstants
 {
-	@NotNull @NonNls private final String name;
-	@NotNull private final TypeMetadata type;
+	@SuppressWarnings("HardcodedFileSeparator") @NotNull @NonNls public static final String Producer = "java-llvm (https://github.com/raphaelcohn/java-llvm)";
 
-	public DITemplateTypeParameterKeyedMetadata(@NotNull final String name, @NotNull final TypeMetadata type)
+	private StringConstants()
 	{
-		super(type);
-		this.name = name;
-		this.type = type;
-	}
-
-	@Override
-	protected <X extends Exception> void writeLabelledFields(@NotNull final MetadataNodeIndexProvider metadataNodeIndexProvider, @NotNull final KeyedFieldsMetadataWriter<X> keyedFieldsMetadataWriter) throws X
-	{
-		keyedFieldsMetadataWriter.write(AbstractKeyedMetadata.name, name);
-		keyedFieldsMetadataWriter.write(AbstractKeyedMetadata.type, type, metadataNodeIndexProvider);
 	}
 }

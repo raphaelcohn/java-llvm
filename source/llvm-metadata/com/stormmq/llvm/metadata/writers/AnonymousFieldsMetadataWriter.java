@@ -27,13 +27,13 @@ import org.jetbrains.annotations.NotNull;
 
 public interface AnonymousFieldsMetadataWriter<X extends Exception>
 {
-	void writeAnonymousField(@NonNls @NotNull final String value) throws X;
+	void write(@NonNls @NotNull final String value) throws X;
 
-	void writeAnonymousField_i32(@NonNls final int value) throws X;
+	void write(@NonNls final int value) throws X;
 
-	void writeAnonymousFieldMetadataNode(final int metadataNodeIndex) throws X;
+	void writeMetadataNode(final int metadataNodeIndex) throws X;
 
-	void writeAnonymousFieldUnquotedString(@NonNls @NotNull final String value) throws X;
+	void writeUnquotedString(@NonNls @NotNull final String value) throws X;
 
-	void writeAnonymousField_i64(final long value) throws X;
+	void write_i64(final long value) throws X;
 }

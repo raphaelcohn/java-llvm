@@ -22,7 +22,6 @@
 
 package com.stormmq.llvm.metadata.debugging;
 
-import com.stormmq.llvm.api.writing.metadataWriters.*;
 import com.stormmq.llvm.metadata.writers.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -45,7 +44,7 @@ public final class NullTypeMetadata implements TypeMetadata
 	public <X extends Exception> void write(@NotNull final MetadataNodeIndexProvider metadataNodeIndexProvider, @NotNull final MetadataWriter<X> metadataWriter) throws X
 	{
 		final AnonymousFieldsMetadataWriter<X> anonymousFieldsMetadataWriter = metadataWriter.writeAnonymousMetadataNodeStart(metadataNodeIndexProvider.assignedReference(this));
-		anonymousFieldsMetadataWriter.writeAnonymousField("null");
+		anonymousFieldsMetadataWriter.write("null");
 		metadataWriter.writeAnonymousMetadataNodeEnd();
 	}
 }

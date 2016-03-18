@@ -28,19 +28,19 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-public interface SpecializedLabelledFieldsMetadataWriter<X extends Exception>
+public interface KeyedFieldsMetadataWriter<X extends Exception>
 {
-	void writeLabelledField(@NonNls @NotNull final String label, @NonNls @NotNull final String value) throws X;
+	void write(@NonNls @NotNull final String label, @NonNls @NotNull final String value) throws X;
 
-	<E extends Enum<E>> void writeLabelledField(@NonNls @NotNull final String label, @NonNls @NotNull final E value) throws X;
+	<E extends Enum<E>> void write(@NonNls @NotNull final String label, @NonNls @NotNull final E value) throws X;
 
-	void writeLabelledField(@NonNls @NotNull final String label, final boolean value) throws X;
+	void write(@NonNls @NotNull final String label, final boolean value) throws X;
 
-	void writeLabelledField(@NonNls @NotNull final String label, final int value) throws X;
+	void write(@NonNls @NotNull final String label, final int value) throws X;
 
-	<E extends Enum<E>> void writeLabelledField(@NonNls @NotNull final String label, @NotNull final Set<E> values) throws X;
+	<E extends Enum<E>> void write(@NonNls @NotNull final String label, @NotNull final Set<E> values) throws X;
 
-	void writeLabelledField(@NonNls @NotNull final String label, @NotNull final Metadata reference, @NotNull final MetadataNodeIndexProvider metadataNodeIndexProvider) throws X;
+	void write(@NonNls @NotNull final String label, @NotNull final Metadata reference, @NotNull final MetadataNodeIndexProvider metadataNodeIndexProvider) throws X;
 
-	void writeLabelledFieldUnquotedString(@NonNls @NotNull final String label, @NonNls @NotNull final String value) throws X;
+	void writeUnquotedString(@NonNls @NotNull final String label, @NonNls @NotNull final String value) throws X;
 }

@@ -24,7 +24,6 @@ package com.stormmq.llvm.metadata.tbaa;
 
 import com.stormmq.llvm.metadata.AbstractAnonymousMetadata;
 import com.stormmq.llvm.metadata.AbstractNamedMetadata;
-import com.stormmq.llvm.api.writing.metadataWriters.*;
 import com.stormmq.llvm.metadata.writers.*;
 import org.jetbrains.annotations.NotNull;
 

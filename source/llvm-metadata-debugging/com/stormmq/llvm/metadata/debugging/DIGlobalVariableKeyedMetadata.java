@@ -23,7 +23,7 @@
 package com.stormmq.llvm.metadata.debugging;
 
 import com.stormmq.llvm.metadata.writers.MetadataNodeIndexProvider;
-import com.stormmq.llvm.metadata.writers.SpecializedLabelledFieldsMetadataWriter;
+import com.stormmq.llvm.metadata.writers.KeyedFieldsMetadataWriter;
 import com.stormmq.llvm.metadata.*;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -57,17 +57,17 @@ public final class DIGlobalVariableKeyedMetadata extends AbstractKeyedMetadata i
 	}
 
 	@Override
-	protected <X extends Exception> void writeLabelledFields(@NotNull final MetadataNodeIndexProvider metadataNodeIndexProvider, @NotNull final SpecializedLabelledFieldsMetadataWriter<X> specializedLabelledFieldsMetadataWriter) throws X
+	protected <X extends Exception> void writeLabelledFields(@NotNull final MetadataNodeIndexProvider metadataNodeIndexProvider, @NotNull final KeyedFieldsMetadataWriter<X> keyedFieldsMetadataWriter) throws X
 	{
-		specializedLabelledFieldsMetadataWriter.writeLabelledField(AbstractKeyedMetadata.name, name);
-		specializedLabelledFieldsMetadataWriter.writeLabelledField(AbstractKeyedMetadata.linkageName, linkageName);
-		specializedLabelledFieldsMetadataWriter.writeLabelledField(AbstractKeyedMetadata.scope, scope, metadataNodeIndexProvider);
-		specializedLabelledFieldsMetadataWriter.writeLabelledField(AbstractKeyedMetadata.file, file, metadataNodeIndexProvider);
-		specializedLabelledFieldsMetadataWriter.writeLabelledField(line, lineNumber);
-		specializedLabelledFieldsMetadataWriter.writeLabelledField(AbstractKeyedMetadata.type, type, metadataNodeIndexProvider);
-		specializedLabelledFieldsMetadataWriter.writeLabelledField("isLocal", isLocal);
-		specializedLabelledFieldsMetadataWriter.writeLabelledField("isDefinition", isDefinition);
-		specializedLabelledFieldsMetadataWriter.writeLabelledField("variable", variable.encoded());
-		specializedLabelledFieldsMetadataWriter.writeLabelledField(AbstractKeyedMetadata.declaration, declaration, metadataNodeIndexProvider);
+		keyedFieldsMetadataWriter.write(AbstractKeyedMetadata.name, name);
+		keyedFieldsMetadataWriter.write(AbstractKeyedMetadata.linkageName, linkageName);
+		keyedFieldsMetadataWriter.write(AbstractKeyedMetadata.scope, scope, metadataNodeIndexProvider);
+		keyedFieldsMetadataWriter.write(AbstractKeyedMetadata.file, file, metadataNodeIndexProvider);
+		keyedFieldsMetadataWriter.write(line, lineNumber);
+		keyedFieldsMetadataWriter.write(AbstractKeyedMetadata.type, type, metadataNodeIndexProvider);
+		keyedFieldsMetadataWriter.write("isLocal", isLocal);
+		keyedFieldsMetadataWriter.write("isDefinition", isDefinition);
+		keyedFieldsMetadataWriter.write("variable", variable.encoded());
+		keyedFieldsMetadataWriter.write(AbstractKeyedMetadata.declaration, declaration, metadataNodeIndexProvider);
 	}
 }

@@ -22,17 +22,15 @@
 
 package com.stormmq.llvm.metadata.module;
 
-import com.stormmq.llvm.metadata.Metadata;
-import com.stormmq.llvm.metadata.AbstractChildlessAnonymousMetadata;
-import com.stormmq.llvm.metadata.AbstractNamedMetadata;
+import com.stormmq.llvm.metadata.*;
 import com.stormmq.llvm.metadata.writers.AnonymousFieldsMetadataWriter;
 import com.stormmq.llvm.metadata.writers.MetadataNodeIndexProvider;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+
+import static com.stormmq.llvm.metadata.StringConstants.Producer;
 
 public final class LlvmIdentNamedMetadata extends AbstractNamedMetadata
 {
-	@SuppressWarnings("HardcodedFileSeparator") @NotNull @NonNls public static final String Producer = "java-llvm (https://github.com/raphaelcohn/java-llvm)";
 	@NotNull public static final Metadata LLvmIdent = new LlvmIdentNamedMetadata(Producer);
 
 	private LlvmIdentNamedMetadata(@NotNull final String producer)
@@ -42,7 +40,7 @@ public final class LlvmIdentNamedMetadata extends AbstractNamedMetadata
 			@Override
 			protected <X extends Exception> void writeAnonymousFields(@NotNull final MetadataNodeIndexProvider metadataNodeIndexProvider, @NotNull final AnonymousFieldsMetadataWriter<X> anonymousFieldsMetadataWriter) throws X
 			{
-				anonymousFieldsMetadataWriter.writeAnonymousField(producer);
+				anonymousFieldsMetadataWriter.write(producer);
 			}
 		});
 	}
