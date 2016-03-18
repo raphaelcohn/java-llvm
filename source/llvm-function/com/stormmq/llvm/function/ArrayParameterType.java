@@ -20,24 +20,33 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.target.writers;
+package com.stormmq.llvm.function;
 
-import com.stormmq.byteWriters.ByteWriter;
-import org.jetbrains.annotations.NonNls;
+import com.stormmq.llvm.attributes.AttributeGroup;
+import com.stormmq.llvm.attributes.parameterAttributes.ParameterAttribute;
 import org.jetbrains.annotations.NotNull;
 
-public final class ByteWriterTargetTripleWriter<X extends Exception> implements TargetTripleWriter<X>
+public final class ArrayParameterType extends AbstractMultipleParameterType
 {
-	@NotNull private final ByteWriter<X> byteWriter;
-
-	public ByteWriterTargetTripleWriter(@NotNull final ByteWriter<X> byteWriter)
+	public ArrayParameterType(final int length, @NotNull final SingleValueParameterType singleValueParameterType, @NotNull final AttributeGroup<ParameterAttribute> parameterAttributesGroup)
 	{
-		this.byteWriter = byteWriter;
+		super(length, singleValueParameterType, parameterAttributesGroup);
+	}
+
+	public ArrayParameterType(final int length, @NotNull final ArrayParameterType arrayParameterType, @NotNull final AttributeGroup<ParameterAttribute> parameterAttributesGroup)
+	{
+		super(length, arrayParameterType, parameterAttributesGroup);
 	}
 
 	@Override
-	public void writeTargetTriple(@NotNull @NonNls final String targetTriple) throws X
+	protected byte start()
 	{
-		byteWriter.writeUtf8EncodedStringWithCertainty(targetTriple);
+		return '[';
+	}
+
+	@Override
+	protected byte end()
+	{
+		return ']';
 	}
 }

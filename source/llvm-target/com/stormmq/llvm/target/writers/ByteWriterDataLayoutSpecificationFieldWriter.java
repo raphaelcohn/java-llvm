@@ -23,7 +23,6 @@
 package com.stormmq.llvm.target.writers;
 
 import com.stormmq.byteWriters.ByteWriter;
-import com.stormmq.string.InvalidUtf16StringException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -51,13 +50,6 @@ public final class ByteWriterDataLayoutSpecificationFieldWriter<X extends Except
 			isAfterFirst = false;
 		}
 
-		try
-		{
-			byteWriter.writeUtf8EncodedString(value);
-		}
-		catch (final InvalidUtf16StringException e)
-		{
-			throw new IllegalStateException("We should not have an invalid field to write", e);
-		}
+		byteWriter.writeUtf8EncodedStringWithCertainty(value);
 	}
 }

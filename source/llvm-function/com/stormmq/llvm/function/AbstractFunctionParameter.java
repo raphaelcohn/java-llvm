@@ -20,24 +20,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.target.writers;
+package com.stormmq.llvm.function;
 
-import com.stormmq.byteWriters.ByteWriter;
-import org.jetbrains.annotations.NonNls;
+import com.stormmq.llvm.attributes.AttributeGroup;
+import com.stormmq.llvm.attributes.parameterAttributes.ParameterAttribute;
 import org.jetbrains.annotations.NotNull;
 
-public final class ByteWriterTargetTripleWriter<X extends Exception> implements TargetTripleWriter<X>
+public abstract class AbstractFunctionParameter implements FunctionParameter
 {
-	@NotNull private final ByteWriter<X> byteWriter;
+	@NotNull private final AttributeGroup<ParameterAttribute> attributes;
 
-	public ByteWriterTargetTripleWriter(@NotNull final ByteWriter<X> byteWriter)
+	protected AbstractFunctionParameter(final ParameterType parameterType, @NotNull final AttributeGroup<ParameterAttribute> attributes)
 	{
-		this.byteWriter = byteWriter;
-	}
-
-	@Override
-	public void writeTargetTriple(@NotNull @NonNls final String targetTriple) throws X
-	{
-		byteWriter.writeUtf8EncodedStringWithCertainty(targetTriple);
+		this.attributes = attributes;
 	}
 }

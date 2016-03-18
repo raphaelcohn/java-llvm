@@ -35,5 +35,7 @@ public interface ByteWriter<X extends Exception> extends AutoCloseable
 
 	void writeBytes(@NotNull final byte... bytes) throws X;
 
-	void writeUtf8EncodedString(@NotNull @NonNls final String value) throws InvalidUtf16StringException, X, X;
+	void writeUtf8EncodedString(@NotNull @NonNls final String value) throws InvalidUtf16StringException, X;
+
+	void writeUtf8EncodedStringWithCertainty(@NotNull @NonNls final String value) throws X;
 }

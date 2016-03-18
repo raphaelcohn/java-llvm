@@ -20,24 +20,38 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.target.writers;
+package com.stormmq.llvm.function;
 
-import com.stormmq.byteWriters.ByteWriter;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-public final class ByteWriterTargetTripleWriter<X extends Exception> implements TargetTripleWriter<X>
+public enum LinkageType
 {
-	@NotNull private final ByteWriter<X> byteWriter;
+	_private,
+	internal,
+	available_externally,
+	linkonce,
+	weak,
+	common,
+	appending,
+	extern_weak,
+	linkonce_odr,
+	weak_odr,
+	external,
+	;
 
-	public ByteWriterTargetTripleWriter(@NotNull final ByteWriter<X> byteWriter)
-	{
-		this.byteWriter = byteWriter;
-	}
+	@NotNull
+	public final String name;
 
-	@Override
-	public void writeTargetTriple(@NotNull @NonNls final String targetTriple) throws X
+	LinkageType()
 	{
-		byteWriter.writeUtf8EncodedStringWithCertainty(targetTriple);
+		final String name = name();
+		if (name.charAt(0) == '_')
+		{
+			this.name = name.substring(1);
+		}
+		else
+		{
+			this.name = name;
+		}
 	}
 }

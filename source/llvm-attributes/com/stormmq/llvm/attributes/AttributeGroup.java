@@ -29,10 +29,16 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+import static com.stormmq.llvm.attributes.parameterAttributes.FixedParameterAttribute.signext;
+import static com.stormmq.llvm.attributes.parameterAttributes.FixedParameterAttribute.zeroext;
 import static java.util.Arrays.asList;
 
 public final class AttributeGroup<A extends Attribute>
 {
+	@NotNull public static final AttributeGroup<ParameterAttribute> EmptyParameterAttibutes = parameterAttributes();
+	@NotNull public static final AttributeGroup<ParameterAttribute> ZeroExtend = parameterAttributes(zeroext);
+	@NotNull public static final AttributeGroup<ParameterAttribute> SignExtend = parameterAttributes(signext);
+
 	@NotNull
 	public static AttributeGroup<FunctionAttribute> functionAttributes(@NotNull final FunctionAttribute... functionAttributes)
 	{

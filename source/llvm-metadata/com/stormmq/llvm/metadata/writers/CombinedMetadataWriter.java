@@ -359,13 +359,6 @@ public final class CombinedMetadataWriter<X extends Exception> implements Metada
 
 	private void writeString(@NotNull @NonNls final String value) throws X
 	{
-		try
-		{
-			byteWriter.writeUtf8EncodedString(value);
-		}
-		catch (final InvalidUtf16StringException e)
-		{
-			throw new IllegalArgumentException("value should not be an invalid UTf-16 string", e);
-		}
+		byteWriter.writeUtf8EncodedStringWithCertainty(value);
 	}
 }

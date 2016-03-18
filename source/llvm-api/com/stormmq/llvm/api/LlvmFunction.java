@@ -1,9 +1,6 @@
 package com.stormmq.llvm.api;
 
 import com.stormmq.llvm.api.CallingConvention;
-import com.stormmq.llvm.api.LinkageType;
-import com.stormmq.llvm.api.VisibilityStyle;
-import com.stormmq.llvm.api.DllStorageClass;
 import org.jetbrains.annotations.NotNull;
 
 import static com.stormmq.llvm.api.CallingConvention.ccc;

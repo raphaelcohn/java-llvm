@@ -24,17 +24,17 @@ package com.stormmq.llvm.attributes.writers;
 
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.attributes.Attribute;
-import com.stormmq.string.InvalidUtf16StringException;
-import com.stormmq.string.StringUtilities;
 import org.jetbrains.annotations.*;
 
 import java.util.*;
 
+import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+
 public final class ByteWriterFunctionAttributeGroupWriter<X extends Exception> implements AttributeGroupWriter<X>, AttributeWriter<X>
 {
-	@NotNull private static final byte[] AttributesStart = StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid("attributes #");
-	@NotNull private static final byte[] AttributesMiddle = StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid(" = {");
-	@SuppressWarnings("HardcodedLineSeparator") @NotNull private static final byte[] AttributesEnd = StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid(" }\n");
+	@NotNull private static final byte[] AttributesStart = encodeUtf8BytesWithCertaintyValueIsValid("attributes #");
+	@NotNull private static final byte[] AttributesMiddle = encodeUtf8BytesWithCertaintyValueIsValid(" = {");
+	@SuppressWarnings("HardcodedLineSeparator") @NotNull private static final byte[] AttributesEnd = encodeUtf8BytesWithCertaintyValueIsValid(" }\n");
 
 	@NotNull private final ByteWriter<X> byteWriter;
 	private int nextGroupIdentifier;
@@ -61,14 +61,7 @@ public final class ByteWriterFunctionAttributeGroupWriter<X extends Exception> i
 		nextGroupIdentifier++;
 
 		byteWriter.writeBytes(AttributesStart);
-		try
-		{
-			byteWriter.writeUtf8EncodedString(Integer.toString(groupIdentifier));
-		}
-		catch (final InvalidUtf16StringException e)
-		{
-			throw new IllegalStateException("Why?", e);
-		}
+		byteWriter.writeUtf8EncodedStringWithCertainty(Integer.toString(groupIdentifier));
 		byteWriter.writeBytes(AttributesMiddle);
 
 		for (final Attribute attribute : attributes)
@@ -82,13 +75,6 @@ public final class ByteWriterFunctionAttributeGroupWriter<X extends Exception> i
 	@Override
 	public void write(@NonNls @NotNull final String value) throws X
 	{
-		try
-		{
-			byteWriter.writeUtf8EncodedString(value);
-		}
-		catch (final InvalidUtf16StringException e)
-		{
-			throw new IllegalArgumentException("value should not be invalid", e);
-		}
+		byteWriter.writeUtf8EncodedStringWithCertainty(value);
 	}
 }

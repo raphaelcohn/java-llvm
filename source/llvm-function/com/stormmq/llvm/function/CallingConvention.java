@@ -20,24 +20,34 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.target.writers;
+package com.stormmq.llvm.function;
 
-import com.stormmq.byteWriters.ByteWriter;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-public final class ByteWriterTargetTripleWriter<X extends Exception> implements TargetTripleWriter<X>
+public enum CallingConvention
 {
-	@NotNull private final ByteWriter<X> byteWriter;
+	ccc,
+	fastcc,
+	coldcc,
+	cc10("cc 10"),
+	cc11("cc 11"),
+	webkit_jscc,
+	anyregcc,
+	preserve_mostcc,
+	preserve_allcc,
+	cxx_fast_tlscc,
+	;
 
-	public ByteWriterTargetTripleWriter(@NotNull final ByteWriter<X> byteWriter)
+	@NotNull
+	public final String name;
+
+	CallingConvention()
 	{
-		this.byteWriter = byteWriter;
+		this.name = this.name();
 	}
 
-	@Override
-	public void writeTargetTriple(@NotNull @NonNls final String targetTriple) throws X
+	CallingConvention(@NotNull final String name)
 	{
-		byteWriter.writeUtf8EncodedStringWithCertainty(targetTriple);
+		this.name = name;
 	}
 }

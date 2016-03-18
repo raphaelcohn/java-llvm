@@ -9,7 +9,9 @@
       <module fileurl="file://$PROJECT_DIR$/source/java-parsing-fileParsers/java-parsing-fileParsers.iml" filepath="$PROJECT_DIR$/source/java-parsing-fileParsers/java-parsing-fileParsers.iml" group="library/java-classfile/parsing" />
       <module fileurl="file://$PROJECT_DIR$/source/java-parsing-utilities/java-parsing-utilities.iml" filepath="$PROJECT_DIR$/source/java-parsing-utilities/java-parsing-utilities.iml" group="library/java-classfile/parsing" />
       <module fileurl="file://$PROJECT_DIR$/source/llvm-api/llvm-api.iml" filepath="$PROJECT_DIR$/source/llvm-api/llvm-api.iml" group="llvm" />
+      <module fileurl="file://$PROJECT_DIR$/source/llvm-attributes/llvm-attributes.iml" filepath="$PROJECT_DIR$/source/llvm-attributes/llvm-attributes.iml" group="llvm" />
       <module fileurl="file://$PROJECT_DIR$/source/llvm-examples/llvm-examples.iml" filepath="$PROJECT_DIR$/source/llvm-examples/llvm-examples.iml" group="llvm" />
+      <module fileurl="file://$PROJECT_DIR$/source/llvm-function/llvm-function.iml" filepath="$PROJECT_DIR$/source/llvm-function/llvm-function.iml" group="llvm" />
       <module fileurl="file://$PROJECT_DIR$/source/llvm-metadata/llvm-metadata.iml" filepath="$PROJECT_DIR$/source/llvm-metadata/llvm-metadata.iml" group="llvm/metadata" />
       <module fileurl="file://$PROJECT_DIR$/source/llvm-metadata-debugging/llvm-metadata-debugging.iml" filepath="$PROJECT_DIR$/source/llvm-metadata-debugging/llvm-metadata-debugging.iml" group="llvm/metadata" />
       <module fileurl="file://$PROJECT_DIR$/source/llvm-metadata-module/llvm-metadata-module.iml" filepath="$PROJECT_DIR$/source/llvm-metadata-module/llvm-metadata-module.iml" group="llvm/metadata" />

@@ -20,24 +20,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.target.writers;
+package com.stormmq.llvm.function;
 
 import com.stormmq.byteWriters.ByteWriter;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-public final class ByteWriterTargetTripleWriter<X extends Exception> implements TargetTripleWriter<X>
+public final class TokenParameterType implements ParameterType
 {
-	@NotNull private final ByteWriter<X> byteWriter;
+	@NotNull public static final ParameterType _void = new TokenParameterType("void");
+	@NotNull public static final ParameterType metadata = new TokenParameterType("metadata");
 
-	public ByteWriterTargetTripleWriter(@NotNull final ByteWriter<X> byteWriter)
+	@NotNull private final String token;
+
+	public TokenParameterType(@NotNull @NonNls final String token)
 	{
-		this.byteWriter = byteWriter;
+		this.token = token;
 	}
 
 	@Override
-	public void writeTargetTriple(@NotNull @NonNls final String targetTriple) throws X
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
 	{
-		byteWriter.writeUtf8EncodedStringWithCertainty(targetTriple);
+		byteWriter.writeUtf8EncodedStringWithCertainty(token);
 	}
 }

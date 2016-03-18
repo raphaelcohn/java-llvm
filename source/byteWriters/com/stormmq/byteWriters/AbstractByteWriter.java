@@ -39,4 +39,17 @@ public abstract class AbstractByteWriter<X extends Exception> implements ByteWri
 	{
 		encodeUtf8Bytes(value, this::writeByte);
 	}
+
+	@Override
+	public final void writeUtf8EncodedStringWithCertainty(@NotNull @NonNls final String value) throws X
+	{
+		try
+		{
+			writeUtf8EncodedString(value);
+		}
+		catch (final InvalidUtf16StringException e)
+		{
+			throw new IllegalArgumentException("value should have been a valid UTF-16 string", e);
+		}
+	}
 }
