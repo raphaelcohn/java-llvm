@@ -20,13 +20,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.function;
+package com.stormmq.llvm.domain.function;
 
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.attributes.Attribute;
 import com.stormmq.llvm.attributes.AttributeGroup;
 import com.stormmq.llvm.attributes.functionAttributes.FunctionAttribute;
 import com.stormmq.llvm.attributes.writers.ByteWriterFunctionAttributeGroupWriter;
+import com.stormmq.llvm.domain.parameterTypes.ParameterType;
 import org.jetbrains.annotations.*;
 
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;

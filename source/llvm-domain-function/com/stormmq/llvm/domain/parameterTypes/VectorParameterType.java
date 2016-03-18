@@ -20,7 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.function;
+package com.stormmq.llvm.domain.parameterTypes;
 
 import com.stormmq.llvm.attributes.AttributeGroup;
 import com.stormmq.llvm.attributes.parameterAttributes.ParameterAttribute;

@@ -20,18 +20,33 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.function;
+package com.stormmq.llvm.domain.parameterTypes;
 
 import com.stormmq.llvm.attributes.AttributeGroup;
 import com.stormmq.llvm.attributes.parameterAttributes.ParameterAttribute;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractFunctionParameter implements FunctionParameter
+public final class ArrayParameterType extends AbstractMultipleParameterType
 {
-	@NotNull private final AttributeGroup<ParameterAttribute> attributes;
-
-	protected AbstractFunctionParameter(final ParameterType parameterType, @NotNull final AttributeGroup<ParameterAttribute> attributes)
+	public ArrayParameterType(final int length, @NotNull final SingleValueParameterType singleValueParameterType, @NotNull final AttributeGroup<ParameterAttribute> parameterAttributesGroup)
 	{
-		this.attributes = attributes;
+		super(length, singleValueParameterType, parameterAttributesGroup);
+	}
+
+	public ArrayParameterType(final int length, @NotNull final ArrayParameterType arrayParameterType, @NotNull final AttributeGroup<ParameterAttribute> parameterAttributesGroup)
+	{
+		super(length, arrayParameterType, parameterAttributesGroup);
+	}
+
+	@Override
+	protected byte start()
+	{
+		return '[';
+	}
+
+	@Override
+	protected byte end()
+	{
+		return ']';
 	}
 }

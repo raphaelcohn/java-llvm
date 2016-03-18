@@ -20,7 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.function;
+package com.stormmq.llvm.domain.function;
 
 import org.jetbrains.annotations.NotNull;
 

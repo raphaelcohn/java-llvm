@@ -20,27 +20,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.function;
+package com.stormmq.llvm.domain.parameterTypes;
 
 import com.stormmq.byteWriters.ByteWriter;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-public final class TokenParameterType implements ParameterType
+public interface ParameterType
 {
-	@NotNull public static final ParameterType _void = new TokenParameterType("void");
-	@NotNull public static final ParameterType metadata = new TokenParameterType("metadata");
-
-	@NotNull private final String token;
-
-	public TokenParameterType(@NotNull @NonNls final String token)
-	{
-		this.token = token;
-	}
-
-	@Override
-	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
-	{
-		byteWriter.writeUtf8EncodedStringWithCertainty(token);
-	}
+	<X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X;
 }

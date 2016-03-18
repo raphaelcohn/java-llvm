@@ -20,34 +20,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.function;
+package com.stormmq.llvm.domain.parameterTypes;
 
+import com.stormmq.byteWriters.ByteWriter;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-public enum CallingConvention
+public final class TokenParameterType implements ParameterType
 {
-	ccc,
-	fastcc,
-	coldcc,
-	cc10("cc 10"),
-	cc11("cc 11"),
-	webkit_jscc,
-	anyregcc,
-	preserve_mostcc,
-	preserve_allcc,
-	cxx_fast_tlscc,
-	;
+	@NotNull public static final ParameterType _void = new TokenParameterType("void");
+	@NotNull public static final ParameterType metadata = new TokenParameterType("metadata");
 
-	@NotNull
-	public final String name;
+	@NotNull private final String token;
 
-	CallingConvention()
+	public TokenParameterType(@NotNull @NonNls final String token)
 	{
-		this.name = this.name();
+		this.token = token;
 	}
 
-	CallingConvention(@NotNull final String name)
+	@Override
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
 	{
-		this.name = name;
+		byteWriter.writeUtf8EncodedStringWithCertainty(token);
 	}
 }

@@ -20,30 +20,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.function;
+package com.stormmq.llvm.domain.function;
 
-import org.jetbrains.annotations.NotNull;
-
-public enum VisibilityStyle
+public enum DllStorageClass
 {
-	_default,
-	hidden,
-	_protected,
+	dllimport,
+	dllexport,
 	;
-
-	@NotNull
-	public final String name;
-
-	VisibilityStyle()
-	{
-		final String name = name();
-		if (name.charAt(0) == '_')
-		{
-			this.name = name.substring(1);
-		}
-		else
-		{
-			this.name = name;
-		}
-	}
 }

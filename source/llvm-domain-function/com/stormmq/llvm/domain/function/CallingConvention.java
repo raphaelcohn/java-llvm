@@ -20,12 +20,34 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.function;
+package com.stormmq.llvm.domain.function;
 
-import com.stormmq.byteWriters.ByteWriter;
 import org.jetbrains.annotations.NotNull;
 
-public interface ParameterType
+public enum CallingConvention
 {
-	<X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X;
+	ccc,
+	fastcc,
+	coldcc,
+	cc10("cc 10"),
+	cc11("cc 11"),
+	webkit_jscc,
+	anyregcc,
+	preserve_mostcc,
+	preserve_allcc,
+	cxx_fast_tlscc,
+	;
+
+	@NotNull
+	public final String name;
+
+	CallingConvention()
+	{
+		this.name = this.name();
+	}
+
+	CallingConvention(@NotNull final String name)
+	{
+		this.name = name;
+	}
 }
