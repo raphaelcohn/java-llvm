@@ -29,9 +29,9 @@ public final class TbaaStructEntry
 {
 	private final long offset;
 	private final long length;
-	@NotNull private final com.stormmq.llvm.metadata.tbaa.TbaaTagMetadata tbaaTagMetadataNode;
+	@NotNull private final TbaaTagMetadata tbaaTagMetadataNode;
 
-	public TbaaStructEntry(final long offset, final long length, @NotNull final com.stormmq.llvm.metadata.tbaa.TbaaTagMetadata tbaaTagMetadataNode)
+	public TbaaStructEntry(final long offset, final long length, @NotNull final TbaaTagMetadata tbaaTagMetadataNode)
 	{
 		this.offset = offset;
 		this.length = length;
