@@ -11,9 +11,10 @@
       <module fileurl="file://$PROJECT_DIR$/source/llvm-api/llvm-api.iml" filepath="$PROJECT_DIR$/source/llvm-api/llvm-api.iml" group="llvm" />
       <module fileurl="file://$PROJECT_DIR$/source/llvm-examples/llvm-examples.iml" filepath="$PROJECT_DIR$/source/llvm-examples/llvm-examples.iml" group="llvm" />
       <module fileurl="file://$PROJECT_DIR$/source/llvm-metadata/llvm-metadata.iml" filepath="$PROJECT_DIR$/source/llvm-metadata/llvm-metadata.iml" group="llvm/metadata" />
-      <module fileurl="file://$PROJECT_DIR$/source/llvm-metadata-debugging/llvm-metadata-debugging.iml" filepath="$PROJECT_DIR$/source/llvm-metadata-debugging/llvm-metadata-debugging.iml" group="llvm/metadata"/>
+      <module fileurl="file://$PROJECT_DIR$/source/llvm-metadata-debugging/llvm-metadata-debugging.iml" filepath="$PROJECT_DIR$/source/llvm-metadata-debugging/llvm-metadata-debugging.iml" group="llvm/metadata" />
       <module fileurl="file://$PROJECT_DIR$/source/llvm-metadata-module/llvm-metadata-module.iml" filepath="$PROJECT_DIR$/source/llvm-metadata-module/llvm-metadata-module.iml" group="llvm/metadata" />
       <module fileurl="file://$PROJECT_DIR$/source/llvm-metadata-tbaa/llvm-metadata-tbaa.iml" filepath="$PROJECT_DIR$/source/llvm-metadata-tbaa/llvm-metadata-tbaa.iml" group="llvm/metadata" />
+      <module fileurl="file://$PROJECT_DIR$/source/llvm-target/llvm-target.iml" filepath="$PROJECT_DIR$/source/llvm-target/llvm-target.iml" group="llvm" />
       <module fileurl="file://$PROJECT_DIR$/source/path/path.iml" filepath="$PROJECT_DIR$/source/path/path.iml" group="library/path" />
       <module fileurl="file://$PROJECT_DIR$/source/string/string.iml" filepath="$PROJECT_DIR$/source/string/string.iml" group="library/string" />
     </modules>
