@@ -20,27 +20,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.parameterTypes;
+package com.stormmq.llvm.domain.types;
 
 import com.stormmq.byteWriters.ByteWriter;
 import org.jetbrains.annotations.NotNull;
 
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
-
-public final class StructureParameterType implements ParameterType
+public final class StructureLlvmType implements LlvmType
 {
-	@NotNull private static final byte[] Middle = encodeUtf8BytesWithCertaintyValueIsValid(" x ");
 	@NotNull private static final byte[] Start = {'{', ' '};
 	@NotNull private static final byte[] CommaSpace = {',', ' '};
 	@NotNull private static final byte[] End = {' ', '}'};
 
 	private final boolean isPacked;
-	@NotNull private final ParameterType[] list;
+	@NotNull private final LlvmType[] llvmTypes;
 
-	public StructureParameterType(final boolean isPacked, @NotNull final ParameterType... list)
+	public StructureLlvmType(final boolean isPacked, @NotNull final LlvmType... llvmTypes)
 	{
 		this.isPacked = isPacked;
-		this.list = list;
+		this.llvmTypes = llvmTypes;
 	}
 
 	@Override
@@ -52,15 +49,15 @@ public final class StructureParameterType implements ParameterType
 		}
 		byteWriter.writeBytes(Start);
 
-		final int length = list.length;
+		final int length = llvmTypes.length;
 		for (int index = 0; index < length; index++)
 		{
-			final ParameterType parameterType = list[index];
+			final LlvmType llvmType = llvmTypes[index];
 			if (index != 0)
 			{
 				byteWriter.writeBytes(CommaSpace);
 			}
-			parameterType.write(byteWriter);
+			llvmType.write(byteWriter);
 		}
 
 		byteWriter.writeBytes(End);

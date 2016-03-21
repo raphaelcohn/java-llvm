@@ -6,6 +6,7 @@ set -e
 
 toolsPath='/usr/local/opt/llvm37/lib/llvm-3.7/bin'
 systemHeadersPath='/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/usr/include'
+outFolderPath='../out/examples'
 
 _llvm_tool()
 {
@@ -398,7 +399,6 @@ main()
 	local operation="$1"
 	shift 1
 	
-	local outFolderPath='../../out/examples/c'
 	mkdir -m 0755 -p "$outFolderPath"
 	
 	case "$operation" in
