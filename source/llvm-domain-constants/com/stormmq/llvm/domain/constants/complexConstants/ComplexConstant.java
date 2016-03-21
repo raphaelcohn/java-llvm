@@ -20,10 +20,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.variables.constants.complexConstants;
+package com.stormmq.llvm.domain.constants.complexConstants;
 
 import com.stormmq.llvm.domain.types.Type;
-import com.stormmq.llvm.domain.variables.constants.Constant;
+import com.stormmq.llvm.domain.constants.Constant;
 
 public interface ComplexConstant<T extends Type> extends Constant<T>
 {

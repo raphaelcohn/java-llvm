@@ -20,12 +20,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.variables.constants.complexConstants;
+package com.stormmq.llvm.domain.constants.complexConstants;
 
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.types.TypeWithSize;
 import com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.ArrayType;
-import com.stormmq.llvm.domain.variables.constants.Constant;
+import com.stormmq.llvm.domain.constants.Constant;
 import org.jetbrains.annotations.NotNull;
 
 public final class ArrayConstant<T extends TypeWithSize> implements ComplexConstant<ArrayType<T>>

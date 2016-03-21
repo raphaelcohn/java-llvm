@@ -27,7 +27,7 @@ import com.stormmq.llvm.domain.*;
 import com.stormmq.llvm.domain.comdat.ComdatIdentifier;
 import com.stormmq.llvm.domain.names.SectionName;
 import com.stormmq.llvm.domain.types.Type;
-import com.stormmq.llvm.domain.variables.constants.Constant;
+import com.stormmq.llvm.domain.constants.Constant;
 import org.jetbrains.annotations.*;
 
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;

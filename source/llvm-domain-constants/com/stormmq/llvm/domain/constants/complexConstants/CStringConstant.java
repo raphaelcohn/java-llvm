@@ -20,7 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.variables.constants.complexConstants;
+package com.stormmq.llvm.domain.constants.complexConstants;
 
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType;

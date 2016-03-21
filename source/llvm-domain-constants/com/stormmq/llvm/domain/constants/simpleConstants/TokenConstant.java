@@ -20,11 +20,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.variables.constants.simpleConstants;
+package com.stormmq.llvm.domain.constants.simpleConstants;
 
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.types.firstClassTypes.TokenType;
-import com.stormmq.llvm.domain.variables.constants.Constant;
+import com.stormmq.llvm.domain.constants.Constant;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 

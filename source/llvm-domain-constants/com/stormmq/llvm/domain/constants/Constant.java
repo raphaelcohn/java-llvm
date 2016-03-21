@@ -20,7 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.variables.constants;
+package com.stormmq.llvm.domain.constants;
 
 import com.stormmq.llvm.domain.Writable;
 import com.stormmq.llvm.domain.types.Type;
