@@ -20,18 +20,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.function;
+package com.stormmq.llvm.domain.function.attributes.functionAttributes;
 
-import com.stormmq.llvm.domain.attributes.AttributeGroup;
-import com.stormmq.llvm.domain.function.attributes.parameterAttributes.ParameterAttribute;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractFunctionParameter
+public final class IntegerKeyValueFunctionAttribute extends AbstractKeyValueFunctionAttribute
 {
-	@NotNull private final AttributeGroup<ParameterAttribute> attributes;
+	@NotNull public static final FunctionAttribute StackProtectorBufferSize_8 = StackProtectorBufferSize(8);
 
-	protected AbstractFunctionParameter(final FormalParameter formalParameter, @NotNull final AttributeGroup<ParameterAttribute> attributes)
+	@NotNull
+	public static FunctionAttribute StackProtectorBufferSize(final int sizeInBytes)
 	{
-		this.attributes = attributes;
+		return new IntegerKeyValueFunctionAttribute("stack-protector-buffer-size", sizeInBytes);
+	}
+
+	private IntegerKeyValueFunctionAttribute(@NonNls @NotNull final String key, final int value)
+	{
+		super(key, Integer.toString(value));
 	}
 }

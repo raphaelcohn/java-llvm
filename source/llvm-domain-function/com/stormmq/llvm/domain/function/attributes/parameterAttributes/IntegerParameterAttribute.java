@@ -20,35 +20,63 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.names;
+package com.stormmq.llvm.domain.function.attributes.parameterAttributes;
 
-import com.stormmq.llvm.domain.identifiers.GlobalIdentifier;
+import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.llvm.domain.attributes.AttributeKind;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
 
-public final class SectionName extends AbstractName
+public final class IntegerParameterAttribute implements ParameterAttribute
 {
-	@NotNull private static final byte[] Start = encodeUtf8BytesWithCertaintyValueIsValid(" section \"");
-	@NotNull private static final byte[] End = encodeUtf8BytesWithCertaintyValueIsValid("\"");
-
-	public SectionName(@NotNull @NonNls final String name)
-	{
-		super(name);
-	}
-
-	@Override
 	@NotNull
-	protected byte[] start()
+	public static IntegerParameterAttribute align(final int alignmentInBytes)
 	{
-		return Start;
+		return new IntegerParameterAttribute("align", alignmentInBytes);
 	}
 
 	@NotNull
-	@Override
-	protected byte[] end()
+	public static IntegerParameterAttribute dereferenceable(final int size)
 	{
-		return End;
+		return new IntegerParameterAttribute("dereferenceable", size);
+	}
+
+	@NotNull
+	public static IntegerParameterAttribute dereferenceableOrNull(final int size)
+	{
+		return new IntegerParameterAttribute("dereferenceable_or_null", size);
+	}
+
+	@NotNull private final String name;
+	private final int value;
+	@NotNull private final byte[] llvmAssemblyEncoding;
+
+	private IntegerParameterAttribute(@NonNls @NotNull final String name, final int value)
+	{
+		this.name = name;
+		this.value = value;
+		llvmAssemblyEncoding = encodeUtf8BytesWithCertaintyValueIsValid(name + '(' + Integer.toString(value) + ')');
+	}
+
+	@NotNull
+	@Override
+	public AttributeKind attributeKind()
+	{
+		return AttributeKind.Defined;
+	}
+
+	@NotNull
+	@Override
+	public String name()
+	{
+		return name;
+	}
+
+	@Override
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	{
+		byteWriter.writeBytes(llvmAssemblyEncoding);
 	}
 }

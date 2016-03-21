@@ -20,18 +20,42 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.function;
+package com.stormmq.llvm.domain.types;
 
-import com.stormmq.llvm.domain.attributes.AttributeGroup;
-import com.stormmq.llvm.domain.function.attributes.parameterAttributes.ParameterAttribute;
-import org.jetbrains.annotations.NotNull;
+import com.stormmq.byteWriters.ByteWriter;
+import org.jetbrains.annotations.*;
 
-public abstract class AbstractFunctionParameter
+public final class FunctionType implements TypeExcludingVoid, CanBePointedToType
 {
-	@NotNull private final AttributeGroup<ParameterAttribute> attributes;
+	@NotNull private static final byte[] SpaceOpenBracket = {' ', '('};
+	@NotNull private static final byte[] CommaSpace = {',', ' '};
 
-	protected AbstractFunctionParameter(final FormalParameter formalParameter, @NotNull final AttributeGroup<ParameterAttribute> attributes)
+	@NotNull private final VoidOrFirstClassTypeExcludingLabelAndMetadata returnType;
+	@NotNull private final TypeExcludingVoid[] formalParameterTypes;
+
+	public FunctionType(@NotNull final VoidOrFirstClassTypeExcludingLabelAndMetadata returnType, @NotNull final TypeExcludingVoid... formalParameterTypes)
 	{
-		this.attributes = attributes;
+		this.returnType = returnType;
+		this.formalParameterTypes = formalParameterTypes;
+	}
+
+	@Override
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	{
+		returnType.write(byteWriter);
+		byteWriter.writeBytes(SpaceOpenBracket);
+
+		final int length = formalParameterTypes.length;
+		for(int index = 0; index < length; index++)
+		{
+			if (index != 0)
+			{
+				byteWriter.writeBytes(CommaSpace);
+			}
+
+			formalParameterTypes[index].write(byteWriter);
+		}
+
+		byteWriter.writeByte(')');
 	}
 }

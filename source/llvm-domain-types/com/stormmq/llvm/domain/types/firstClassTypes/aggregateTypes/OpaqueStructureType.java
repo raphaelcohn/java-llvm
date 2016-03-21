@@ -20,18 +20,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.function;
+package com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes;
 
-import com.stormmq.llvm.domain.attributes.AttributeGroup;
-import com.stormmq.llvm.domain.function.attributes.parameterAttributes.ParameterAttribute;
+import com.stormmq.byteWriters.ByteWriter;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractFunctionParameter
-{
-	@NotNull private final AttributeGroup<ParameterAttribute> attributes;
+import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
 
-	protected AbstractFunctionParameter(final FormalParameter formalParameter, @NotNull final AttributeGroup<ParameterAttribute> attributes)
+public final class OpaqueStructureType implements AggregateType
+{
+	@NotNull private static final byte[] Bytes = encodeUtf8BytesWithCertaintyValueIsValid("opaque");
+
+	@NotNull public static final AggregateType OpaqueStructure = new OpaqueStructureType();
+
+	private OpaqueStructureType()
 	{
-		this.attributes = attributes;
+	}
+
+	// when defining, needs to have 'type '
+	@Override
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	{
+		byteWriter.writeBytes(Bytes);
 	}
 }

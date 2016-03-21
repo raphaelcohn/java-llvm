@@ -20,18 +20,44 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.function;
+package com.stormmq.llvm.domain.function.attributes.functionAttributes;
 
-import com.stormmq.llvm.domain.attributes.AttributeGroup;
-import com.stormmq.llvm.domain.function.attributes.parameterAttributes.ParameterAttribute;
+import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.llvm.domain.attributes.AttributeKind;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractFunctionParameter
-{
-	@NotNull private final AttributeGroup<ParameterAttribute> attributes;
+import static com.stormmq.llvm.domain.attributes.AttributeKind.Defined;
+import static java.lang.String.format;
+import static java.util.Locale.ENGLISH;
 
-	protected AbstractFunctionParameter(final FormalParameter formalParameter, @NotNull final AttributeGroup<ParameterAttribute> attributes)
+public final class AlignStackFunctionAttribute implements FunctionAttribute
+{
+	private final int stackAlignmentAsPowerOfTwo;
+
+	public AlignStackFunctionAttribute(final int stackAlignmentAsPowerOfTwo)
 	{
-		this.attributes = attributes;
+		this.stackAlignmentAsPowerOfTwo = stackAlignmentAsPowerOfTwo;
+	}
+
+	@NonNls
+	@NotNull
+	@Override
+	public String name()
+	{
+		return "alignstack";
+	}
+
+	@NotNull
+	@Override
+	public AttributeKind attributeKind()
+	{
+		return Defined;
+	}
+
+	@Override
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	{
+		byteWriter.writeUtf8EncodedStringWithCertainty(format(ENGLISH, "alignstack(%1$s)", stackAlignmentAsPowerOfTwo));
 	}
 }

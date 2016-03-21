@@ -20,68 +20,45 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.comdat;
+package com.stormmq.llvm.domain.types.firstClassTypes;
 
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.Writable;
-import org.jetbrains.annotations.*;
+import com.stormmq.llvm.domain.types.CanBePointedToType;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Locale;
 
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
 import static java.lang.String.format;
 import static java.util.Locale.ENGLISH;
 
-public final class ComdatGroup implements Writable
+public final class VectorType implements SingleValueType
 {
-	@NotNull private static final byte[] Middle = encodeUtf8BytesWithCertaintyValueIsValid(" = comdat ");
-	@NotNull private static final byte[] End = encodeUtf8BytesWithCertaintyValueIsValid(")");
+	@NotNull private static final byte[] SpaceXSpace = encodeUtf8BytesWithCertaintyValueIsValid(" x ");
 
-	@NotNull private final ComdatIdentifier comdatIdentifier;
-	@NotNull private final ComdatSelectionKind comdatSelectionKind;
+	@NotNull private final PrimitiveSingleValueType primitiveSingleValueType;
+	private final int numberOfElements;
 
-	public ComdatGroup(@NotNull final ComdatIdentifier comdatIdentifier, @NotNull final ComdatSelectionKind comdatSelectionKind)
+	public VectorType(@NotNull final PrimitiveSingleValueType primitiveSingleValueType, final int numberOfElements)
 	{
-		this.comdatIdentifier = comdatIdentifier;
-		this.comdatSelectionKind = comdatSelectionKind;
+		if (numberOfElements < 1)
+		{
+			throw new IllegalArgumentException(format(ENGLISH, "Number of element can not be '%1$s' - it must be greater than zero", numberOfElements));
+		}
+		this.primitiveSingleValueType = primitiveSingleValueType;
+		this.numberOfElements = numberOfElements;
 	}
 
 	@Override
 	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
 	{
-		// $foo = comdat largest
-		comdatIdentifier.write(byteWriter);
-		byteWriter.writeBytes(Middle);
-		byteWriter.writeBytes(comdatSelectionKind.llAssemblyValueWithLineFeed);
-	}
+		byteWriter.writeByte('<');
 
-	@Override
-	@NotNull
-	public String toString()
-	{
-		return format(ENGLISH, "%1$s(%2$s, %3$s)". getClass().getSimpleName(), comdatIdentifier, comdatSelectionKind);
-	}
+		byteWriter.writeUtf8EncodedStringWithCertainty(Integer.toString(numberOfElements));
+		byteWriter.writeBytes(SpaceXSpace);
+		primitiveSingleValueType.write(byteWriter);
 
-	@Override
-	public boolean equals(@Nullable final Object o)
-	{
-		if (this == o)
-		{
-			return true;
-		}
-		if (o == null || getClass() != o.getClass())
-		{
-			return false;
-		}
-
-		final ComdatGroup that = (ComdatGroup) o;
-
-		return comdatIdentifier.equals(that.comdatIdentifier) && comdatSelectionKind == that.comdatSelectionKind;
-	}
-
-	@Override
-	public int hashCode()
-	{
-		int result = comdatIdentifier.hashCode();
-		result = 31 * result + comdatSelectionKind.hashCode();
-		return result;
+		byteWriter.writeByte('>');
 	}
 }

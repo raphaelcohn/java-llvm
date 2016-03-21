@@ -20,35 +20,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.names;
+package com.stormmq.llvm.domain.function.attributes.functionAttributes;
 
-import com.stormmq.llvm.domain.identifiers.GlobalIdentifier;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
-
-public final class SectionName extends AbstractName
+public final class BooleanKeyValueFunctionAttribute extends AbstractKeyValueFunctionAttribute
 {
-	@NotNull private static final byte[] Start = encodeUtf8BytesWithCertaintyValueIsValid(" section \"");
-	@NotNull private static final byte[] End = encodeUtf8BytesWithCertaintyValueIsValid("\"");
-
-	public SectionName(@NotNull @NonNls final String name)
-	{
-		super(name);
-	}
-
-	@Override
-	@NotNull
-	protected byte[] start()
-	{
-		return Start;
-	}
+	@NotNull public static final FunctionAttribute DisableTailCalls_Off = falseBooleanKey("disable-tail-calls");
+	@NotNull public static final FunctionAttribute NoFramePointerElimination_Off = falseBooleanKey("no-frame-pointer-elim");
+	@NotNull public static final FunctionAttribute LessPreciseFloatingPointMath_Off = falseBooleanKey("less-precise-fpmad");
+	@NotNull public static final FunctionAttribute NoInfinitiesFloatingPointMath_Off = falseBooleanKey("no-infs-fp-math");
+	@NotNull public static final FunctionAttribute NoNotANumbersFloatingPointMath_Off = falseBooleanKey("no-nans-fp-math");
+	@NotNull public static final FunctionAttribute UnsafeFloatingPointMath_Off = falseBooleanKey("unsafe-fp-math");
+	@NotNull public static final FunctionAttribute UseSoftFloat_Off = falseBooleanKey("use-soft-float");
 
 	@NotNull
-	@Override
-	protected byte[] end()
+	private static BooleanKeyValueFunctionAttribute falseBooleanKey(@NonNls @NotNull final String key)
 	{
-		return End;
+		return new BooleanKeyValueFunctionAttribute(key, false);
+	}
+
+	private BooleanKeyValueFunctionAttribute(@NonNls @NotNull final String key, final boolean value)
+	{
+		super(key, value ? "true" : "false");
 	}
 }

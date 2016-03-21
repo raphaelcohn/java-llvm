@@ -20,18 +20,47 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.function;
+package com.stormmq.llvm.domain.function.attributes.parameterAttributes;
 
-import com.stormmq.llvm.domain.attributes.AttributeGroup;
-import com.stormmq.llvm.domain.function.attributes.parameterAttributes.ParameterAttribute;
+import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.llvm.domain.attributes.AttributeKind;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractFunctionParameter
-{
-	@NotNull private final AttributeGroup<ParameterAttribute> attributes;
+import static com.stormmq.llvm.domain.attributes.AttributeKind.Defined;
+import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
 
-	protected AbstractFunctionParameter(final FormalParameter formalParameter, @NotNull final AttributeGroup<ParameterAttribute> attributes)
+public enum FixedParameterAttribute implements ParameterAttribute
+{
+	zeroext,
+	signext,
+	inreg,
+	byval,
+	inalloca,
+	sret,
+	noalias,
+	nocapture,
+	nest,
+	returned,
+	nonnull,
+	;
+
+	@NotNull private final byte[] llvmAssemblyEncoding;
+
+	FixedParameterAttribute()
 	{
-		this.attributes = attributes;
+		llvmAssemblyEncoding = encodeUtf8BytesWithCertaintyValueIsValid(name());
+	}
+
+	@NotNull
+	@Override
+	public AttributeKind attributeKind()
+	{
+		return Defined;
+	}
+
+	@Override
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	{
+		byteWriter.writeBytes(llvmAssemblyEncoding);
 	}
 }

@@ -74,7 +74,7 @@ public abstract class AbstractVariable implements Writable
 		if (threadLocalStorageModel != null)
 		{
 			Writable.writeSpace(byteWriter);
-			byteWriter.writeBytes(threadLocalStorageModel.llAssemblyValue);
+			byteWriter.writeBytes(threadLocalStorageModel.llvmAssemblyEncoding);
 		}
 
 		if (hasUnnamedAddress)

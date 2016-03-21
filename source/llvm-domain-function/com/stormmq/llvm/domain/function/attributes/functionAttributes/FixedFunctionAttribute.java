@@ -20,18 +20,69 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.function;
+package com.stormmq.llvm.domain.function.attributes.functionAttributes;
 
-import com.stormmq.llvm.domain.attributes.AttributeGroup;
-import com.stormmq.llvm.domain.function.attributes.parameterAttributes.ParameterAttribute;
+import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.llvm.domain.attributes.AttributeKind;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractFunctionParameter
-{
-	@NotNull private final AttributeGroup<ParameterAttribute> attributes;
+import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
 
-	protected AbstractFunctionParameter(final FormalParameter formalParameter, @NotNull final AttributeGroup<ParameterAttribute> attributes)
+public enum FixedFunctionAttribute implements FunctionAttribute
+{
+	alwaysinline,
+	builtin,
+	cold,
+	convergent,
+	inaccessiblememonly,
+	inaccessiblemem_or_argmemonly,
+	inlinehint,
+	jumptable,
+	minsize,
+	naked,
+	nobuiltin,
+	noduplicate,
+	noimplicitfloat,
+	noinline,
+	nonlazybind,
+	noredzone,
+	noreturn,
+	norecurse,
+	nounwind,
+	optnone,
+	optsize,
+	readnone,
+	readonly,
+	argmemonly,
+	returns_twice,
+	safestack,
+	sanitize_address,
+	sanitize_memory,
+	sanitize_thread,
+	ssp,
+	sspreq,
+	sspstrong,
+	thunk,
+	uwtable,
+	;
+
+	@NotNull private final byte[] llvmAssemblyEncoding;
+
+	FixedFunctionAttribute()
 	{
-		this.attributes = attributes;
+		llvmAssemblyEncoding = encodeUtf8BytesWithCertaintyValueIsValid(name());
+	}
+
+	@NotNull
+	@Override
+	public AttributeKind attributeKind()
+	{
+		return AttributeKind.Defined;
+	}
+
+	@Override
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	{
+		byteWriter.writeBytes(llvmAssemblyEncoding);
 	}
 }

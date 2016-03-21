@@ -20,68 +20,56 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.comdat;
+package com.stormmq.llvm.domain.types.firstClassTypes;
 
 import com.stormmq.byteWriters.ByteWriter;
-import com.stormmq.llvm.domain.Writable;
+import com.stormmq.string.StringUtilities;
 import org.jetbrains.annotations.*;
+
+import java.util.Locale;
 
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
 import static java.lang.String.format;
 import static java.util.Locale.ENGLISH;
 
-public final class ComdatGroup implements Writable
+public final class IntegerValueType implements PrimitiveSingleValueType
 {
-	@NotNull private static final byte[] Middle = encodeUtf8BytesWithCertaintyValueIsValid(" = comdat ");
-	@NotNull private static final byte[] End = encodeUtf8BytesWithCertaintyValueIsValid(")");
+	@NotNull public static final IntegerValueType i8 = new IntegerValueType(8);
+	@NotNull public static final IntegerValueType i16 = new IntegerValueType(16);
+	@NotNull public static final IntegerValueType i32 = new IntegerValueType(32);
+	@NotNull public static final IntegerValueType i64 = new IntegerValueType(64);
+	@NotNull public static final IntegerValueType i128 = new IntegerValueType(128);
 
-	@NotNull private final ComdatIdentifier comdatIdentifier;
-	@NotNull private final ComdatSelectionKind comdatSelectionKind;
+	private static final int MaximumNumberOfBits = 2 << 23 - 1;
+	@NotNull private final String stringValue;
+	@SuppressWarnings("FieldNotUsedInToString") @NotNull private final byte[] llvmAssemblyEncoding;
 
-	public ComdatGroup(@NotNull final ComdatIdentifier comdatIdentifier, @NotNull final ComdatSelectionKind comdatSelectionKind)
+	public IntegerValueType(final int numberOfBits)
 	{
-		this.comdatIdentifier = comdatIdentifier;
-		this.comdatSelectionKind = comdatSelectionKind;
+		if (numberOfBits < 1)
+		{
+			throw new IllegalArgumentException(format(ENGLISH, "Number of bits must be 1 or more, not '%1$s'", numberOfBits));
+		}
+
+		if (numberOfBits > MaximumNumberOfBits)
+		{
+			throw new IllegalArgumentException(format(ENGLISH, "Number of bits must not exceed 2^23 - 1, not '%1$s'", numberOfBits));
+		}
+
+		stringValue = 'i' + Integer.toString(numberOfBits);
+		llvmAssemblyEncoding = encodeUtf8BytesWithCertaintyValueIsValid(stringValue);
 	}
 
 	@Override
 	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
 	{
-		// $foo = comdat largest
-		comdatIdentifier.write(byteWriter);
-		byteWriter.writeBytes(Middle);
-		byteWriter.writeBytes(comdatSelectionKind.llAssemblyValueWithLineFeed);
+		byteWriter.writeBytes(llvmAssemblyEncoding);
 	}
 
 	@Override
 	@NotNull
 	public String toString()
 	{
-		return format(ENGLISH, "%1$s(%2$s, %3$s)". getClass().getSimpleName(), comdatIdentifier, comdatSelectionKind);
-	}
-
-	@Override
-	public boolean equals(@Nullable final Object o)
-	{
-		if (this == o)
-		{
-			return true;
-		}
-		if (o == null || getClass() != o.getClass())
-		{
-			return false;
-		}
-
-		final ComdatGroup that = (ComdatGroup) o;
-
-		return comdatIdentifier.equals(that.comdatIdentifier) && comdatSelectionKind == that.comdatSelectionKind;
-	}
-
-	@Override
-	public int hashCode()
-	{
-		int result = comdatIdentifier.hashCode();
-		result = 31 * result + comdatSelectionKind.hashCode();
-		return result;
+		return stringValue;
 	}
 }

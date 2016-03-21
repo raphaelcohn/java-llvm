@@ -22,47 +22,30 @@
 
 package com.stormmq.llvm.domain.attributes;
 
-import com.stormmq.llvm.domain.attributes.functionAttributes.FunctionAttribute;
-import com.stormmq.llvm.domain.attributes.parameterAttributes.ParameterAttribute;
-import com.stormmq.llvm.domain.attributes.writers.AttributeGroupWriter;
+import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.llvm.domain.Writable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-import static com.stormmq.llvm.domain.attributes.parameterAttributes.FixedParameterAttribute.signext;
-import static com.stormmq.llvm.domain.attributes.parameterAttributes.FixedParameterAttribute.zeroext;
 import static java.util.Arrays.asList;
 
-public final class AttributeGroup<A extends Attribute>
+public final class AttributeGroup<A extends Attribute> implements Writable
 {
-	@NotNull public static final AttributeGroup<ParameterAttribute> EmptyParameterAttibutes = parameterAttributes();
-	@NotNull public static final AttributeGroup<ParameterAttribute> ZeroExtend = parameterAttributes(zeroext);
-	@NotNull public static final AttributeGroup<ParameterAttribute> SignExtend = parameterAttributes(signext);
-
-	@NotNull
-	public static AttributeGroup<FunctionAttribute> functionAttributes(@NotNull final FunctionAttribute... functionAttributes)
-	{
-		return attributeGroup(functionAttributes);
-	}
-
-	@NotNull
-	public static AttributeGroup<ParameterAttribute> parameterAttributes(@NotNull final ParameterAttribute... parameterAttributes)
-	{
-		return attributeGroup(parameterAttributes);
-	}
-
 	@SafeVarargs
 	@NotNull
-	private static <A extends Attribute> AttributeGroup<A> attributeGroup(@NotNull final A... attributes)
+	public static <A extends Attribute> AttributeGroup<A> attributeGroup(@NotNull final A... attributes)
 	{
 		return new AttributeGroup<A>(asList(attributes));
 	}
 
+	@NotNull private static final byte[] CommaSpace = {',', ' '};
+
 	@NotNull private final SortedSet<A> attributes;
 
-	public AttributeGroup(@NotNull final Collection<A> attributes)
+	private AttributeGroup(@NotNull final Collection<A> attributes)
 	{
-		this.attributes = new TreeSet<>((Comparator<A>) (left, right) ->
+		this.attributes = new TreeSet<>((left, right) ->
 		{
 			final AttributeKind attributeKindLeft = left.attributeKind();
 			final AttributeKind attributeKindRight = right.attributeKind();
@@ -80,8 +63,21 @@ public final class AttributeGroup<A extends Attribute>
 		this.attributes.addAll(attributes);
 	}
 
-	public <X extends Exception> void write(@NotNull final AttributeGroupWriter<X> attributeGroupWriter) throws X
+	@Override
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
 	{
-		attributeGroupWriter.write(attributes);
+		boolean afterFirst = false;
+		for (final A attribute : attributes)
+		{
+			if (afterFirst)
+			{
+				byteWriter.writeBytes(CommaSpace);
+			}
+			else
+			{
+				afterFirst = true;
+			}
+			attribute.write(byteWriter);
+		}
 	}
 }

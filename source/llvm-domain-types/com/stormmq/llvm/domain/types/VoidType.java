@@ -20,18 +20,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.function;
+package com.stormmq.llvm.domain.types;
 
-import com.stormmq.llvm.domain.attributes.AttributeGroup;
-import com.stormmq.llvm.domain.function.attributes.parameterAttributes.ParameterAttribute;
-import org.jetbrains.annotations.NotNull;
+import com.stormmq.byteWriters.ByteWriter;
+import org.jetbrains.annotations.*;
 
-public abstract class AbstractFunctionParameter
+import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+
+public final class VoidType implements VoidOrFirstClassTypeExcludingLabelAndMetadata
 {
-	@NotNull private final AttributeGroup<ParameterAttribute> attributes;
+	@NotNull public static final VoidType Void = new VoidType();
 
-	protected AbstractFunctionParameter(final FormalParameter formalParameter, @NotNull final AttributeGroup<ParameterAttribute> attributes)
+	private VoidType()
 	{
-		this.attributes = attributes;
+	}
+
+	@NotNull private static final byte[] _void = encodeUtf8BytesWithCertaintyValueIsValid("void");
+
+	@Override
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	{
+		byteWriter.writeBytes(_void);
 	}
 }

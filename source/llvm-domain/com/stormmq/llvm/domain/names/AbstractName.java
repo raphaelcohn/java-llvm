@@ -24,8 +24,10 @@ package com.stormmq.llvm.domain.names;
 
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.Writable;
+import com.stormmq.string.*;
 import org.jetbrains.annotations.*;
 
+import static com.stormmq.string.StringUtilities.iterateOverStringCodePoints;
 import static java.lang.String.format;
 import static java.util.Locale.ENGLISH;
 
@@ -35,7 +37,27 @@ public abstract class AbstractName implements Writable
 
 	protected AbstractName(@NonNls @NotNull final String name)
 	{
-		this.name = name;
+		this.name = validateName(name);
+	}
+
+	@NotNull
+	private static String validateName(@NotNull @NonNls final String name)
+	{
+		try
+		{
+			iterateOverStringCodePoints(name, (index, codePoint) ->
+			{
+				if (codePoint == 0)
+				{
+					throw new IllegalArgumentException("Names can not contain ASCII NUL");
+				}
+			});
+		}
+		catch (final InvalidUtf16StringException e)
+		{
+			throw new IllegalArgumentException("A name must be a valid UTF-16 string", e);
+		}
+		return name;
 	}
 
 	@Override

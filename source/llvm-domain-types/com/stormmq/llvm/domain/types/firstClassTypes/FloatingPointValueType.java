@@ -20,18 +20,38 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.function;
+package com.stormmq.llvm.domain.types.firstClassTypes;
 
-import com.stormmq.llvm.domain.attributes.AttributeGroup;
-import com.stormmq.llvm.domain.function.attributes.parameterAttributes.ParameterAttribute;
+import com.stormmq.byteWriters.ByteWriter;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractFunctionParameter
-{
-	@NotNull private final AttributeGroup<ParameterAttribute> attributes;
+import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import static java.lang.String.format;
+import static java.util.Locale.ENGLISH;
 
-	protected AbstractFunctionParameter(final FormalParameter formalParameter, @NotNull final AttributeGroup<ParameterAttribute> attributes)
+public enum FloatingPointValueType implements PrimitiveSingleValueType
+{
+	half(16),
+	_float(32),
+	_double(64),
+	fp128(128), // AKA quad
+	x86_fp80(80), // AKA long double
+	ppc_fp128(128), // AKA double-double
+	;
+
+	@NotNull private final byte[] llvmAssemblyEncoding;
+
+	FloatingPointValueType(final int numberOfBits)
 	{
-		this.attributes = attributes;
+		final String name = name();
+		@NotNull @NonNls final String stringValue = name.charAt(0) == '_' ? name.substring(1) : name;
+		llvmAssemblyEncoding = encodeUtf8BytesWithCertaintyValueIsValid(stringValue);
+	}
+
+	@Override
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	{
+		byteWriter.writeBytes(llvmAssemblyEncoding);
 	}
 }

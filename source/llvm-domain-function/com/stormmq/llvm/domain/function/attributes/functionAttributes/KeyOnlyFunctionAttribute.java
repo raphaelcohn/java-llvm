@@ -20,18 +20,44 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.function;
+package com.stormmq.llvm.domain.function.attributes.functionAttributes;
 
-import com.stormmq.llvm.domain.attributes.AttributeGroup;
-import com.stormmq.llvm.domain.function.attributes.parameterAttributes.ParameterAttribute;
+import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.llvm.domain.attributes.AttributeKind;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractFunctionParameter
-{
-	@NotNull private final AttributeGroup<ParameterAttribute> attributes;
+import static java.lang.String.format;
+import static java.util.Locale.ENGLISH;
 
-	protected AbstractFunctionParameter(final FormalParameter formalParameter, @NotNull final AttributeGroup<ParameterAttribute> attributes)
+public final class KeyOnlyFunctionAttribute implements FunctionAttribute
+{
+	@NotNull public static final FunctionAttribute NoFramePointerEliminationNonLeaf = new KeyOnlyFunctionAttribute("no-frame-pointer-elim-non-leaf");
+
+	@NotNull private final String key;
+
+	private KeyOnlyFunctionAttribute(@NonNls @NotNull final String key)
 	{
-		this.attributes = attributes;
+		this.key = key;
+	}
+
+	@NotNull
+	@Override
+	public String name()
+	{
+		return key;
+	}
+
+	@NotNull
+	@Override
+	public AttributeKind attributeKind()
+	{
+		return AttributeKind.CompilerValueless;
+	}
+
+	@Override
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	{
+		byteWriter.writeUtf8EncodedStringWithCertainty(format(ENGLISH, "\"%1$s\"", key));
 	}
 }

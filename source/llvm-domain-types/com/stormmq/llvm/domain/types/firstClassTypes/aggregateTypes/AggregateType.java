@@ -20,18 +20,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.function;
+package com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes;
 
-import com.stormmq.llvm.domain.attributes.AttributeGroup;
-import com.stormmq.llvm.domain.function.attributes.parameterAttributes.ParameterAttribute;
-import org.jetbrains.annotations.NotNull;
+import com.stormmq.llvm.domain.types.*;
+import com.stormmq.llvm.domain.types.firstClassTypes.FirstClassType;
 
-public abstract class AbstractFunctionParameter
+public interface AggregateType extends TypeWithSize, CanBePointedToType, FirstClassType
 {
-	@NotNull private final AttributeGroup<ParameterAttribute> attributes;
-
-	protected AbstractFunctionParameter(final FormalParameter formalParameter, @NotNull final AttributeGroup<ParameterAttribute> attributes)
-	{
-		this.attributes = attributes;
-	}
 }

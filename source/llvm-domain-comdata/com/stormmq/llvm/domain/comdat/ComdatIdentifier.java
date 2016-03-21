@@ -20,18 +20,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.function;
+package com.stormmq.llvm.domain.comdat;
 
-import com.stormmq.llvm.domain.attributes.AttributeGroup;
-import com.stormmq.llvm.domain.function.attributes.parameterAttributes.ParameterAttribute;
+import com.stormmq.llvm.domain.identifiers.AbstractIdentifier;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractFunctionParameter
+public final class ComdatIdentifier extends AbstractIdentifier
 {
-	@NotNull private final AttributeGroup<ParameterAttribute> attributes;
+	private static final byte Dollar = (byte) '$';
 
-	protected AbstractFunctionParameter(final FormalParameter formalParameter, @NotNull final AttributeGroup<ParameterAttribute> attributes)
+	public ComdatIdentifier(@NonNls @NotNull final String identifier)
 	{
-		this.attributes = attributes;
+		super(Dollar, identifier);
 	}
 }

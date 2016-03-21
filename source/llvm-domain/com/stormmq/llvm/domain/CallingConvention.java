@@ -22,33 +22,31 @@
 
 package com.stormmq.llvm.domain;
 
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+
+import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
 
 public enum CallingConvention
 {
-	ccc,
-	fastcc,
-	coldcc,
+	ccc("ccc"),
+	fastcc("fastcc"),
+	coldcc("coldcc"),
 	cc10("cc 10"),
 	cc11("cc 11"),
-	webkit_jscc,
-	anyregcc,
-	preserve_mostcc,
-	preserve_allcc,
-	cxx_fast_tlscc,
+	webkit_jscc("webkit_jscc"),
+	anyregcc("anyregcc"),
+	preserve_mostcc("preserve_mostcc"),
+	preserve_allcc("preserve_allcc"),
+	cxx_fast_tlscc("cxx_fast_tlscc"),
+	cc64("cc 64"),
 	/*cc64, */
 	;
 
-	@NotNull
-	public final String name;
+	@NotNull public final byte[] llAssemblyValue;
 
-	CallingConvention()
+	CallingConvention(@NonNls @NotNull final String name)
 	{
-		this.name = this.name();
-	}
-
-	CallingConvention(@NotNull final String name)
-	{
-		this.name = name;
+		llAssemblyValue = encodeUtf8BytesWithCertaintyValueIsValid(name);
 	}
 }

@@ -20,18 +20,36 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.function;
+package com.stormmq.llvm.domain.function.attributes.functionAttributes;
 
-import com.stormmq.llvm.domain.attributes.AttributeGroup;
-import com.stormmq.llvm.domain.function.attributes.parameterAttributes.ParameterAttribute;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractFunctionParameter
-{
-	@NotNull private final AttributeGroup<ParameterAttribute> attributes;
+import java.util.*;
 
-	protected AbstractFunctionParameter(final FormalParameter formalParameter, @NotNull final AttributeGroup<ParameterAttribute> attributes)
+import static com.stormmq.llvm.domain.function.attributes.functionAttributes.TargetFeature.*;
+import static java.util.Arrays.asList;
+
+public final class PlusEnumSetKeyValueFunctionAttribute<E extends Enum<E>> extends AbstractKeyValueFunctionAttribute
+{
+	@NotNull
+	public static FunctionAttribute TargetFeatures(@NotNull final TargetFeature... targetFeatures)
 	{
-		this.attributes = attributes;
+		return new PlusEnumSetKeyValueFunctionAttribute<>("target-features", targetFeatures);
 	}
+
+	@NotNull public static final FunctionAttribute TargetFeatures_core2 = TargetFeatures(cx16, sse, sse2, sse3, ssse3);
+
+	@SuppressWarnings("OverloadedVarargsMethod")
+	@SafeVarargs
+	public PlusEnumSetKeyValueFunctionAttribute(@NonNls @NotNull final String key, @NotNull final E... values)
+	{
+		this(key, new HashSet<>(asList(values)));
+	}
+
+	public PlusEnumSetKeyValueFunctionAttribute(@NonNls @NotNull final String key, @NotNull final Set<E> values)
+	{
+		super(key, valueAsString(values, anEnum -> '+' + anEnum.name()));
+	}
+
 }

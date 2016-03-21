@@ -20,18 +20,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.function;
+package com.stormmq.llvm.domain.identifiers;
 
-import com.stormmq.llvm.domain.attributes.AttributeGroup;
-import com.stormmq.llvm.domain.function.attributes.parameterAttributes.ParameterAttribute;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.*;
 
-public abstract class AbstractFunctionParameter
+public final class LocalIdentifier extends AbstractIdentifier
 {
-	@NotNull private final AttributeGroup<ParameterAttribute> attributes;
+	private static final byte Percent = (byte) '%';
 
-	protected AbstractFunctionParameter(final FormalParameter formalParameter, @NotNull final AttributeGroup<ParameterAttribute> attributes)
+	public LocalIdentifier(@NonNls @NotNull final String identifier)
 	{
-		this.attributes = attributes;
+		super(Percent, identifier);
 	}
 }

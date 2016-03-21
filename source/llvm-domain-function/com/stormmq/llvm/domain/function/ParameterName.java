@@ -22,16 +22,33 @@
 
 package com.stormmq.llvm.domain.function;
 
-import com.stormmq.llvm.domain.attributes.AttributeGroup;
-import com.stormmq.llvm.domain.function.attributes.parameterAttributes.ParameterAttribute;
+import com.stormmq.llvm.domain.names.AbstractName;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractFunctionParameter
-{
-	@NotNull private final AttributeGroup<ParameterAttribute> attributes;
+import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
 
-	protected AbstractFunctionParameter(final FormalParameter formalParameter, @NotNull final AttributeGroup<ParameterAttribute> attributes)
+public final class ParameterName extends AbstractName
+{
+	@NotNull private static final byte[] Start = {};
+	@NotNull private static final byte[] End = {};
+
+	public ParameterName(@NotNull @NonNls final String name)
 	{
-		this.attributes = attributes;
+		super(name);
+	}
+
+	@Override
+	@NotNull
+	protected byte[] start()
+	{
+		return Start;
+	}
+
+	@NotNull
+	@Override
+	protected byte[] end()
+	{
+		return End;
 	}
 }

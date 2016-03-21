@@ -24,7 +24,7 @@ package com.stormmq.llvm.domain.variables;
 
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.*;
-import com.stormmq.llvm.domain.types.LlvmType;
+import com.stormmq.llvm.domain.types.Type;
 import org.jetbrains.annotations.*;
 
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
@@ -34,11 +34,11 @@ import static java.util.Locale.ENGLISH;
 public final class Alias extends AbstractVariable
 {
 	@NotNull private static final byte[] SpaceAlias = encodeUtf8BytesWithCertaintyValueIsValid(" alias");
-	@NotNull private final LlvmType[] aliaseeTypes;
+	@NotNull private final Type[] aliaseeTypes;
 	@NotNull private final String originalGlobalVariableOrFunctionName;
 
 	// TODO: AliaseeTy, Aliasee
-	public Alias(@NotNull @NonNls final String name, @NotNull final Linkage linkage, @NotNull final Visibility visibility, @Nullable final DllStorageClass dllStorageClass, @Nullable final ThreadLocalStorageModel threadLocalStorageModel, final boolean hasUnnamedAddress, @NotNull final LlvmType[] aliaseeTypes, @NotNull @NonNls final String originalGlobalVariableOrFunctionName)
+	public Alias(@NotNull @NonNls final String name, @NotNull final Linkage linkage, @NotNull final Visibility visibility, @Nullable final DllStorageClass dllStorageClass, @Nullable final ThreadLocalStorageModel threadLocalStorageModel, final boolean hasUnnamedAddress, @NotNull final Type[] aliaseeTypes, @NotNull @NonNls final String originalGlobalVariableOrFunctionName)
 	{
 		super(name, linkage, visibility, dllStorageClass, threadLocalStorageModel, hasUnnamedAddress);
 		this.aliaseeTypes = aliaseeTypes;

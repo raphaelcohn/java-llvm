@@ -22,11 +22,11 @@
 
 package com.stormmq.llvm.domain.attributes;
 
-import com.stormmq.llvm.domain.attributes.writers.AttributeWriter;
+import com.stormmq.llvm.domain.Writable;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-public interface Attribute
+public interface Attribute extends Writable
 {
 	@NotNull
 	AttributeKind attributeKind();
@@ -34,6 +34,4 @@ public interface Attribute
 	@NonNls
 	@NotNull
 	String name();
-
-	<X extends Exception> void write(@NotNull final AttributeWriter<X> attributeWriter) throws X;
 }

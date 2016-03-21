@@ -22,16 +22,37 @@
 
 package com.stormmq.llvm.domain.function;
 
+import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.llvm.domain.Writable;
 import com.stormmq.llvm.domain.attributes.AttributeGroup;
 import com.stormmq.llvm.domain.function.attributes.parameterAttributes.ParameterAttribute;
+import com.stormmq.llvm.domain.types.TypeExcludingVoid;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public abstract class AbstractFunctionParameter
+public final class FormalParameter implements Writable
 {
-	@NotNull private final AttributeGroup<ParameterAttribute> attributes;
+	@NotNull private final TypeExcludingVoid typeExcludingVoid;
+	@NotNull private final AttributeGroup<ParameterAttribute> parameterAttributes;
+	@Nullable private final ParameterName name;
 
-	protected AbstractFunctionParameter(final FormalParameter formalParameter, @NotNull final AttributeGroup<ParameterAttribute> attributes)
+	public FormalParameter(@NotNull final TypeExcludingVoid typeExcludingVoid, @NotNull final AttributeGroup<ParameterAttribute> parameterAttributes, @Nullable final ParameterName name)
 	{
-		this.attributes = attributes;
+		this.typeExcludingVoid = typeExcludingVoid;
+		this.parameterAttributes = parameterAttributes;
+		this.name = name;
+	}
+
+	@Override
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	{
+		typeExcludingVoid.write(byteWriter);
+
+		parameterAttributes.write(byteWriter);
+
+		if (name != null)
+		{
+			name.write(byteWriter);
+		}
 	}
 }

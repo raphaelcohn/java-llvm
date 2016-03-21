@@ -22,16 +22,24 @@
 
 package com.stormmq.llvm.domain.function;
 
-import com.stormmq.llvm.domain.attributes.AttributeGroup;
-import com.stormmq.llvm.domain.function.attributes.parameterAttributes.ParameterAttribute;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.*;
 
-public abstract class AbstractFunctionParameter
+import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+
+public enum GarbageCollectorStrategyName
 {
-	@NotNull private final AttributeGroup<ParameterAttribute> attributes;
+	shadow_stack,
+	erlang,
+	ocaml,
+	statepoint_example,
+	coreclr,
+	;
 
-	protected AbstractFunctionParameter(final FormalParameter formalParameter, @NotNull final AttributeGroup<ParameterAttribute> attributes)
+	@NotNull public final byte[] llvmAssemblyEncoding;
+	
+	GarbageCollectorStrategyName()
 	{
-		this.attributes = attributes;
+		final String name = name().replace('_', '-');
+		llvmAssemblyEncoding = encodeUtf8BytesWithCertaintyValueIsValid("gc \"" + name + '"');
 	}
 }

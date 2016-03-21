@@ -20,18 +20,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.function;
+package com.stormmq.llvm.domain.types.firstClassTypes;
 
-import com.stormmq.llvm.domain.attributes.AttributeGroup;
-import com.stormmq.llvm.domain.function.attributes.parameterAttributes.ParameterAttribute;
-import org.jetbrains.annotations.NotNull;
+import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.string.StringUtilities;
+import org.jetbrains.annotations.*;
 
-public abstract class AbstractFunctionParameter
+import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+
+public abstract class AbstractFixedFirstClassType implements FirstClassType
 {
-	@NotNull private final AttributeGroup<ParameterAttribute> attributes;
+	@NotNull private final byte[] value;
 
-	protected AbstractFunctionParameter(final FormalParameter formalParameter, @NotNull final AttributeGroup<ParameterAttribute> attributes)
+	protected AbstractFixedFirstClassType(@NotNull @NonNls final String value)
 	{
-		this.attributes = attributes;
+		this.value = encodeUtf8BytesWithCertaintyValueIsValid(value);
+	}
+
+	@Override
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	{
+		byteWriter.writeBytes(value);
 	}
 }

@@ -24,9 +24,9 @@ package com.stormmq.llvm.domain.variables;
 
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.*;
-import com.stormmq.llvm.domain.comdat.ComdatName;
+import com.stormmq.llvm.domain.comdat.ComdatIdentifier;
 import com.stormmq.llvm.domain.names.SectionName;
-import com.stormmq.llvm.domain.types.LlvmType;
+import com.stormmq.llvm.domain.types.Type;
 import org.jetbrains.annotations.*;
 
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
@@ -42,13 +42,13 @@ public final class GlobalVariable extends AbstractVariable
 
 	private final int addressSpace;
 	private final boolean isConstant;
-	@NotNull private final LlvmType llvmType;
+	@NotNull private final Type type;
 	@Nullable private final Object initializerConstant;
 	@Nullable private final SectionName sectionName;
-	@Nullable private final ComdatName comdatName;
+	@Nullable private final ComdatIdentifier comdatIdentifier;
 	private final int alignmentAsPowerOfTwo;
 
-	public GlobalVariable(@NotNull @NonNls final String name, @NotNull final Linkage linkage, @NotNull final Visibility visibility, @Nullable final DllStorageClass dllStorageClass, @Nullable final ThreadLocalStorageModel threadLocalStorageModel, final boolean hasUnnamedAddress, final int addressSpace, final boolean isConstant, @NotNull final LlvmType llvmType, @Nullable final Object initializerConstant, @Nullable final SectionName sectionName, @Nullable final ComdatName comdatName, final int alignmentAsPowerOfTwo)
+	public GlobalVariable(@NotNull @NonNls final String name, @NotNull final Linkage linkage, @NotNull final Visibility visibility, @Nullable final DllStorageClass dllStorageClass, @Nullable final ThreadLocalStorageModel threadLocalStorageModel, final boolean hasUnnamedAddress, final int addressSpace, final boolean isConstant, @NotNull final Type type, @Nullable final Object initializerConstant, @Nullable final SectionName sectionName, @Nullable final ComdatIdentifier comdatIdentifier, final int alignmentAsPowerOfTwo)
 	{
 		super(name, linkage, visibility, dllStorageClass, threadLocalStorageModel, hasUnnamedAddress);
 		if (alignmentAsPowerOfTwo < AutomaticAlignment)
@@ -68,10 +68,10 @@ public final class GlobalVariable extends AbstractVariable
 
 		this.addressSpace = addressSpace;
 		this.isConstant = isConstant;
-		this.llvmType = llvmType;
+		this.type = type;
 		this.initializerConstant = initializerConstant;
 		this.sectionName = sectionName;
-		this.comdatName = comdatName;
+		this.comdatIdentifier = comdatIdentifier;
 		this.alignmentAsPowerOfTwo = alignmentAsPowerOfTwo;
 	}
 
@@ -93,7 +93,7 @@ public final class GlobalVariable extends AbstractVariable
 		byteWriter.writeBytes(globalOrConstant);
 
 		Writable.writeSpace(byteWriter);
-		llvmType.write(byteWriter);
+		type.write(byteWriter);
 
 		if (initializerConstant != null)
 		{
@@ -106,10 +106,10 @@ public final class GlobalVariable extends AbstractVariable
 			sectionName.write(byteWriter);
 		}
 
-		if (comdatName != null)
+		if (comdatIdentifier != null)
 		{
 			writeCommaSpace(byteWriter);
-			comdatName.write(byteWriter);
+			comdatIdentifier.write(byteWriter);
 		}
 
 		if (alignmentAsPowerOfTwo != AutomaticAlignment)

@@ -20,18 +20,52 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.function;
+package com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes;
 
-import com.stormmq.llvm.domain.attributes.AttributeGroup;
-import com.stormmq.llvm.domain.function.attributes.parameterAttributes.ParameterAttribute;
+import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.llvm.domain.types.Type;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractFunctionParameter
+public final class StructureType implements AggregateType
 {
-	@NotNull private final AttributeGroup<ParameterAttribute> attributes;
+	@NotNull private static final byte[] Start = {'{', ' '};
+	@NotNull private static final byte[] CommaSpace = {',', ' '};
+	@NotNull private static final byte[] End = {' ', '}'};
 
-	protected AbstractFunctionParameter(final FormalParameter formalParameter, @NotNull final AttributeGroup<ParameterAttribute> attributes)
+	private final boolean isPacked;
+	@NotNull private final Type[] types;
+
+	public StructureType(final boolean isPacked, @NotNull final Type... types)
 	{
-		this.attributes = attributes;
+		this.isPacked = isPacked;
+		this.types = types;
+	}
+
+	// when defining, needs to have 'type '
+	@Override
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	{
+		if (isPacked)
+		{
+			byteWriter.writeByte('<');
+		}
+		byteWriter.writeBytes(Start);
+
+		final int length = types.length;
+		for (int index = 0; index < length; index++)
+		{
+			final Type type = types[index];
+			if (index != 0)
+			{
+				byteWriter.writeBytes(CommaSpace);
+			}
+			type.write(byteWriter);
+		}
+
+		byteWriter.writeBytes(End);
+		if (isPacked)
+		{
+			byteWriter.writeByte('>');
+		}
 	}
 }
