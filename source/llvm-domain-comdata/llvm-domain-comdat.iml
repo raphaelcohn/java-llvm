@@ -10,7 +10,6 @@
     <orderEntry type="library" name="annotations" level="project" />
     <orderEntry type="module" module-name="byteWriters" />
     <orderEntry type="module" module-name="string" />
-    <orderEntry type="module" module-name="llvm-domain-attributes" />
     <orderEntry type="module" module-name="llvm-domain" />
   </component>
 </module>

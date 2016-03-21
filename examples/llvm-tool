@@ -4,6 +4,7 @@
 set -u
 set -e
 
+# brew install llvm38 --with-all-targets --with-asan --with-lld --with-lldb --without-assertions
 toolsPath='/usr/local/opt/llvm38/lib/llvm-3.8/bin'
 systemHeadersPath='/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/usr/include'
 outFolderPath='../out/examples'

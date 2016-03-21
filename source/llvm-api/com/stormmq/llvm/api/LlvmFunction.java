@@ -1,13 +1,12 @@
 package com.stormmq.llvm.api;
 
 
-import com.stormmq.llvm.domain.function.*;
+import com.stormmq.llvm.domain.*;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import static com.stormmq.llvm.domain.function.CallingConvention.ccc;
-import static com.stormmq.llvm.domain.function.LinkageType.external;
-import static com.stormmq.llvm.domain.function.VisibilityStyle._default;
+import static com.stormmq.llvm.domain.CallingConvention.ccc;
+import static com.stormmq.llvm.domain.LinkageType.external;
+import static com.stormmq.llvm.domain.VisibilityStyle._default;
 
 public @interface LlvmFunction
 {

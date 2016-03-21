@@ -20,12 +20,35 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.types;
+package com.stormmq.llvm.domain;
 
-import com.stormmq.byteWriters.ByteWriter;
-import com.stormmq.llvm.domain.Writable;
 import org.jetbrains.annotations.NotNull;
 
-public interface LlvmType extends Writable
+public enum CallingConvention
 {
+	ccc,
+	fastcc,
+	coldcc,
+	cc10("cc 10"),
+	cc11("cc 11"),
+	webkit_jscc,
+	anyregcc,
+	preserve_mostcc,
+	preserve_allcc,
+	cxx_fast_tlscc,
+	/*cc64, */
+	;
+
+	@NotNull
+	public final String name;
+
+	CallingConvention()
+	{
+		this.name = this.name();
+	}
+
+	CallingConvention(@NotNull final String name)
+	{
+		this.name = name;
+	}
 }

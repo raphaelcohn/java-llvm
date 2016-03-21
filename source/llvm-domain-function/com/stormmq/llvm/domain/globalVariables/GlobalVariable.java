@@ -20,30 +20,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.function;
+package com.stormmq.llvm.domain.globalVariables;
 
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.*;
 
-public enum VisibilityStyle
+public final class GlobalVariable
 {
-	_default,
-	hidden,
-	_protected,
-	;
-
-	@NotNull
-	public final String name;
-
-	VisibilityStyle()
+	public GlobalVariable()
 	{
-		final String name = name();
-		if (name.charAt(0) == '_')
-		{
-			this.name = name.substring(1);
-		}
-		else
-		{
-			this.name = name;
-		}
+		/*
+		[@<GlobalVarName> =] [Linkage] [Visibility] [DLLStorageClass] [ThreadLocal]
+                     [unnamed_addr] [AddrSpace] [ExternallyInitialized]
+                     <global | constant> <Type> [<InitializerConstant>]
+                     [, section "name"] [, comdat [($name)]]
+                     [, align <Alignment>]
+		 */
 	}
 }

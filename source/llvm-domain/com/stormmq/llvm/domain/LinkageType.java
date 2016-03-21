@@ -20,34 +20,38 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.function;
+package com.stormmq.llvm.domain;
 
 import org.jetbrains.annotations.NotNull;
 
-public enum CallingConvention
+public enum LinkageType
 {
-	ccc,
-	fastcc,
-	coldcc,
-	cc10("cc 10"),
-	cc11("cc 11"),
-	webkit_jscc,
-	anyregcc,
-	preserve_mostcc,
-	preserve_allcc,
-	cxx_fast_tlscc,
+	_private,
+	internal,
+	available_externally,
+	linkonce,
+	weak,
+	common,
+	appending,
+	extern_weak,
+	linkonce_odr,
+	weak_odr,
+	external,
 	;
 
 	@NotNull
 	public final String name;
 
-	CallingConvention()
+	LinkageType()
 	{
-		this.name = this.name();
-	}
-
-	CallingConvention(@NotNull final String name)
-	{
-		this.name = name;
+		final String name = name();
+		if (name.charAt(0) == '_')
+		{
+			this.name = name.substring(1);
+		}
+		else
+		{
+			this.name = name;
+		}
 	}
 }

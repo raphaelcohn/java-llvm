@@ -23,6 +23,7 @@
 package com.stormmq.llvm.domain.function;
 
 import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.llvm.domain.*;
 import com.stormmq.llvm.domain.attributes.Attribute;
 import com.stormmq.llvm.domain.attributes.AttributeGroup;
 import com.stormmq.llvm.domain.attributes.functionAttributes.FunctionAttribute;

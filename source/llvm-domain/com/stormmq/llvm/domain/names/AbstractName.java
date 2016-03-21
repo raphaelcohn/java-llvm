@@ -20,12 +20,73 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.types;
+package com.stormmq.llvm.domain.names;
 
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.Writable;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.*;
 
-public interface LlvmType extends Writable
+import static java.lang.String.format;
+import static java.util.Locale.ENGLISH;
+
+public abstract class AbstractName implements Writable
 {
+	@NotNull private final String name;
+
+	protected AbstractName(@NonNls @NotNull final String name)
+	{
+		this.name = name;
+	}
+
+	@Override
+	public final <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	{
+		byteWriter.writeBytes(start());
+		byteWriter.writeUtf8EncodedStringWithCertainty(name);
+		byteWriter.writeBytes(end());
+	}
+
+	@NotNull
+	protected abstract byte[] start();
+
+	@NotNull
+	protected abstract byte[] end();
+
+	@Override
+	@NotNull
+	public final String toString()
+	{
+		return format(ENGLISH, "%1$s(%2$s)". getClass().getSimpleName(), name);
+	}
+
+	@Override
+	public final boolean equals(@Nullable final Object o)
+	{
+		if (this == o)
+		{
+			return true;
+		}
+		if (o == null || getClass() != o.getClass())
+		{
+			return false;
+		}
+
+		final AbstractName sectionName = (AbstractName) o;
+
+		return name.equals(sectionName.name);
+
+	}
+
+	@Override
+	public final int hashCode()
+	{
+		return name.hashCode();
+	}
+
+	@NotNull
+	@NonNls
+	public final String name()
+	{
+		return name;
+	}
 }

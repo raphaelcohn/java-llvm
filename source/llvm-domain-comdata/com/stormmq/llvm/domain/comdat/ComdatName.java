@@ -20,12 +20,35 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.types;
+package com.stormmq.llvm.domain.comdat;
 
-import com.stormmq.byteWriters.ByteWriter;
-import com.stormmq.llvm.domain.Writable;
+import com.stormmq.llvm.domain.names.AbstractName;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-public interface LlvmType extends Writable
+import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+
+public final class ComdatName extends AbstractName
 {
+	@NotNull private static final byte[] Start = encodeUtf8BytesWithCertaintyValueIsValid(" comdat ($\"");
+	@NotNull private static final byte[] End = encodeUtf8BytesWithCertaintyValueIsValid(")");
+
+	public ComdatName(@NonNls @NotNull final String name)
+	{
+		super(name);
+	}
+
+	@Override
+	@NotNull
+	protected byte[] start()
+	{
+		return Start;
+	}
+
+	@NotNull
+	@Override
+	protected byte[] end()
+	{
+		return End;
+	}
 }

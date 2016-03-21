@@ -20,11 +20,34 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.function;
+package com.stormmq.llvm.domain.names;
 
-public enum DllStorageClass
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+
+import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+
+public final class SectionName extends AbstractName
 {
-	dllimport,
-	dllexport,
-	;
+	@NotNull private static final byte[] Start = encodeUtf8BytesWithCertaintyValueIsValid(" section \"");
+	@NotNull private static final byte[] End = encodeUtf8BytesWithCertaintyValueIsValid("\"");
+
+	public SectionName(@NonNls @NotNull final String name)
+	{
+		super(name);
+	}
+
+	@Override
+	@NotNull
+	protected byte[] start()
+	{
+		return Start;
+	}
+
+	@NotNull
+	@Override
+	protected byte[] end()
+	{
+		return End;
+	}
 }

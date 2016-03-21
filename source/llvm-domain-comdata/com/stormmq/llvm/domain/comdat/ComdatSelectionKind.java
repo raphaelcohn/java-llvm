@@ -20,38 +20,49 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.function;
+package com.stormmq.llvm.domain.comdat;
 
-import org.jetbrains.annotations.NotNull;
+import com.stormmq.llvm.domain.ObjectFileFormat;
+import org.jetbrains.annotations.*;
 
-public enum LinkageType
+import java.util.EnumSet;
+
+import static com.stormmq.llvm.domain.ObjectFileFormat.ELF;
+import static com.stormmq.llvm.domain.ObjectFileFormat.PECOFF;
+import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import static java.util.EnumSet.of;
+
+public enum ComdatSelectionKind
 {
-	_private,
-	internal,
-	available_externally,
-	linkonce,
-	weak,
-	common,
-	appending,
-	extern_weak,
-	linkonce_odr,
-	weak_odr,
-	external,
+	any(true),
+	exactmatch,
+	largest,
+	noduplicates,
+	samesize,
 	;
 
-	@NotNull
-	public final String name;
+	@NotNull public final byte[] nameAsBytesWithLineFeed;
+	@NotNull public final EnumSet<ObjectFileFormat> supportedObjectFileFormats;
 
-	LinkageType()
+	@SuppressWarnings("HardcodedLineSeparator")
+	ComdatSelectionKind(final boolean isSupportedByElf)
 	{
-		final String name = name();
-		if (name.charAt(0) == '_')
+		nameAsBytesWithLineFeed = encodeUtf8BytesWithCertaintyValueIsValid(name() + '\n');
+
+		supportedObjectFileFormats = of(PECOFF);
+		if (isSupportedByElf)
 		{
-			this.name = name.substring(1);
+			supportedObjectFileFormats.add(ELF);
 		}
-		else
-		{
-			this.name = name;
-		}
+	}
+
+	ComdatSelectionKind()
+	{
+		this(false);
+	}
+
+	public boolean isSupportedByObjectFileFormat(@NotNull final ObjectFileFormat objectFileFormat)
+	{
+		return supportedObjectFileFormats.contains(objectFileFormat);
 	}
 }
