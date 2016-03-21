@@ -25,6 +25,7 @@ package com.stormmq.llvm.domain.module;
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.Writable;
 import com.stormmq.llvm.domain.comdat.ComdatDefinition;
+import com.stormmq.llvm.domain.function.FunctionDeclaration;
 import com.stormmq.llvm.domain.function.FunctionDefinition;
 import com.stormmq.llvm.domain.identifiers.LocalIdentifier;
 import com.stormmq.llvm.domain.target.dataLayout.DataLayoutSpecification;
@@ -52,10 +53,11 @@ public final class Module implements Writable
 	@NotNull private final Map<LocalIdentifier, StructureType> structureTypes;
 	@NotNull private final Map<LocalIdentifier, OpaqueStructureType> opaqueStructureTypes;
 	@NotNull private final List<GlobalVariable<?>> globalVariablesAndConstants;
+	@NotNull private final List<FunctionDeclaration> functionDeclarations;
 	@NotNull private final List<FunctionDefinition> functionDefinitions;
 	@NotNull private final List<Alias> aliases;
 
-	public Module(@NotNull final DataLayoutSpecification dataLayoutSpecification, @NotNull final TargetTriple targetTriple, @NotNull final List<ComdatDefinition> comdatDefinitions, @NotNull final Map<LocalIdentifier, StructureType> structureTypes, @NotNull final Map<LocalIdentifier, OpaqueStructureType> opaqueStructureTypes, @NotNull final List<GlobalVariable<?>> globalVariablesAndConstants, @NotNull final List<FunctionDefinition> functionDefinitions, @NotNull final List<Alias> aliases)
+	public Module(@NotNull final DataLayoutSpecification dataLayoutSpecification, @NotNull final TargetTriple targetTriple, @NotNull final List<ComdatDefinition> comdatDefinitions, @NotNull final Map<LocalIdentifier, StructureType> structureTypes, @NotNull final Map<LocalIdentifier, OpaqueStructureType> opaqueStructureTypes, @NotNull final List<GlobalVariable<?>> globalVariablesAndConstants, @NotNull final List<FunctionDeclaration> functionDeclarations, @NotNull final List<FunctionDefinition> functionDefinitions, @NotNull final List<Alias> aliases)
 	{
 		this.dataLayoutSpecification = dataLayoutSpecification;
 		this.targetTriple = targetTriple;
@@ -63,6 +65,7 @@ public final class Module implements Writable
 		this.structureTypes = structureTypes;
 		this.opaqueStructureTypes = opaqueStructureTypes;
 		this.globalVariablesAndConstants = globalVariablesAndConstants;
+		this.functionDeclarations = functionDeclarations;
 		this.functionDefinitions = functionDefinitions;
 		this.aliases = aliases;
 	}
@@ -77,6 +80,8 @@ public final class Module implements Writable
 		writeItem(byteWriter, comdatDefinitions);
 
 		writeItem(byteWriter, globalVariablesAndConstants);
+
+		writeItem(byteWriter, functionDeclarations);
 
 		writeItem(byteWriter, aliases);
 
