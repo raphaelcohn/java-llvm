@@ -22,36 +22,25 @@
 
 package com.stormmq.llvm.domain;
 
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-public enum LinkageType
+import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+
+public enum Visibility
 {
-	_private,
-	internal,
-	available_externally,
-	linkonce,
-	weak,
-	common,
-	appending,
-	extern_weak,
-	linkonce_odr,
-	weak_odr,
-	external,
+	_default,
+	hidden,
+	_protected,
 	;
 
-	@NotNull
-	public final String name;
+	@NotNull @NonNls public final String name;
+	@NotNull public final byte[] llAssemblyValue;
 
-	LinkageType()
+	Visibility()
 	{
 		final String name = name();
-		if (name.charAt(0) == '_')
-		{
-			this.name = name.substring(1);
-		}
-		else
-		{
-			this.name = name;
-		}
+		this.name = name.charAt(0) == '_' ? name.substring(1) : name;
+		llAssemblyValue = encodeUtf8BytesWithCertaintyValueIsValid(name);
 	}
 }

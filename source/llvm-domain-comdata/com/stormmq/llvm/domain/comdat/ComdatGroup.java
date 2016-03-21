@@ -52,7 +52,7 @@ public final class ComdatGroup implements Writable
 		byteWriter.writeByte('$');
 		byteWriter.writeUtf8EncodedStringWithCertainty(name);
 		byteWriter.writeBytes(Middle);
-		byteWriter.writeBytes(comdatSelectionKind.nameAsBytesWithLineFeed);
+		byteWriter.writeBytes(comdatSelectionKind.llAssemblyValueWithLineFeed);
 	}
 
 	@Override

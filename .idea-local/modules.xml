@@ -18,6 +18,8 @@
       <module fileurl="file://$PROJECT_DIR$/source/llvm-domain-metadata-module/llvm-domain-metadata-module.iml" filepath="$PROJECT_DIR$/source/llvm-domain-metadata-module/llvm-domain-metadata-module.iml" group="llvm/domain/metadata" />
       <module fileurl="file://$PROJECT_DIR$/source/llvm-domain-metadata-tbaa/llvm-domain-metadata-tbaa.iml" filepath="$PROJECT_DIR$/source/llvm-domain-metadata-tbaa/llvm-domain-metadata-tbaa.iml" group="llvm/domain/metadata" />
       <module fileurl="file://$PROJECT_DIR$/source/llvm-domain-target/llvm-domain-target.iml" filepath="$PROJECT_DIR$/source/llvm-domain-target/llvm-domain-target.iml" group="llvm/domain" />
+      <module fileurl="file://$PROJECT_DIR$/source/llvm-domain-types/llvm-domain-types.iml" filepath="$PROJECT_DIR$/source/llvm-domain-types/llvm-domain-types.iml" group="llvm/domain" />
+      <module fileurl="file://$PROJECT_DIR$/source/llvm-domain-variables/llvm-domain-variables.iml" filepath="$PROJECT_DIR$/source/llvm-domain-variables/llvm-domain-variables.iml" group="llvm/domain" />
       <module fileurl="file://$PROJECT_DIR$/source/llvm-examples/llvm-examples.iml" filepath="$PROJECT_DIR$/source/llvm-examples/llvm-examples.iml" group="llvm" />
       <module fileurl="file://$PROJECT_DIR$/source/path/path.iml" filepath="$PROJECT_DIR$/source/path/path.iml" group="library/path" />
       <module fileurl="file://$PROJECT_DIR$/source/string/string.iml" filepath="$PROJECT_DIR$/source/string/string.iml" group="library/string" />

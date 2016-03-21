@@ -22,9 +22,20 @@
 
 package com.stormmq.llvm.domain;
 
+import org.jetbrains.annotations.NotNull;
+
+import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+
 public enum DllStorageClass
 {
 	dllimport,
 	dllexport,
 	;
+
+	@NotNull public final byte[] llAssemblyValue;
+
+	DllStorageClass()
+	{
+		llAssemblyValue = encodeUtf8BytesWithCertaintyValueIsValid(name());
+	}
 }

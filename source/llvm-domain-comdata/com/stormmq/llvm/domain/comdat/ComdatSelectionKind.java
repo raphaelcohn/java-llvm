@@ -41,13 +41,13 @@ public enum ComdatSelectionKind
 	samesize,
 	;
 
-	@NotNull public final byte[] nameAsBytesWithLineFeed;
+	@NotNull public final byte[] llAssemblyValueWithLineFeed;
 	@NotNull public final EnumSet<ObjectFileFormat> supportedObjectFileFormats;
 
 	@SuppressWarnings("HardcodedLineSeparator")
 	ComdatSelectionKind(final boolean isSupportedByElf)
 	{
-		nameAsBytesWithLineFeed = encodeUtf8BytesWithCertaintyValueIsValid(name() + '\n');
+		llAssemblyValueWithLineFeed = encodeUtf8BytesWithCertaintyValueIsValid(name() + '\n');
 
 		supportedObjectFileFormats = of(PECOFF);
 		if (isSupportedByElf)

@@ -27,5 +27,18 @@ import org.jetbrains.annotations.*;
 
 public interface Writable
 {
+	int AutomaticAlignment = -1;
+
+	static <X extends Exception> void writeSpace(@NotNull final ByteWriter<X> byteWriter) throws X
+	{
+		byteWriter.writeByte(' ');
+	}
+
+	@SuppressWarnings("HardcodedLineSeparator")
+	static <X extends Exception> void writeLineFeed(@NotNull final ByteWriter<X> byteWriter) throws X
+	{
+		byteWriter.writeByte((byte) '\n');
+	}
+
 	<X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X;
 }

@@ -22,11 +22,33 @@
 
 package com.stormmq.llvm.domain;
 
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Locale;
+
+import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import static java.lang.String.format;
+import static java.util.Locale.ENGLISH;
+
 public enum ThreadLocalStorageModel
 {
-	generaldynamic, // Default, not exposed
+	generaldynamic(true), // Default, not exposed
 	localdynamic,
 	initialexec,
 	localexec,
 	;
+
+	@NotNull public final byte[] llAssemblyValue;
+
+	ThreadLocalStorageModel(final boolean isDefault)
+	{
+		@NonNls final String llAssemblyValueString = isDefault ? "thread_local" : format(ENGLISH, "thread_local(%1$s)", name());
+		llAssemblyValue = encodeUtf8BytesWithCertaintyValueIsValid(llAssemblyValueString);
+	}
+
+	ThreadLocalStorageModel()
+	{
+		this(false);
+	}
 }

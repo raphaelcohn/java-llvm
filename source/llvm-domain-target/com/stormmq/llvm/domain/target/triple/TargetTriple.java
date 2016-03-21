@@ -65,14 +65,7 @@ public final class TargetTriple
 	@Override
 	public String toString()
 	{
-		if (environment == null)
-		{
-			return format(ENGLISH, "%1$s-%2$s", architecture, operatingSystem);
-		}
-		else
-		{
-			return format(ENGLISH, "%1$s-%2$s-%3$s", architecture, operatingSystem, environment);
-		}
+		return environment == null ? format(ENGLISH, "%1$s-%2$s", architecture, operatingSystem) : format(ENGLISH, "%1$s-%2$s-%3$s", architecture, operatingSystem, environment);
 	}
 
 	@Override

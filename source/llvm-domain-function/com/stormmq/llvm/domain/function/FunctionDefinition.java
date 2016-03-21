@@ -47,14 +47,14 @@ public final class FunctionDefinition
 	@SuppressWarnings("HardcodedLineSeparator") @NotNull private static final byte[] NewLineOpenBrace = encodeUtf8BytesWithCertaintyValueIsValid("\n{");
 	@SuppressWarnings("HardcodedLineSeparator") @NotNull private static final byte[] CloseBraceNewLine = encodeUtf8BytesWithCertaintyValueIsValid("}\n");
 
-	@NotNull private final LinkageType linkageType;
-	@NotNull private final VisibilityStyle visibilityStyle;
+	@NotNull private final Linkage linkage;
+	@NotNull private final Visibility visibility;
 	@Nullable private final DllStorageClass dllStorageClass;
 	@NotNull private final CallingConvention callingConvention;
 	@NotNull private final ParameterType resultType;
 	@NotNull private final String functionName;
 	@NotNull private final ParameterType[] parameters;
-	private final boolean isUnnamedAddress;
+	private final boolean hasUnnamedAddress;
 	@NotNull private final AttributeGroup<FunctionAttribute> attributes;
 	@Nullable @NonNls private final String sectionName;
 	@Nullable @NonNls private final String comdatName;
@@ -65,17 +65,17 @@ public final class FunctionDefinition
 	// personality
 	// metadata
 
-	public FunctionDefinition(@NotNull final LinkageType linkageType, @NotNull final VisibilityStyle visibilityStyle, @Nullable final DllStorageClass dllStorageClass, @NotNull final CallingConvention callingConvention, @NotNull final ParameterType resultType, @NonNls @NotNull final String functionName, @NotNull final ParameterType[] parameters, final boolean isUnnamedAddress, @NotNull final AttributeGroup<FunctionAttribute> attributes, @Nullable @NonNls final String sectionName, @Nullable @NonNls final String comdatName, final int alignment, @Nullable @NonNls final String garbageCollectorStrategyName)
+	public FunctionDefinition(@NotNull final Linkage linkage, @NotNull final Visibility visibility, @Nullable final DllStorageClass dllStorageClass, @NotNull final CallingConvention callingConvention, @NotNull final ParameterType resultType, @NonNls @NotNull final String functionName, @NotNull final ParameterType[] parameters, final boolean hasUnnamedAddress, @NotNull final AttributeGroup<FunctionAttribute> attributes, @Nullable @NonNls final String sectionName, @Nullable @NonNls final String comdatName, final int alignment, @Nullable @NonNls final String garbageCollectorStrategyName)
 	{
-		this.linkageType = linkageType;
-		this.visibilityStyle = visibilityStyle;
+		this.linkage = linkage;
+		this.visibility = visibility;
 		this.dllStorageClass = dllStorageClass;
 		this.callingConvention = callingConvention;
 		// We deliberately prefix with '.' to prevent collisions with the 'llvm.' namespace of predefined functions
 		this.functionName = '.' + functionName;
 		this.resultType = resultType;
 		this.parameters = parameters;
-		this.isUnnamedAddress = isUnnamedAddress;
+		this.hasUnnamedAddress = hasUnnamedAddress;
 		this.attributes = attributes;
 		this.sectionName = sectionName;
 		this.comdatName = comdatName;
@@ -87,10 +87,10 @@ public final class FunctionDefinition
 	{
 		byteWriter.writeBytes(defineSpace);
 
-		byteWriter.writeUtf8EncodedStringWithCertainty(linkageType.name);
+		byteWriter.writeBytes(linkage.llAssemblyValue);
 		byteWriter.writeByte(' ');
 
-		byteWriter.writeUtf8EncodedStringWithCertainty(visibilityStyle.name);
+		byteWriter.writeUtf8EncodedStringWithCertainty(visibility.name);
 		byteWriter.writeByte(' ');
 
 		if (dllStorageClass != null)
@@ -113,7 +113,7 @@ public final class FunctionDefinition
 		}
 		byteWriter.writeByte(')');
 
-		if (isUnnamedAddress)
+		if (hasUnnamedAddress)
 		{
 			byteWriter.writeBytes(UnnamedAddress);
 		}
