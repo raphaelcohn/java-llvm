@@ -51,11 +51,11 @@ public final class Module implements Writable
 	@NotNull private final List<ComdatDefinition> comdatDefinitions;
 	@NotNull private final Map<LocalIdentifier, StructureType> structureTypes;
 	@NotNull private final Map<LocalIdentifier, OpaqueStructureType> opaqueStructureTypes;
-	@NotNull private final List<GlobalVariable> globalVariablesAndConstants;
+	@NotNull private final List<GlobalVariable<?>> globalVariablesAndConstants;
 	@NotNull private final List<FunctionDefinition> functionDefinitions;
 	@NotNull private final List<Alias> aliases;
 
-	public Module(@NotNull final DataLayoutSpecification dataLayoutSpecification, @NotNull final TargetTriple targetTriple, @NotNull final List<ComdatDefinition> comdatDefinitions, @NotNull final Map<LocalIdentifier, StructureType> structureTypes, @NotNull final Map<LocalIdentifier, OpaqueStructureType> opaqueStructureTypes, @NotNull final List<GlobalVariable> globalVariablesAndConstants, @NotNull final List<FunctionDefinition> functionDefinitions, @NotNull final List<Alias> aliases)
+	public Module(@NotNull final DataLayoutSpecification dataLayoutSpecification, @NotNull final TargetTriple targetTriple, @NotNull final List<ComdatDefinition> comdatDefinitions, @NotNull final Map<LocalIdentifier, StructureType> structureTypes, @NotNull final Map<LocalIdentifier, OpaqueStructureType> opaqueStructureTypes, @NotNull final List<GlobalVariable<?>> globalVariablesAndConstants, @NotNull final List<FunctionDefinition> functionDefinitions, @NotNull final List<Alias> aliases)
 	{
 		this.dataLayoutSpecification = dataLayoutSpecification;
 		this.targetTriple = targetTriple;

@@ -34,7 +34,7 @@ import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyVal
 import static java.lang.String.format;
 import static java.util.Locale.ENGLISH;
 
-public final class GlobalVariable extends AbstractVariable
+public final class GlobalVariable<T extends Type> extends AbstractVariable
 {
 	@NotNull private static final byte[] SpaceAddressSpaceStart = encodeUtf8BytesWithCertaintyValueIsValid(" addrspace(");
 	@NotNull private static final byte[] SpaceGlobal = encodeUtf8BytesWithCertaintyValueIsValid(" global");
@@ -43,13 +43,13 @@ public final class GlobalVariable extends AbstractVariable
 
 	private final int addressSpace;
 	private final boolean isConstant;
-	@NotNull private final Type type;
-	@Nullable private final Constant initializerConstant;
+	@NotNull private final T type;
+	@Nullable private final Constant<T> initializerConstant;
 	@Nullable private final SectionName sectionName;
 	@Nullable private final ComdatIdentifier comdatIdentifier;
 	private final int alignmentAsPowerOfTwo;
 
-	public GlobalVariable(@NotNull @NonNls final String name, @NotNull final Linkage linkage, @NotNull final Visibility visibility, @Nullable final DllStorageClass dllStorageClass, @Nullable final ThreadLocalStorageModel threadLocalStorageModel, final boolean hasUnnamedAddress, final int addressSpace, final boolean isConstant, @NotNull final Type type, @Nullable final Constant initializerConstant, @Nullable final SectionName sectionName, @Nullable final ComdatIdentifier comdatIdentifier, final int alignmentAsPowerOfTwo)
+	public GlobalVariable(@NotNull @NonNls final String name, @NotNull final Linkage linkage, @NotNull final Visibility visibility, @Nullable final DllStorageClass dllStorageClass, @Nullable final ThreadLocalStorageModel threadLocalStorageModel, final boolean hasUnnamedAddress, final int addressSpace, final boolean isConstant, @NotNull final T type, @Nullable final Constant<T> initializerConstant, @Nullable final SectionName sectionName, @Nullable final ComdatIdentifier comdatIdentifier, final int alignmentAsPowerOfTwo)
 	{
 		super(name, linkage, visibility, dllStorageClass, threadLocalStorageModel, hasUnnamedAddress);
 		if (alignmentAsPowerOfTwo < AutomaticAlignment)

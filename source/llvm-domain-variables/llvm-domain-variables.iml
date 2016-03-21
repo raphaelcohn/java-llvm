@@ -13,5 +13,6 @@
     <orderEntry type="module" module-name="llvm-domain" />
     <orderEntry type="module" module-name="llvm-domain-comdat" />
     <orderEntry type="module" module-name="llvm-domain-types" />
+    <orderEntry type="module" module-name="llvm-domain-constants" />
   </component>
 </module>
