@@ -30,14 +30,14 @@ import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyVal
 import static java.lang.String.format;
 import static java.util.Locale.ENGLISH;
 
-public final class ArrayType implements AggregateType
+public final class ArrayType<T extends TypeWithSize> implements AggregateType
 {
 	@NotNull private static final byte[] SpaceXSpace = encodeUtf8BytesWithCertaintyValueIsValid(" x ");
 
-	@NotNull private final TypeWithSize elementType;
+	@NotNull private final T elementType;
 	private final int[] dimensionLengths;
 
-	public ArrayType(@NotNull final TypeWithSize elementType, final int... dimensionLengths)
+	public ArrayType(@NotNull final T elementType, final int... dimensionLengths)
 	{
 		final int length = dimensionLengths.length;
 		if (length == 0)

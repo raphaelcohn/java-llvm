@@ -22,39 +22,14 @@
 
 package com.stormmq.llvm.domain.types.firstClassTypes;
 
-import com.stormmq.byteWriters.ByteWriter;
 import org.jetbrains.annotations.NotNull;
 
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
-import static java.lang.String.format;
-import static java.util.Locale.ENGLISH;
-
-public final class VectorType<T extends PrimitiveSingleValueType> implements SingleValueType
+public final class MetadataType extends AbstractFixedFirstClassType
 {
-	@NotNull private static final byte[] SpaceXSpace = encodeUtf8BytesWithCertaintyValueIsValid(" x ");
+	@NotNull public static final FirstClassType Metadata = new MetadataType();
 
-	@NotNull private final T primitiveSingleValueType;
-	public final int numberOfElements;
-
-	public VectorType(@NotNull final T primitiveSingleValueType, final int numberOfElements)
+	private MetadataType()
 	{
-		if (numberOfElements < 1)
-		{
-			throw new IllegalArgumentException(format(ENGLISH, "Number of element can not be '%1$s' - it must be greater than zero", numberOfElements));
-		}
-		this.primitiveSingleValueType = primitiveSingleValueType;
-		this.numberOfElements = numberOfElements;
-	}
-
-	@Override
-	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
-	{
-		byteWriter.writeByte('<');
-
-		byteWriter.writeUtf8EncodedStringWithCertainty(Integer.toString(numberOfElements));
-		byteWriter.writeBytes(SpaceXSpace);
-		primitiveSingleValueType.write(byteWriter);
-
-		byteWriter.writeByte('>');
+		super("metadata");
 	}
 }

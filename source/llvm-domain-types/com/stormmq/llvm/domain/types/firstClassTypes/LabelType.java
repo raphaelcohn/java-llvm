@@ -20,13 +20,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.target.writers;
+package com.stormmq.llvm.domain.types.firstClassTypes;
 
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.*;
 
-@FunctionalInterface
-public interface DataLayoutSpecificationFieldWriter<X extends Exception>
+public final class LabelType extends AbstractFixedFirstClassType
 {
-	void writeField(@NonNls @NotNull final String value) throws X;
+	@NotNull public static final FirstClassType Label = new LabelType();
+
+	private LabelType()
+	{
+		super("label");
+	}
 }

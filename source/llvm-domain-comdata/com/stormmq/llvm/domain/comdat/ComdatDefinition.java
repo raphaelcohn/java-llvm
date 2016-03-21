@@ -30,15 +30,14 @@ import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyVal
 import static java.lang.String.format;
 import static java.util.Locale.ENGLISH;
 
-public final class ComdatGroup implements Writable
+public final class ComdatDefinition implements Writable
 {
 	@NotNull private static final byte[] Middle = encodeUtf8BytesWithCertaintyValueIsValid(" = comdat ");
-	@NotNull private static final byte[] End = encodeUtf8BytesWithCertaintyValueIsValid(")");
 
 	@NotNull private final ComdatIdentifier comdatIdentifier;
 	@NotNull private final ComdatSelectionKind comdatSelectionKind;
 
-	public ComdatGroup(@NotNull final ComdatIdentifier comdatIdentifier, @NotNull final ComdatSelectionKind comdatSelectionKind)
+	public ComdatDefinition(@NotNull final ComdatIdentifier comdatIdentifier, @NotNull final ComdatSelectionKind comdatSelectionKind)
 	{
 		this.comdatIdentifier = comdatIdentifier;
 		this.comdatSelectionKind = comdatSelectionKind;
@@ -72,7 +71,7 @@ public final class ComdatGroup implements Writable
 			return false;
 		}
 
-		final ComdatGroup that = (ComdatGroup) o;
+		final ComdatDefinition that = (ComdatDefinition) o;
 
 		return comdatIdentifier.equals(that.comdatIdentifier) && comdatSelectionKind == that.comdatSelectionKind;
 	}

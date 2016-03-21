@@ -20,18 +20,56 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.types.firstClassTypes;
+package com.stormmq.llvm.domain.variables.constants.complexConstants;
 
 import com.stormmq.byteWriters.ByteWriter;
-import org.jetbrains.annotations.NonNls;
+import com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.StructureType;
+import com.stormmq.llvm.domain.variables.constants.Constant;
 import org.jetbrains.annotations.NotNull;
 
-public final class MetadataFirstClassType extends AbstractFixedFirstClassType
+public final class StructureConstant implements ComplexConstant<StructureType>
 {
-	@NotNull public static final FirstClassType Metadata = new MetadataFirstClassType();
+	@NotNull private static final byte[] Start = {'{', ' '};
+	@NotNull private static final byte[] CommaSpace = {',', ' '};
+	@NotNull private static final byte[] End = {' ', '}'};
 
-	private MetadataFirstClassType()
+	@NotNull private final StructureType structureType;
+	@NotNull private final Constant<?>[] values;
+
+	public StructureConstant(@NotNull final StructureType structureType, @NotNull final Constant<?>... values)
 	{
-		super("metadata");
+		this.structureType = structureType;
+		this.values = values;
+	}
+
+	@NotNull
+	@Override
+	public StructureType type()
+	{
+		return structureType;
+	}
+
+	@Override
+	public int alignment()
+	{
+		return AutomaticAlignment;
+	}
+
+	@Override
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	{
+		byteWriter.writeBytes(Start);
+
+		final int length = values.length;
+		for (int index = 0; index < length; index++)
+		{
+			if (index != 0)
+			{
+				byteWriter.writeBytes(CommaSpace);
+			}
+			values[index].write(byteWriter);
+		}
+
+		byteWriter.writeBytes(End);
 	}
 }

@@ -20,13 +20,42 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.target.writers;
+package com.stormmq.llvm.domain.variables.constants.simpleConstants.floatingPointConstants;
 
-import org.jetbrains.annotations.NonNls;
+import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.llvm.domain.types.firstClassTypes.FloatingPointValueType;
 import org.jetbrains.annotations.NotNull;
 
-@FunctionalInterface
-public interface TargetTripleWriter<X extends Exception>
+import static com.stormmq.llvm.domain.types.firstClassTypes.FloatingPointValueType._double;
+
+public final class DoubleConstant implements FloatingPointConstant
 {
-	void writeTargetTriple(@NotNull @NonNls final String targetTriple) throws X;
+	@NotNull private static final byte[] _0x = {'0', 'x'};
+
+	private final long value;
+
+	public DoubleConstant(final long value)
+	{
+		this.value = value;
+	}
+
+	@Override
+	@NotNull
+	public FloatingPointValueType type()
+	{
+		return _double;
+	}
+
+	@Override
+	public int alignment()
+	{
+		return 8;
+	}
+
+	@Override
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	{
+		byteWriter.writeBytes(_0x);
+		byteWriter.writeUtf8EncodedStringWithCertainty(Long.toHexString(value));
+	}
 }

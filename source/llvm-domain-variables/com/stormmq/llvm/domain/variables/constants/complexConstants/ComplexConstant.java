@@ -20,14 +20,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.target.writers;
+package com.stormmq.llvm.domain.variables.constants.complexConstants;
 
-import com.stormmq.llvm.domain.target.dataLayout.DataLayoutSpecification;
-import com.stormmq.llvm.domain.target.triple.TargetTriple;
-import org.jetbrains.annotations.NotNull;
+import com.stormmq.llvm.domain.types.Type;
+import com.stormmq.llvm.domain.variables.constants.Constant;
 
-@FunctionalInterface
-public interface TargetWriter<X extends Exception>
+public interface ComplexConstant<T extends Type> extends Constant<T>
 {
-	void writeTarget(@NotNull final DataLayoutSpecification dataLayoutSpecification, @NotNull final TargetTriple targetTriple) throws X;
 }

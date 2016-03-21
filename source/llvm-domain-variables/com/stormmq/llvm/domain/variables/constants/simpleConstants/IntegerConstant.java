@@ -20,36 +20,40 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.target.writers;
+package com.stormmq.llvm.domain.variables.constants.simpleConstants;
 
 import com.stormmq.byteWriters.ByteWriter;
-import org.jetbrains.annotations.NonNls;
+import com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType;
+import com.stormmq.llvm.domain.variables.constants.Constant;
 import org.jetbrains.annotations.NotNull;
 
-public final class ByteWriterDataLayoutSpecificationFieldWriter<X extends Exception> implements DataLayoutSpecificationFieldWriter<X>
+public final class IntegerConstant implements Constant<IntegerValueType>
 {
-	private static final char Hyphen = '-';
-	@NotNull private final ByteWriter<X> byteWriter;
-	private boolean isAfterFirst;
+	@NotNull private final IntegerValueType integerValueType;
+	private final long value;
 
-	public ByteWriterDataLayoutSpecificationFieldWriter(@NotNull final ByteWriter<X> byteWriter)
+	public IntegerConstant(@NotNull final IntegerValueType integerValueType, final long value)
 	{
-		this.byteWriter = byteWriter;
-		isAfterFirst = false;
+		this.integerValueType = integerValueType;
+		this.value = value;
 	}
 
 	@Override
-	public void writeField(@NonNls @NotNull final String value) throws X
+	@NotNull
+	public IntegerValueType type()
 	{
-		if (isAfterFirst)
-		{
-			byteWriter.writeByte(Hyphen);
-		}
-		else
-		{
-			isAfterFirst = false;
-		}
+		return integerValueType;
+	}
 
-		byteWriter.writeUtf8EncodedStringWithCertainty(value);
+	@Override
+	public int alignment()
+	{
+		return integerValueType.alignment;
+	}
+
+	@Override
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	{
+		byteWriter.writeUtf8EncodedStringWithCertainty(Long.toString(value));
 	}
 }

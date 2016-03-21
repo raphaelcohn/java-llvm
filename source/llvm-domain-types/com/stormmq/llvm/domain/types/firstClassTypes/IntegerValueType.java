@@ -23,10 +23,7 @@
 package com.stormmq.llvm.domain.types.firstClassTypes;
 
 import com.stormmq.byteWriters.ByteWriter;
-import com.stormmq.string.StringUtilities;
-import org.jetbrains.annotations.*;
-
-import java.util.Locale;
+import org.jetbrains.annotations.NotNull;
 
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
 import static java.lang.String.format;
@@ -34,17 +31,19 @@ import static java.util.Locale.ENGLISH;
 
 public final class IntegerValueType implements PrimitiveSingleValueType
 {
-	@NotNull public static final IntegerValueType i8 = new IntegerValueType(8);
-	@NotNull public static final IntegerValueType i16 = new IntegerValueType(16);
-	@NotNull public static final IntegerValueType i32 = new IntegerValueType(32);
-	@NotNull public static final IntegerValueType i64 = new IntegerValueType(64);
-	@NotNull public static final IntegerValueType i128 = new IntegerValueType(128);
+	@NotNull public static final IntegerValueType i1 = new IntegerValueType(1, 1);
+	@NotNull public static final IntegerValueType i8 = new IntegerValueType(8, 1);
+	@NotNull public static final IntegerValueType i16 = new IntegerValueType(16, 2);
+	@NotNull public static final IntegerValueType i32 = new IntegerValueType(32, 4);
+	@NotNull public static final IntegerValueType i64 = new IntegerValueType(64, 8);
+	@NotNull public static final IntegerValueType i128 = new IntegerValueType(128, 16);
 
 	private static final int MaximumNumberOfBits = 2 << 23 - 1;
 	@NotNull private final String stringValue;
 	@SuppressWarnings("FieldNotUsedInToString") @NotNull private final byte[] llvmAssemblyEncoding;
+	@SuppressWarnings("FieldNotUsedInToString") public final int alignment;
 
-	public IntegerValueType(final int numberOfBits)
+	public IntegerValueType(final int numberOfBits, final int alignment)
 	{
 		if (numberOfBits < 1)
 		{
@@ -58,6 +57,8 @@ public final class IntegerValueType implements PrimitiveSingleValueType
 
 		stringValue = 'i' + Integer.toString(numberOfBits);
 		llvmAssemblyEncoding = encodeUtf8BytesWithCertaintyValueIsValid(stringValue);
+
+		this.alignment = alignment;
 	}
 
 	@Override

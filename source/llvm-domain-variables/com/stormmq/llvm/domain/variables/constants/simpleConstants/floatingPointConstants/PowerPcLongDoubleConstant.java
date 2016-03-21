@@ -20,18 +20,45 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.types.firstClassTypes;
+package com.stormmq.llvm.domain.variables.constants.simpleConstants.floatingPointConstants;
 
 import com.stormmq.byteWriters.ByteWriter;
-import org.jetbrains.annotations.NonNls;
+import com.stormmq.llvm.domain.types.firstClassTypes.FloatingPointValueType;
 import org.jetbrains.annotations.NotNull;
 
-public final class TokenFirstClassType extends AbstractFixedFirstClassType
-{
-	@NotNull public static final FirstClassType Token = new TokenFirstClassType();
+import static com.stormmq.llvm.domain.types.firstClassTypes.FloatingPointValueType.ppc_fp128;
 
-	private TokenFirstClassType()
+public final class PowerPcLongDoubleConstant implements FloatingPointConstant
+{
+	@NotNull private static final byte[] _0xM = {'0', 'x', 'M'};
+
+	private final long valueLeft;
+	private final long valueRight;
+
+	public PowerPcLongDoubleConstant(final long valueLeft, final long valueRight)
 	{
-		super("token");
+		this.valueLeft = valueLeft;
+		this.valueRight = valueRight;
+	}
+
+	@Override
+	@NotNull
+	public FloatingPointValueType type()
+	{
+		return ppc_fp128;
+	}
+
+	@Override
+	public int alignment()
+	{
+		return 16;
+	}
+
+	@Override
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	{
+		byteWriter.writeBytes(_0xM);
+		byteWriter.writeUtf8EncodedStringWithCertainty(Long.toHexString(valueLeft));
+		byteWriter.writeUtf8EncodedStringWithCertainty(Long.toHexString(valueRight));
 	}
 }

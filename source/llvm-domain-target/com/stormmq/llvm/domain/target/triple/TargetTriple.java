@@ -22,18 +22,22 @@
 
 package com.stormmq.llvm.domain.target.triple;
 
-import com.stormmq.llvm.domain.target.writers.TargetTripleWriter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.llvm.domain.Writable;
+import org.jetbrains.annotations.*;
 
+import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
 import static java.lang.String.format;
 import static java.util.Locale.ENGLISH;
 
-public final class TargetTriple
+public final class TargetTriple implements Writable
 {
-	@NotNull private final Architecture architecture;
-	@NotNull private final TargetOperatingSystem operatingSystem;
-	@Nullable private final String environment;
+	@NotNull private static final byte[] TargetTripleStart = encodeUtf8BytesWithCertaintyValueIsValid("target triple = \"");
+	@SuppressWarnings("HardcodedLineSeparator") @NotNull private static final byte[] End = encodeUtf8BytesWithCertaintyValueIsValid("\"\n");
+
+	@SuppressWarnings("FieldNotUsedInToString") @NotNull private final Architecture architecture;
+	@SuppressWarnings("FieldNotUsedInToString") @NotNull private final TargetOperatingSystem operatingSystem;
+	@SuppressWarnings("FieldNotUsedInToString") @Nullable private final String environment;
 
 	public TargetTriple(@NotNull final Architecture architecture, @NotNull final TargetOperatingSystem operatingSystem, @Nullable final String environment)
 	{
@@ -57,13 +61,24 @@ public final class TargetTriple
 		this.environment = environment;
 	}
 
-	public <X extends Exception> void write(@NotNull final TargetTripleWriter<X> targetTripleWriter) throws X
+	@Override
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
 	{
-		targetTripleWriter.writeTargetTriple(toString());
+		byteWriter.writeBytes(TargetTripleStart);
+		byteWriter.writeUtf8EncodedStringWithCertainty(toTargetTriple());
+		byteWriter.writeBytes(End);
 	}
 
 	@Override
+	@NotNull
 	public String toString()
+	{
+		return toTargetTriple();
+	}
+
+	@NonNls
+	@NotNull
+	private String toTargetTriple()
 	{
 		return environment == null ? format(ENGLISH, "%1$s-%2$s", architecture, operatingSystem) : format(ENGLISH, "%1$s-%2$s-%3$s", architecture, operatingSystem, environment);
 	}

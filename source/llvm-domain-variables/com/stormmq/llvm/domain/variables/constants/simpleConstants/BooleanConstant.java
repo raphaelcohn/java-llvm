@@ -20,41 +20,45 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.types.firstClassTypes;
+package com.stormmq.llvm.domain.variables.constants.simpleConstants;
 
 import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
+import static com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType.i1;
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
-import static java.lang.String.format;
-import static java.util.Locale.ENGLISH;
 
-public final class VectorType<T extends PrimitiveSingleValueType> implements SingleValueType
+public enum BooleanConstant implements SimpleConstant<IntegerValueType>
 {
-	@NotNull private static final byte[] SpaceXSpace = encodeUtf8BytesWithCertaintyValueIsValid(" x ");
+	True("true"),
+	False("false"),
+	;
 
-	@NotNull private final T primitiveSingleValueType;
-	public final int numberOfElements;
+	@NotNull private final byte[] llAssemblyEncoding;
 
-	public VectorType(@NotNull final T primitiveSingleValueType, final int numberOfElements)
+	BooleanConstant(@NotNull @NonNls final String value)
 	{
-		if (numberOfElements < 1)
-		{
-			throw new IllegalArgumentException(format(ENGLISH, "Number of element can not be '%1$s' - it must be greater than zero", numberOfElements));
-		}
-		this.primitiveSingleValueType = primitiveSingleValueType;
-		this.numberOfElements = numberOfElements;
+		llAssemblyEncoding = encodeUtf8BytesWithCertaintyValueIsValid(value);
+	}
+
+	@Override
+	@NotNull
+	public IntegerValueType type()
+	{
+		return i1;
+	}
+
+	@Override
+	public int alignment()
+	{
+		return 1;
 	}
 
 	@Override
 	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
 	{
-		byteWriter.writeByte('<');
-
-		byteWriter.writeUtf8EncodedStringWithCertainty(Integer.toString(numberOfElements));
-		byteWriter.writeBytes(SpaceXSpace);
-		primitiveSingleValueType.write(byteWriter);
-
-		byteWriter.writeByte('>');
+		byteWriter.writeBytes(llAssemblyEncoding);
 	}
 }

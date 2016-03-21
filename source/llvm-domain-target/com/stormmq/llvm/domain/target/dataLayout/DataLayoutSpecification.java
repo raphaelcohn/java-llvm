@@ -22,18 +22,23 @@
 
 package com.stormmq.llvm.domain.target.dataLayout;
 
+import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.llvm.domain.Writable;
 import com.stormmq.llvm.domain.target.triple.Architecture;
-import com.stormmq.llvm.domain.target.writers.DataLayoutSpecificationFieldWriter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.*;
 
-import static com.stormmq.llvm.domain.target.triple.Architecture.x86_64;
 import static com.stormmq.llvm.domain.target.dataLayout.Endianness.BigEndian;
 import static com.stormmq.llvm.domain.target.dataLayout.Endianness.LittleEndian;
 import static com.stormmq.llvm.domain.target.dataLayout.Mangling.MachO;
+import static com.stormmq.llvm.domain.target.triple.Architecture.x86_64;
+import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
 
-public final class DataLayoutSpecification
+public final class DataLayoutSpecification implements Writable
 {
+	@NotNull private static final byte[] TargetDataLayoutStart = encodeUtf8BytesWithCertaintyValueIsValid("target datalayout = \"");
+	@SuppressWarnings("HardcodedLineSeparator") @NotNull private static final byte[] End = encodeUtf8BytesWithCertaintyValueIsValid("\"\n");
+	private static final byte Hyphen = '-';
+
 	@NotNull public static final Endianness DefaultEndianness = BigEndian; // Mach OS X is LittleEndian
 	public static final int DefaultStackAlignmentSizeInBytes = 0; // Mac OS X is 16
 	@NotNull public static final Sizing DefaultPointer64Sizing = new Sizing(64);
@@ -99,29 +104,38 @@ public final class DataLayoutSpecification
 		this.architecture = architecture;
 	}
 
-	// "e-m:o-i64:64-f80:128-n8:16:32:64-S128"
-	// default a:
-	public <X extends Exception> void write(@NotNull final DataLayoutSpecificationFieldWriter<X> dataLayoutSpecificationFieldWriter) throws X
+	@Override
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
 	{
-		dataLayoutSpecificationFieldWriter.writeField(endianness.dataLayoutEncoding);
-		dataLayoutSpecificationFieldWriter.writeField('S' + stackAlignmentSizeInBits);
-		dataLayoutSpecificationFieldWriter.writeField("n:" + architecture.nativeIntegerWidths);
-		dataLayoutSpecificationFieldWriter.writeField("p:64" + pointer64Sizing.dataLayoutEncoding);
-		dataLayoutSpecificationFieldWriter.writeField("i1" + booleanSizing.dataLayoutEncoding);
-		dataLayoutSpecificationFieldWriter.writeField("i8" + byteSizing.dataLayoutEncoding);
-		dataLayoutSpecificationFieldWriter.writeField("i16" + shortSizing.dataLayoutEncoding);
-		dataLayoutSpecificationFieldWriter.writeField("i32" + intSizing.dataLayoutEncoding);
-		dataLayoutSpecificationFieldWriter.writeField("i64" + longSizing.dataLayoutEncoding);
-		dataLayoutSpecificationFieldWriter.writeField("f16" + halfSizing.dataLayoutEncoding);
-		dataLayoutSpecificationFieldWriter.writeField("f32" + floatSizing.dataLayoutEncoding);
-		dataLayoutSpecificationFieldWriter.writeField("f64" + doubleSizing.dataLayoutEncoding);
-		dataLayoutSpecificationFieldWriter.writeField("f80" + longDoubleSizing.dataLayoutEncoding);
-		dataLayoutSpecificationFieldWriter.writeField("f128" + quadSizing.dataLayoutEncoding);
-		dataLayoutSpecificationFieldWriter.writeField("v64" + vector64Sizing.dataLayoutEncoding);
-		dataLayoutSpecificationFieldWriter.writeField("v128" + vector128Sizing.dataLayoutEncoding);
-		dataLayoutSpecificationFieldWriter.writeField('a' + aggregateTypeAlignment.dataLayoutEncoding);
-		dataLayoutSpecificationFieldWriter.writeField("m:" + mangling.dataLayoutEncoding);
-		dataLayoutSpecificationFieldWriter.writeField("n:" + architecture.nativeIntegerWidths);
+		byteWriter.writeBytes(TargetDataLayoutStart);
+
+		byteWriter.writeUtf8EncodedStringWithCertainty(endianness.dataLayoutEncoding);
+		writeField(byteWriter, "S", stackAlignmentSizeInBits);
+		writeField(byteWriter, "n:", architecture.nativeIntegerWidths);
+		writeField(byteWriter, "p:64", pointer64Sizing.dataLayoutEncoding);
+		writeField(byteWriter, "i1", booleanSizing.dataLayoutEncoding);
+		writeField(byteWriter, "i8", byteSizing.dataLayoutEncoding);
+		writeField(byteWriter, "i16", shortSizing.dataLayoutEncoding);
+		writeField(byteWriter, "i32", intSizing.dataLayoutEncoding);
+		writeField(byteWriter, "i64", longSizing.dataLayoutEncoding);
+		writeField(byteWriter, "f16", halfSizing.dataLayoutEncoding);
+		writeField(byteWriter, "f32", floatSizing.dataLayoutEncoding);
+		writeField(byteWriter, "f64", doubleSizing.dataLayoutEncoding);
+		writeField(byteWriter, "f80", longDoubleSizing.dataLayoutEncoding);
+		writeField(byteWriter, "f128", quadSizing.dataLayoutEncoding);
+		writeField(byteWriter, "v64", vector64Sizing.dataLayoutEncoding);
+		writeField(byteWriter, "v128", vector128Sizing.dataLayoutEncoding);
+		writeField(byteWriter, "a", aggregateTypeAlignment.dataLayoutEncoding);
+		writeField(byteWriter, "m:", mangling.dataLayoutEncoding);
+		writeField(byteWriter, "n:", architecture.nativeIntegerWidths);
+
+		byteWriter.writeBytes(End);
 	}
 
+	private static <X extends Exception> void writeField(@NotNull final ByteWriter<X> byteWriter, @NotNull @NonNls final String dataLayoutEncodingA, @NotNull @NonNls final String dataLayoutEncodingB) throws X
+	{
+		byteWriter.writeByte(Hyphen);
+		byteWriter.writeUtf8EncodedStringWithCertainty(dataLayoutEncodingA);
+		byteWriter.writeUtf8EncodedStringWithCertainty(dataLayoutEncodingB);
+	}
 }

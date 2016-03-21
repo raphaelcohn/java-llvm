@@ -20,26 +20,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.target;
+package com.stormmq.llvm.domain.variables.constants;
 
-import com.stormmq.llvm.domain.target.dataLayout.DataLayoutSpecification;
-import com.stormmq.llvm.domain.target.triple.TargetTriple;
-import com.stormmq.llvm.domain.target.writers.TargetWriter;
+import com.stormmq.llvm.domain.Writable;
+import com.stormmq.llvm.domain.types.Type;
 import org.jetbrains.annotations.NotNull;
 
-public final class Target
+public interface Constant<T extends Type> extends Writable
 {
-	@NotNull private final DataLayoutSpecification dataLayoutSpecification;
-	@NotNull private final TargetTriple targetTriple;
+	@NotNull
+	T type();
 
-	public Target(@NotNull final DataLayoutSpecification dataLayoutSpecification, @NotNull final TargetTriple targetTriple)
-	{
-		this.dataLayoutSpecification = dataLayoutSpecification;
-		this.targetTriple = targetTriple;
-	}
-
-	public <X extends Exception> void write(@NotNull final TargetWriter<X> targetWriter) throws X
-	{
-		targetWriter.writeTarget(dataLayoutSpecification, targetTriple);
-	}
+	int alignment();
 }

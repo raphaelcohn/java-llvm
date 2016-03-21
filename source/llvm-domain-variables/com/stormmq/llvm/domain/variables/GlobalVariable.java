@@ -27,6 +27,7 @@ import com.stormmq.llvm.domain.*;
 import com.stormmq.llvm.domain.comdat.ComdatIdentifier;
 import com.stormmq.llvm.domain.names.SectionName;
 import com.stormmq.llvm.domain.types.Type;
+import com.stormmq.llvm.domain.variables.constants.Constant;
 import org.jetbrains.annotations.*;
 
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
@@ -43,12 +44,12 @@ public final class GlobalVariable extends AbstractVariable
 	private final int addressSpace;
 	private final boolean isConstant;
 	@NotNull private final Type type;
-	@Nullable private final Object initializerConstant;
+	@Nullable private final Constant initializerConstant;
 	@Nullable private final SectionName sectionName;
 	@Nullable private final ComdatIdentifier comdatIdentifier;
 	private final int alignmentAsPowerOfTwo;
 
-	public GlobalVariable(@NotNull @NonNls final String name, @NotNull final Linkage linkage, @NotNull final Visibility visibility, @Nullable final DllStorageClass dllStorageClass, @Nullable final ThreadLocalStorageModel threadLocalStorageModel, final boolean hasUnnamedAddress, final int addressSpace, final boolean isConstant, @NotNull final Type type, @Nullable final Object initializerConstant, @Nullable final SectionName sectionName, @Nullable final ComdatIdentifier comdatIdentifier, final int alignmentAsPowerOfTwo)
+	public GlobalVariable(@NotNull @NonNls final String name, @NotNull final Linkage linkage, @NotNull final Visibility visibility, @Nullable final DllStorageClass dllStorageClass, @Nullable final ThreadLocalStorageModel threadLocalStorageModel, final boolean hasUnnamedAddress, final int addressSpace, final boolean isConstant, @NotNull final Type type, @Nullable final Constant initializerConstant, @Nullable final SectionName sectionName, @Nullable final ComdatIdentifier comdatIdentifier, final int alignmentAsPowerOfTwo)
 	{
 		super(name, linkage, visibility, dllStorageClass, threadLocalStorageModel, hasUnnamedAddress);
 		if (alignmentAsPowerOfTwo < AutomaticAlignment)
@@ -97,7 +98,7 @@ public final class GlobalVariable extends AbstractVariable
 
 		if (initializerConstant != null)
 		{
-			throw new UnsupportedOperationException("initializer constants are not yet supported");
+			initializerConstant.write(byteWriter);
 		}
 
 		if (sectionName != null)

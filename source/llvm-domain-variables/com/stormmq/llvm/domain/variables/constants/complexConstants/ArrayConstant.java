@@ -20,41 +20,58 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.types.firstClassTypes;
+package com.stormmq.llvm.domain.variables.constants.complexConstants;
 
 import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.llvm.domain.types.TypeWithSize;
+import com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.ArrayType;
+import com.stormmq.llvm.domain.variables.constants.Constant;
 import org.jetbrains.annotations.NotNull;
 
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
-import static java.lang.String.format;
-import static java.util.Locale.ENGLISH;
-
-public final class VectorType<T extends PrimitiveSingleValueType> implements SingleValueType
+public final class ArrayConstant<T extends TypeWithSize> implements ComplexConstant<ArrayType<T>>
 {
-	@NotNull private static final byte[] SpaceXSpace = encodeUtf8BytesWithCertaintyValueIsValid(" x ");
+	@NotNull private static final byte[] Start = {'[', ' '};
+	@NotNull private static final byte[] CommaSpace = {',', ' '};
+	@NotNull private static final byte[] End = {' ', ']'};
 
-	@NotNull private final T primitiveSingleValueType;
-	public final int numberOfElements;
+	@NotNull private final ArrayType<T> arrayType;
+	@NotNull private final Constant<T>[] values;
 
-	public VectorType(@NotNull final T primitiveSingleValueType, final int numberOfElements)
+	@SafeVarargs
+	public ArrayConstant(@NotNull final ArrayType<T> arrayType, @NotNull final Constant<T>... values)
 	{
-		if (numberOfElements < 1)
-		{
-			throw new IllegalArgumentException(format(ENGLISH, "Number of element can not be '%1$s' - it must be greater than zero", numberOfElements));
-		}
-		this.primitiveSingleValueType = primitiveSingleValueType;
-		this.numberOfElements = numberOfElements;
+		this.arrayType = arrayType;
+		this.values = values;
+	}
+
+	@Override
+	@NotNull
+	public ArrayType<T> type()
+	{
+		return arrayType;
+	}
+
+	@Override
+	public int alignment()
+	{
+		return AutomaticAlignment;
 	}
 
 	@Override
 	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
 	{
-		byteWriter.writeByte('<');
+		byteWriter.writeBytes(Start);
 
-		byteWriter.writeUtf8EncodedStringWithCertainty(Integer.toString(numberOfElements));
-		byteWriter.writeBytes(SpaceXSpace);
-		primitiveSingleValueType.write(byteWriter);
+		final int length = values.length;
+		for(int index = 0; index < length; index++)
+		{
+			if (index != 0)
+			{
+				byteWriter.writeBytes(CommaSpace);
+			}
+			values[index].write(byteWriter);
+		}
 
-		byteWriter.writeByte('>');
+		byteWriter.writeBytes(End);
 	}
 }

@@ -20,41 +20,42 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.types.firstClassTypes;
+package com.stormmq.llvm.domain.variables.constants.simpleConstants.floatingPointConstants;
 
 import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.llvm.domain.types.firstClassTypes.FloatingPointValueType;
 import org.jetbrains.annotations.NotNull;
 
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
-import static java.lang.String.format;
-import static java.util.Locale.ENGLISH;
+import static com.stormmq.llvm.domain.types.firstClassTypes.FloatingPointValueType._float;
 
-public final class VectorType<T extends PrimitiveSingleValueType> implements SingleValueType
+public final class FloatConstant implements FloatingPointConstant
 {
-	@NotNull private static final byte[] SpaceXSpace = encodeUtf8BytesWithCertaintyValueIsValid(" x ");
+	@NotNull private static final byte[] _0xH = {'0', 'x'};
 
-	@NotNull private final T primitiveSingleValueType;
-	public final int numberOfElements;
+	private final float value;
 
-	public VectorType(@NotNull final T primitiveSingleValueType, final int numberOfElements)
+	public FloatConstant(final float value)
 	{
-		if (numberOfElements < 1)
-		{
-			throw new IllegalArgumentException(format(ENGLISH, "Number of element can not be '%1$s' - it must be greater than zero", numberOfElements));
-		}
-		this.primitiveSingleValueType = primitiveSingleValueType;
-		this.numberOfElements = numberOfElements;
+		this.value = value;
+	}
+
+	@Override
+	@NotNull
+	public FloatingPointValueType type()
+	{
+		return _float;
+	}
+
+	@Override
+	public int alignment()
+	{
+		return 8;
 	}
 
 	@Override
 	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
 	{
-		byteWriter.writeByte('<');
-
-		byteWriter.writeUtf8EncodedStringWithCertainty(Integer.toString(numberOfElements));
-		byteWriter.writeBytes(SpaceXSpace);
-		primitiveSingleValueType.write(byteWriter);
-
-		byteWriter.writeByte('>');
+		byteWriter.writeBytes(_0xH);
+		byteWriter.writeUtf8EncodedStringWithCertainty(Float.toHexString(value));
 	}
 }

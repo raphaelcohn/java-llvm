@@ -11,5 +11,11 @@
     <orderEntry type="module" module-name="byteWriters" />
     <orderEntry type="module" module-name="string" />
     <orderEntry type="module" module-name="llvm-domain" />
+    <orderEntry type="module" module-name="llvm-domain-attributes" />
+    <orderEntry type="module" module-name="llvm-domain-comdat" />
+    <orderEntry type="module" module-name="llvm-domain-types" />
+    <orderEntry type="module" module-name="llvm-domain-target" />
+    <orderEntry type="module" module-name="llvm-domain-function" />
+    <orderEntry type="module" module-name="llvm-domain-variables" />
   </component>
 </module>

@@ -20,17 +20,41 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.types.firstClassTypes;
+package com.stormmq.llvm.domain.variables.constants.simpleConstants.floatingPointConstants;
 
 import com.stormmq.byteWriters.ByteWriter;
-import org.jetbrains.annotations.*;
+import com.stormmq.llvm.domain.types.firstClassTypes.FloatingPointValueType;
+import org.jetbrains.annotations.NotNull;
 
-public final class LabelFirstClassType extends AbstractFixedFirstClassType
+import static com.stormmq.llvm.domain.types.firstClassTypes.FloatingPointValueType.x86_fp80;
+
+public final class X86LongDoubleConstant implements FloatingPointConstant
 {
-	@NotNull public static final FirstClassType Label = new LabelFirstClassType();
+	@NotNull private static final byte[] _0xK = {'0', 'x', 'K'};
+	@NotNull private final String twentyHexadecimalCharacters;
 
-	private LabelFirstClassType()
+	public X86LongDoubleConstant(@NotNull final String twentyHexadecimalCharacters)
 	{
-		super("label");
+		this.twentyHexadecimalCharacters = twentyHexadecimalCharacters;
+	}
+
+	@Override
+	@NotNull
+	public FloatingPointValueType type()
+	{
+		return x86_fp80;
+	}
+
+	@Override
+	public int alignment()
+	{
+		return 16;
+	}
+
+	@Override
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	{
+		byteWriter.writeBytes(_0xK);
+		byteWriter.writeUtf8EncodedStringWithCertainty(twentyHexadecimalCharacters);
 	}
 }

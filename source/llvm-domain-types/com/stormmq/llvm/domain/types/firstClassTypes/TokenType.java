@@ -20,24 +20,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.target.writers;
+package com.stormmq.llvm.domain.types.firstClassTypes;
 
-import com.stormmq.byteWriters.ByteWriter;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-public final class ByteWriterTargetTripleWriter<X extends Exception> implements TargetTripleWriter<X>
+public final class TokenType extends AbstractFixedFirstClassType
 {
-	@NotNull private final ByteWriter<X> byteWriter;
+	@NotNull public static final TokenType Token = new TokenType();
 
-	public ByteWriterTargetTripleWriter(@NotNull final ByteWriter<X> byteWriter)
+	private TokenType()
 	{
-		this.byteWriter = byteWriter;
-	}
-
-	@Override
-	public void writeTargetTriple(@NotNull @NonNls final String targetTriple) throws X
-	{
-		byteWriter.writeUtf8EncodedStringWithCertainty(targetTriple);
+		super("token");
 	}
 }
