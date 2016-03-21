@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+import static com.stormmq.llvm.domain.attributes.functionAttributes.TargetFeature.*;
 import static java.util.Arrays.asList;
 
 public final class PlusEnumSetKeyValueFunctionAttribute<E extends Enum<E>> extends AbstractKeyValueFunctionAttribute

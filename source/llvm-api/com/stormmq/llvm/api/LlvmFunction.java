@@ -16,6 +16,4 @@ public @interface LlvmFunction
 	@NotNull CallingConvention callingConvention() default ccc;
 
 	@NotNull VisibilityStyle visibility() default _default;
-
-	@Nullable DllStorageClass dllStorageClass();
 }

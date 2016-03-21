@@ -4,7 +4,7 @@
 set -u
 set -e
 
-toolsPath='/usr/local/opt/llvm37/lib/llvm-3.7/bin'
+toolsPath='/usr/local/opt/llvm38/lib/llvm-3.8/bin'
 systemHeadersPath='/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/usr/include'
 outFolderPath='../out/examples'
 
