@@ -25,12 +25,14 @@ package com.stormmq.llvm.domain.function;
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.*;
 import com.stormmq.llvm.domain.attributes.AttributeGroup;
+import com.stormmq.llvm.domain.function.attributes.FunctionAttributeGroup;
 import com.stormmq.llvm.domain.function.attributes.parameterAttributes.ParameterAttribute;
 import com.stormmq.llvm.domain.identifiers.GlobalIdentifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.stormmq.llvm.domain.Writable.writeSpace;
+import static com.stormmq.llvm.domain.function.attributes.FunctionAttributeGroup.writeFunctionAttributes;
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
 
 public final class FunctionDeclaration implements Writable
@@ -48,13 +50,13 @@ public final class FunctionDeclaration implements Writable
 	@NotNull private final GlobalIdentifier functionIdentifier;
 	@NotNull private final FormalParameter[] parameters;
 	private final boolean hasUnnamedAddress;
+	@NotNull private final FunctionAttributeGroup functionAttributes;
 	private final int alignment;
 	@Nullable private final GarbageCollectorStrategyName garbageCollectorStrategyName;
 
 	// also prefix, prologue
-	public FunctionDeclaration(@NotNull final Linkage linkage, @NotNull final Visibility visibility, @Nullable final DllStorageClass dllStorageClass, @NotNull final CallingConvention callingConvention, @NotNull final AttributeGroup<ParameterAttribute> returnAttributes, @NotNull final FormalParameter resultType, @NotNull final GlobalIdentifier functionIdentifier, @NotNull final FormalParameter[] parameters, final boolean hasUnnamedAddress, final int alignment, @Nullable final GarbageCollectorStrategyName garbageCollectorStrategyName)
+	public FunctionDeclaration(@NotNull final Linkage linkage, @NotNull final Visibility visibility, @Nullable final DllStorageClass dllStorageClass, @NotNull final CallingConvention callingConvention, @NotNull final AttributeGroup<ParameterAttribute> returnAttributes, @NotNull final FormalParameter resultType, @NotNull final GlobalIdentifier functionIdentifier, @NotNull final FormalParameter[] parameters, final boolean hasUnnamedAddress, @NotNull final FunctionAttributeGroup functionAttributes, final int alignment, @Nullable final GarbageCollectorStrategyName garbageCollectorStrategyName)
 	{
-
 		this.linkage = linkage;
 		this.visibility = visibility;
 		this.dllStorageClass = dllStorageClass;
@@ -64,6 +66,7 @@ public final class FunctionDeclaration implements Writable
 		this.functionIdentifier = functionIdentifier;
 		this.parameters = parameters;
 		this.hasUnnamedAddress = hasUnnamedAddress;
+		this.functionAttributes = functionAttributes;
 		this.alignment = alignment;
 		this.garbageCollectorStrategyName = garbageCollectorStrategyName;
 	}
@@ -71,6 +74,8 @@ public final class FunctionDeclaration implements Writable
 	@Override
 	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
 	{
+		final int referenceIndex = functionAttributes.writeFunctionAttributesGroup(byteWriter);
+
 		byteWriter.writeBytes(declareSpace);
 		byteWriter.writeBytes(linkage.llAssemblyValue);
 
@@ -106,6 +111,8 @@ public final class FunctionDeclaration implements Writable
 		{
 			byteWriter.writeBytes(UnnamedAddress);
 		}
+
+		writeFunctionAttributes(byteWriter, referenceIndex);
 
 		if (alignment != AutomaticAlignment)
 		{

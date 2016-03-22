@@ -25,10 +25,12 @@ package com.stormmq.llvm.domain.variables;
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.*;
 import com.stormmq.llvm.domain.comdat.ComdatIdentifier;
+import com.stormmq.llvm.domain.constants.Constant;
+import com.stormmq.llvm.domain.identifiers.GlobalIdentifier;
 import com.stormmq.llvm.domain.names.SectionName;
 import com.stormmq.llvm.domain.types.Type;
-import com.stormmq.llvm.domain.constants.Constant;
-import org.jetbrains.annotations.*;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
 import static java.lang.String.format;
@@ -36,6 +38,7 @@ import static java.util.Locale.ENGLISH;
 
 public final class GlobalVariable<T extends Type> extends AbstractVariable
 {
+	private static final int MaximumPowerOfTwo = 29;
 	@NotNull private static final byte[] SpaceAddressSpaceStart = encodeUtf8BytesWithCertaintyValueIsValid(" addrspace(");
 	@NotNull private static final byte[] SpaceGlobal = encodeUtf8BytesWithCertaintyValueIsValid(" global");
 	@NotNull private static final byte[] SpaceConstant = encodeUtf8BytesWithCertaintyValueIsValid(" constant");
@@ -49,17 +52,17 @@ public final class GlobalVariable<T extends Type> extends AbstractVariable
 	@Nullable private final ComdatIdentifier comdatIdentifier;
 	private final int alignmentAsPowerOfTwo;
 
-	public GlobalVariable(@NotNull @NonNls final String name, @NotNull final Linkage linkage, @NotNull final Visibility visibility, @Nullable final DllStorageClass dllStorageClass, @Nullable final ThreadLocalStorageModel threadLocalStorageModel, final boolean hasUnnamedAddress, final int addressSpace, final boolean isConstant, @NotNull final T type, @Nullable final Constant<T> initializerConstant, @Nullable final SectionName sectionName, @Nullable final ComdatIdentifier comdatIdentifier, final int alignmentAsPowerOfTwo)
+	public GlobalVariable(@NotNull final GlobalIdentifier identifier, @NotNull final Linkage linkage, @NotNull final Visibility visibility, @Nullable final DllStorageClass dllStorageClass, @Nullable final ThreadLocalStorageModel threadLocalStorageModel, final boolean hasUnnamedAddress, final int addressSpace, final boolean isConstant, @NotNull final T type, @Nullable final Constant<T> initializerConstant, @Nullable final SectionName sectionName, @Nullable final ComdatIdentifier comdatIdentifier, final int alignmentAsPowerOfTwo)
 	{
-		super(name, linkage, visibility, dllStorageClass, threadLocalStorageModel, hasUnnamedAddress);
+		super(identifier, linkage, visibility, dllStorageClass, threadLocalStorageModel, hasUnnamedAddress);
 		if (alignmentAsPowerOfTwo < AutomaticAlignment)
 		{
 			throw new IllegalArgumentException(format(ENGLISH, "alignmentAsPowerOfTwo ('%1$s') can not be negative", alignmentAsPowerOfTwo));
 		}
 
-		if (alignmentAsPowerOfTwo > 29)
+		if (alignmentAsPowerOfTwo > MaximumPowerOfTwo)
 		{
-			throw new IllegalArgumentException(format(ENGLISH, "alignmentAsPowerOfTwo ('%1$s') can not be more than 29", alignmentAsPowerOfTwo));
+			throw new IllegalArgumentException(format(ENGLISH, "alignmentAsPowerOfTwo ('%1$s') can not be more than %2$s", alignmentAsPowerOfTwo, MaximumPowerOfTwo));
 		}
 
 		if (isConstant && initializerConstant == null)
@@ -77,7 +80,6 @@ public final class GlobalVariable<T extends Type> extends AbstractVariable
 	}
 
 	// [@<GlobalVarName> =] [Linkage] [Visibility] [DLLStorageClass] [ThreadLocal] [unnamed_addr] [AddrSpace] [ExternallyInitialized] <global | constant> <Type> [<InitializerConstant>] [, section "name"] [, comdat [($name)]] [, align <Alignment>]
-
 	@Override
 	protected <X extends Exception> void writeVariable(@NotNull final ByteWriter<X> byteWriter) throws X
 	{

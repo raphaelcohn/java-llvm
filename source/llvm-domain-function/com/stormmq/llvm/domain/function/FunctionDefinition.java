@@ -25,16 +25,18 @@ package com.stormmq.llvm.domain.function;
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.*;
 import com.stormmq.llvm.domain.attributes.AttributeGroup;
-import com.stormmq.llvm.domain.function.attributes.functionAttributes.FunctionAttribute;
 import com.stormmq.llvm.domain.comdat.ComdatIdentifier;
+import com.stormmq.llvm.domain.function.attributes.FunctionAttributeGroup;
+import com.stormmq.llvm.domain.function.attributes.functionAttributes.FunctionAttribute;
 import com.stormmq.llvm.domain.function.attributes.parameterAttributes.FixedParameterAttribute;
 import com.stormmq.llvm.domain.function.attributes.parameterAttributes.ParameterAttribute;
 import com.stormmq.llvm.domain.identifiers.GlobalIdentifier;
 import com.stormmq.llvm.domain.names.SectionName;
-import org.jetbrains.annotations.*;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static com.stormmq.llvm.domain.Writable.writeSpace;
-import static com.stormmq.llvm.domain.attributes.AttributeGroup.attributeGroup;
+import static com.stormmq.llvm.domain.function.attributes.FunctionAttributeGroup.writeFunctionAttributes;
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
 import static java.lang.String.format;
 import static java.util.Locale.ENGLISH;
@@ -48,13 +50,13 @@ public final class FunctionDefinition implements Writable
 	@NotNull
 	public static AttributeGroup<FunctionAttribute> functionAttributes(@NotNull final FunctionAttribute... functionAttributes)
 	{
-		return attributeGroup(functionAttributes);
+		return new AttributeGroup<>();
 	}
 
 	@NotNull
 	public static AttributeGroup<ParameterAttribute> parameterAttributes(@NotNull final ParameterAttribute... parameterAttributes)
 	{
-		return attributeGroup(parameterAttributes);
+		return new AttributeGroup<>();
 	}
 
 	@NotNull private static final byte[] defineSpace = encodeUtf8BytesWithCertaintyValueIsValid("define ");
@@ -74,7 +76,7 @@ public final class FunctionDefinition implements Writable
 	@NotNull private final GlobalIdentifier functionIdentifier;
 	@NotNull private final FormalParameter[] parameters;
 	private final boolean hasUnnamedAddress;
-	@NotNull private final AttributeGroup<FunctionAttribute> functionAttributes;
+	@NotNull private final FunctionAttributeGroup functionAttributes;
 	@Nullable private final SectionName sectionName;
 	@Nullable private final ComdatIdentifier comdatIdentifier;
 	private final int alignment;
@@ -84,7 +86,7 @@ public final class FunctionDefinition implements Writable
 	// personality
 	// metadata
 
-	public FunctionDefinition(@NotNull final Linkage linkage, @NotNull final Visibility visibility, @Nullable final DllStorageClass dllStorageClass, @NotNull final CallingConvention callingConvention, @NotNull final AttributeGroup<ParameterAttribute> returnAttributes, @NotNull final FormalParameter resultType, @NotNull final GlobalIdentifier functionIdentifier, @NotNull final FormalParameter[] parameters, final boolean hasUnnamedAddress, @NotNull final AttributeGroup<FunctionAttribute> functionAttributes, @Nullable final SectionName sectionName, @Nullable final ComdatIdentifier comdatIdentifier, final int alignment, @Nullable final GarbageCollectorStrategyName garbageCollectorStrategyName)
+	public FunctionDefinition(@NotNull final Linkage linkage, @NotNull final Visibility visibility, @Nullable final DllStorageClass dllStorageClass, @NotNull final CallingConvention callingConvention, @NotNull final AttributeGroup<ParameterAttribute> returnAttributes, @NotNull final FormalParameter resultType, @NotNull final GlobalIdentifier functionIdentifier, @NotNull final FormalParameter[] parameters, final boolean hasUnnamedAddress, @NotNull final FunctionAttributeGroup functionAttributes, @Nullable final SectionName sectionName, @Nullable final ComdatIdentifier comdatIdentifier, final int alignment, @Nullable final GarbageCollectorStrategyName garbageCollectorStrategyName)
 	{
 		if (alignment < AutomaticAlignment)
 		{
@@ -109,6 +111,8 @@ public final class FunctionDefinition implements Writable
 	@Override
 	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
 	{
+		final int referenceIndex = functionAttributes.writeFunctionAttributesGroup(byteWriter);
+
 		byteWriter.writeBytes(defineSpace);
 		byteWriter.writeBytes(linkage.llAssemblyValue);
 
@@ -145,8 +149,7 @@ public final class FunctionDefinition implements Writable
 			byteWriter.writeBytes(UnnamedAddress);
 		}
 
-		writeSpace(byteWriter);
-		functionAttributes.write(byteWriter);
+		writeFunctionAttributes(byteWriter, referenceIndex);
 
 		if (sectionName != null)
 		{

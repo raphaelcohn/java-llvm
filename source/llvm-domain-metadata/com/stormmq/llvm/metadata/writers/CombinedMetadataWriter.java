@@ -23,6 +23,7 @@
 package com.stormmq.llvm.metadata.writers;
 
 import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.llvm.domain.identifiers.AbstractIdentifier;
 import com.stormmq.llvm.metadata.Metadata;
 import com.stormmq.string.InvalidUtf16StringException;
 import org.jetbrains.annotations.NonNls;
@@ -175,6 +176,13 @@ public final class CombinedMetadataWriter<X extends Exception> implements Metada
 	{
 		writeLabelledFieldExceptForValue(label);
 		writeDoubleQuotedString(value);
+	}
+
+	@Override
+	public void write(@NonNls @NotNull final String label, @NonNls @NotNull final AbstractIdentifier value) throws X
+	{
+		writeLabelledFieldExceptForValue(label);
+		writeDoubleQuotedString(value.name());
 	}
 
 	@Override

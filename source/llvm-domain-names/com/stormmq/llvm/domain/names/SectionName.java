@@ -20,30 +20,34 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.metadata.writers;
+package com.stormmq.llvm.domain.names;
 
-import com.stormmq.llvm.domain.identifiers.AbstractIdentifier;
-import com.stormmq.llvm.metadata.Metadata;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Set;
+import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
 
-public interface KeyedFieldsMetadataWriter<X extends Exception>
+public final class SectionName extends AbstractName
 {
-	void write(@NonNls @NotNull final String label, @NonNls @NotNull final String value) throws X;
+	@NotNull private static final byte[] Start = encodeUtf8BytesWithCertaintyValueIsValid(" section \"");
+	@NotNull private static final byte[] End = encodeUtf8BytesWithCertaintyValueIsValid("\"");
 
-	void write(@NonNls @NotNull final String label, @NonNls @NotNull final AbstractIdentifier value) throws X;
+	public SectionName(@NotNull @NonNls final String name)
+	{
+		super(name);
+	}
 
-	<E extends Enum<E>> void write(@NonNls @NotNull final String label, @NonNls @NotNull final E value) throws X;
+	@Override
+	@NotNull
+	protected byte[] start()
+	{
+		return Start;
+	}
 
-	void write(@NonNls @NotNull final String label, final boolean value) throws X;
-
-	void write(@NonNls @NotNull final String label, final int value) throws X;
-
-	<E extends Enum<E>> void write(@NonNls @NotNull final String label, @NotNull final Set<E> values) throws X;
-
-	void write(@NonNls @NotNull final String label, @NotNull final Metadata reference, @NotNull final MetadataNodeIndexProvider metadataNodeIndexProvider) throws X;
-
-	void writeUnquotedString(@NonNls @NotNull final String label, @NonNls @NotNull final String value) throws X;
+	@NotNull
+	@Override
+	protected byte[] end()
+	{
+		return End;
+	}
 }

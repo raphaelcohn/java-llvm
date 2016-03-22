@@ -24,6 +24,7 @@ package com.stormmq.llvm.domain.variables;
 
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.*;
+import com.stormmq.llvm.domain.identifiers.GlobalIdentifier;
 import com.stormmq.llvm.domain.types.Type;
 import org.jetbrains.annotations.*;
 
@@ -35,12 +36,11 @@ public final class Alias extends AbstractVariable
 {
 	@NotNull private static final byte[] SpaceAlias = encodeUtf8BytesWithCertaintyValueIsValid(" alias");
 	@NotNull private final Type[] aliaseeTypes;
-	@NotNull private final String originalGlobalVariableOrFunctionName;
+	@NotNull private final GlobalIdentifier originalGlobalVariableOrFunctionName;
 
-	// TODO: AliaseeTy, Aliasee
-	public Alias(@NotNull @NonNls final String name, @NotNull final Linkage linkage, @NotNull final Visibility visibility, @Nullable final DllStorageClass dllStorageClass, @Nullable final ThreadLocalStorageModel threadLocalStorageModel, final boolean hasUnnamedAddress, @NotNull final Type[] aliaseeTypes, @NotNull @NonNls final String originalGlobalVariableOrFunctionName)
+	public Alias(@NotNull final GlobalIdentifier identifier, @NotNull final Linkage linkage, @NotNull final Visibility visibility, @Nullable final DllStorageClass dllStorageClass, @Nullable final ThreadLocalStorageModel threadLocalStorageModel, final boolean hasUnnamedAddress, @NotNull final Type[] aliaseeTypes, @NotNull final GlobalIdentifier originalGlobalVariableOrFunctionName)
 	{
-		super(name, linkage, visibility, dllStorageClass, threadLocalStorageModel, hasUnnamedAddress);
+		super(identifier, linkage, visibility, dllStorageClass, threadLocalStorageModel, hasUnnamedAddress);
 		this.aliaseeTypes = aliaseeTypes;
 		this.originalGlobalVariableOrFunctionName = originalGlobalVariableOrFunctionName;
 
@@ -54,9 +54,9 @@ public final class Alias extends AbstractVariable
 			throw new IllegalArgumentException("There must be at least one aliasee");
 		}
 
-		if (name.equals(originalGlobalVariableOrFunctionName))
+		if (identifier.equals(originalGlobalVariableOrFunctionName))
 		{
-			throw new IllegalArgumentException(format(ENGLISH, "The alias name '%1$s' can not match the name of the thing being aliased '%2$s'", name, originalGlobalVariableOrFunctionName));
+			throw new IllegalArgumentException(format(ENGLISH, "The alias name '%1$s' can not match the name of the thing being aliased '%2$s'", identifier, originalGlobalVariableOrFunctionName));
 		}
 	}
 
@@ -81,6 +81,6 @@ public final class Alias extends AbstractVariable
 		}
 
 		Writable.writeSpace(byteWriter);
-		byteWriter.writeUtf8EncodedStringWithCertainty(originalGlobalVariableOrFunctionName);
+		originalGlobalVariableOrFunctionName.write(byteWriter);
 	}
 }

@@ -20,30 +20,39 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.metadata.writers;
+package com.stormmq.llvm.domain;
 
-import com.stormmq.llvm.domain.identifiers.AbstractIdentifier;
-import com.stormmq.llvm.metadata.Metadata;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
-public interface KeyedFieldsMetadataWriter<X extends Exception>
+public final class ReferenceTracker<R>
 {
-	void write(@NonNls @NotNull final String label, @NonNls @NotNull final String value) throws X;
+	@NotNull private final Map<Object, Integer> references;
+	private int nextReferenceIndex;
 
-	void write(@NonNls @NotNull final String label, @NonNls @NotNull final AbstractIdentifier value) throws X;
+	public ReferenceTracker()
+	{
+		references = new HashMap<>(64);
+		nextReferenceIndex = 0;
+	}
 
-	<E extends Enum<E>> void write(@NonNls @NotNull final String label, @NonNls @NotNull final E value) throws X;
+	public boolean hasBeenWritten(@NotNull final R reference)
+	{
+		return references.containsKey(reference);
+	}
 
-	void write(@NonNls @NotNull final String label, final boolean value) throws X;
-
-	void write(@NonNls @NotNull final String label, final int value) throws X;
-
-	<E extends Enum<E>> void write(@NonNls @NotNull final String label, @NotNull final Set<E> values) throws X;
-
-	void write(@NonNls @NotNull final String label, @NotNull final Metadata reference, @NotNull final MetadataNodeIndexProvider metadataNodeIndexProvider) throws X;
-
-	void writeUnquotedString(@NonNls @NotNull final String label, @NonNls @NotNull final String value) throws X;
+	public int referenceIndex(@NotNull final R reference)
+	{
+		final int referenceIndex = nextReferenceIndex;
+		@Nullable final Integer existing = references.putIfAbsent(reference, referenceIndex);
+		if (existing == null)
+		{
+			nextReferenceIndex++;
+			return referenceIndex;
+		}
+		return existing;
+	}
 }

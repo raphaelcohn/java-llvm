@@ -24,6 +24,7 @@ package com.stormmq.llvm.domain.variables;
 
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.*;
+import com.stormmq.llvm.domain.identifiers.GlobalIdentifier;
 import org.jetbrains.annotations.*;
 
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
@@ -34,16 +35,16 @@ public abstract class AbstractVariable implements Writable
 	@NotNull private static final byte[] SpaceEqualsSpace = encodeUtf8BytesWithCertaintyValueIsValid(" = ");
 	@NotNull private static final byte[] SpaceUnnamedAddress = encodeUtf8BytesWithCertaintyValueIsValid(" unnamed_addr");
 
-	@NotNull private final String name;
+	@NotNull private final GlobalIdentifier identifier;
 	@NotNull private final Linkage linkage;
 	@NotNull private final Visibility visibility;
 	@Nullable private final DllStorageClass dllStorageClass;
 	@Nullable private final ThreadLocalStorageModel threadLocalStorageModel;
 	private final boolean hasUnnamedAddress;
 
-	protected AbstractVariable(@NotNull @NonNls final String name, @NotNull final Linkage linkage, @NotNull final Visibility visibility, @Nullable final DllStorageClass dllStorageClass, @Nullable final ThreadLocalStorageModel threadLocalStorageModel, final boolean hasUnnamedAddress)
+	protected AbstractVariable(@NotNull final GlobalIdentifier identifier, @NotNull final Linkage linkage, @NotNull final Visibility visibility, @Nullable final DllStorageClass dllStorageClass, @Nullable final ThreadLocalStorageModel threadLocalStorageModel, final boolean hasUnnamedAddress)
 	{
-		this.name = name;
+		this.identifier = identifier;
 		this.linkage = linkage;
 		this.visibility = visibility;
 		this.dllStorageClass = dllStorageClass;
@@ -51,12 +52,10 @@ public abstract class AbstractVariable implements Writable
 		this.hasUnnamedAddress = hasUnnamedAddress;
 	}
 
-	// @<Name> = [Linkage] [Visibility] [DLLStorageClass] [ThreadLocal] [unnamed_addr] alias <AliaseeTy>, <AliaseeTy>* @<Aliasee>
 	@Override
 	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
 	{
-		byteWriter.writeByte('@');
-		byteWriter.writeUtf8EncodedStringWithCertainty(name);
+		identifier.write(byteWriter);
 
 		byteWriter.writeBytes(SpaceEqualsSpace);
 

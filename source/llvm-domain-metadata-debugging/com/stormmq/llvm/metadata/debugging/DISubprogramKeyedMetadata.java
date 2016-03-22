@@ -22,11 +22,10 @@
 
 package com.stormmq.llvm.metadata.debugging;
 
-import com.stormmq.llvm.metadata.Metadata;
-import com.stormmq.llvm.metadata.CollectionMetadata;
-import com.stormmq.llvm.metadata.AbstractKeyedMetadata;
-import com.stormmq.llvm.metadata.writers.MetadataNodeIndexProvider;
+import com.stormmq.llvm.domain.identifiers.GlobalIdentifier;
+import com.stormmq.llvm.metadata.*;
 import com.stormmq.llvm.metadata.writers.KeyedFieldsMetadataWriter;
+import com.stormmq.llvm.metadata.writers.MetadataNodeIndexProvider;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,7 +33,7 @@ import java.util.Set;
 
 public final class DISubprogramKeyedMetadata extends AbstractKeyedMetadata implements ScopeMetadata
 {
-	@NotNull private final String functionName;
+	@NotNull private final GlobalIdentifier functionName;
 	@NotNull private final String linkageName;
 	@NotNull private final ScopeMetadata scope;
 	@NotNull private final DIFileKeyedMetadata file;
@@ -52,7 +51,7 @@ public final class DISubprogramKeyedMetadata extends AbstractKeyedMetadata imple
 	@NotNull private final Metadata declaration;
 	@NotNull private final CollectionMetadata<DILocalVariableKeyedMetadata> variables;
 
-	public DISubprogramKeyedMetadata(@NotNull @NonNls final String functionName, @NotNull @NonNls final String linkageName, @NotNull final ScopeMetadata scope, @NotNull final DIFileKeyedMetadata file, final int lineNumber, @NotNull final DISubroutineTypeKeyedMetadata type, final boolean isLocal, final boolean isDefinition, final int scopeLine, @NotNull final TypeMetadata containingType, @NotNull final Virtuality virtuality, final int virtualIndex, @NotNull final Set<DIFlag> flags, final boolean isOptimized, @NotNull final CollectionMetadata<TemplateParameterMetadata> templateParameters, @NotNull final Metadata declaration, @NotNull final CollectionMetadata<DILocalVariableKeyedMetadata> variables)
+	public DISubprogramKeyedMetadata(@NotNull @NonNls final GlobalIdentifier functionName, @NotNull @NonNls final String linkageName, @NotNull final ScopeMetadata scope, @NotNull final DIFileKeyedMetadata file, final int lineNumber, @NotNull final DISubroutineTypeKeyedMetadata type, final boolean isLocal, final boolean isDefinition, final int scopeLine, @NotNull final TypeMetadata containingType, @NotNull final Virtuality virtuality, final int virtualIndex, @NotNull final Set<DIFlag> flags, final boolean isOptimized, @NotNull final CollectionMetadata<TemplateParameterMetadata> templateParameters, @NotNull final Metadata declaration, @NotNull final CollectionMetadata<DILocalVariableKeyedMetadata> variables)
 	{
 		super(scope, file, type, containingType, templateParameters, declaration, variables);
 		// (name: "foo", linkageName: "_Zfoov", scope: !1, file: !2, line: 7, type: !3, isLocal: true, isDefinition: false, scopeLine: 8, containingType: !4, virtuality: DW_VIRTUALITY_pure_virtual, virtualIndex: 10, flags: DIFlagPrototyped, isOptimized: true, templateParams: !5, declaration: !6, variables: !7)

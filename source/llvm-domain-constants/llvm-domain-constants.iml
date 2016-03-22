@@ -8,11 +8,11 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="annotations" level="project" />
-    <orderEntry type="module" module-name="byteWriters" />
+    <orderEntry type="module" module-name="byteWriters" exported="" />
     <orderEntry type="module" module-name="string" />
-    <orderEntry type="module" module-name="llvm-domain" />
-    <orderEntry type="module" module-name="llvm-domain-attributes" />
-    <orderEntry type="module" module-name="llvm-domain-comdat" />
-    <orderEntry type="module" module-name="llvm-domain-types" />
+    <orderEntry type="module" module-name="llvm-domain" exported="" />
+    <orderEntry type="module" module-name="llvm-domain-attributes" exported="" />
+    <orderEntry type="module" module-name="llvm-domain-comdat" exported="" />
+    <orderEntry type="module" module-name="llvm-domain-types" exported="" />
   </component>
 </module>

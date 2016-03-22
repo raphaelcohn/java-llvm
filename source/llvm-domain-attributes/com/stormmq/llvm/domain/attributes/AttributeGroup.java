@@ -30,22 +30,26 @@ import java.util.*;
 
 import static java.util.Arrays.asList;
 
-public final class AttributeGroup<A extends Attribute> implements Writable
+public class AttributeGroup<A extends Attribute> implements Writable
 {
+	@NotNull protected final SortedSet<A> attributes;
+
+	@SuppressWarnings("OverloadedVarargsMethod")
 	@SafeVarargs
-	@NotNull
-	public static <A extends Attribute> AttributeGroup<A> attributeGroup(@NotNull final A... attributes)
+	public AttributeGroup(@NotNull final A... attributes)
 	{
-		return new AttributeGroup<A>(asList(attributes));
+		this(asList(attributes));
 	}
-
-	@NotNull private static final byte[] CommaSpace = {',', ' '};
-
-	@NotNull private final SortedSet<A> attributes;
 
 	private AttributeGroup(@NotNull final Collection<A> attributes)
 	{
-		this.attributes = new TreeSet<>((left, right) ->
+		this.attributes = newAttributeSet(attributes);
+	}
+
+	@NotNull
+	private static <A extends Attribute> SortedSet<A> newAttributeSet(@NotNull final Collection<A> attributes)
+	{
+		final SortedSet<A> attributeSet = new TreeSet<>((left, right) ->
 		{
 			final AttributeKind attributeKindLeft = left.attributeKind();
 			final AttributeKind attributeKindRight = right.attributeKind();
@@ -60,18 +64,19 @@ public final class AttributeGroup<A extends Attribute> implements Writable
 			final String rightName = right.name();
 			return leftName.compareTo(rightName);
 		});
-		this.attributes.addAll(attributes);
+		attributeSet.addAll(attributes);
+		return attributeSet;
 	}
 
 	@Override
-	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	public final <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
 	{
 		boolean afterFirst = false;
 		for (final A attribute : attributes)
 		{
 			if (afterFirst)
 			{
-				byteWriter.writeBytes(CommaSpace);
+				Writable.writeSpace(byteWriter);
 			}
 			else
 			{
@@ -80,4 +85,5 @@ public final class AttributeGroup<A extends Attribute> implements Writable
 			attribute.write(byteWriter);
 		}
 	}
+
 }

@@ -75,33 +75,33 @@ public final class Module implements Writable
 	{
 		dataLayoutSpecification.write(byteWriter);
 		targetTriple.write(byteWriter);
-		writeLineFeed(byteWriter);
 
-		writeItem(byteWriter, comdatDefinitions);
+		write(byteWriter, comdatDefinitions);
 
-		writeItem(byteWriter, globalVariablesAndConstants);
+		write(byteWriter, globalVariablesAndConstants);
 
-		writeItem(byteWriter, functionDeclarations);
+		write(byteWriter, functionDeclarations);
 
-		writeItem(byteWriter, aliases);
+		write(byteWriter, aliases);
 
-		writeTypeDefinition(byteWriter, structureTypes);
+		write(byteWriter, structureTypes);
 
-		writeTypeDefinition(byteWriter, opaqueStructureTypes);
+		write(byteWriter, opaqueStructureTypes);
 
-		writeItem(byteWriter, functionDefinitions);
+		write(byteWriter, functionDefinitions);
 	}
 
-	private static <X extends Exception> void writeItem(@NotNull final ByteWriter<X> byteWriter, @NotNull final List<? extends Writable> writables) throws X
+	private static <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter, @NotNull final List<? extends Writable> writables) throws X
 	{
 		for (final Writable writable : writables)
 		{
 			writable.write(byteWriter);
 			writeLineFeed(byteWriter);
 		}
+		writeLineFeed(byteWriter);
 	}
 
-	private static <X extends Exception> void writeTypeDefinition(@NotNull final ByteWriter<X> byteWriter, @NotNull final Map<LocalIdentifier, ? extends Writable> types) throws X
+	private static <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter, @NotNull final Map<LocalIdentifier, ? extends Writable> types) throws X
 	{
 		for (final Entry<LocalIdentifier, ? extends Writable> entry : types.entrySet())
 		{
@@ -111,6 +111,7 @@ public final class Module implements Writable
 			writeLineFeed(byteWriter);
 			writeLineFeed(byteWriter);
 		}
+		writeLineFeed(byteWriter);
 	}
 
 	private static <X extends Exception> void writeLineFeed(@NotNull final ByteWriter<X> byteWriter) throws X
