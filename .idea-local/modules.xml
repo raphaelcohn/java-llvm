@@ -11,7 +11,7 @@
       <module fileurl="file://$PROJECT_DIR$/source/llvm-api/llvm-api.iml" filepath="$PROJECT_DIR$/source/llvm-api/llvm-api.iml" group="llvm" />
       <module fileurl="file://$PROJECT_DIR$/source/llvm-domain/llvm-domain.iml" filepath="$PROJECT_DIR$/source/llvm-domain/llvm-domain.iml" group="llvm/domain" />
       <module fileurl="file://$PROJECT_DIR$/source/llvm-domain-attributes/llvm-domain-attributes.iml" filepath="$PROJECT_DIR$/source/llvm-domain-attributes/llvm-domain-attributes.iml" group="llvm/domain" />
-      <module fileurl="file://$PROJECT_DIR$/source/llvm-domain-comdata/llvm-domain-comdat.iml" filepath="$PROJECT_DIR$/source/llvm-domain-comdata/llvm-domain-comdat.iml" group="llvm/domain" />
+      <module fileurl="file://$PROJECT_DIR$/source/llvm-domain-comdat/llvm-domain-comdat.iml" filepath="$PROJECT_DIR$/source/llvm-domain-comdat/llvm-domain-comdat.iml" group="llvm/domain" />
       <module fileurl="file://$PROJECT_DIR$/source/llvm-domain-constants/llvm-domain-constants.iml" filepath="$PROJECT_DIR$/source/llvm-domain-constants/llvm-domain-constants.iml" group="llvm/domain" />
       <module fileurl="file://$PROJECT_DIR$/source/llvm-domain-function/llvm-domain-function.iml" filepath="$PROJECT_DIR$/source/llvm-domain-function/llvm-domain-function.iml" group="llvm/domain" />
       <module fileurl="file://$PROJECT_DIR$/source/llvm-domain-identifiers/llvm-domain-identifiers.iml" filepath="$PROJECT_DIR$/source/llvm-domain-identifiers/llvm-domain-identifiers.iml" group="llvm/domain" />
