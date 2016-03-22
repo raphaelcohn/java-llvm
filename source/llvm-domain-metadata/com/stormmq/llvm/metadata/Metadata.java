@@ -22,13 +22,9 @@
 
 package com.stormmq.llvm.metadata;
 
-import com.stormmq.llvm.metadata.writers.MetadataNodeIndexProvider;
-import com.stormmq.llvm.metadata.writers.MetadataWriter;
-import org.jetbrains.annotations.NotNull;
+import com.stormmq.llvm.domain.Reference;
 
-public interface Metadata
+public interface Metadata extends Reference
 {
-	<X extends Exception> void assignForwardReferences(@NotNull final MetadataNodeIndexProvider metadataNodeIndexProvider, @NotNull final MetadataWriter<X> metadataWriter) throws X;
-
-	<X extends Exception> void write(@NotNull final MetadataNodeIndexProvider metadataNodeIndexProvider, @NotNull final MetadataWriter<X> metadataWriter) throws X;
+	boolean isConstant();
 }

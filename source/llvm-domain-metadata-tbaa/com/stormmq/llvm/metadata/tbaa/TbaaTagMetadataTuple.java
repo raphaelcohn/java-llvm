@@ -23,29 +23,43 @@
 package com.stormmq.llvm.metadata.tbaa;
 
 import com.stormmq.llvm.domain.ReferenceTracker;
-import com.stormmq.llvm.metadata.metadataTuples.NamedMetadataTuple;
-import com.stormmq.llvm.metadata.Metadata;
+import com.stormmq.llvm.domain.constants.simpleConstants.IntegerConstant;
+import com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType;
+import com.stormmq.llvm.metadata.*;
+import com.stormmq.llvm.metadata.metadataTuples.AnonymousMetadataTuple;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public final class TbaaNamedMetadata extends NamedMetadataTuple
+public final class TbaaTagMetadataTuple extends AnonymousMetadataTuple
 {
-	public TbaaNamedMetadata(@NotNull final ReferenceTracker<String> referenceTracker, @NotNull final List<TbaaTriplet> tbaaTriplets)
+	@NotNull private static final Metadata IsConstant = new ConstantMetadata(new IntegerConstant(IntegerValueType.i64, 1L));
+
+	// identifier is typically a type name, eg float, const float, etc
+	public TbaaTagMetadataTuple(@NotNull final ReferenceTracker<List<? extends Metadata>> referenceTracker, @NotNull final StringConstantMetadata identifier, @Nullable final TbaaTagMetadataTuple parent, final boolean isConstant)
 	{
-		super(referenceTracker, "tbaa.struct", convert(tbaaTriplets));
+		super(referenceTracker, convert(identifier, parent, isConstant));
 	}
 
 	@NotNull
-	private static List<? extends Metadata> convert(@NotNull final List<TbaaTriplet> tbaaTriplets)
+	private static List<? extends Metadata> convert(@NotNull final StringConstantMetadata identifier, @Nullable final TbaaTagMetadataTuple parent, final boolean isConstant)
 	{
-		final ArrayList<Metadata> converted = new ArrayList<>(tbaaTriplets.size() * 3);
-		for (final TbaaTriplet tbaaTriplet : tbaaTriplets)
+		final List<Metadata> tuple = new ArrayList<>(3);
+		tuple.add(identifier);
+		if (parent != null)
 		{
-			tbaaTriplet.addTo(converted);
+			tuple.add(parent);
+			if (isConstant)
+			{
+				tuple.add(IsConstant);
+			}
 		}
-		return converted;
+		else if (isConstant)
+		{
+			throw new IllegalArgumentException("isConstant can not be true if the parent is null");
+		}
+		return tuple;
 	}
-
 }

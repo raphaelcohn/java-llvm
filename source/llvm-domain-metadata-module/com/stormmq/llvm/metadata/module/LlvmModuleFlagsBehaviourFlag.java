@@ -22,6 +22,12 @@
 
 package com.stormmq.llvm.metadata.module;
 
+import com.stormmq.llvm.domain.constants.simpleConstants.IntegerConstant;
+import com.stormmq.llvm.metadata.ConstantMetadata;
+import org.jetbrains.annotations.NotNull;
+
+import static com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType.i32;
+
 public enum LlvmModuleFlagsBehaviourFlag
 {
 	Error(1),
@@ -32,10 +38,10 @@ public enum LlvmModuleFlagsBehaviourFlag
 	AppendUnique(6),
 	;
 
-	public final int value;
+	@NotNull public final ConstantMetadata constantMetadataField;
 
 	LlvmModuleFlagsBehaviourFlag(final int value)
 	{
-		this.value = value;
+		this.constantMetadataField = new ConstantMetadata(new IntegerConstant(i32, value));
 	}
 }

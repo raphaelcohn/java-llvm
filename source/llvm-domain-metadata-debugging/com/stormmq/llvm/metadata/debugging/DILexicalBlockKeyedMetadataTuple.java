@@ -20,51 +20,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.constants.simpleConstants;
+package com.stormmq.llvm.metadata.debugging;
 
-import com.stormmq.byteWriters.ByteWriter;
-import com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType;
-import org.jetbrains.annotations.NonNls;
+import com.stormmq.llvm.domain.ReferenceTracker;
+import com.stormmq.llvm.metadata.metadataTuples.KeyedMetadataTuple;
 import org.jetbrains.annotations.NotNull;
 
-import static com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType.i1;
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
-
-public enum BooleanConstant implements SimpleConstant<IntegerValueType>
+public final class DILexicalBlockKeyedMetadataTuple extends KeyedMetadataTuple implements ScopeMetadata
 {
-	True("true"),
-	False("false"),
-	;
-
-	@NotNull private final byte[] llAssemblyEncoding;
-
-	BooleanConstant(@NotNull @NonNls final String value)
+	public DILexicalBlockKeyedMetadataTuple(@NotNull final ReferenceTracker<KeyedMetadataTuple> referenceTracker, @NotNull final ScopeMetadata scope, @NotNull final DIFileKeyedMetadataTuple file, final int lineNumber, final int column)
 	{
-		llAssemblyEncoding = encodeUtf8BytesWithCertaintyValueIsValid(value);
-	}
+		super(referenceTracker, false, "DILexicalBlock", Key.scope.with(scope), Key.file.with(file), Key.line.with(lineNumber), Key.column.with(column));
 
-	@Override
-	@NotNull
-	public IntegerValueType type()
-	{
-		return i1;
-	}
+		if (lineNumber < 0)
+		{
+			throw new IllegalArgumentException("lineNumber can not be negative");
+		}
 
-	@Override
-	public int alignment()
-	{
-		return 1;
-	}
-
-	@Override
-	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
-	{
-		byteWriter.writeBytes(llAssemblyEncoding);
-	}
-
-	@NotNull
-	public static BooleanConstant booleanConstant(final boolean value)
-	{
-		return value ? True : False;
+		if (column < 0)
+		{
+			throw new IllegalArgumentException("column can not be negative");
+		}
 	}
 }

@@ -20,51 +20,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.constants.simpleConstants;
+package com.stormmq.llvm.metadata.debugging;
 
-import com.stormmq.byteWriters.ByteWriter;
-import com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType;
+import com.stormmq.llvm.domain.ReferenceTracker;
+import com.stormmq.llvm.metadata.metadataTuples.KeyedMetadataTuple;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import static com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType.i1;
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
-
-public enum BooleanConstant implements SimpleConstant<IntegerValueType>
+public final class DIBasicTypeKeyedMetadataTuple extends KeyedMetadataTuple implements TypeMetadata
 {
-	True("true"),
-	False("false"),
-	;
-
-	@NotNull private final byte[] llAssemblyEncoding;
-
-	BooleanConstant(@NotNull @NonNls final String value)
+	public DIBasicTypeKeyedMetadataTuple(@NotNull final ReferenceTracker<KeyedMetadataTuple> referenceTracker, @NotNull final DW_TAG tag, @NotNull @NonNls final String typeName, final int sizeInBits, final int alignmentInBits, @NotNull final DW_ATE encoding)
 	{
-		llAssemblyEncoding = encodeUtf8BytesWithCertaintyValueIsValid(value);
-	}
-
-	@Override
-	@NotNull
-	public IntegerValueType type()
-	{
-		return i1;
-	}
-
-	@Override
-	public int alignment()
-	{
-		return 1;
-	}
-
-	@Override
-	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
-	{
-		byteWriter.writeBytes(llAssemblyEncoding);
-	}
-
-	@NotNull
-	public static BooleanConstant booleanConstant(final boolean value)
-	{
-		return value ? True : False;
+		super(referenceTracker, false, "DIBasicType", Key.tag.with(tag), Key.name.with(typeName), Key.size.with(sizeInBits), Key.align.with(alignmentInBits), Key.encoding.with(encoding));
 	}
 }

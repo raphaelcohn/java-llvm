@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdint.h>
 
+const int XXXXXX = 10;
+
 int main()
 {
 	puts("hello world\n");

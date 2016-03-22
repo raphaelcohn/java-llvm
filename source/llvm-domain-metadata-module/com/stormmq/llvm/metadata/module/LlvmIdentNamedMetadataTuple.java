@@ -20,51 +20,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.constants.simpleConstants;
+package com.stormmq.llvm.metadata.module;
 
-import com.stormmq.byteWriters.ByteWriter;
-import com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType;
-import org.jetbrains.annotations.NonNls;
+import com.stormmq.llvm.domain.ReferenceTracker;
+import com.stormmq.llvm.metadata.metadataTuples.NamedMetadataTuple;
+import com.stormmq.llvm.metadata.StringConstantMetadata;
 import org.jetbrains.annotations.NotNull;
 
-import static com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType.i1;
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import java.util.List;
 
-public enum BooleanConstant implements SimpleConstant<IntegerValueType>
+import static com.stormmq.llvm.metadata.ProducerConstant.Producer;
+import static java.util.Collections.singletonList;
+
+public final class LlvmIdentNamedMetadataTuple extends NamedMetadataTuple
 {
-	True("true"),
-	False("false"),
-	;
+	@NotNull private static final List<StringConstantMetadata> ProducerOnly = singletonList(new StringConstantMetadata(Producer));
 
-	@NotNull private final byte[] llAssemblyEncoding;
-
-	BooleanConstant(@NotNull @NonNls final String value)
+	private LlvmIdentNamedMetadataTuple(@NotNull final ReferenceTracker<String> referenceTracker)
 	{
-		llAssemblyEncoding = encodeUtf8BytesWithCertaintyValueIsValid(value);
-	}
-
-	@Override
-	@NotNull
-	public IntegerValueType type()
-	{
-		return i1;
-	}
-
-	@Override
-	public int alignment()
-	{
-		return 1;
-	}
-
-	@Override
-	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
-	{
-		byteWriter.writeBytes(llAssemblyEncoding);
-	}
-
-	@NotNull
-	public static BooleanConstant booleanConstant(final boolean value)
-	{
-		return value ? True : False;
+		super(referenceTracker, "llvm.ident", ProducerOnly);
 	}
 }

@@ -20,51 +20,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.constants.simpleConstants;
+package com.stormmq.llvm.metadata.debugging;
 
-import com.stormmq.byteWriters.ByteWriter;
-import com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType;
-import org.jetbrains.annotations.NonNls;
+import com.stormmq.llvm.domain.ReferenceTracker;
+import com.stormmq.llvm.domain.identifiers.LocalIdentifier;
+import com.stormmq.llvm.metadata.metadataTuples.KeyedMetadataTuple;
 import org.jetbrains.annotations.NotNull;
 
-import static com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType.i1;
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import java.util.Set;
 
-public enum BooleanConstant implements SimpleConstant<IntegerValueType>
+public final class DILocalVariableKeyedMetadataTuple extends KeyedMetadataTuple
 {
-	True("true"),
-	False("false"),
-	;
-
-	@NotNull private final byte[] llAssemblyEncoding;
-
-	BooleanConstant(@NotNull @NonNls final String value)
+	// oneBasedIndex is zero, then this is NOT a method variable
+	public DILocalVariableKeyedMetadataTuple(@NotNull final ReferenceTracker<KeyedMetadataTuple> referenceTracker, @NotNull final LocalIdentifier variableName, final int oneBasedIndex, @NotNull final ScopeMetadata scope, @NotNull final DIFileKeyedMetadataTuple file, final int lineNumber, @NotNull final TypeMetadata type, @NotNull final Set<DIFlag> flags)
 	{
-		llAssemblyEncoding = encodeUtf8BytesWithCertaintyValueIsValid(value);
-	}
-
-	@Override
-	@NotNull
-	public IntegerValueType type()
-	{
-		return i1;
-	}
-
-	@Override
-	public int alignment()
-	{
-		return 1;
-	}
-
-	@Override
-	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
-	{
-		byteWriter.writeBytes(llAssemblyEncoding);
-	}
-
-	@NotNull
-	public static BooleanConstant booleanConstant(final boolean value)
-	{
-		return value ? True : False;
+		super(referenceTracker, false, "DILocalVariable", Key.name.with(variableName), Key.arg.with(oneBasedIndex), Key.scope.with(scope), Key.file.with(file), Key.lineNumber.with(lineNumber), Key.type.with(type), Key.flags.with(flags));
 	}
 }

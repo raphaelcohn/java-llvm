@@ -20,51 +20,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.constants.simpleConstants;
+package com.stormmq.llvm.metadata.debugging;
 
-import com.stormmq.byteWriters.ByteWriter;
-import com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType;
-import org.jetbrains.annotations.NonNls;
+import com.stormmq.llvm.domain.ReferenceTracker;
+import com.stormmq.llvm.metadata.metadataTuples.NamedMetadataTuple;
 import org.jetbrains.annotations.NotNull;
 
-import static com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType.i1;
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import java.util.List;
 
-public enum BooleanConstant implements SimpleConstant<IntegerValueType>
+public final class LlvmDbgCuNamedMetadataTuple extends NamedMetadataTuple
 {
-	True("true"),
-	False("false"),
-	;
-
-	@NotNull private final byte[] llAssemblyEncoding;
-
-	BooleanConstant(@NotNull @NonNls final String value)
+	public LlvmDbgCuNamedMetadataTuple(@NotNull final ReferenceTracker<String> referenceTracker, @NotNull final List<DICompileUnitKeyedMetadataTuple> compileUnits)
 	{
-		llAssemblyEncoding = encodeUtf8BytesWithCertaintyValueIsValid(value);
-	}
-
-	@Override
-	@NotNull
-	public IntegerValueType type()
-	{
-		return i1;
-	}
-
-	@Override
-	public int alignment()
-	{
-		return 1;
-	}
-
-	@Override
-	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
-	{
-		byteWriter.writeBytes(llAssemblyEncoding);
-	}
-
-	@NotNull
-	public static BooleanConstant booleanConstant(final boolean value)
-	{
-		return value ? True : False;
+		super(referenceTracker, "llvm.dbg.cu", compileUnits);
 	}
 }

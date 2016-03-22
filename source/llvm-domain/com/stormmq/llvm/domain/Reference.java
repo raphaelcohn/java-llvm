@@ -24,7 +24,7 @@ package com.stormmq.llvm.domain;
 
 public interface Reference extends Writable
 {
-	boolean hasNotYetBeenWritten();
+	boolean hasBeenWritten();
 
 	int referenceIndex();
 }

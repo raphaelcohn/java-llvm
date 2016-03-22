@@ -11,5 +11,6 @@
     <orderEntry type="module" module-name="byteWriters" />
     <orderEntry type="module" module-name="string" />
     <orderEntry type="module" module-name="llvm-domain-identifiers" />
+    <orderEntry type="module" module-name="llvm-domain-constants" />
   </component>
 </module>

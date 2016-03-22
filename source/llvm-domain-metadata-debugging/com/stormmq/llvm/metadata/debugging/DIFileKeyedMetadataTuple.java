@@ -20,51 +20,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.constants.simpleConstants;
+package com.stormmq.llvm.metadata.debugging;
 
-import com.stormmq.byteWriters.ByteWriter;
-import com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType;
+import com.stormmq.llvm.domain.ReferenceTracker;
+import com.stormmq.llvm.metadata.metadataTuples.KeyedMetadataTuple;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import static com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType.i1;
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import java.nio.file.Path;
 
-public enum BooleanConstant implements SimpleConstant<IntegerValueType>
+public final class DIFileKeyedMetadataTuple extends KeyedMetadataTuple
 {
-	True("true"),
-	False("false"),
-	;
-
-	@NotNull private final byte[] llAssemblyEncoding;
-
-	BooleanConstant(@NotNull @NonNls final String value)
+	public DIFileKeyedMetadataTuple(@NotNull final ReferenceTracker<KeyedMetadataTuple> referenceTracker, @NonNls @NotNull final String simpleSourceFileName, @NotNull final Path directoryUsageOfSimpleSourceFileEncounteredIn)
 	{
-		llAssemblyEncoding = encodeUtf8BytesWithCertaintyValueIsValid(value);
-	}
-
-	@Override
-	@NotNull
-	public IntegerValueType type()
-	{
-		return i1;
-	}
-
-	@Override
-	public int alignment()
-	{
-		return 1;
-	}
-
-	@Override
-	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
-	{
-		byteWriter.writeBytes(llAssemblyEncoding);
-	}
-
-	@NotNull
-	public static BooleanConstant booleanConstant(final boolean value)
-	{
-		return value ? True : False;
+		super(referenceTracker, false, "DIFile", Key.filename.with(simpleSourceFileName), Key.directory.with(directoryUsageOfSimpleSourceFileEncounteredIn.toString()));
 	}
 }

@@ -20,51 +20,34 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.constants.simpleConstants;
+package com.stormmq.llvm.metadata.tbaa;
 
-import com.stormmq.byteWriters.ByteWriter;
-import com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType;
-import org.jetbrains.annotations.NonNls;
+import com.stormmq.llvm.domain.constants.simpleConstants.IntegerConstant;
+import com.stormmq.llvm.metadata.ConstantMetadata;
+import com.stormmq.llvm.metadata.Metadata;
 import org.jetbrains.annotations.NotNull;
 
-import static com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType.i1;
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import java.util.List;
 
-public enum BooleanConstant implements SimpleConstant<IntegerValueType>
+import static com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType.i64;
+
+public final class TbaaTriplet
 {
-	True("true"),
-	False("false"),
-	;
+	private final long offset;
+	private final long length;
+	@NotNull private final TbaaTagMetadataTuple tbaaTagMetadataTuple;
 
-	@NotNull private final byte[] llAssemblyEncoding;
-
-	BooleanConstant(@NotNull @NonNls final String value)
+	public TbaaTriplet(final long offset, final long length, @NotNull final TbaaTagMetadataTuple tbaaTagMetadataTuple)
 	{
-		llAssemblyEncoding = encodeUtf8BytesWithCertaintyValueIsValid(value);
+		this.offset = offset;
+		this.length = length;
+		this.tbaaTagMetadataTuple = tbaaTagMetadataTuple;
 	}
 
-	@Override
-	@NotNull
-	public IntegerValueType type()
+	public void addTo(@NotNull final List<Metadata> metadata)
 	{
-		return i1;
-	}
-
-	@Override
-	public int alignment()
-	{
-		return 1;
-	}
-
-	@Override
-	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
-	{
-		byteWriter.writeBytes(llAssemblyEncoding);
-	}
-
-	@NotNull
-	public static BooleanConstant booleanConstant(final boolean value)
-	{
-		return value ? True : False;
+		metadata.add(new ConstantMetadata(new IntegerConstant(i64, offset)));
+		metadata.add(new ConstantMetadata(new IntegerConstant(i64, length)));
+		metadata.add(tbaaTagMetadataTuple);
 	}
 }

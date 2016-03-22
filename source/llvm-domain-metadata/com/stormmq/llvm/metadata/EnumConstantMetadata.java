@@ -20,51 +20,56 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.constants.simpleConstants;
+package com.stormmq.llvm.metadata;
 
 import com.stormmq.byteWriters.ByteWriter;
-import com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import static com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType.i1;
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import static java.lang.String.format;
+import static java.util.Locale.ENGLISH;
 
-public enum BooleanConstant implements SimpleConstant<IntegerValueType>
+public final class EnumConstantMetadata<E extends Enum<E>> implements Metadata
 {
-	True("true"),
-	False("false"),
-	;
+	@NotNull private final E value;
+	@SuppressWarnings("FieldNotUsedInToString") @NotNull private final byte[] llAssembleEncoding;
 
-	@NotNull private final byte[] llAssemblyEncoding;
-
-	BooleanConstant(@NotNull @NonNls final String value)
+	public EnumConstantMetadata(@NotNull @NonNls final E value)
 	{
-		llAssemblyEncoding = encodeUtf8BytesWithCertaintyValueIsValid(value);
+		this.value = value;
+
+		llAssembleEncoding = encodeUtf8BytesWithCertaintyValueIsValid(value.name());
 	}
 
 	@Override
-	@NotNull
-	public IntegerValueType type()
+	public boolean isConstant()
 	{
-		return i1;
+		return true;
 	}
 
 	@Override
-	public int alignment()
+	public boolean hasBeenWritten()
 	{
-		return 1;
+		return true;
+	}
+
+	@Override
+	public int referenceIndex()
+	{
+		throw new UnsupportedOperationException("Enum constants do not have reference indices");
 	}
 
 	@Override
 	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
 	{
-		byteWriter.writeBytes(llAssemblyEncoding);
+		byteWriter.writeBytes(llAssembleEncoding);
 	}
 
+	@Override
 	@NotNull
-	public static BooleanConstant booleanConstant(final boolean value)
+	public String toString()
 	{
-		return value ? True : False;
+		return format(ENGLISH, "%1$s(%2$s)", getClass().getSimpleName(), value);
 	}
 }

@@ -55,7 +55,7 @@ public final class FunctionAttributeGroup extends AttributeGroup<FunctionAttribu
 
 	public <X extends Exception> int writeFunctionAttributesGroup(@NotNull final ByteWriter<X> byteWriter) throws X
 	{
-		if (referenceTracker.hasBeenWritten(attributes))
+		if (hasBeenWritten())
 		{
 			return referenceIndex();
 		}
@@ -74,9 +74,9 @@ public final class FunctionAttributeGroup extends AttributeGroup<FunctionAttribu
 	}
 
 	@Override
-	public boolean hasNotYetBeenWritten()
+	public boolean hasBeenWritten()
 	{
-		return !referenceTracker.hasBeenWritten(attributes);
+		return referenceTracker.hasBeenWritten(attributes);
 	}
 
 	@Override
