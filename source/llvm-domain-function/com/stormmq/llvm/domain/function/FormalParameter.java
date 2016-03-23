@@ -23,24 +23,46 @@
 package com.stormmq.llvm.domain.function;
 
 import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.llvm.domain.ReferenceTracker;
 import com.stormmq.llvm.domain.Writable;
 import com.stormmq.llvm.domain.attributes.AttributeGroup;
 import com.stormmq.llvm.domain.function.attributes.parameterAttributes.ParameterAttribute;
+import com.stormmq.llvm.domain.identifiers.LocalIdentifier;
 import com.stormmq.llvm.domain.types.TypeExcludingVoid;
+import com.stormmq.llvm.metadata.debugging.*;
+import com.stormmq.llvm.metadata.metadataTuples.KeyedMetadataTuple;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Set;
+
+import static java.util.Collections.emptySet;
+
 public final class FormalParameter implements Writable
 {
+	@NotNull private static final Set<DIFlag> NoFlags = emptySet();
 	@NotNull private final TypeExcludingVoid typeExcludingVoid;
 	@NotNull private final AttributeGroup<ParameterAttribute> parameterAttributes;
-	@Nullable private final ParameterName name;
+	@Nullable private final LocalIdentifier name;
 
-	public FormalParameter(@NotNull final TypeExcludingVoid typeExcludingVoid, @NotNull final AttributeGroup<ParameterAttribute> parameterAttributes, @Nullable final ParameterName name)
+	public FormalParameter(@NotNull final TypeExcludingVoid typeExcludingVoid, @NotNull final AttributeGroup<ParameterAttribute> parameterAttributes, @Nullable final LocalIdentifier name)
 	{
 		this.typeExcludingVoid = typeExcludingVoid;
 		this.parameterAttributes = parameterAttributes;
 		this.name = name;
+	}
+
+	@NotNull
+	public DILocalVariableKeyedMetadataTuple debuggingInformation(@NotNull final ReferenceTracker<KeyedMetadataTuple> referenceTracker, final int oneBasedIndex, @NotNull final DIFileKeyedMetadataTuple file, final int lineNumber, @NotNull final TypeMetadata type)
+	{
+		final ScopeMetadata scope = null; // subprogram
+		return new DILocalVariableKeyedMetadataTuple(referenceTracker, name == null ? generatedName(oneBasedIndex) : name, oneBasedIndex, scope, file, lineNumber, type, NoFlags);
+	}
+
+	@NotNull
+	private static LocalIdentifier generatedName(final int oneBasedIndex)
+	{
+		return new LocalIdentifier(".generated." + Integer.toString(oneBasedIndex));
 	}
 
 	@Override

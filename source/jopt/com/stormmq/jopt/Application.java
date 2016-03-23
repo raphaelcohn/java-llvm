@@ -20,25 +20,38 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.metadata.debugging;
+package com.stormmq.jopt;
 
-import com.stormmq.llvm.domain.ReferenceTracker;
-import com.stormmq.llvm.metadata.metadataTuples.*;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import static java.lang.String.format;
-import static java.util.Locale.ENGLISH;
+import static com.stormmq.jopt.CommandLineArgumentsParser.newShouldHaveExited;
+import static com.stormmq.jopt.ExitCode.ExitCodeGeneralError;
+import static com.stormmq.jopt.ExitCode.ExitCodeOk;
 
-public final class DICompositeTypeKeyedMetadataTuple extends KeyedMetadataTuple implements TypeMetadata
+@FunctionalInterface
+public interface Application
 {
-	public DICompositeTypeKeyedMetadataTuple(@NotNull final ReferenceTracker<KeyedMetadataTuple> referenceTracker, @NotNull final DW_TAG tag, @NonNls @NotNull final String name, @NotNull final DIFileKeyedMetadataTuple file, final int lineNumber, final int sizeInBits, final int alignmentInBits, @NotNull @NonNls final String identifier, @NotNull final TypedMetadataTuple<TypeMetadata> elements)
-	{
-		super(referenceTracker, false, "DICompositeType", Key.tag.with(tag), Key.name.with(name), Key.file.with(file), Key.lineNumber.with(lineNumber), Key.size.with(sizeInBits), Key.align.with(alignmentInBits), Key.identifier.with(identifier), Key.element.with(elements));
+	@NotNull
+	ExitCode execute();
 
-		if (!tag.validForCompositeType)
+	@SuppressWarnings("CallToPrintStackTrace")
+	static void run(@NotNull final Application application)
+	{
+		final ExitCode exitCode;
+		try
 		{
-			throw new IllegalArgumentException(format(ENGLISH, "Tag '%1$s' is not valid for a composite type", tag));
+			exitCode = application.execute();
+		}
+		catch (final Throwable e)
+		{
+			e.printStackTrace();
+			ExitCodeGeneralError.exit();
+			throw newShouldHaveExited(e);
+		}
+
+		if (exitCode != ExitCodeOk)
+		{
+			exitCode.exit();
 		}
 	}
 }

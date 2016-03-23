@@ -34,6 +34,9 @@ import com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.OpaqueStruct
 import com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.StructureType;
 import com.stormmq.llvm.domain.variables.Alias;
 import com.stormmq.llvm.domain.variables.GlobalVariable;
+import com.stormmq.llvm.metadata.debugging.LlvmDbgCuNamedMetadataTuple;
+import com.stormmq.llvm.metadata.module.LlvmIdentNamedMetadataTuple;
+import com.stormmq.llvm.metadata.module.LlvmModuleFlagsNamedMetadataTuple;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -49,6 +52,9 @@ public final class Module implements Writable
 
 	@NotNull private final DataLayoutSpecification dataLayoutSpecification;
 	@NotNull private final TargetTriple targetTriple;
+	@NotNull private final LlvmIdentNamedMetadataTuple llvmIdentNamedMetadataTuple;
+	@NotNull private final LlvmModuleFlagsNamedMetadataTuple llvmModuleFlagsNamedMetadataTuple;
+	@NotNull private final LlvmDbgCuNamedMetadataTuple compileUnits;
 	@NotNull private final List<ComdatDefinition> comdatDefinitions;
 	@NotNull private final Map<LocalIdentifier, StructureType> structureTypes;
 	@NotNull private final Map<LocalIdentifier, OpaqueStructureType> opaqueStructureTypes;
@@ -57,10 +63,13 @@ public final class Module implements Writable
 	@NotNull private final List<FunctionDefinition> functionDefinitions;
 	@NotNull private final List<Alias> aliases;
 
-	public Module(@NotNull final DataLayoutSpecification dataLayoutSpecification, @NotNull final TargetTriple targetTriple, @NotNull final List<ComdatDefinition> comdatDefinitions, @NotNull final Map<LocalIdentifier, StructureType> structureTypes, @NotNull final Map<LocalIdentifier, OpaqueStructureType> opaqueStructureTypes, @NotNull final List<GlobalVariable<?>> globalVariablesAndConstants, @NotNull final List<FunctionDeclaration> functionDeclarations, @NotNull final List<FunctionDefinition> functionDefinitions, @NotNull final List<Alias> aliases)
+	public Module(@NotNull final DataLayoutSpecification dataLayoutSpecification, @NotNull final TargetTriple targetTriple, @NotNull final LlvmIdentNamedMetadataTuple llvmIdentNamedMetadataTuple, @NotNull final LlvmModuleFlagsNamedMetadataTuple llvmModuleFlagsNamedMetadataTuple, @NotNull final LlvmDbgCuNamedMetadataTuple compileUnits, @NotNull final List<ComdatDefinition> comdatDefinitions, @NotNull final Map<LocalIdentifier, StructureType> structureTypes, @NotNull final Map<LocalIdentifier, OpaqueStructureType> opaqueStructureTypes, @NotNull final List<GlobalVariable<?>> globalVariablesAndConstants, @NotNull final List<FunctionDeclaration> functionDeclarations, @NotNull final List<FunctionDefinition> functionDefinitions, @NotNull final List<Alias> aliases)
 	{
 		this.dataLayoutSpecification = dataLayoutSpecification;
 		this.targetTriple = targetTriple;
+		this.llvmIdentNamedMetadataTuple = llvmIdentNamedMetadataTuple;
+		this.llvmModuleFlagsNamedMetadataTuple = llvmModuleFlagsNamedMetadataTuple;
+		this.compileUnits = compileUnits;
 		this.comdatDefinitions = comdatDefinitions;
 		this.structureTypes = structureTypes;
 		this.opaqueStructureTypes = opaqueStructureTypes;
@@ -75,6 +84,12 @@ public final class Module implements Writable
 	{
 		dataLayoutSpecification.write(byteWriter);
 		targetTriple.write(byteWriter);
+
+		llvmIdentNamedMetadataTuple.write(byteWriter);
+
+		llvmModuleFlagsNamedMetadataTuple.write(byteWriter);
+
+		compileUnits.write(byteWriter);
 
 		write(byteWriter, comdatDefinitions);
 

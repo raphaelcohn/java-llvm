@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import static com.stormmq.llvm.metadata.debugging.Key.*;
 import static com.stormmq.llvm.metadata.ProducerConstant.Producer;
 
-public final class DICompileUnitKeyedMetadataTuple extends KeyedMetadataTuple
+public final class DICompileUnitKeyedMetadataTuple extends KeyedMetadataTuple implements ScopeMetadata
 {
 	public DICompileUnitKeyedMetadataTuple(@NotNull final ReferenceTracker<KeyedMetadataTuple> referenceTracker, @NotNull final LlvmDebugLanguage llvmDebugLanguage, @NotNull final DIFileKeyedMetadataTuple file, @NotNull final AnonymousMetadataTuple enums, @NotNull final AnonymousMetadataTuple retainedTypes, @NotNull final TypedMetadataTuple<DISubprogramKeyedMetadataTuple> subprograms, @NotNull final TypedMetadataTuple<DIGlobalVariableKeyedMetadataTuple> globals, @NotNull final TypedMetadataTuple<DIImportedEntityKeyedMetadataTuple> imports, @NotNull final TypedMetadataTuple<DIMacroFileKeyedMetadataTuple> macros)
 	{

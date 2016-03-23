@@ -23,7 +23,23 @@
 package com.stormmq.llvm.domain.function.attributes.parameterAttributes;
 
 import com.stormmq.llvm.domain.attributes.Attribute;
+import com.stormmq.llvm.domain.attributes.AttributeGroup;
+import org.jetbrains.annotations.NotNull;
+
+import static com.stormmq.llvm.domain.function.attributes.parameterAttributes.FixedParameterAttribute.signext;
+import static com.stormmq.llvm.domain.function.attributes.parameterAttributes.FixedParameterAttribute.zeroext;
 
 public interface ParameterAttribute extends Attribute
 {
+	@NotNull AttributeGroup<ParameterAttribute> EmptyParameterAttributes = parameterAttributes();
+
+	@NotNull AttributeGroup<ParameterAttribute> ZeroExtend = parameterAttributes(zeroext);
+
+	@NotNull AttributeGroup<ParameterAttribute> SignExtend = parameterAttributes(signext);
+
+	@NotNull
+	static AttributeGroup<ParameterAttribute> parameterAttributes(@NotNull final ParameterAttribute... parameterAttributes)
+	{
+		return new AttributeGroup<>(parameterAttributes);
+	}
 }

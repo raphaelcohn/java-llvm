@@ -9,6 +9,11 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="llvm-api" />
     <orderEntry type="library" name="annotations" level="project" />
+    <orderEntry type="module" module-name="java-parsing-fileParsers" />
+    <orderEntry type="module" module-name="java-classfile-parsing" />
+    <orderEntry type="module" module-name="java-classfile-domain" />
+    <orderEntry type="module" module-name="jopt" />
+    <orderEntry type="module" module-name="path" />
   </component>
   <component name="org.twodividedbyzero.idea.findbugs">
     <option name="_basePreferences">

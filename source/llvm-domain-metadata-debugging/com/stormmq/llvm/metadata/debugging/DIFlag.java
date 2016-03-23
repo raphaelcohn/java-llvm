@@ -24,7 +24,22 @@ package com.stormmq.llvm.metadata.debugging;
 
 public enum DIFlag
 {
-	DIFlagPrototyped,
+	DIFlagPrivate,
+	DIFlagProtected,
+	DIFlagPublic,
+	DIFlagFwdDecl,
+	DIFlagAppleBlock,
+	DIFlagBlockByrefStruct,
+	DIFlagVirtual,
 	DIFlagArtificial,
+	DIFlagExplicit,
+	DIFlagPrototyped,
+	DIFlagObjcClassComplete,
+	DIFlagObjectPointer,
+	DIFlagVector,
+	DIFlagStaticMember,
+	DIFlagLValueReference,
+	DIFlagRValueReference,
+	DIFlagExternalTypeRef,
 	;
 }

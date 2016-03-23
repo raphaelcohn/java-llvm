@@ -20,35 +20,33 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.function;
+package com.stormmq.jopt;
 
-import com.stormmq.llvm.domain.names.AbstractName;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
+import static com.stormmq.jopt.CommandLineArgumentsParser.newShouldHaveExited;
+import static java.lang.Runtime.getRuntime;
 
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
-
-public final class ParameterName extends AbstractName
+public enum ExitCode
 {
-	@NotNull private static final byte[] Start = {};
-	@NotNull private static final byte[] End = {};
+	ExitCodeOk(0),
+	ExitCodeGeneralError(1),
+	;
 
-	public ParameterName(@NotNull @NonNls final String name)
+	private final int value;
+
+	ExitCode(final int value)
 	{
-		super(name);
+		this.value = value;
 	}
 
-	@Override
-	@NotNull
-	protected byte[] start()
+	public void exit()
 	{
-		return Start;
+		System.exit(value);
+		throw newShouldHaveExited();
 	}
 
-	@NotNull
-	@Override
-	protected byte[] end()
+	public void halt()
 	{
-		return End;
+		getRuntime().halt(value);
+		throw newShouldHaveExited();
 	}
 }

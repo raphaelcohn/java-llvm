@@ -8,6 +8,7 @@
       <module fileurl="file://$PROJECT_DIR$/source/java-classfile-parsing/java-classfile-parsing.iml" filepath="$PROJECT_DIR$/source/java-classfile-parsing/java-classfile-parsing.iml" group="library/java-classfile/classfile" />
       <module fileurl="file://$PROJECT_DIR$/source/java-parsing-fileParsers/java-parsing-fileParsers.iml" filepath="$PROJECT_DIR$/source/java-parsing-fileParsers/java-parsing-fileParsers.iml" group="library/java-classfile/parsing" />
       <module fileurl="file://$PROJECT_DIR$/source/java-parsing-utilities/java-parsing-utilities.iml" filepath="$PROJECT_DIR$/source/java-parsing-utilities/java-parsing-utilities.iml" group="library/java-classfile/parsing" />
+      <module fileurl="file://$PROJECT_DIR$/source/jopt/jopt.iml" filepath="$PROJECT_DIR$/source/jopt/jopt.iml" />
       <module fileurl="file://$PROJECT_DIR$/source/llvm-api/llvm-api.iml" filepath="$PROJECT_DIR$/source/llvm-api/llvm-api.iml" group="llvm" />
       <module fileurl="file://$PROJECT_DIR$/source/llvm-domain/llvm-domain.iml" filepath="$PROJECT_DIR$/source/llvm-domain/llvm-domain.iml" group="llvm/domain" />
       <module fileurl="file://$PROJECT_DIR$/source/llvm-domain-attributes/llvm-domain-attributes.iml" filepath="$PROJECT_DIR$/source/llvm-domain-attributes/llvm-domain-attributes.iml" group="llvm/domain" />

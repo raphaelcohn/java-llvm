@@ -17,5 +17,7 @@
     <orderEntry type="module" module-name="llvm-domain-target" exported="" />
     <orderEntry type="module" module-name="llvm-domain-function" exported="" />
     <orderEntry type="module" module-name="llvm-domain-variables" exported="" />
+    <orderEntry type="module" module-name="llvm-domain-metadata-debugging" />
+    <orderEntry type="module" module-name="llvm-domain-metadata-module" />
   </component>
 </module>

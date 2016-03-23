@@ -20,25 +20,31 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.metadata.debugging;
+package com.stormmq.llvm.examples;
 
-import com.stormmq.llvm.domain.ReferenceTracker;
-import com.stormmq.llvm.metadata.metadataTuples.*;
+import com.stormmq.jopt.CommandLineArgumentsParser;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import static java.lang.String.format;
-import static java.util.Locale.ENGLISH;
+import java.nio.file.Path;
+import java.util.LinkedHashSet;
+import java.util.function.Supplier;
 
-public final class DICompositeTypeKeyedMetadataTuple extends KeyedMetadataTuple implements TypeMetadata
+import static com.stormmq.jopt.Application.run;
+import static com.stormmq.jopt.CommandLineArgumentsParser.commandLineArgumentsParser;
+import static com.stormmq.path.Constants.CurrentFolder;
+
+public final class ConsoleEntryPoint
 {
-	public DICompositeTypeKeyedMetadataTuple(@NotNull final ReferenceTracker<KeyedMetadataTuple> referenceTracker, @NotNull final DW_TAG tag, @NonNls @NotNull final String name, @NotNull final DIFileKeyedMetadataTuple file, final int lineNumber, final int sizeInBits, final int alignmentInBits, @NotNull @NonNls final String identifier, @NotNull final TypedMetadataTuple<TypeMetadata> elements)
+	public static void main(@NotNull @NonNls final String... commandLineArguments)
 	{
-		super(referenceTracker, false, "DICompositeType", Key.tag.with(tag), Key.name.with(name), Key.file.with(file), Key.lineNumber.with(lineNumber), Key.size.with(sizeInBits), Key.align.with(alignmentInBits), Key.identifier.with(identifier), Key.element.with(elements));
+		final CommandLineArgumentsParser commandLineArgumentsParser = commandLineArgumentsParser(commandLineArguments);
+		@SuppressWarnings("HardcodedFileSeparator") final Supplier<LinkedHashSet<Path>> source = commandLineArgumentsParser.extantWritableFolderPathsOption(true, "source", "source root path", "/path/to/source", CurrentFolder);
 
-		if (!tag.validForCompositeType)
-		{
-			throw new IllegalArgumentException(format(ENGLISH, "Tag '%1$s' is not valid for a composite type", tag));
-		}
+		run(new ExampleApplication(source.get()));
+	}
+
+	private ConsoleEntryPoint()
+	{
 	}
 }
