@@ -41,11 +41,13 @@ import static java.nio.file.Files.readAllBytes;
 public final class WrappingJavaClassFileParser implements FileParser
 {
 	@NotNull private final ParseFailureLog parseFailureLog;
+	private final boolean permitConstantsInInstanceFields;
 	@NotNull private final TypeInformationUser typeInformationUser;
 
-	public WrappingJavaClassFileParser(@NotNull final ParseFailureLog parseFailureLog, @NotNull final TypeInformationUser typeInformationUser)
+	public WrappingJavaClassFileParser(@NotNull final ParseFailureLog parseFailureLog, final boolean permitConstantsInInstanceFields, @NotNull final TypeInformationUser typeInformationUser)
 	{
 		this.parseFailureLog = parseFailureLog;
+		this.permitConstantsInInstanceFields = permitConstantsInInstanceFields;
 		this.typeInformationUser = typeInformationUser;
 	}
 
@@ -66,7 +68,7 @@ public final class WrappingJavaClassFileParser implements FileParser
 		{
 			try
 			{
-				typeInformationUser.use(JavaClassFileParser.parseJavaClassFile(byteReader), filePath.toString(), sourceRootPath.toString());
+				typeInformationUser.use(JavaClassFileParser.parseJavaClassFile(byteReader, permitConstantsInInstanceFields), filePath.toString(), sourceRootPath.toString());
 			}
 			catch (final InvalidJavaClassFileException e)
 			{
@@ -92,7 +94,7 @@ public final class WrappingJavaClassFileParser implements FileParser
 			{
 				try
 				{
-					typeInformationUser.use(JavaClassFileParser.parseJavaClassFile(byteReader), zipEntry.getName(), zipFile.getName());
+					typeInformationUser.use(JavaClassFileParser.parseJavaClassFile(byteReader, permitConstantsInInstanceFields), zipEntry.getName(), zipFile.getName());
 				}
 				catch (final InvalidJavaClassFileException e)
 				{

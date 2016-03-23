@@ -45,7 +45,7 @@ public final class ExampleApplication implements Application
 	@NotNull private final ParseFailureLog parseFailureLog;
 	@NotNull private final MultiplePathsParser multiplePathsParser;
 
-	public ExampleApplication(@NotNull final LinkedHashSet<Path> sourcePaths)
+	public ExampleApplication(@NotNull final LinkedHashSet<Path> sourcePaths, final boolean permitConstantsInInstanceFields)
 	{
 		this.sourcePaths = sourcePaths;
 		parseFailureLog = StandardError();
@@ -57,7 +57,7 @@ public final class ExampleApplication implements Application
 			{
 			}
 		};
-		final WrappingJavaClassFileParser javaClassFileParser = new WrappingJavaClassFileParser(parseFailureLog, typeInformationUser);
+		final WrappingJavaClassFileParser javaClassFileParser = new WrappingJavaClassFileParser(parseFailureLog, permitConstantsInInstanceFields, typeInformationUser);
 		multiplePathsParser = new MultiplePathsParser(DoNothingFileParser, javaClassFileParser);
 	}
 

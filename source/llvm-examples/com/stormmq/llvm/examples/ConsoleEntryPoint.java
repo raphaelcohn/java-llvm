@@ -41,7 +41,7 @@ public final class ConsoleEntryPoint
 		final CommandLineArgumentsParser commandLineArgumentsParser = commandLineArgumentsParser(commandLineArguments);
 		@SuppressWarnings("HardcodedFileSeparator") final Supplier<LinkedHashSet<Path>> source = commandLineArgumentsParser.extantWritableFolderPathsOption(true, "source", "source root path", "/path/to/source", CurrentFolder);
 
-		run(new ExampleApplication(source.get()));
+		run(new ExampleApplication(source.get(), true));
 	}
 
 	private ConsoleEntryPoint()
