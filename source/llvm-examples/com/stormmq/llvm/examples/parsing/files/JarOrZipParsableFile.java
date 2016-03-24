@@ -22,24 +22,32 @@
 
 package com.stormmq.llvm.examples.parsing.files;
 
-import com.stormmq.java.parsing.fileParsers.FileParser;
+import com.stormmq.llvm.examples.parsing.FileParser;
 import com.stormmq.llvm.examples.parsing.parseFailueLogs.ParseFailureLog;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
+import static com.stormmq.llvm.examples.parsing.parseFailueLogs.ParseFailureLog.zipPathDetails;
+import static com.stormmq.path.FileAndFolderHelper.retrieveAllBytesForKnownInputStreamSize;
+import static com.stormmq.path.FileAndFolderHelper.retrieveAllBytesForUnknownInputStreamSize;
 import static com.stormmq.path.IsFileTypeFilter.isClassFile;
 
 public final class JarOrZipParsableFile implements ParsableFile
 {
-	@NotNull private final Path zipFilePath;
+	private static final int OneMegabyte = 1048576;
 
-	public JarOrZipParsableFile(@NotNull final Path zipFilePath)
+	@NotNull private final Path zipFilePath;
+	@NotNull private final ConcurrentLinkedQueue<ParsableFile> parsableFileQueue;
+
+	public JarOrZipParsableFile(@NotNull final Path zipFilePath, @NotNull final ConcurrentLinkedQueue<ParsableFile> parsableFileQueue)
 	{
 		this.zipFilePath = zipFilePath;
+		this.parsableFileQueue = parsableFileQueue;
 	}
 
 	@Override
@@ -52,7 +60,34 @@ public final class JarOrZipParsableFile implements ParsableFile
 				return;
 			}
 
-			zipFile.stream().filter((zipEntry) -> !zipEntry.isDirectory() && isClassFile(zipEntry.getName())).forEach(zipEntry -> fileParser.parseFile(zipFile, zipEntry));
+			zipFile.stream().filter((zipEntry) -> !zipEntry.isDirectory() && isClassFile(zipEntry.getName())).forEach(zipEntry ->
+			{
+				final long size = zipEntry.getSize();
+				if (size > Integer.MAX_VALUE)
+				{
+					parseFailureLog.failureJavaClassFileIsTooLarge(zipPathDetails(zipFile, zipEntry));
+					return;
+				}
+
+				@SuppressWarnings("NumericCastThatLosesPrecision") final int length = (int) size;
+
+				final byte[] all;
+				try
+				{
+					all = length == -1 ? retrieveAllBytesForUnknownInputStreamSize(zipFile, zipEntry, OneMegabyte) : retrieveAllBytesForKnownInputStreamSize(zipFile, zipEntry, length);
+				}
+				catch (final ZipException e)
+				{
+					parseFailureLog.failure(zipFile, zipEntry, e);
+					return;
+				}
+				catch (final IOException e)
+				{
+					parseFailureLog.failure(zipFile, zipEntry, e);
+					return;
+				}
+				parsableFileQueue.add((fileParser1, parseFailureLog1) -> fileParser1.parseFile(zipFile, zipEntry, all));
+			});
 		}
 		catch (final ZipException e)
 		{
@@ -63,4 +98,5 @@ public final class JarOrZipParsableFile implements ParsableFile
 			parseFailureLog.failureZip(zipFilePath, e);
 		}
 	}
+
 }

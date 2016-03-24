@@ -74,13 +74,7 @@ public final class PrintStreamParseFailureLog implements ParseFailureLog
 	}
 
 	@Override
-	public void success(@NotNull final Path filePath)
-	{
-		successCount.getAndIncrement();
-	}
-
-	@Override
-	public void success(@NotNull final ZipFile zipFile, @NotNull final ZipEntry zipEntry)
+	public void success(@NotNull final String filePath)
 	{
 		successCount.getAndIncrement();
 	}
@@ -104,41 +98,27 @@ public final class PrintStreamParseFailureLog implements ParseFailureLog
 	}
 
 	@Override
-	public void failure(@NotNull final Path filePath, @NotNull final InvalidJavaClassFileException e)
+	public void failure(@NotNull final String filePath, @NotNull final InvalidJavaClassFileException e)
+	{
+		failure("File '%1$s' on disk could not be read because it is an invalid Java class file '%2$s'", filePath, e.getMessage());
+	}
+
+	@Override
+	public void failure(@NotNull final String filePath, @NotNull final JavaClassFileContainsDataTooLongToReadException e)
 	{
 		failure("File '%1$s' on disk could not be parsed because it is an invalid Java class file ('%2$s')", filePath, e.getMessage());
 	}
 
 	@Override
-	public void failure(@NotNull final Path filePath, @NotNull final JavaClassFileContainsDataTooLongToReadException e)
-	{
-		failure("File '%1$s' on disk could not be parsed because it contains data that is too long to read ('%2$s'); this is extremely unusual", filePath, e.getMessage());
-	}
-
-	@Override
 	public void failure(@NotNull final ZipFile zipFile, @NotNull final ZipEntry zipEntry, @NotNull final IOException e)
 	{
-		failure("File '%1$s' in zip archive could not be read because of an input error '%2$s'", zipPathDetails(zipFile, zipEntry), e.getMessage());
+		failure("File '%1$s' in zip archive could not be read because of an input error '%2$s'", ParseFailureLog.zipPathDetails(zipFile, zipEntry), e.getMessage());
 	}
 
 	@Override
-	public void failure(@NotNull final ZipFile zipFile, @NotNull final ZipEntry zipEntry, @NotNull final InvalidJavaClassFileException e)
+	public void failureJavaClassFileIsTooLarge(@NotNull final String filePath)
 	{
-		failure("File '%1$s' in zip archive could not be parsed because it is an invalid Java class file ('%2$s')", zipPathDetails(zipFile, zipEntry), e.getMessage());
-	}
-
-	@Override
-	public void failure(@NotNull final ZipFile zipFile, @NotNull final ZipEntry zipEntry, @NotNull final JavaClassFileContainsDataTooLongToReadException e)
-	{
-		failure("File '%1$s' in zip archive could not be parsed because it contains data that is too long to read ('%2$s'); this is extremely unusual", zipPathDetails(zipFile, zipEntry), e.getMessage());
-	}
-
-	@SuppressWarnings("HardcodedFileSeparator")
-	@NonNls
-	@NotNull
-	private static String zipPathDetails(@NotNull final ZipFile zipFile, @NotNull final ZipEntry zipEntry)
-	{
-		return zipFile.getName() + "!/" + zipEntry.getName();
+		failure("File '%1$s' is larger than 2Gb and so is too big to parse. This should be exceedingly rare.");
 	}
 
 	@SuppressWarnings({"resource", "SynchronizationOnLocalVariableOrMethodParameter", "OverloadedVarargsMethod"})

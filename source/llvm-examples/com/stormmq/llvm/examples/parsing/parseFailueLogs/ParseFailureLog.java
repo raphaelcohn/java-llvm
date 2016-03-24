@@ -24,6 +24,7 @@ package com.stormmq.llvm.examples.parsing.parseFailueLogs;
 
 import com.stormmq.java.classfile.parser.javaClassFileParsers.exceptions.InvalidJavaClassFileException;
 import com.stormmq.java.classfile.parser.javaClassFileParsers.exceptions.JavaClassFileContainsDataTooLongToReadException;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -32,15 +33,21 @@ import java.util.zip.*;
 
 public interface ParseFailureLog
 {
+	@SuppressWarnings("HardcodedFileSeparator")
+	@NonNls
+	@NotNull
+	static String zipPathDetails(@NotNull final ZipFile zipFile, @NotNull final ZipEntry zipEntry)
+	{
+		return zipFile.getName() + "!/" + zipEntry.getName();
+	}
+
 	boolean hasFailures();
 
 	int failureCount();
 
 	int successCount();
 
-	void success(@NotNull final Path filePath);
-
-	void success(@NotNull final ZipFile zipFile, @NotNull final ZipEntry zipEntry);
+	void success(@NotNull final String filePath);
 
 	void failureZip(@NotNull final Path zipFilePath, @NotNull final IOException e);
 
@@ -48,13 +55,11 @@ public interface ParseFailureLog
 
 	void failure(@NotNull final Path filePath, @NotNull final IOException e);
 
-	void failure(@NotNull final Path filePath, @NotNull final InvalidJavaClassFileException e);
+	void failure(@NotNull final String filePath, @NotNull final InvalidJavaClassFileException e);
 
-	void failure(@NotNull final Path filePath, @NotNull final JavaClassFileContainsDataTooLongToReadException e);
+	void failure(@NotNull final String filePath, @NotNull final JavaClassFileContainsDataTooLongToReadException e);
 
 	void failure(@NotNull final ZipFile zipFile, @NotNull final ZipEntry zipEntry, @NotNull final IOException e);
 
-	void failure(@NotNull final ZipFile zipFile, @NotNull final ZipEntry zipEntry, @NotNull final InvalidJavaClassFileException e);
-
-	void failure(@NotNull final ZipFile zipFile, @NotNull final ZipEntry zipEntry, @NotNull final JavaClassFileContainsDataTooLongToReadException e);
+	void failureJavaClassFileIsTooLarge(@NotNull final String filePath);
 }

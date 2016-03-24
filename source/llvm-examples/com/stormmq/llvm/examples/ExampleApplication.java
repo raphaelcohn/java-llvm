@@ -23,7 +23,6 @@
 package com.stormmq.llvm.examples;
 
 import com.stormmq.java.classfile.domain.information.TypeInformation;
-import com.stormmq.java.parsing.fileParsers.FileParser;
 import com.stormmq.jopt.Application;
 import com.stormmq.jopt.ExitCode;
 import com.stormmq.llvm.examples.parsing.*;
@@ -58,11 +57,11 @@ public final class ExampleApplication implements Application
 			{
 			}
 		};
-		final FileParser javaClassFileParser = new WrappingJavaClassFileParser(parseFailureLog, permitConstantsInInstanceFields, typeInformationUser);
+		final FileParser javaClassFileParser = new JavaClassFileParser(parseFailureLog, permitConstantsInInstanceFields, typeInformationUser);
 		final ConcurrentLinkedQueue<ParsableFile> parsableFileQueue = new ConcurrentLinkedQueue<>();
 
-
-		final Coordination coordination = new Coordination(3, parsableFileQueue, javaClassFileParser, parseFailureLog);
+		// Can easily become saturated with JAR file processing
+		final Coordination coordination = new Coordination(16, parsableFileQueue, javaClassFileParser, parseFailureLog);
 		multiplePathsParser = new EnqueuePathsWalker(parsableFileQueue, coordination);
 	}
 

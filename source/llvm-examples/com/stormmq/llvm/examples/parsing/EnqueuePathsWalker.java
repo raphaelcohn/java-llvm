@@ -22,8 +22,8 @@
 
 package com.stormmq.llvm.examples.parsing;
 
-import com.stormmq.llvm.examples.parsing.files.*;
-import com.stormmq.path.FileAndFolderHelper;
+import com.stormmq.llvm.examples.parsing.files.JarOrZipParsableFile;
+import com.stormmq.llvm.examples.parsing.files.ParsableFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,6 +32,7 @@ import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import static com.stormmq.path.FileAndFolderHelper.FollowLinks;
 import static com.stormmq.path.IsFileTypeFilter.IsClassFile;
 import static com.stormmq.path.IsFileTypeFilter.IsJarOrZipFile;
 import static com.stormmq.path.IsSubFolderFilter.IsSubFolder;
@@ -76,19 +77,19 @@ public final class EnqueuePathsWalker
 
 	private void processJarOrZipFile(@NotNull final Path jarOrZipFilePath)
 	{
-		parsableFileQueue.add(new JarOrZipParsableFile(jarOrZipFilePath));
+		parsableFileQueue.add(new JarOrZipParsableFile(jarOrZipFilePath, parsableFileQueue));
 	}
 
 	private void processClassFile(@NotNull final Path javaClassFilePath, @NotNull final Path dependencyPath)
 	{
-		parsableFileQueue.add(new JavaClassParsableFile(javaClassFilePath, dependencyPath));
+		parsableFileQueue.add((fileParser, parseFailureLog) -> fileParser.parseFile(javaClassFilePath, dependencyPath));
 	}
 
 	private void processFolder(@NotNull final Path dependencyPath)
 	{
 		try
 		{
-			walkFileTree(dependencyPath, FileAndFolderHelper.FollowLinks, MAX_VALUE, new FileVisitor<Path>()
+			walkFileTree(dependencyPath, FollowLinks, MAX_VALUE, new FileVisitor<Path>()
 			{
 				@Override
 				public FileVisitResult preVisitDirectory(@NotNull final Path directory, @NotNull final BasicFileAttributes basicFileAttributes)

@@ -6,7 +6,6 @@
       <module fileurl="file://$PROJECT_DIR$/source/charsetDetector/charsetDetector.iml" filepath="$PROJECT_DIR$/source/charsetDetector/charsetDetector.iml" group="library/charsetDetector" />
       <module fileurl="file://$PROJECT_DIR$/source/java-classfile-domain/java-classfile-domain.iml" filepath="$PROJECT_DIR$/source/java-classfile-domain/java-classfile-domain.iml" group="library/java-classfile/classfile" />
       <module fileurl="file://$PROJECT_DIR$/source/java-classfile-parsing/java-classfile-parsing.iml" filepath="$PROJECT_DIR$/source/java-classfile-parsing/java-classfile-parsing.iml" group="library/java-classfile/classfile" />
-      <module fileurl="file://$PROJECT_DIR$/source/java-parsing-fileParsers/java-parsing-fileParsers.iml" filepath="$PROJECT_DIR$/source/java-parsing-fileParsers/java-parsing-fileParsers.iml" group="library/java-classfile/parsing" />
       <module fileurl="file://$PROJECT_DIR$/source/java-parsing-utilities/java-parsing-utilities.iml" filepath="$PROJECT_DIR$/source/java-parsing-utilities/java-parsing-utilities.iml" group="library/java-classfile/parsing" />
       <module fileurl="file://$PROJECT_DIR$/source/jopt/jopt.iml" filepath="$PROJECT_DIR$/source/jopt/jopt.iml" />
       <module fileurl="file://$PROJECT_DIR$/source/llvm-api/llvm-api.iml" filepath="$PROJECT_DIR$/source/llvm-api/llvm-api.iml" group="llvm" />

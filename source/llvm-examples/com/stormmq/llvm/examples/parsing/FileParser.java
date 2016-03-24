@@ -20,32 +20,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.examples.parsing.files;
+package com.stormmq.llvm.examples.parsing;
 
-import com.stormmq.java.parsing.fileParsers.FileParser;
-import com.stormmq.llvm.examples.parsing.parseFailueLogs.ParseFailureLog;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
-import static com.stormmq.path.FileAndFolderHelper.relativeToRootPath;
-
-public final class JavaClassParsableFile implements ParsableFile
+public interface FileParser
 {
-	@NotNull private final Path javaClassFilePath;
-	@NotNull private final Path relativeFilePath;
-	@NotNull private final Path dependencyPath;
+	void parseFile(@NotNull final Path javaClassFilePath, @NotNull final Path dependencyPath);
 
-	public JavaClassParsableFile(@NotNull final Path javaClassFilePath, @NotNull final Path dependencyPath)
-	{
-		this.javaClassFilePath = javaClassFilePath;
-		this.dependencyPath = dependencyPath;
-		relativeFilePath = relativeToRootPath(dependencyPath, javaClassFilePath);
-	}
-
-	@Override
-	public void process(@NotNull final FileParser fileParser, @NotNull final ParseFailureLog parseFailureLog)
-	{
-		fileParser.parseFile(javaClassFilePath, dependencyPath);
-	}
+	void parseFile(@NotNull final ZipFile zipFile, @NotNull final ZipEntry zipEntry, @NotNull final byte[] fileData);
 }
