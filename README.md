@@ -11,18 +11,8 @@
 The license for this project is MIT.
 
 
-## Known Issues
+## Valid Files
 
-### Invalid Files
-
-On Mac OS X, using all the jar files from JDK 1.8.0 update 74 (`rm -rf ./out/jar; mkdir -p ./out/jar; find /Library/Java/JavaVirtualMachines/jdk1.8.0_74.jdk/Contents/Home/ -type f -name '*.jar' | xargs gcp -t ./out/jar`), the following failures are present:-
-
-* RuntimeInvisibleParameterAnnotations length must match method descriptor parameter count
-    * `rt.jar`
-        * `com/sun/xml/internal/ws/binding/WebServiceFeatureList$MergedFeatures.class`
-* bootstrap method argument reference is not a bootstrap method argument
-    * `rt.jar`
-        * `java/time/chrono/AbstractChronology.class`
-        * and others; this looks like a real bug
+On Mac OS X, using all the jar files from JDK 1.8.0 update 74 (`rm -rf ./out/jar; mkdir -p ./out/jar; find /Library/Java/JavaVirtualMachines/jdk1.8.0_74.jdk/Contents/Home/ -type f -name '*.jar' | xargs gcp -t ./out/jar`), all 73,669 files pass (although about 10 class files make use of String constants that have invalid UTF-16 surrogate pairs in them).
 
 [java-llvm]: https://github.com/raphaelcohn/java-llvm "java-llvm GitHub page"
