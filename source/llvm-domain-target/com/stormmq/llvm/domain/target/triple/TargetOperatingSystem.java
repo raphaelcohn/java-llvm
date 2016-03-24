@@ -22,18 +22,20 @@
 
 package com.stormmq.llvm.domain.target.triple;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.*;
 
+import static com.stormmq.llvm.domain.target.triple.Vendor.apple;
 import static java.lang.String.format;
 import static java.util.Locale.ENGLISH;
 
 public final class TargetOperatingSystem
 {
+	@NotNull public static final TargetOperatingSystem MacOsXMavericks = new TargetOperatingSystem(apple, "macosx10.9.0");
+
 	@NotNull private final Vendor vendor;
 	@NotNull private final String versionedName;
 
-	public TargetOperatingSystem(@NotNull final Vendor vendor, @NotNull final String versionedName)
+	public TargetOperatingSystem(@NotNull final Vendor vendor, @NonNls @NotNull final String versionedName)
 	{
 		if (versionedName.isEmpty())
 		{

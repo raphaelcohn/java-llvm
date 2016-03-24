@@ -32,7 +32,7 @@ import java.util.Set;
 public final class DILocalVariableKeyedMetadataTuple extends KeyedMetadataTuple
 {
 	// oneBasedIndex is zero, then this is NOT a method variable
-	public DILocalVariableKeyedMetadataTuple(@NotNull final ReferenceTracker<KeyedMetadataTuple> referenceTracker, @NotNull final LocalIdentifier variableName, final int oneBasedIndex, @NotNull final ScopeMetadata scope, @NotNull final DIFileKeyedMetadataTuple file, final int lineNumber, @NotNull final TypeMetadata type, @NotNull final Set<DIFlag> flags)
+	public DILocalVariableKeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final LocalIdentifier variableName, final int oneBasedIndex, @NotNull final ScopeMetadata scope, @NotNull final DIFileKeyedMetadataTuple file, final int lineNumber, @NotNull final TypeMetadata type, @NotNull final Set<DIFlag> flags)
 	{
 		super(referenceTracker, false, "DILocalVariable", Key.name.with(variableName), Key.arg.with(oneBasedIndex), Key.scope.with(scope), Key.file.with(file), Key.lineNumber.with(lineNumber), Key.type.with(type), Key.flags.with(flags));
 	}

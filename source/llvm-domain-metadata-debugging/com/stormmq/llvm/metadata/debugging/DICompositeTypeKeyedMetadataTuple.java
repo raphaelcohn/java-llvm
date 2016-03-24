@@ -32,7 +32,7 @@ import static java.util.Locale.ENGLISH;
 
 public final class DICompositeTypeKeyedMetadataTuple extends KeyedMetadataTuple implements TypeMetadata
 {
-	public DICompositeTypeKeyedMetadataTuple(@NotNull final ReferenceTracker<KeyedMetadataTuple> referenceTracker, @NotNull final DW_TAG tag, @NonNls @NotNull final String name, @NotNull final DIFileKeyedMetadataTuple file, final int lineNumber, final int sizeInBits, final int alignmentInBits, @NotNull @NonNls final String identifier, @NotNull final TypedMetadataTuple<TypeMetadata> elements)
+	public DICompositeTypeKeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final DW_TAG tag, @NonNls @NotNull final String name, @NotNull final DIFileKeyedMetadataTuple file, final int lineNumber, final int sizeInBits, final int alignmentInBits, @NotNull @NonNls final String identifier, @NotNull final TypedMetadataTuple<TypeMetadata> elements)
 	{
 		super(referenceTracker, false, "DICompositeType", Key.tag.with(tag), Key.name.with(name), Key.file.with(file), Key.lineNumber.with(lineNumber), Key.size.with(sizeInBits), Key.align.with(alignmentInBits), Key.identifier.with(identifier), Key.element.with(elements));
 

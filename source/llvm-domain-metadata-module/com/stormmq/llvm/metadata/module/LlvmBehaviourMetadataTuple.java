@@ -42,43 +42,43 @@ import static java.util.Collections.singletonList;
 public final class LlvmBehaviourMetadataTuple extends AnonymousMetadataTuple
 {
 	@NotNull
-	private static LlvmBehaviourMetadataTuple llvmBehaviourMetadataTuple(@NotNull final ReferenceTracker<List<? extends Metadata>> referenceTracker, @NotNull final LlvmModuleFlagsBehaviourFlag behaviourFlag, @NonNls @NotNull final String key, final int value)
+	private static LlvmBehaviourMetadataTuple llvmBehaviourMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final LlvmModuleFlagsBehaviourFlag behaviourFlag, @NonNls @NotNull final String key, final int value)
 	{
 		return new LlvmBehaviourMetadataTuple(referenceTracker, behaviourFlag, key, new ConstantMetadata(new IntegerConstant(i32, value)));
 	}
 
 	@NotNull
-	public static LlvmBehaviourMetadataTuple DwarfVersion2(@NotNull final ReferenceTracker<List<? extends Metadata>> referenceTracker)
+	public static LlvmBehaviourMetadataTuple DwarfVersion2(@NotNull final ReferenceTracker referenceTracker)
 	{
 		return llvmBehaviourMetadataTuple(referenceTracker, Warning, "Dwarf Version", 2);
 	}
 
 	@NotNull
-	public static LlvmBehaviourMetadataTuple DebugInfoVersion(@NotNull final ReferenceTracker<List<? extends Metadata>> referenceTracker)
+	public static LlvmBehaviourMetadataTuple DebugInfoVersion(@NotNull final ReferenceTracker referenceTracker)
 	{
 		return llvmBehaviourMetadataTuple(referenceTracker, Warning, "Debug Info Version", 3);
 	}
 
 	@NotNull
-	public static LlvmBehaviourMetadataTuple PicLevel2(@NotNull final ReferenceTracker<List<? extends Metadata>> referenceTracker)
+	public static LlvmBehaviourMetadataTuple PicLevel2(@NotNull final ReferenceTracker referenceTracker)
 	{
 		return llvmBehaviourMetadataTuple(referenceTracker, Error, "PIC Level", 2);
 	}
 
 	@NotNull
-	public static LlvmBehaviourMetadataTuple armCTypeWidthEnum(@NotNull final ReferenceTracker<List<? extends Metadata>> referenceTracker, @NotNull final WcharWidth wcharWidth)
+	public static LlvmBehaviourMetadataTuple armCTypeWidthEnum(@NotNull final ReferenceTracker referenceTracker, @NotNull final WcharWidth wcharWidth)
 	{
 		return llvmBehaviourMetadataTuple(referenceTracker, Error, "short_wchar", wcharWidth.value);
 	}
 
 	@NotNull
-	public static LlvmBehaviourMetadataTuple armCTypeWidthEnum(@NotNull final ReferenceTracker<List<? extends Metadata>> referenceTracker, @NotNull final EnumWidth enumWidth)
+	public static LlvmBehaviourMetadataTuple armCTypeWidthEnum(@NotNull final ReferenceTracker referenceTracker, @NotNull final EnumWidth enumWidth)
 	{
 		return llvmBehaviourMetadataTuple(referenceTracker, Error, "short_enum", enumWidth.value);
 	}
 
 	@NotNull
-	public static LlvmBehaviourMetadataTuple linkerLibraries(@NotNull final ReferenceTracker<List<? extends Metadata>> referenceTracker, @NonNls @NotNull final String... libraries)
+	public static LlvmBehaviourMetadataTuple linkerLibraries(@NotNull final ReferenceTracker referenceTracker, @NonNls @NotNull final String... libraries)
 	{
 		final LinkedHashSet<String> unique = new LinkedHashSet<>(asList(libraries));
 		@NonNls final String[] options = new String[unique.size()];
@@ -92,7 +92,7 @@ public final class LlvmBehaviourMetadataTuple extends AnonymousMetadataTuple
 	}
 
 	@NotNull
-	public static LlvmBehaviourMetadataTuple linkerOptionsForTarget(@NotNull final ReferenceTracker<List<? extends Metadata>> referenceTracker, @NotNull final Map<String, String> parameterizedOptions, @NotNull final String... options)
+	public static LlvmBehaviourMetadataTuple linkerOptionsForTarget(@NotNull final ReferenceTracker referenceTracker, @NotNull final Map<String, String> parameterizedOptions, @NotNull final String... options)
 	{
 		final int length = options.length;
 		final List<Metadata> tuple = new ArrayList<>(parameterizedOptions.size() + length);
@@ -114,7 +114,7 @@ public final class LlvmBehaviourMetadataTuple extends AnonymousMetadataTuple
 		return new LlvmBehaviourMetadataTuple(referenceTracker, AppendUnique, "Linker Options", new AnonymousMetadataTuple(referenceTracker, tuple));
 	}
 
-	public LlvmBehaviourMetadataTuple(@NotNull final ReferenceTracker<List<? extends Metadata>> referenceTracker, @NotNull final LlvmModuleFlagsBehaviourFlag behaviourFlag, @NonNls @NotNull final String key, @NotNull final Metadata value)
+	public LlvmBehaviourMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final LlvmModuleFlagsBehaviourFlag behaviourFlag, @NonNls @NotNull final String key, @NotNull final Metadata value)
 	{
 		super(referenceTracker, convert(behaviourFlag, key, value));
 	}

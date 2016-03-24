@@ -84,12 +84,15 @@ public final class Module implements Writable
 	{
 		dataLayoutSpecification.write(byteWriter);
 		targetTriple.write(byteWriter);
+		Writable.writeLineFeed(byteWriter);
 
 		llvmIdentNamedMetadataTuple.write(byteWriter);
 
 		llvmModuleFlagsNamedMetadataTuple.write(byteWriter);
 
 		compileUnits.write(byteWriter);
+
+		Writable.writeLineFeed(byteWriter);
 
 		write(byteWriter, comdatDefinitions);
 

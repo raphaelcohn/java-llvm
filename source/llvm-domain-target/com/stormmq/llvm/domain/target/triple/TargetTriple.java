@@ -26,12 +26,15 @@ import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.Writable;
 import org.jetbrains.annotations.*;
 
+import static com.stormmq.llvm.domain.target.triple.Architecture.x86_64;
+import static com.stormmq.llvm.domain.target.triple.TargetOperatingSystem.MacOsXMavericks;
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
 import static java.lang.String.format;
 import static java.util.Locale.ENGLISH;
 
 public final class TargetTriple implements Writable
 {
+	@NotNull public static final TargetTriple MacOsXMavericksOnX86_64 = new TargetTriple(x86_64, MacOsXMavericks, null);
 	@NotNull private static final byte[] TargetTripleStart = encodeUtf8BytesWithCertaintyValueIsValid("target triple = \"");
 	@SuppressWarnings("HardcodedLineSeparator") @NotNull private static final byte[] End = encodeUtf8BytesWithCertaintyValueIsValid("\"\n");
 

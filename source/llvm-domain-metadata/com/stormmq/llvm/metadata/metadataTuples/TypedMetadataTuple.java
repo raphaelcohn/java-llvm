@@ -28,9 +28,17 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+import static java.util.Collections.emptyList;
+
 public final class TypedMetadataTuple<M extends Metadata> extends AnonymousMetadataTuple
 {
-	public TypedMetadataTuple(@NotNull final ReferenceTracker<List<? extends Metadata>> referenceTracker, @NotNull final List<M> tuple)
+	@NotNull
+	public static <M extends Metadata> TypedMetadataTuple<M> emptyTypedMetadataTuple(@NotNull final ReferenceTracker referenceTracker)
+	{
+		return new TypedMetadataTuple<>(referenceTracker, emptyList());
+	}
+
+	public TypedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final List<M> tuple)
 	{
 		super(referenceTracker, tuple);
 	}

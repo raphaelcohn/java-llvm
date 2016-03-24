@@ -27,12 +27,10 @@ import com.stormmq.llvm.metadata.metadataTuples.KeyedMetadataTuple;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import java.nio.file.Path;
-
 public final class DIFileKeyedMetadataTuple extends KeyedMetadataTuple
 {
-	public DIFileKeyedMetadataTuple(@NotNull final ReferenceTracker<KeyedMetadataTuple> referenceTracker, @NonNls @NotNull final String simpleSourceFileName, @NotNull final Path directoryUsageOfSimpleSourceFileEncounteredIn)
+	public DIFileKeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NonNls @NotNull final String simpleSourceFileName, @NotNull final String directoryUsageOfSimpleSourceFileEncounteredIn)
 	{
-		super(referenceTracker, false, "DIFile", Key.filename.with(simpleSourceFileName), Key.directory.with(directoryUsageOfSimpleSourceFileEncounteredIn.toString()));
+		super(referenceTracker, false, "DIFile", Key.filename.with(simpleSourceFileName), Key.directory.with(directoryUsageOfSimpleSourceFileEncounteredIn));
 	}
 }

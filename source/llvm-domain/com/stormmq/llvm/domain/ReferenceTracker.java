@@ -28,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class ReferenceTracker<R>
+public final class ReferenceTracker
 {
 	@NotNull private final Map<Object, Integer> references;
 	private int nextReferenceIndex;
@@ -39,12 +39,12 @@ public final class ReferenceTracker<R>
 		nextReferenceIndex = 0;
 	}
 
-	public boolean hasBeenWritten(@NotNull final R reference)
+	public boolean hasBeenWritten(@NotNull final Object reference)
 	{
 		return references.containsKey(reference);
 	}
 
-	public int referenceIndex(@NotNull final R reference)
+	public int referenceIndex(@NotNull final Object reference)
 	{
 		final int referenceIndex = nextReferenceIndex;
 		@Nullable final Integer existing = references.putIfAbsent(reference, referenceIndex);

@@ -20,12 +20,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.examples.parsing;
+package com.stormmq.llvm.examples.parsing.fileParsers;
 
 import com.stormmq.java.classfile.domain.information.TypeInformation;
 import com.stormmq.java.classfile.parser.byteReaders.ByteArrayByteReader;
 import com.stormmq.java.classfile.parser.javaClassFileParsers.exceptions.*;
 import com.stormmq.llvm.examples.parsing.parseFailueLogs.ParseFailureLog;
+import com.stormmq.llvm.examples.parsing.typeInformationUsers.TypeInformationUser;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;

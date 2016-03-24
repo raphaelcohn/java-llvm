@@ -30,7 +30,7 @@ public final class DILexicalBlockFileKeyedMetadataTuple extends KeyedMetadataTup
 {
 	@NotNull private static final String DILexicalBlockFile = "DILexicalBlockFile";
 
-	public DILexicalBlockFileKeyedMetadataTuple(@NotNull final ReferenceTracker<KeyedMetadataTuple> referenceTracker, @NotNull final ScopeMetadata scope, @NotNull final DIFileKeyedMetadataTuple file, final int discriminator)
+	public DILexicalBlockFileKeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final ScopeMetadata scope, @NotNull final DIFileKeyedMetadataTuple file, final int discriminator)
 	{
 		super(referenceTracker, false, DILexicalBlockFile, Key.scope.with(scope), Key.file.with(file), Key.discriminator.with(discriminator));
 
@@ -40,7 +40,7 @@ public final class DILexicalBlockFileKeyedMetadataTuple extends KeyedMetadataTup
 		}
 	}
 
-	public DILexicalBlockFileKeyedMetadataTuple(@NotNull final ReferenceTracker<KeyedMetadataTuple> referenceTracker, @NotNull final ScopeMetadata scope, @NotNull final DIFileKeyedMetadataTuple file, final int lineNumber, final int column)
+	public DILexicalBlockFileKeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final ScopeMetadata scope, @NotNull final DIFileKeyedMetadataTuple file, final int lineNumber, final int column)
 	{
 		super(referenceTracker, false, DILexicalBlockFile, Key.scope.with(scope), Key.file.with(file), Key.line.with(lineNumber), Key.column.with(column));
 

@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
 
 public final class DISubroutineTypeKeyedMetadataTuple extends KeyedMetadataTuple implements TypeMetadata
 {
-	public DISubroutineTypeKeyedMetadataTuple(@NotNull final ReferenceTracker<KeyedMetadataTuple> referenceTracker, @NotNull final TypedMetadataTuple<TypeMetadata> types)
+	public DISubroutineTypeKeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final TypedMetadataTuple<TypeMetadata> types)
 	{
 		super(referenceTracker, false, "DISubroutineType", Key.types.with(types));
 	}

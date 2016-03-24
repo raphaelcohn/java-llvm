@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
 
 public final class DIBasicTypeKeyedMetadataTuple extends KeyedMetadataTuple implements TypeMetadata
 {
-	public DIBasicTypeKeyedMetadataTuple(@NotNull final ReferenceTracker<KeyedMetadataTuple> referenceTracker, @NotNull final DW_TAG tag, @NotNull @NonNls final String typeName, final int sizeInBits, final int alignmentInBits, @NotNull final DW_ATE encoding)
+	public DIBasicTypeKeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final DW_TAG tag, @NotNull @NonNls final String typeName, final int sizeInBits, final int alignmentInBits, @NotNull final DW_ATE encoding)
 	{
 		super(referenceTracker, false, "DIBasicType", Key.tag.with(tag), Key.name.with(typeName), Key.size.with(sizeInBits), Key.align.with(alignmentInBits), Key.encoding.with(encoding));
 	}

@@ -30,7 +30,7 @@ import java.util.List;
 
 public final class LlvmDbgCuNamedMetadataTuple extends NamedMetadataTuple
 {
-	public LlvmDbgCuNamedMetadataTuple(@NotNull final ReferenceTracker<String> referenceTracker, @NotNull final List<DICompileUnitKeyedMetadataTuple> compileUnits)
+	public LlvmDbgCuNamedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final List<DICompileUnitKeyedMetadataTuple> compileUnits)
 	{
 		super(referenceTracker, "llvm.dbg.cu", compileUnits);
 	}

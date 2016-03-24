@@ -32,7 +32,7 @@ import org.jetbrains.annotations.NotNull;
 
 public final class DIGlobalVariableKeyedMetadataTuple extends KeyedMetadataTuple implements TypeMetadata
 {
-	public DIGlobalVariableKeyedMetadataTuple(@NotNull final ReferenceTracker<KeyedMetadataTuple> referenceTracker, @NotNull final GlobalIdentifier globalIdentifier, @NotNull @NonNls final String linkageName, @NotNull final ScopeMetadata scope, @NotNull final DIFileKeyedMetadataTuple file, final int lineNumber, @NotNull final TypeMetadata type, final boolean isLocal, final boolean isDefinition, @NotNull final Constant<?> variable, @NotNull final Metadata declaration)
+	public DIGlobalVariableKeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final GlobalIdentifier globalIdentifier, @NotNull @NonNls final String linkageName, @NotNull final ScopeMetadata scope, @NotNull final DIFileKeyedMetadataTuple file, final int lineNumber, @NotNull final TypeMetadata type, final boolean isLocal, final boolean isDefinition, @NotNull final Constant<?> variable, @NotNull final Metadata declaration)
 	{
 		super(referenceTracker, false, "DIGlobalVariable", Key.name.with(globalIdentifier), Key.linkageName.with(linkageName), Key.scope.with(scope), Key.file.with(file), Key.line.with(lineNumber), Key.type.with(type), Key.isLocal.with(isLocal), Key.isDefinition.with(isDefinition), Key.variable.with(variable), Key.declaration.with(declaration));
 	}

@@ -38,7 +38,7 @@ public final class TbaaTagMetadataTuple extends AnonymousMetadataTuple
 	@NotNull private static final Metadata IsConstant = new ConstantMetadata(new IntegerConstant(IntegerValueType.i64, 1L));
 
 	// identifier is typically a type name, eg float, const float, etc
-	public TbaaTagMetadataTuple(@NotNull final ReferenceTracker<List<? extends Metadata>> referenceTracker, @NotNull final StringConstantMetadata identifier, @Nullable final TbaaTagMetadataTuple parent, final boolean isConstant)
+	public TbaaTagMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final StringConstantMetadata identifier, @Nullable final TbaaTagMetadataTuple parent, final boolean isConstant)
 	{
 		super(referenceTracker, convert(identifier, parent, isConstant));
 	}

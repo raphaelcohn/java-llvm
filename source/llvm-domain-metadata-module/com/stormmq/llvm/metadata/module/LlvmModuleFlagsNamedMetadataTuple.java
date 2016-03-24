@@ -23,40 +23,25 @@
 package com.stormmq.llvm.metadata.module;
 
 import com.stormmq.llvm.domain.ReferenceTracker;
-import com.stormmq.llvm.metadata.Metadata;
 import com.stormmq.llvm.metadata.metadataTuples.NamedMetadataTuple;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static com.stormmq.llvm.metadata.module.EnumWidth.AtLeastAsLargeAsInt;
 import static com.stormmq.llvm.metadata.module.LlvmBehaviourMetadataTuple.*;
 import static com.stormmq.llvm.metadata.module.WcharWidth.Wide;
+import static java.util.Arrays.asList;
 
 public final class LlvmModuleFlagsNamedMetadataTuple extends NamedMetadataTuple
 {
 	@NotNull
-	public static LlvmModuleFlagsNamedMetadataTuple TypicalLlvmModuleFlags(@NotNull final ReferenceTracker<String> referenceTrackerA, @NotNull final ReferenceTracker<List<? extends Metadata>> referenceTrackerB)
+	public static LlvmModuleFlagsNamedMetadataTuple TypicalLlvmModuleFlags(@NotNull final ReferenceTracker referenceTrackerA, @NotNull final ReferenceTracker referenceTrackerB)
 	{
 		return new LlvmModuleFlagsNamedMetadataTuple(referenceTrackerA, DwarfVersion2(referenceTrackerB), DebugInfoVersion(referenceTrackerB), PicLevel2(referenceTrackerB), armCTypeWidthEnum(referenceTrackerB, Wide), armCTypeWidthEnum(referenceTrackerB, AtLeastAsLargeAsInt));
 	}
 
-	public LlvmModuleFlagsNamedMetadataTuple(@NotNull final ReferenceTracker<String> referenceTracker, @NotNull final LlvmBehaviourMetadataTuple... llvmBehaviourMetadataTuples)
+	public LlvmModuleFlagsNamedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final LlvmBehaviourMetadataTuple... llvmBehaviourMetadataTuples)
 	{
-		super(referenceTracker, "llvm.module.flags", converts(llvmBehaviourMetadataTuples));
+		super(referenceTracker, "llvm.module.flags", asList(llvmBehaviourMetadataTuples));
 	}
 
-	@SuppressWarnings({"ForLoopReplaceableByForEach", "ManualArrayToCollectionCopy"})
-	@NotNull
-	private static List<? extends Metadata> converts(@NotNull final LlvmBehaviourMetadataTuple[] llvmBehaviourMetadataTuples)
-	{
-		final int length = llvmBehaviourMetadataTuples.length;
-		final List<Metadata> tuple = new ArrayList<>(length);
-		for(int index = 0; index < length; index++)
-		{
-			tuple.add(llvmBehaviourMetadataTuples[index]);
-		}
-		return tuple;
-	}
 }

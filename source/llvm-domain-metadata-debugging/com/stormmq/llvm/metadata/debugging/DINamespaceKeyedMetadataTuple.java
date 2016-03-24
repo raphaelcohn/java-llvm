@@ -28,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 
 public final class DINamespaceKeyedMetadataTuple extends KeyedMetadataTuple implements TypeMetadata
 {
-	public DINamespaceKeyedMetadataTuple(@NotNull final ReferenceTracker<KeyedMetadataTuple> referenceTracker, @NotNull final String name, @NotNull final ScopeMetadata scope, @NotNull final DIFileKeyedMetadataTuple file, final int lineNumber)
+	public DINamespaceKeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final String name, @NotNull final ScopeMetadata scope, @NotNull final DIFileKeyedMetadataTuple file, final int lineNumber)
 	{
 		super(referenceTracker, false, "DINamespace", Key.name.with(name), Key.scope.with(scope), Key.file.with(file), Key.line.with(lineNumber));
 	}

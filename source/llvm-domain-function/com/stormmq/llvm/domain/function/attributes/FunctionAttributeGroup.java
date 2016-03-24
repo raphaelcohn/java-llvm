@@ -28,8 +28,6 @@ import com.stormmq.llvm.domain.attributes.AttributeGroup;
 import com.stormmq.llvm.domain.function.attributes.functionAttributes.FunctionAttribute;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.SortedSet;
-
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
 
 public final class FunctionAttributeGroup extends AttributeGroup<FunctionAttribute> implements Reference
@@ -45,9 +43,9 @@ public final class FunctionAttributeGroup extends AttributeGroup<FunctionAttribu
 		byteWriter.writeUtf8EncodedStringWithCertainty(Integer.toString(referenceIndex));
 	}
 
-	@NotNull private final ReferenceTracker<SortedSet<FunctionAttribute>> referenceTracker;
+	@NotNull private final ReferenceTracker referenceTracker;
 
-	public FunctionAttributeGroup(@NotNull final ReferenceTracker<SortedSet<FunctionAttribute>> referenceTracker, @NotNull final FunctionAttribute... attributes)
+	public FunctionAttributeGroup(@NotNull final ReferenceTracker referenceTracker, @NotNull final FunctionAttribute... attributes)
 	{
 		super(attributes);
 		this.referenceTracker = referenceTracker;

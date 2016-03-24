@@ -22,41 +22,46 @@
 
 package com.stormmq.llvm.examples;
 
-import com.stormmq.java.classfile.domain.information.TypeInformation;
 import com.stormmq.jopt.Application;
 import com.stormmq.jopt.ExitCode;
-import com.stormmq.llvm.examples.parsing.*;
+import com.stormmq.llvm.examples.parsing.Coordination;
+import com.stormmq.llvm.examples.parsing.EnqueuePathsWalker;
+import com.stormmq.llvm.examples.parsing.fileParsers.FileParser;
+import com.stormmq.llvm.examples.parsing.fileParsers.JavaClassFileParser;
 import com.stormmq.llvm.examples.parsing.files.ParsableFile;
 import com.stormmq.llvm.examples.parsing.parseFailueLogs.ParseFailureLog;
+import com.stormmq.llvm.examples.parsing.typeInformationUsers.NaiveTypeInformationUser;
+import com.stormmq.llvm.examples.parsing.typeInformationUsers.TypeInformationUser;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.LinkedHashSet;
-import java.util.Locale;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import static com.stormmq.jopt.ExitCode.ExitCodeGeneralError;
 import static com.stormmq.jopt.ExitCode.ExitCodeOk;
 import static com.stormmq.llvm.examples.parsing.parseFailueLogs.PrintStreamParseFailureLog.StandardError;
+import static java.lang.System.err;
+import static java.lang.System.out;
+import static java.nio.file.Files.createDirectories;
+import static java.nio.file.Files.deleteIfExists;
+import static java.util.Locale.ENGLISH;
 
 public final class ExampleApplication implements Application
 {
 	@NotNull private final LinkedHashSet<Path> sourcePaths;
+	@NotNull private final Path outputPath;
 	@NotNull private final ParseFailureLog parseFailureLog;
 	@NotNull private final EnqueuePathsWalker multiplePathsParser;
 
-	public ExampleApplication(@NotNull final LinkedHashSet<Path> sourcePaths, final boolean permitConstantsInInstanceFields)
+	public ExampleApplication(@NotNull final LinkedHashSet<Path> sourcePaths, @NotNull final Path outputPath, final boolean permitConstantsInInstanceFields)
 	{
 		this.sourcePaths = sourcePaths;
+		this.outputPath = outputPath;
 		parseFailureLog = StandardError();
 
-		final TypeInformationUser typeInformationUser = new TypeInformationUser()
-		{
-			@Override
-			public void use(@NotNull final TypeInformation typeInformation, @NotNull final String sourceRootPath, @NotNull final String relativeFilePath)
-			{
-			}
-		};
+		final TypeInformationUser typeInformationUser = new NaiveTypeInformationUser(outputPath);
 		final FileParser javaClassFileParser = new JavaClassFileParser(parseFailureLog, permitConstantsInInstanceFields, typeInformationUser);
 		final ConcurrentLinkedQueue<ParsableFile> parsableFileQueue = new ConcurrentLinkedQueue<>();
 
@@ -69,20 +74,51 @@ public final class ExampleApplication implements Application
 	@NotNull
 	public ExitCode execute()
 	{
-		int extra = 1;
+		if (couldNotRecreateOutputDirectory())
+		{
+			return ExitCodeGeneralError;
+		}
 		try
 		{
 			multiplePathsParser.parse(sourcePaths);
-			extra = 0;
 		}
 		finally
 		{
-			System.out.printf(Locale.ENGLISH, "Success: %1$s\tFailure: %2$s\tTotal: %3$s%n", parseFailureLog.successCount(), parseFailureLog.failureCount() + extra, parseFailureLog.successCount() + parseFailureLog.failureCount() + extra);
+			final int successCount = parseFailureLog.successCount();
+			final int failureCount = parseFailureLog.failureCount();
+			final int total = successCount + failureCount;
+			//noinspection HardCodedStringLiteral
+			out.printf(ENGLISH, "Success: %1$s.  Failure: %2$s.  Total: %3$s%n.", successCount, failureCount, total);
 		}
 		if (parseFailureLog.hasFailures())
 		{
 			return ExitCodeGeneralError;
 		}
 		return ExitCodeOk;
+	}
+
+	public boolean couldNotRecreateOutputDirectory()
+	{
+		try
+		{
+			deleteIfExists(outputPath);
+		}
+		catch (final IOException ignored)
+		{
+			// Lots of legitimate reasons; may be like $HOME for instance (can't delete)
+		}
+
+		try
+		{
+			createDirectories(outputPath);
+		}
+		catch (final IOException e)
+		{
+			//noinspection HardCodedStringLiteral
+			err.printf(ENGLISH, "Could not create output directory (or one of its parents) because of '%1$s'%n", e.getMessage());
+			return true;
+		}
+
+		return false;
 	}
 }

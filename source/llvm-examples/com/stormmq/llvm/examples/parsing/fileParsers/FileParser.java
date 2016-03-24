@@ -20,7 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.examples.parsing;
+package com.stormmq.llvm.examples.parsing.fileParsers;
 
 import org.jetbrains.annotations.NotNull;
 

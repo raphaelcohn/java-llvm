@@ -22,6 +22,7 @@
 
 package com.stormmq.llvm.examples.parsing;
 
+import com.stormmq.llvm.examples.parsing.fileParsers.FileParser;
 import com.stormmq.llvm.examples.parsing.files.ParsableFile;
 import com.stormmq.llvm.examples.parsing.parseFailueLogs.ParseFailureLog;
 import org.jetbrains.annotations.NotNull;
@@ -30,6 +31,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static java.lang.System.err;
 import static java.lang.Thread.currentThread;
 
 public final class Coordination
@@ -55,6 +57,12 @@ public final class Coordination
 	{
 		for (final Thread queueProcessor : queueProcessors)
 		{
+			queueProcessor.setUncaughtExceptionHandler((t, e) ->
+			{
+				e.printStackTrace(err);
+				countDownLatch.countDown();
+				finish.set(true);
+			});
 			queueProcessor.start();
 		}
 	}

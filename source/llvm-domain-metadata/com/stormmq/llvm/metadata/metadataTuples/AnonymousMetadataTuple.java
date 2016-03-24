@@ -32,13 +32,22 @@ import java.util.List;
 
 import static com.stormmq.llvm.metadata.metadataTuples.NamedMetadataTuple.writeTuple;
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import static java.util.Collections.emptyList;
 
 public class AnonymousMetadataTuple implements Metadata
 {
-	@SuppressWarnings("FieldNotUsedInToString") @NotNull private final ReferenceTracker<List<? extends Metadata>> referenceTracker;
+	@NotNull private static final List<Metadata> EmptyList = emptyList();
+
+	@NotNull
+	public static AnonymousMetadataTuple EmptyAnonymousMetadataTuple(@NotNull final ReferenceTracker referenceTracker)
+	{
+		return new AnonymousMetadataTuple(referenceTracker, EmptyList);
+	}
+
+	@SuppressWarnings("FieldNotUsedInToString") @NotNull private final ReferenceTracker referenceTracker;
 	@NotNull private final List<? extends Metadata> tuple;
 
-	public AnonymousMetadataTuple(@NotNull final ReferenceTracker<List<? extends Metadata>> referenceTracker, @NotNull final List<? extends Metadata> tuple)
+	public AnonymousMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final List<? extends Metadata> tuple)
 	{
 		this.referenceTracker = referenceTracker;
 		this.tuple = tuple;

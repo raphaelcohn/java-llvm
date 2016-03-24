@@ -24,6 +24,7 @@ package com.stormmq.llvm.metadata.metadataTuples;
 
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.ReferenceTracker;
+import com.stormmq.llvm.domain.Writable;
 import com.stormmq.llvm.metadata.KeyWithMetadataField;
 import com.stormmq.llvm.metadata.Metadata;
 import org.jetbrains.annotations.*;
@@ -31,24 +32,26 @@ import org.jetbrains.annotations.*;
 import java.util.List;
 
 import static com.stormmq.llvm.metadata.metadataTuples.NamedMetadataTuple.*;
+import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
 import static java.util.Arrays.asList;
 
 public class KeyedMetadataTuple implements Metadata
 {
 	@NotNull public static final byte[] ColonSpace = {':', ' '};
+	@NotNull public static final byte[] distinctSpace = encodeUtf8BytesWithCertaintyValueIsValid("distinct ");
 
-	@NotNull private final ReferenceTracker<KeyedMetadataTuple> referenceTracker;
+	@NotNull private final ReferenceTracker referenceTracker;
 	private final boolean isDistinct;
 	@NotNull private final String name;
 	@NotNull private final List<KeyWithMetadataField> fields;
 
 	@SuppressWarnings("OverloadedVarargsMethod")
-	public KeyedMetadataTuple(@NotNull final ReferenceTracker<KeyedMetadataTuple> referenceTracker, final boolean isDistinct, @NotNull @NonNls final String name, @NotNull final KeyWithMetadataField... fields)
+	public KeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, final boolean isDistinct, @NotNull @NonNls final String name, @NotNull final KeyWithMetadataField... fields)
 	{
 		this(referenceTracker, isDistinct, name, asList(fields));
 	}
 
-	public KeyedMetadataTuple(@NotNull final ReferenceTracker<KeyedMetadataTuple> referenceTracker, final boolean isDistinct, @NotNull @NonNls final String name, @NotNull final List<KeyWithMetadataField> fields)
+	public KeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, final boolean isDistinct, @NotNull @NonNls final String name, @NotNull final List<KeyWithMetadataField> fields)
 	{
 		this.referenceTracker = referenceTracker;
 		this.isDistinct = isDistinct;
@@ -92,7 +95,16 @@ public class KeyedMetadataTuple implements Metadata
 		byteWriter.writeByte('!');
 		byteWriter.writeUtf8EncodedStringWithCertainty(Integer.toString(referenceIndex()));
 
-		byteWriter.writeBytes(SpaceEqualsSpaceExclamationMarkOpenBrace);
+		byteWriter.writeBytes(SpaceEqualsSpace);
+		if (isDistinct)
+		{
+			byteWriter.writeBytes(distinctSpace);
+		}
+
+		byteWriter.writeByte('!');
+		byteWriter.writeUtf8EncodedStringWithCertainty(name);
+		byteWriter.writeByte('{');
+
 		boolean isAfterFirst = false;
 		for (final KeyWithMetadataField field : fields)
 		{
@@ -108,6 +120,7 @@ public class KeyedMetadataTuple implements Metadata
 			field.writeKeyValue(byteWriter);
 		}
 		byteWriter.writeBytes(CloseBraceLineFeed);
+		Writable.writeLineFeed(byteWriter);
 	}
 
 	@SuppressWarnings("SimplifiableIfStatement")

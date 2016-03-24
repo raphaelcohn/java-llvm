@@ -36,12 +36,12 @@ public final class DISubrangeKeyedMetadataTuple extends KeyedMetadataTuple imple
 	public static final int EmptyLowerBound = -1;
 
 	@NotNull
-	public static DISubrangeKeyedMetadataTuple EmptyArray(@NotNull final ReferenceTracker<KeyedMetadataTuple> referenceTracker)
+	public static DISubrangeKeyedMetadataTuple EmptyArray(@NotNull final ReferenceTracker referenceTracker)
 	{
 		return new DISubrangeKeyedMetadataTuple(referenceTracker, EmptyCount, EmptyLowerBound);
 	}
 
-	public DISubrangeKeyedMetadataTuple(@NotNull final ReferenceTracker<KeyedMetadataTuple> referenceTracker, final int count, final int lowerBound)
+	public DISubrangeKeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, final int count, final int lowerBound)
 	{
 		super(referenceTracker, false, "DISubrange", with(count, lowerBound));
 	}

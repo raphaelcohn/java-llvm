@@ -28,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 
 public final class DIExpressionKeyedMetadataTuple extends KeyedMetadataTuple implements MacroMetadata
 {
-	public DIExpressionKeyedMetadataTuple(@NotNull final ReferenceTracker<KeyedMetadataTuple> referenceTracker)
+	public DIExpressionKeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker)
 	{
 		super(referenceTracker, false, "DIExpression");
 	}

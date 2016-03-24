@@ -22,6 +22,7 @@
 
 package com.stormmq.llvm.examples.parsing;
 
+import com.stormmq.llvm.examples.parsing.fileParsers.FileParser;
 import com.stormmq.llvm.examples.parsing.files.ParsableFile;
 import com.stormmq.llvm.examples.parsing.parseFailueLogs.ParseFailureLog;
 import org.jetbrains.annotations.NotNull;

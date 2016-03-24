@@ -30,7 +30,6 @@ import com.stormmq.llvm.domain.function.attributes.parameterAttributes.Parameter
 import com.stormmq.llvm.domain.identifiers.LocalIdentifier;
 import com.stormmq.llvm.domain.types.TypeExcludingVoid;
 import com.stormmq.llvm.metadata.debugging.*;
-import com.stormmq.llvm.metadata.metadataTuples.KeyedMetadataTuple;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -53,7 +52,7 @@ public final class FormalParameter implements Writable
 	}
 
 	@NotNull
-	public DILocalVariableKeyedMetadataTuple debuggingInformation(@NotNull final ReferenceTracker<KeyedMetadataTuple> referenceTracker, final int oneBasedIndex, @NotNull final DIFileKeyedMetadataTuple file, final int lineNumber, @NotNull final TypeMetadata type)
+	public DILocalVariableKeyedMetadataTuple debuggingInformation(@NotNull final ReferenceTracker referenceTracker, final int oneBasedIndex, @NotNull final DIFileKeyedMetadataTuple file, final int lineNumber, @NotNull final TypeMetadata type)
 	{
 		final ScopeMetadata scope = null; // subprogram
 		return new DILocalVariableKeyedMetadataTuple(referenceTracker, name == null ? generatedName(oneBasedIndex) : name, oneBasedIndex, scope, file, lineNumber, type, NoFlags);

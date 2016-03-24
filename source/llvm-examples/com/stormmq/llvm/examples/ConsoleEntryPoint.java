@@ -36,12 +36,13 @@ import static com.stormmq.path.Constants.CurrentFolder;
 
 public final class ConsoleEntryPoint
 {
+	@SuppressWarnings("HardcodedFileSeparator")
 	public static void main(@NotNull @NonNls final String... commandLineArguments)
 	{
 		final CommandLineArgumentsParser commandLineArgumentsParser = commandLineArgumentsParser(commandLineArguments);
-		@SuppressWarnings("HardcodedFileSeparator") final Supplier<LinkedHashSet<Path>> source = commandLineArgumentsParser.extantWritableFolderPathsOption(true, "source", "source root path", "/path/to/source", CurrentFolder);
-
-		run(new ExampleApplication(source.get(), true));
+		final Supplier<LinkedHashSet<Path>> source = commandLineArgumentsParser.extantWritableFolderPathsOption(true, "source", "source root path", "/path/to/source", CurrentFolder);
+		final Supplier<Path> outputPath = commandLineArgumentsParser.creatableFolderPathOption(true, "output", "output folder path, created if doesn't exist", "/path/to/output", "./out/llvm");
+		run(new ExampleApplication(source.get(), outputPath.get(), true));
 	}
 
 	private ConsoleEntryPoint()

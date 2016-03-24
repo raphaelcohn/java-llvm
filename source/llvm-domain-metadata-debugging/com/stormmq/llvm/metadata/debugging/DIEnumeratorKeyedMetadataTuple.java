@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
 
 public final class DIEnumeratorKeyedMetadataTuple extends KeyedMetadataTuple implements TypeMetadata
 {
-	public DIEnumeratorKeyedMetadataTuple(@NotNull final ReferenceTracker<KeyedMetadataTuple> referenceTracker, @NotNull @NonNls final String name, final int value)
+	public DIEnumeratorKeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull @NonNls final String name, final int value)
 	{
 		super(referenceTracker, false, "DIEnumerator", Key.name.with(name), Key.value.with(value));
 	}

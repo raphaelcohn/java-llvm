@@ -32,7 +32,7 @@ import java.util.List;
 
 public final class TbaaNamedMetadata extends NamedMetadataTuple
 {
-	public TbaaNamedMetadata(@NotNull final ReferenceTracker<String> referenceTracker, @NotNull final List<TbaaTriplet> tbaaTriplets)
+	public TbaaNamedMetadata(@NotNull final ReferenceTracker referenceTracker, @NotNull final List<TbaaTriplet> tbaaTriplets)
 	{
 		super(referenceTracker, "tbaa.struct", convert(tbaaTriplets));
 	}

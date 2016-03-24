@@ -36,7 +36,7 @@ public final class LlvmIdentNamedMetadataTuple extends NamedMetadataTuple
 {
 	@NotNull private static final List<StringConstantMetadata> ProducerOnly = singletonList(new StringConstantMetadata(Producer));
 
-	private LlvmIdentNamedMetadataTuple(@NotNull final ReferenceTracker<String> referenceTracker)
+	public LlvmIdentNamedMetadataTuple(@NotNull final ReferenceTracker referenceTracker)
 	{
 		super(referenceTracker, "llvm.ident", ProducerOnly);
 	}

@@ -41,12 +41,12 @@ public class NamedMetadataTuple implements Writable
 	@NotNull public static final byte[] CommaSpace = encodeUtf8BytesWithCertaintyValueIsValid(", ");
 	@SuppressWarnings("HardcodedLineSeparator") @NotNull public static final byte[] CloseBraceLineFeed = encodeUtf8BytesWithCertaintyValueIsValid("}\n");
 
-	@SuppressWarnings("FieldNotUsedInToString") @NotNull private final ReferenceTracker<String> referenceTracker;
+	@SuppressWarnings("FieldNotUsedInToString") @NotNull private final ReferenceTracker referenceTracker;
 	@NotNull private final String name;
 	@NotNull private final List<? extends Metadata> tuple;
 	@SuppressWarnings("FieldNotUsedInToString") @NotNull private final byte[] llAssemblyEncoding;
 
-	public NamedMetadataTuple(@NotNull final ReferenceTracker<String> referenceTracker, @NotNull @NonNls final String name, @NotNull final List<? extends Metadata> tuple)
+	public NamedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull @NonNls final String name, @NotNull final List<? extends Metadata> tuple)
 	{
 		this.referenceTracker = referenceTracker;
 		this.name = name;
@@ -90,15 +90,8 @@ public class NamedMetadataTuple implements Writable
 				}
 				else
 				{
-					referenceIndex = item.referenceIndex();
-					byteWriter.writeByte('!');
-					byteWriter.writeUtf8EncodedStringWithCertainty(Integer.toString(referenceIndex));
-					byteWriter.writeBytes(SpaceEqualsSpace);
-
 					item.write(byteWriter);
-
-					Writable.writeLineFeed(byteWriter);
-					Writable.writeLineFeed(byteWriter);
+					referenceIndex = item.referenceIndex();
 				}
 				referenceIndices[index] = referenceIndex;
 			}
@@ -127,6 +120,7 @@ public class NamedMetadataTuple implements Writable
 			}
 		}
 		byteWriter.writeBytes(CloseBraceLineFeed);
+		Writable.writeLineFeed(byteWriter);
 	}
 
 	@Override

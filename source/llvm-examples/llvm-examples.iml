@@ -13,6 +13,9 @@
     <orderEntry type="module" module-name="java-classfile-domain" />
     <orderEntry type="module" module-name="jopt" />
     <orderEntry type="module" module-name="path" />
+    <orderEntry type="module" module-name="llvm-domain-module" />
+    <orderEntry type="module" module-name="llvm-domain-metadata-module" />
+    <orderEntry type="module" module-name="llvm-domain-metadata-debugging" />
   </component>
   <component name="org.twodividedbyzero.idea.findbugs">
     <option name="_basePreferences">

@@ -31,7 +31,7 @@ import static java.util.Locale.ENGLISH;
 
 public final class DIDerivedTypeKeyedMetadataTuple extends KeyedMetadataTuple implements TypeMetadata
 {
-	public DIDerivedTypeKeyedMetadataTuple(@NotNull final ReferenceTracker<KeyedMetadataTuple> referenceTracker, @NotNull final DW_TAG tag, @NotNull final DIBasicTypeKeyedMetadataTuple baseType, final int sizeInBits, final int alignmentInBits)
+	public DIDerivedTypeKeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final DW_TAG tag, @NotNull final DIBasicTypeKeyedMetadataTuple baseType, final int sizeInBits, final int alignmentInBits)
 	{
 		super(referenceTracker, false, "DIDerivedType", Key.tag.with(tag), Key.baseType.with(baseType), Key.size.with(sizeInBits), Key.align.with(alignmentInBits));
 

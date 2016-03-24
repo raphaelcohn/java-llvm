@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
 
 public final class DIMacroFileKeyedMetadataTuple extends KeyedMetadataTuple implements MacroMetadata
 {
-	public DIMacroFileKeyedMetadataTuple(@NotNull final ReferenceTracker<KeyedMetadataTuple> referenceTracker, @NotNull final MACINFO macinfo, final int lineNumber, @NotNull final DIFileKeyedMetadataTuple file, @NotNull final TypedMetadataTuple<MacroMetadata> nodes)
+	public DIMacroFileKeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final MACINFO macinfo, final int lineNumber, @NotNull final DIFileKeyedMetadataTuple file, @NotNull final TypedMetadataTuple<MacroMetadata> nodes)
 	{
 		super(referenceTracker, false, "DIMacroFile", Key.macinfo.with(macinfo), Key.line.with(lineNumber), Key.file.with(file), Key.nodes.with(nodes));
 	}

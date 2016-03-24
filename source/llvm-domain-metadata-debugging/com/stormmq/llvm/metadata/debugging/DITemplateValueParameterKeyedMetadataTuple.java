@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
 
 public final class DITemplateValueParameterKeyedMetadataTuple extends KeyedMetadataTuple implements TemplateParameterMetadata
 {
-	public DITemplateValueParameterKeyedMetadataTuple(@NotNull final ReferenceTracker<KeyedMetadataTuple> referenceTracker, @NotNull final String name, @NotNull final TypeMetadata type, @NotNull final Constant<?> value)
+	public DITemplateValueParameterKeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final String name, @NotNull final TypeMetadata type, @NotNull final Constant<?> value)
 	{
 		super(referenceTracker, false, "DITemplateValueParameter", Key.name.with(name), Key.type.with(type), Key.value.with(value));
 	}
