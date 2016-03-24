@@ -33,6 +33,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
 import java.util.LinkedHashSet;
+import java.util.Locale;
 
 import static com.stormmq.java.parsing.fileParsers.FileParser.DoNothingFileParser;
 import static com.stormmq.jopt.ExitCode.ExitCodeGeneralError;
@@ -53,7 +54,7 @@ public final class ExampleApplication implements Application
 		final TypeInformationUser typeInformationUser = new TypeInformationUser()
 		{
 			@Override
-			public void use(@NotNull final TypeInformation typeInformation, @NotNull final String relativeFilePath, @NotNull final String sourceRootPath)
+			public void use(@NotNull final TypeInformation typeInformation, @NotNull final String sourceRootPath, @NotNull final String relativeFilePath)
 			{
 			}
 		};
@@ -65,7 +66,16 @@ public final class ExampleApplication implements Application
 	@NotNull
 	public ExitCode execute()
 	{
-		multiplePathsParser.parse(sourcePaths);
+		int extra = 1;
+		try
+		{
+			multiplePathsParser.parse(sourcePaths);
+			extra = 0;
+		}
+		finally
+		{
+			System.out.printf(Locale.ENGLISH, "Success: %1$s\tFailure: %2$s\tTotal: %3$s%n", parseFailureLog.successCount(), parseFailureLog.failureCount() + extra, parseFailureLog.successCount() + parseFailureLog.failureCount() + extra);
+		}
 		if (parseFailureLog.hasFailures())
 		{
 			return ExitCodeGeneralError;

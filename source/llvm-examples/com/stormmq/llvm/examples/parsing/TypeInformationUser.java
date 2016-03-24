@@ -28,5 +28,5 @@ import org.jetbrains.annotations.NotNull;
 @FunctionalInterface
 public interface TypeInformationUser
 {
-	void use(@NotNull final TypeInformation typeInformation, @NotNull final String relativeFilePath, @NotNull final String sourceRootPath);
+	void use(@NotNull final TypeInformation typeInformation, @NotNull final String sourceRootPath, @NotNull final String relativeFilePath);
 }

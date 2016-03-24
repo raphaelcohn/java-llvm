@@ -22,16 +22,16 @@
 
 package com.stormmq.llvm.examples.parsing;
 
+import com.stormmq.java.classfile.domain.information.TypeInformation;
 import com.stormmq.java.classfile.parser.JavaClassFileParser;
-import com.stormmq.java.classfile.parser.byteReaders.*;
-import com.stormmq.java.classfile.parser.javaClassFileParsers.exceptions.InvalidJavaClassFileException;
-import com.stormmq.java.classfile.parser.javaClassFileParsers.exceptions.JavaClassFileContainsDataTooLongToReadException;
+import com.stormmq.java.classfile.parser.byteReaders.ByteArrayByteReader;
+import com.stormmq.java.classfile.parser.byteReaders.InputStreamByteReader;
+import com.stormmq.java.classfile.parser.javaClassFileParsers.exceptions.*;
 import com.stormmq.java.parsing.fileParsers.FileParser;
 import com.stormmq.llvm.examples.parsing.parseFailueLogs.ParseFailureLog;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Path;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -40,6 +40,9 @@ import static java.nio.file.Files.readAllBytes;
 
 public final class WrappingJavaClassFileParser implements FileParser
 {
+	private static final int SixtyFourKilobytes = 65536;
+	private static final int OneMegabyte = 1048576;
+
 	@NotNull private final ParseFailureLog parseFailureLog;
 	private final boolean permitConstantsInInstanceFields;
 	@NotNull private final TypeInformationUser typeInformationUser;
@@ -61,58 +64,100 @@ public final class WrappingJavaClassFileParser implements FileParser
 		}
 		catch (final IOException e)
 		{
-			parseFailureLog.log(filePath, e);
+			parseFailureLog.failure(filePath, e);
 			return;
 		}
-		try(final ByteReader byteReader = new ByteArrayByteReader(byteArray))
+		catch (@SuppressWarnings("ErrorNotRethrown") final OutOfMemoryError ignored)
+		{
+			// Java class file exceeds 2Gb. This is exceedingly unlikely, and can be fixed by switching to a less efficient InputStreamByteReader
+			parseFailureLog.failure(filePath, new JavaClassFileContainsDataTooLongToReadException());
+			return;
+		}
+
+		final TypeInformation typeInformation;
+		try(final ByteArrayByteReader byteReader = new ByteArrayByteReader(byteArray))
 		{
 			try
 			{
-				typeInformationUser.use(JavaClassFileParser.parseJavaClassFile(byteReader, permitConstantsInInstanceFields), filePath.toString(), sourceRootPath.toString());
+				typeInformation = JavaClassFileParser.parseJavaClassFile(byteReader, permitConstantsInInstanceFields);
+			}
+			catch (final NotAJavaClassFileException ignored)
+			{
+				return;
 			}
 			catch (final InvalidJavaClassFileException e)
 			{
-				parseFailureLog.log(filePath, e);
+				parseFailureLog.failure(filePath, e);
+				return;
 			}
 			catch (final JavaClassFileContainsDataTooLongToReadException e)
 			{
-				parseFailureLog.log(filePath, e);
+				parseFailureLog.failure(filePath, e);
+				return;
 			}
 		}
-		catch (final IOException e)
-		{
-			throw new IllegalStateException("Should not happen", e);
-		}
+		parseFailureLog.success(filePath);
+		typeInformationUser.use(typeInformation, sourceRootPath.toString(), filePath.toString());
 	}
 
 	@Override
 	public void parseFile(@NotNull final ZipFile zipFile, @NotNull final ZipEntry zipEntry)
 	{
+		final TypeInformation typeInformation;
 		try(final InputStream inputStream = zipFile.getInputStream(zipEntry))
 		{
-			try(final InputStreamByteReader byteReader = new InputStreamByteReader(inputStream))
+			try(final InputStreamByteReader byteReader = new InputStreamByteReader(new BufferedInputStream(inputStream, optimalZipEntryBufferSize(zipEntry))))
 			{
 				try
 				{
-					typeInformationUser.use(JavaClassFileParser.parseJavaClassFile(byteReader, permitConstantsInInstanceFields), zipEntry.getName(), zipFile.getName());
+					typeInformation = JavaClassFileParser.parseJavaClassFile(byteReader, permitConstantsInInstanceFields);
+				}
+				catch (final NotAJavaClassFileException ignored)
+				{
+					return;
 				}
 				catch (final InvalidJavaClassFileException e)
 				{
-					parseFailureLog.log(zipFile, zipEntry, e);
+					parseFailureLog.failure(zipFile, zipEntry, e);
+					return;
 				}
 				catch (final JavaClassFileContainsDataTooLongToReadException e)
 				{
-					parseFailureLog.log(zipFile, zipEntry, e);
+					parseFailureLog.failure(zipFile, zipEntry, e);
+					return;
 				}
 			}
 			catch (final IOException e)
 			{
-				parseFailureLog.log(zipFile, zipEntry, e);
+				parseFailureLog.failure(zipFile, zipEntry, e);
+				return;
 			}
 		}
 		catch (final IOException e)
 		{
-			parseFailureLog.log(zipFile, zipEntry, e);
+			parseFailureLog.failure(zipFile, zipEntry, e);
+			return;
 		}
+
+		parseFailureLog.success(zipFile, zipEntry);
+		typeInformationUser.use(typeInformation, zipFile.getName(), zipEntry.getName());
+	}
+
+	public static int optimalZipEntryBufferSize(@NotNull final ZipEntry zipEntry)
+	{
+		final long size = zipEntry.getSize();
+
+		if (size == -1)
+		{
+			return SixtyFourKilobytes;
+		}
+
+		if (size < OneMegabyte)
+		{
+			//noinspection NumericCastThatLosesPrecision
+			return (int) size;
+		}
+
+		return OneMegabyte;
 	}
 }

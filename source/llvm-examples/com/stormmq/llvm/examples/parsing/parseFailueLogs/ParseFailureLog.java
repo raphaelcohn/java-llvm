@@ -35,15 +35,23 @@ public interface ParseFailureLog
 {
 	boolean hasFailures();
 
-	void log(@NotNull final Path filePath, @NotNull final IOException e);
+	int failureCount();
 
-	void log(@NotNull final Path filePath, @NotNull final InvalidJavaClassFileException e);
+	int successCount();
 
-	void log(@NotNull final Path filePath, @NotNull final JavaClassFileContainsDataTooLongToReadException e);
+	void success(@NotNull final Path filePath);
 
-	void log(@NotNull final ZipFile zipFile, @NotNull final ZipEntry zipEntry, @NotNull final IOException e);
+	void success(@NotNull final ZipFile zipFile, @NotNull final ZipEntry zipEntry);
 
-	void log(@NotNull final ZipFile zipFile, @NotNull final ZipEntry zipEntry, @NotNull final InvalidJavaClassFileException e);
+	void failure(@NotNull final Path filePath, @NotNull final IOException e);
 
-	void log(@NotNull final ZipFile zipFile, @NotNull final ZipEntry zipEntry, @NotNull final JavaClassFileContainsDataTooLongToReadException e);
+	void failure(@NotNull final Path filePath, @NotNull final InvalidJavaClassFileException e);
+
+	void failure(@NotNull final Path filePath, @NotNull final JavaClassFileContainsDataTooLongToReadException e);
+
+	void failure(@NotNull final ZipFile zipFile, @NotNull final ZipEntry zipEntry, @NotNull final IOException e);
+
+	void failure(@NotNull final ZipFile zipFile, @NotNull final ZipEntry zipEntry, @NotNull final InvalidJavaClassFileException e);
+
+	void failure(@NotNull final ZipFile zipFile, @NotNull final ZipEntry zipEntry, @NotNull final JavaClassFileContainsDataTooLongToReadException e);
 }
