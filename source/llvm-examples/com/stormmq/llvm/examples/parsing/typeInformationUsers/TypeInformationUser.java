@@ -25,8 +25,10 @@ package com.stormmq.llvm.examples.parsing.typeInformationUsers;
 import com.stormmq.java.classfile.domain.information.TypeInformation;
 import org.jetbrains.annotations.NotNull;
 
+import java.nio.file.Path;
+
 @FunctionalInterface
 public interface TypeInformationUser
 {
-	void use(@NotNull final TypeInformation typeInformation, @NotNull final String sourceRootPath, @NotNull final String relativeFilePath);
+	void use(@NotNull final TypeInformation typeInformation, @NotNull final String relativeFilePath, @NotNull final Path relativeRootFolderPath);
 }

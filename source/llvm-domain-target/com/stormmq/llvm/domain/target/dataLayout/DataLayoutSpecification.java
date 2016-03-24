@@ -57,7 +57,7 @@ public final class DataLayoutSpecification implements Writable
 	@NotNull public static final Sizing DefaultAggregateSizing = new Sizing(0, 64);
 	@Nullable public static final Mangling DefaultMangling = null; // Mac OS X is MachO
 
-	@NotNull public static final DataLayoutSpecification DarwinOnX86_64 = new DataLayoutSpecification(LittleEndian, 18, DefaultPointer64Sizing, DefaultBooleanSizing, DefaultByteSizing, DefaultShortSizing, DefaultIntSizing, new Sizing(64, 64), DefaultHalfSizing, DefaultFloatSizing, DefaultDoubleSizing, new Sizing(128), DefaultQuadSizing, DefaultVector64Sizing, DefaultVector128Sizing, DefaultAggregateSizing, MachO, x86_64);
+	@NotNull public static final DataLayoutSpecification DarwinOnX86_64 = new DataLayoutSpecification(LittleEndian, 16, DefaultPointer64Sizing, DefaultBooleanSizing, DefaultByteSizing, DefaultShortSizing, DefaultIntSizing, new Sizing(64, 64), DefaultHalfSizing, DefaultFloatSizing, DefaultDoubleSizing, new Sizing(128), DefaultQuadSizing, DefaultVector64Sizing, DefaultVector128Sizing, DefaultAggregateSizing, MachO, x86_64);
 
 	@NotNull private final Endianness endianness;
 	@NotNull private final String stackAlignmentSizeInBits;
@@ -111,7 +111,7 @@ public final class DataLayoutSpecification implements Writable
 
 		byteWriter.writeUtf8EncodedStringWithCertainty(endianness.dataLayoutEncoding);
 		writeField(byteWriter, "S", stackAlignmentSizeInBits);
-		writeField(byteWriter, "n:", architecture.nativeIntegerWidths);
+		writeField(byteWriter, "n", architecture.nativeIntegerWidths);
 		writeField(byteWriter, "p:64", pointer64Sizing.dataLayoutEncoding);
 		writeField(byteWriter, "i1", booleanSizing.dataLayoutEncoding);
 		writeField(byteWriter, "i8", byteSizing.dataLayoutEncoding);
@@ -127,7 +127,6 @@ public final class DataLayoutSpecification implements Writable
 		writeField(byteWriter, "v128", vector128Sizing.dataLayoutEncoding);
 		writeField(byteWriter, "a", aggregateTypeAlignment.dataLayoutEncoding);
 		writeField(byteWriter, "m:", mangling.dataLayoutEncoding);
-		writeField(byteWriter, "n:", architecture.nativeIntegerWidths);
 
 		byteWriter.writeBytes(End);
 	}

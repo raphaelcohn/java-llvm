@@ -63,33 +63,27 @@ public final class EnqueuePathsWalker
 		coordination.finish();
 	}
 
-	private void parse(@NotNull final Path path)
+	private void parse(@NotNull final Path fullRootPath)
 	{
-		if (IsJarOrZipFile.accept(path))
+		if(IsSubFolder.accept(fullRootPath))
 		{
-			processJarOrZipFile(path);
+			processFolder(fullRootPath);
 		}
-		else if(IsSubFolder.accept(path))
+		else if (IsJarOrZipFile.accept(fullRootPath))
 		{
-			processFolder(path);
+			processJarOrZipFile(fullRootPath, fullRootPath.getFileName());
+		}
+		else if(IsClassFile.accept(fullRootPath))
+		{
+			processClassFile(fullRootPath, Paths.get("."), fullRootPath.getFileName());
 		}
 	}
 
-	private void processJarOrZipFile(@NotNull final Path jarOrZipFilePath)
-	{
-		parsableFileQueue.add(new JarOrZipParsableFile(jarOrZipFilePath, parsableFileQueue));
-	}
-
-	private void processClassFile(@NotNull final Path javaClassFilePath, @NotNull final Path dependencyPath)
-	{
-		parsableFileQueue.add((fileParser, parseFailureLog) -> fileParser.parseFile(javaClassFilePath, dependencyPath));
-	}
-
-	private void processFolder(@NotNull final Path dependencyPath)
+	private void processFolder(@NotNull final Path fullRootPath)
 	{
 		try
 		{
-			walkFileTree(dependencyPath, FollowLinks, MAX_VALUE, new FileVisitor<Path>()
+			walkFileTree(fullRootPath, FollowLinks, MAX_VALUE, new FileVisitor<Path>()
 			{
 				@Override
 				public FileVisitResult preVisitDirectory(@NotNull final Path directory, @NotNull final BasicFileAttributes basicFileAttributes)
@@ -102,11 +96,13 @@ public final class EnqueuePathsWalker
 				{
 					if (IsJarOrZipFile.accept(file))
 					{
-						processJarOrZipFile(file);
+						final Path relativeRootFolderPath = fullRootPath.relativize(file);
+						processJarOrZipFile(file, relativeRootFolderPath);
 					}
 					else if (IsClassFile.accept(file))
 					{
-						processClassFile(file, dependencyPath);
+						final Path relativeRootFolderPath = fullRootPath.relativize(file).getParent();
+						processClassFile(file, relativeRootFolderPath, fullRootPath.relativize(file).getFileName());
 					}
 					return CONTINUE;
 				}
@@ -134,4 +130,13 @@ public final class EnqueuePathsWalker
 		}
 	}
 
+	private void processJarOrZipFile(@NotNull final Path jarOrZipFilePath, @NotNull final Path relativeRootFolderPath)
+	{
+		parsableFileQueue.add(new JarOrZipParsableFile(jarOrZipFilePath, relativeRootFolderPath, parsableFileQueue));
+	}
+
+	private void processClassFile(@NotNull final Path javaClassFilePath, @NotNull final Path relativeRootFolderPath, @NotNull final Path relativeJavaClassFilePath)
+	{
+		parsableFileQueue.add((fileParser, parseFailureLog) -> fileParser.parseFile(javaClassFilePath, relativeRootFolderPath, relativeJavaClassFilePath));
+	}
 }

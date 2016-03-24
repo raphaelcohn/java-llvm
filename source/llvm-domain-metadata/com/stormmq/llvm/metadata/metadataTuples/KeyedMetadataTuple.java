@@ -31,13 +31,13 @@ import org.jetbrains.annotations.*;
 
 import java.util.List;
 
-import static com.stormmq.llvm.metadata.metadataTuples.NamedMetadataTuple.*;
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
 import static java.util.Arrays.asList;
 
 public class KeyedMetadataTuple implements Metadata
 {
 	@NotNull public static final byte[] ColonSpace = {':', ' '};
+	@SuppressWarnings("HardcodedLineSeparator") @NotNull private static final byte[] CloseBracketLineFeed = encodeUtf8BytesWithCertaintyValueIsValid(")\n");
 	@NotNull public static final byte[] distinctSpace = encodeUtf8BytesWithCertaintyValueIsValid("distinct ");
 
 	@NotNull private final ReferenceTracker referenceTracker;
@@ -103,7 +103,7 @@ public class KeyedMetadataTuple implements Metadata
 
 		byteWriter.writeByte('!');
 		byteWriter.writeUtf8EncodedStringWithCertainty(name);
-		byteWriter.writeByte('{');
+		byteWriter.writeByte('(');
 
 		boolean isAfterFirst = false;
 		for (final KeyWithMetadataField field : fields)
@@ -119,7 +119,7 @@ public class KeyedMetadataTuple implements Metadata
 
 			field.writeKeyValue(byteWriter);
 		}
-		byteWriter.writeBytes(CloseBraceLineFeed);
+		byteWriter.writeBytes(CloseBracketLineFeed);
 		Writable.writeLineFeed(byteWriter);
 	}
 

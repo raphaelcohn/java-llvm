@@ -42,11 +42,13 @@ public final class JarOrZipParsableFile implements ParsableFile
 	private static final int OneMegabyte = 1048576;
 
 	@NotNull private final Path zipFilePath;
+	@NotNull private final Path relativeRootPath;
 	@NotNull private final ConcurrentLinkedQueue<ParsableFile> parsableFileQueue;
 
-	public JarOrZipParsableFile(@NotNull final Path zipFilePath, @NotNull final ConcurrentLinkedQueue<ParsableFile> parsableFileQueue)
+	public JarOrZipParsableFile(@NotNull final Path zipFilePath, @NotNull final Path relativeRootPath, @NotNull final ConcurrentLinkedQueue<ParsableFile> parsableFileQueue)
 	{
 		this.zipFilePath = zipFilePath;
+		this.relativeRootPath = relativeRootPath;
 		this.parsableFileQueue = parsableFileQueue;
 	}
 
@@ -86,7 +88,7 @@ public final class JarOrZipParsableFile implements ParsableFile
 					parseFailureLog.failure(zipFile, zipEntry, e);
 					return;
 				}
-				parsableFileQueue.add((fileParser1, parseFailureLog1) -> fileParser1.parseFile(zipFile, zipEntry, all));
+				parsableFileQueue.add((fileParser1, parseFailureLog1) -> fileParser1.parseFile(zipFile, zipEntry, relativeRootPath, all));
 			});
 		}
 		catch (final ZipException e)

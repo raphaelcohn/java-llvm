@@ -36,10 +36,8 @@ import static java.util.Locale.ENGLISH;
 
 public class NamedMetadataTuple implements Writable
 {
-	@NotNull public static final byte[] SpaceEqualsSpaceExclamationMarkOpenBrace = encodeUtf8BytesWithCertaintyValueIsValid(" = !{");
-	@NotNull public static final byte[] SpaceEqualsSpace = encodeUtf8BytesWithCertaintyValueIsValid(" = ");
-	@NotNull public static final byte[] CommaSpace = encodeUtf8BytesWithCertaintyValueIsValid(", ");
-	@SuppressWarnings("HardcodedLineSeparator") @NotNull public static final byte[] CloseBraceLineFeed = encodeUtf8BytesWithCertaintyValueIsValid("}\n");
+	@NotNull private static final byte[] SpaceEqualsSpaceExclamationMarkOpenBrace = encodeUtf8BytesWithCertaintyValueIsValid(" = !{");
+	@SuppressWarnings("HardcodedLineSeparator") @NotNull private static final byte[] CloseBraceLineFeed = encodeUtf8BytesWithCertaintyValueIsValid("}\n");
 
 	@SuppressWarnings("FieldNotUsedInToString") @NotNull private final ReferenceTracker referenceTracker;
 	@NotNull private final String name;

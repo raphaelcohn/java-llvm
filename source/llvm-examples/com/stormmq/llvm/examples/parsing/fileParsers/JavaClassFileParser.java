@@ -36,7 +36,6 @@ import java.util.zip.ZipFile;
 
 import static com.stormmq.java.classfile.parser.JavaClassFileParser.parseJavaClassFile;
 import static com.stormmq.llvm.examples.parsing.parseFailueLogs.ParseFailureLog.zipPathDetails;
-import static com.stormmq.path.FileAndFolderHelper.relativeToRootPath;
 import static java.nio.file.Files.readAllBytes;
 
 public final class JavaClassFileParser implements FileParser
@@ -53,7 +52,7 @@ public final class JavaClassFileParser implements FileParser
 	}
 
 	@Override
-	public void parseFile(@NotNull final Path javaClassFilePath, @NotNull final Path dependencyPath)
+	public void parseFile(@NotNull final Path javaClassFilePath, @NotNull final Path relativeRootFolderPath, @NotNull final Path relativeJavaClassFilePath)
 	{
 		final byte[] fileData;
 		try
@@ -71,17 +70,16 @@ public final class JavaClassFileParser implements FileParser
 			return;
 		}
 
-		final Path relativeFilePath = relativeToRootPath(dependencyPath, javaClassFilePath);
-		useFileData(javaClassFilePath.toString(), dependencyPath.toString(), relativeFilePath.toString(), fileData);
+		useFileData(javaClassFilePath.toString(), relativeJavaClassFilePath.toString(), relativeRootFolderPath, fileData);
 	}
 
 	@Override
-	public void parseFile(@NotNull final ZipFile zipFile, @NotNull final ZipEntry zipEntry, @NotNull final byte[] fileData)
+	public void parseFile(@NotNull final ZipFile zipFile, @NotNull final ZipEntry zipEntry, @NotNull final Path relativeRootPath, @NotNull final byte[] fileData)
 	{
-		useFileData(zipPathDetails(zipFile, zipEntry), zipEntry.getName(), zipFile.getName(), fileData);
+		useFileData(zipPathDetails(zipFile, zipEntry), zipEntry.getName(), relativeRootPath, fileData);
 	}
 
-	private void useFileData(@NotNull final String javaClassFilePath, @NotNull final String sourceRootPath, @NotNull final String relativeFilePath, @NotNull final byte[] fileData)
+	private void useFileData(@NotNull final String javaClassFilePath, @NotNull final String relativeFilePath, @NotNull final Path relativeRootFolderPath, @NotNull final byte[] fileData)
 	{
 		final TypeInformation typeInformation;
 		try(final ByteArrayByteReader byteReader = new ByteArrayByteReader(fileData))
@@ -106,7 +104,7 @@ public final class JavaClassFileParser implements FileParser
 			}
 		}
 
-		typeInformationUser.use(typeInformation, sourceRootPath, relativeFilePath);
+		typeInformationUser.use(typeInformation, relativeFilePath, relativeRootFolderPath);
 		parseFailureLog.success(javaClassFilePath);
 	}
 }

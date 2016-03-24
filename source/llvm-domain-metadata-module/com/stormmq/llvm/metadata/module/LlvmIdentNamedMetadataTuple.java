@@ -23,6 +23,7 @@
 package com.stormmq.llvm.metadata.module;
 
 import com.stormmq.llvm.domain.ReferenceTracker;
+import com.stormmq.llvm.metadata.metadataTuples.AnonymousMetadataTuple;
 import com.stormmq.llvm.metadata.metadataTuples.NamedMetadataTuple;
 import com.stormmq.llvm.metadata.StringConstantMetadata;
 import org.jetbrains.annotations.NotNull;
@@ -38,6 +39,6 @@ public final class LlvmIdentNamedMetadataTuple extends NamedMetadataTuple
 
 	public LlvmIdentNamedMetadataTuple(@NotNull final ReferenceTracker referenceTracker)
 	{
-		super(referenceTracker, "llvm.ident", ProducerOnly);
+		super(referenceTracker, "llvm.ident", singletonList(new AnonymousMetadataTuple(referenceTracker, singletonList(new StringConstantMetadata(Producer)))));
 	}
 }

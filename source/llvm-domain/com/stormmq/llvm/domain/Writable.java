@@ -25,9 +25,15 @@ package com.stormmq.llvm.domain;
 import com.stormmq.byteWriters.ByteWriter;
 import org.jetbrains.annotations.*;
 
+import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+
 public interface Writable
 {
 	int AutomaticAlignment = -1;
+
+	@NotNull byte[] CommaSpace = encodeUtf8BytesWithCertaintyValueIsValid(", ");
+
+	@NotNull byte[] SpaceEqualsSpace = encodeUtf8BytesWithCertaintyValueIsValid(" = ");
 
 	static <X extends Exception> void writeSpace(@NotNull final ByteWriter<X> byteWriter) throws X
 	{

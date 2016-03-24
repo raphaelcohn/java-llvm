@@ -53,7 +53,7 @@ public enum Architecture
 			{
 				stringBuilder.append(':');
 			}
-			stringBuilder.append(Integer.toString(index));
+			stringBuilder.append(Integer.toString(nativeIntegerWidths[index]));
 		}
 		return stringBuilder.toString();
 	}

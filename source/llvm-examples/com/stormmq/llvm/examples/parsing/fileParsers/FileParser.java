@@ -30,7 +30,8 @@ import java.util.zip.ZipFile;
 
 public interface FileParser
 {
-	void parseFile(@NotNull final Path javaClassFilePath, @NotNull final Path dependencyPath);
+	void parseFile(@NotNull final Path javaClassFilePath, @NotNull final Path relativeRootFolderPath, @NotNull final Path relativeJavaClassFilePath);
 
-	void parseFile(@NotNull final ZipFile zipFile, @NotNull final ZipEntry zipEntry, @NotNull final byte[] fileData);
+	@SuppressWarnings("MethodCanBeVariableArityMethod")
+	void parseFile(@NotNull final ZipFile zipFile, @NotNull final ZipEntry zipEntry, @NotNull final Path relativeRootPath, @NotNull final byte[] fileData);
 }

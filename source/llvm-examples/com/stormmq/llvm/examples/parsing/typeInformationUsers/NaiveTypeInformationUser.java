@@ -76,11 +76,11 @@ public final class NaiveTypeInformationUser implements TypeInformationUser
 	}
 
 	@Override
-	public void use(@NotNull final TypeInformation typeInformation, @NotNull final String sourceRootPath, @NotNull final String relativeFilePath)
+	public void use(@NotNull final TypeInformation typeInformation, @NotNull final String relativeFilePath, @NotNull final Path relativeRootFolderPath)
 	{
 		final ReferenceTracker referenceTrackerStrings = new ReferenceTracker();
 		final ReferenceTracker referenceTrackerMetadataAndListsOfMetadata = referenceTrackerStrings;
-		final DIFileKeyedMetadataTuple file = new DIFileKeyedMetadataTuple(referenceTrackerMetadataAndListsOfMetadata, relativeFilePath, sourceRootPath);
+		final DIFileKeyedMetadataTuple file = new DIFileKeyedMetadataTuple(referenceTrackerMetadataAndListsOfMetadata, relativeFilePath, relativeRootFolderPath.toString());
 
 		// Will eventually carry some data
 		final TypedMetadataTuple<DISubprogramKeyedMetadataTuple> subprograms = emptyTypedMetadataTuple(referenceTrackerMetadataAndListsOfMetadata);
@@ -104,7 +104,7 @@ public final class NaiveTypeInformationUser implements TypeInformationUser
 
 		final Module module = new Module(DarwinOnX86_64, TargetTriple.MacOsXMavericksOnX86_64, llvmIdent, llvmModuleFlags, llvmDbgCu, NoComdatDefinitions, structureTypes, NoOpaqueStructureTypes, globalVariablesAndConstants, functionDeclarations, functionsDefinitions, NoAliases);
 
-		final Path llvmFilePath = llvmFilePath(relativeFilePath);
+		final Path llvmFilePath = llvmFilePath(relativeFilePath, relativeRootFolderPath);
 		try(final OutputStream outputStream = newOutputStream(llvmFilePath, WRITE, CREATE, TRUNCATE_EXISTING))
 		{
 			final OutputStreamByteWriter byteWriter = new OutputStreamByteWriter(outputStream);
@@ -117,11 +117,11 @@ public final class NaiveTypeInformationUser implements TypeInformationUser
 	}
 
 	@NotNull
-	private Path llvmFilePath(@NotNull final String relativeFilePath)
+	private Path llvmFilePath(@NotNull final String relativeFilePath, @NotNull final Path relativeRootFolderPath)
 	{
 		final int lastIndex = relativeFilePath.lastIndexOf('.');
 		final String relativeFilePathWithoutFileExtension = lastIndex == -1 ? relativeFilePath : relativeFilePath.substring(0, lastIndex);
-		final Path llvmFilePath = outputRootFolderPath.resolve(relativeFilePathWithoutFileExtension + dotLL);
+		final Path llvmFilePath = outputRootFolderPath.resolve(relativeRootFolderPath).resolve(relativeFilePathWithoutFileExtension + dotLL);
 		final Path parentFolder = llvmFilePath.getParent();
 		try
 		{
