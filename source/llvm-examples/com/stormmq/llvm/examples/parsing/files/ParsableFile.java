@@ -20,43 +20,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.jopt;
+package com.stormmq.llvm.examples.parsing.files;
 
+import com.stormmq.java.parsing.fileParsers.FileParser;
+import com.stormmq.llvm.examples.parsing.parseFailueLogs.ParseFailureLog;
 import org.jetbrains.annotations.NotNull;
 
-import static com.stormmq.jopt.CommandLineArgumentsParser.newShouldHaveExited;
-import static com.stormmq.jopt.ExitCode.ExitCodeGeneralError;
-import static com.stormmq.jopt.ExitCode.ExitCodeOk;
-
-@FunctionalInterface
-public interface Application
+public interface ParsableFile
 {
-	@NotNull
-	ExitCode execute();
-
-	@SuppressWarnings("CallToPrintStackTrace")
-	static void run(@NotNull final Application application)
-	{
-		final long start = System.currentTimeMillis();
-		final ExitCode exitCode;
-		try
-		{
-			exitCode = application.execute();
-		}
-		catch (final Throwable e)
-		{
-			e.printStackTrace();
-			ExitCodeGeneralError.exit();
-			throw newShouldHaveExited(e);
-		}
-
-		final long end = System.currentTimeMillis();
-		System.out.printf("Took %1$s milliseconds%n", end - start);
-		System.out.flush();
-
-		if (exitCode != ExitCodeOk)
-		{
-			exitCode.exit();
-		}
-	}
+	void process(@NotNull final FileParser fileParser, @NotNull final ParseFailureLog parseFailureLog);
 }

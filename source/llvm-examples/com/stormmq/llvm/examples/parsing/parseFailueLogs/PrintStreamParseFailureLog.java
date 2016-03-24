@@ -27,10 +27,11 @@ import com.stormmq.java.classfile.parser.javaClassFileParsers.exceptions.JavaCla
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.file.Path;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.zip.*;
 
 import static java.lang.System.err;
 import static java.util.Locale.ENGLISH;
@@ -44,44 +45,56 @@ public final class PrintStreamParseFailureLog implements ParseFailureLog
 	}
 
 	@NotNull private final PrintStream printStream;
-	private int failureCount;
-	private int successCount;
+	@NotNull private final AtomicInteger failureCount;
+	@NotNull private final AtomicInteger successCount;
 
 	public PrintStreamParseFailureLog(@NotNull final PrintStream printStream)
 	{
 		this.printStream = printStream;
-		failureCount = 0;
-		successCount = 0;
+		failureCount = new AtomicInteger(0);
+		successCount = new AtomicInteger(0);
 	}
 
 	@Override
 	public boolean hasFailures()
 	{
-		return failureCount != 0;
+		return failureCount.get() != 0;
 	}
 
 	@Override
 	public int failureCount()
 	{
-		return failureCount;
+		return failureCount.get();
 	}
 
 	@Override
 	public int successCount()
 	{
-		return successCount;
+		return successCount.get();
 	}
 
 	@Override
 	public void success(@NotNull final Path filePath)
 	{
-		successCount++;
+		successCount.getAndIncrement();
 	}
 
 	@Override
 	public void success(@NotNull final ZipFile zipFile, @NotNull final ZipEntry zipEntry)
 	{
-		successCount++;
+		successCount.getAndIncrement();
+	}
+
+	@Override
+	public void failureZip(@NotNull final Path zipFilePath, @NotNull final IOException e)
+	{
+		failure("JAR or ZIP archive '%1$s' on disk could not be read because of an input error '%2$s'", zipFilePath, e.getMessage());
+	}
+
+	@Override
+	public void failureZip(@NotNull final Path zipFilePath, @NotNull final ZipException e)
+	{
+		failure("JAR or ZIP archive '%1$s' on disk could not be read because of a ZIP input error '%2$s'", zipFilePath, e.getMessage());
 	}
 
 	@Override
@@ -131,7 +144,7 @@ public final class PrintStreamParseFailureLog implements ParseFailureLog
 	@SuppressWarnings({"resource", "SynchronizationOnLocalVariableOrMethodParameter", "OverloadedVarargsMethod"})
 	private void failure(@NotNull @NonNls final String template, @NotNull final Object... arguments)
 	{
-		failureCount++;
+		failureCount.getAndIncrement();
 
 		final PrintStream printStream = this.printStream;
 		synchronized (printStream)

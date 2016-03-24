@@ -23,19 +23,19 @@
 package com.stormmq.llvm.examples;
 
 import com.stormmq.java.classfile.domain.information.TypeInformation;
-import com.stormmq.java.parsing.fileParsers.MultiplePathsParser;
+import com.stormmq.java.parsing.fileParsers.FileParser;
 import com.stormmq.jopt.Application;
 import com.stormmq.jopt.ExitCode;
-import com.stormmq.llvm.examples.parsing.TypeInformationUser;
-import com.stormmq.llvm.examples.parsing.WrappingJavaClassFileParser;
+import com.stormmq.llvm.examples.parsing.*;
+import com.stormmq.llvm.examples.parsing.files.ParsableFile;
 import com.stormmq.llvm.examples.parsing.parseFailueLogs.ParseFailureLog;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
 import java.util.LinkedHashSet;
 import java.util.Locale;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
-import static com.stormmq.java.parsing.fileParsers.FileParser.DoNothingFileParser;
 import static com.stormmq.jopt.ExitCode.ExitCodeGeneralError;
 import static com.stormmq.jopt.ExitCode.ExitCodeOk;
 import static com.stormmq.llvm.examples.parsing.parseFailueLogs.PrintStreamParseFailureLog.StandardError;
@@ -44,7 +44,7 @@ public final class ExampleApplication implements Application
 {
 	@NotNull private final LinkedHashSet<Path> sourcePaths;
 	@NotNull private final ParseFailureLog parseFailureLog;
-	@NotNull private final MultiplePathsParser multiplePathsParser;
+	@NotNull private final EnqueuePathsWalker multiplePathsParser;
 
 	public ExampleApplication(@NotNull final LinkedHashSet<Path> sourcePaths, final boolean permitConstantsInInstanceFields)
 	{
@@ -58,8 +58,12 @@ public final class ExampleApplication implements Application
 			{
 			}
 		};
-		final WrappingJavaClassFileParser javaClassFileParser = new WrappingJavaClassFileParser(parseFailureLog, permitConstantsInInstanceFields, typeInformationUser);
-		multiplePathsParser = new MultiplePathsParser(DoNothingFileParser, javaClassFileParser);
+		final FileParser javaClassFileParser = new WrappingJavaClassFileParser(parseFailureLog, permitConstantsInInstanceFields, typeInformationUser);
+		final ConcurrentLinkedQueue<ParsableFile> parsableFileQueue = new ConcurrentLinkedQueue<>();
+
+
+		final Coordination coordination = new Coordination(3, parsableFileQueue, javaClassFileParser, parseFailureLog);
+		multiplePathsParser = new EnqueuePathsWalker(parsableFileQueue, coordination);
 	}
 
 	@Override

@@ -20,43 +20,47 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.jopt;
+package com.stormmq.llvm.examples.parsing.files;
 
+import com.stormmq.java.parsing.fileParsers.FileParser;
+import com.stormmq.llvm.examples.parsing.parseFailueLogs.ParseFailureLog;
 import org.jetbrains.annotations.NotNull;
 
-import static com.stormmq.jopt.CommandLineArgumentsParser.newShouldHaveExited;
-import static com.stormmq.jopt.ExitCode.ExitCodeGeneralError;
-import static com.stormmq.jopt.ExitCode.ExitCodeOk;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
 
-@FunctionalInterface
-public interface Application
+import static com.stormmq.path.IsFileTypeFilter.isClassFile;
+
+public final class JarOrZipParsableFile implements ParsableFile
 {
-	@NotNull
-	ExitCode execute();
+	@NotNull private final Path zipFilePath;
 
-	@SuppressWarnings("CallToPrintStackTrace")
-	static void run(@NotNull final Application application)
+	public JarOrZipParsableFile(@NotNull final Path zipFilePath)
 	{
-		final long start = System.currentTimeMillis();
-		final ExitCode exitCode;
-		try
-		{
-			exitCode = application.execute();
-		}
-		catch (final Throwable e)
-		{
-			e.printStackTrace();
-			ExitCodeGeneralError.exit();
-			throw newShouldHaveExited(e);
-		}
+		this.zipFilePath = zipFilePath;
+	}
 
-		final long end = System.currentTimeMillis();
-		System.out.printf("Took %1$s milliseconds%n", end - start);
-		System.out.flush();
-
-		if (exitCode != ExitCodeOk)
+	@Override
+	public void process(@NotNull final FileParser fileParser, @NotNull final ParseFailureLog parseFailureLog)
+	{
+		try (final ZipFile zipFile = new ZipFile(zipFilePath.toFile()))
 		{
-			exitCode.exit();
+			if (zipFile.size() == 0)
+			{
+				return;
+			}
+
+			zipFile.stream().filter((zipEntry) -> !zipEntry.isDirectory() && isClassFile(zipEntry.getName())).forEach(zipEntry -> fileParser.parseFile(zipFile, zipEntry));
+		}
+		catch (final ZipException e)
+		{
+			parseFailureLog.failureZip(zipFilePath, e);
+		}
+		catch (final IOException e)
+		{
+			parseFailureLog.failureZip(zipFilePath, e);
 		}
 	}
 }

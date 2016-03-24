@@ -20,43 +20,32 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.jopt;
+package com.stormmq.llvm.examples.parsing.files;
 
+import com.stormmq.java.parsing.fileParsers.FileParser;
+import com.stormmq.llvm.examples.parsing.parseFailueLogs.ParseFailureLog;
 import org.jetbrains.annotations.NotNull;
 
-import static com.stormmq.jopt.CommandLineArgumentsParser.newShouldHaveExited;
-import static com.stormmq.jopt.ExitCode.ExitCodeGeneralError;
-import static com.stormmq.jopt.ExitCode.ExitCodeOk;
+import java.nio.file.Path;
 
-@FunctionalInterface
-public interface Application
+import static com.stormmq.path.FileAndFolderHelper.relativeToRootPath;
+
+public final class JavaClassParsableFile implements ParsableFile
 {
-	@NotNull
-	ExitCode execute();
+	@NotNull private final Path javaClassFilePath;
+	@NotNull private final Path relativeFilePath;
+	@NotNull private final Path dependencyPath;
 
-	@SuppressWarnings("CallToPrintStackTrace")
-	static void run(@NotNull final Application application)
+	public JavaClassParsableFile(@NotNull final Path javaClassFilePath, @NotNull final Path dependencyPath)
 	{
-		final long start = System.currentTimeMillis();
-		final ExitCode exitCode;
-		try
-		{
-			exitCode = application.execute();
-		}
-		catch (final Throwable e)
-		{
-			e.printStackTrace();
-			ExitCodeGeneralError.exit();
-			throw newShouldHaveExited(e);
-		}
+		this.javaClassFilePath = javaClassFilePath;
+		this.dependencyPath = dependencyPath;
+		relativeFilePath = relativeToRootPath(dependencyPath, javaClassFilePath);
+	}
 
-		final long end = System.currentTimeMillis();
-		System.out.printf("Took %1$s milliseconds%n", end - start);
-		System.out.flush();
-
-		if (exitCode != ExitCodeOk)
-		{
-			exitCode.exit();
-		}
+	@Override
+	public void process(@NotNull final FileParser fileParser, @NotNull final ParseFailureLog parseFailureLog)
+	{
+		fileParser.parseFile(javaClassFilePath, dependencyPath);
 	}
 }

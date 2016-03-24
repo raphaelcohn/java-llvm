@@ -28,8 +28,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+import java.util.zip.*;
 
 public interface ParseFailureLog
 {
@@ -42,6 +41,10 @@ public interface ParseFailureLog
 	void success(@NotNull final Path filePath);
 
 	void success(@NotNull final ZipFile zipFile, @NotNull final ZipEntry zipEntry);
+
+	void failureZip(@NotNull final Path zipFilePath, @NotNull final IOException e);
+
+	void failureZip(@NotNull final Path zipFilePath, @NotNull final ZipException e);
 
 	void failure(@NotNull final Path filePath, @NotNull final IOException e);
 
