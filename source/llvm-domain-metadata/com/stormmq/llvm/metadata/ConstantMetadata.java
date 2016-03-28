@@ -24,10 +24,8 @@ package com.stormmq.llvm.metadata;
 
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.constants.Constant;
+import com.stormmq.string.Formatting;
 import org.jetbrains.annotations.NotNull;
-
-import static java.lang.String.format;
-import static java.util.Locale.ENGLISH;
 
 public final class ConstantMetadata implements Metadata
 {
@@ -68,6 +66,6 @@ public final class ConstantMetadata implements Metadata
 	@NotNull
 	public String toString()
 	{
-		return format(ENGLISH, "%1$s(%2$s)", getClass().getSimpleName(), value);
+		return Formatting.format("%1$s(%2$s)", getClass().getSimpleName(), value);
 	}
 }

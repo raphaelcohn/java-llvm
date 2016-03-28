@@ -28,8 +28,6 @@ import com.stormmq.string.*;
 import org.jetbrains.annotations.*;
 
 import static com.stormmq.string.StringUtilities.iterateOverStringCodePoints;
-import static java.lang.String.format;
-import static java.util.Locale.ENGLISH;
 
 public abstract class AbstractName implements Writable
 {
@@ -78,7 +76,7 @@ public abstract class AbstractName implements Writable
 	@NotNull
 	public final String toString()
 	{
-		return format(ENGLISH, "%1$s(%2$s)". getClass().getSimpleName(), name);
+		return Formatting.format("%1$s(%2$s)". getClass().getSimpleName(), name);
 	}
 
 	@Override

@@ -49,6 +49,10 @@ public interface ParseFailureLog
 
 	void success(@NotNull final String filePath);
 
+	void genericSuccess(@NonNls @NotNull final String messageTemplate, @NotNull final Object... arguments);
+
+	void genericFailure(@NonNls @NotNull final String messageTemplate, @NotNull final Object... arguments);
+
 	void failureZip(@NotNull final Path zipFilePath, @NotNull final IOException e);
 
 	void failureZip(@NotNull final Path zipFilePath, @NotNull final ZipException e);

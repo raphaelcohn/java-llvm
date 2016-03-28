@@ -25,6 +25,7 @@ package com.stormmq.llvm.examples.parsing.typeInformationUsers;
 import com.stormmq.byteWriters.OutputStreamByteWriter;
 import com.stormmq.java.classfile.domain.information.TypeInformation;
 import com.stormmq.llvm.domain.ReferenceTracker;
+import com.stormmq.llvm.domain.asm.ModuleLevelInlineAsm;
 import com.stormmq.llvm.domain.comdat.ComdatDefinition;
 import com.stormmq.llvm.domain.function.FunctionDeclaration;
 import com.stormmq.llvm.domain.function.FunctionDefinition;
@@ -63,6 +64,7 @@ import static java.util.Collections.*;
 
 public final class NaiveTypeInformationUser implements TypeInformationUser
 {
+	@NotNull private final List<ModuleLevelInlineAsm> NoModuleLevelInlineAsm = emptyList();
 	@NotNull private static final List<ComdatDefinition> NoComdatDefinitions = emptyList();
 	@NotNull private static final Map<LocalIdentifier, OpaqueStructureType> NoOpaqueStructureTypes = emptyMap();
 	@NotNull private static final List<Alias> NoAliases = emptyList();
@@ -102,7 +104,7 @@ public final class NaiveTypeInformationUser implements TypeInformationUser
 		final List<FunctionDeclaration> functionDeclarations = emptyList();
 		final List<FunctionDefinition> functionsDefinitions = emptyList();
 
-		final Module module = new Module(DarwinOnX86_64, TargetTriple.MacOsXMavericksOnX86_64, llvmIdent, llvmModuleFlags, llvmDbgCu, NoComdatDefinitions, structureTypes, NoOpaqueStructureTypes, globalVariablesAndConstants, functionDeclarations, functionsDefinitions, NoAliases);
+		final Module module = new Module(DarwinOnX86_64, TargetTriple.MacOsXMavericksOnX86_64, NoModuleLevelInlineAsm, llvmIdent, llvmModuleFlags, llvmDbgCu, NoComdatDefinitions, structureTypes, NoOpaqueStructureTypes, globalVariablesAndConstants, functionDeclarations, functionsDefinitions, NoAliases);
 
 		final Path llvmFilePath = llvmFilePath(relativeFilePath, relativeRootFolderPath);
 		try(final OutputStream outputStream = newOutputStream(llvmFilePath, WRITE, CREATE, TRUNCATE_EXISTING))

@@ -31,16 +31,17 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Supplier;
 
-import static java.lang.String.format;
+import static com.stormmq.jopt.Verbosity.None;
+import static com.stormmq.jopt.Verbosity.Verbose;
 import static java.lang.System.err;
 import static java.lang.System.out;
 import static java.util.Arrays.copyOfRange;
-import static java.util.Locale.ENGLISH;
 
 public class CommandLineArgumentsParser
 {
 	@NotNull @NonNls static final String help = "help";
 	@NotNull @NonNls private static final String show_help = "show help";
+	@NotNull @NonNls private static final String verbose = "verbose";
 	@NotNull @NonNls private static final String UTF_8 = "UTF-8";
 
 	@NotNull
@@ -50,7 +51,7 @@ public class CommandLineArgumentsParser
 	}
 
 	@NotNull
-	static IllegalStateException newShouldHaveExited(@SuppressWarnings("UnusedParameters") @NotNull final Throwable ignored)
+	public static IllegalStateException newShouldHaveExited(@SuppressWarnings("UnusedParameters") @NotNull final Throwable ignored)
 	{
 		return newShouldHaveExited();
 	}
@@ -92,8 +93,12 @@ public class CommandLineArgumentsParser
 	{
 		final OptionParser optionParser = new OptionParser();
 		optionParser.posixlyCorrect(true);
+
 		optionParser.accepts(help, show_help).forHelp();
 		allKnownOptions.add(help);
+
+		optionWithOptionalValue(false, verbose, com.stormmq.string.Formatting.format("verbosity level (%1$s - %2$s)", None.ordinal(), Verbosity.Everything.ordinal()), "1").withValuesConvertedBy(new VerbosityValueConverter()).defaultsTo(Verbose);
+
 		return optionParser;
 	}
 
@@ -105,6 +110,12 @@ public class CommandLineArgumentsParser
 			arguments = new CommandLineArguments(optionParser, standardOut, standardError, optionsThatMustBePresent, commandLineArguments);
 		}
 		return arguments;
+	}
+
+	@NotNull
+	public final Supplier<Verbosity> verboseOption()
+	{
+		return () -> newArgumentsOnce().verbosityOptionValue(verbose);
 	}
 
 	@NotNull
@@ -143,7 +154,7 @@ public class CommandLineArgumentsParser
 	}
 
 	@NotNull
-	protected final ArgumentAcceptingOptionSpec<String> optionWithRequiredValue(final boolean optionMustBePresent, @NotNull @NonNls final String optionName, @NotNull @NonNls final String description, @NotNull @NonNls final String valueExample, @NotNull @NonNls final String... requireIfTheseOptionsArePresent)
+	private ArgumentAcceptingOptionSpec<String> optionWithRequiredValue(final boolean optionMustBePresent, @NotNull @NonNls final String optionName, @NotNull @NonNls final String description, @NotNull @NonNls final String valueExample, @NotNull @NonNls final String... requireIfTheseOptionsArePresent)
 	{
 		return option(optionMustBePresent, optionName, description, requireIfTheseOptionsArePresent).withRequiredArg().describedAs(valueExample);
 	}
@@ -170,14 +181,14 @@ public class CommandLineArgumentsParser
 
 		if (!allKnownOptions.add(optionName))
 		{
-			throw new IllegalStateException(format(ENGLISH, "Option '%1$s' has already been added", optionName));
+			throw new IllegalStateException(com.stormmq.string.Formatting.format("Option '%1$s' has already been added", optionName));
 		}
 
 		if (optionMustBePresent)
 		{
 			if (!optionsThatMustBePresent.add(optionName))
 			{
-				throw new IllegalArgumentException(format(ENGLISH, "Option '%1$s' is already one that must be present", optionName));
+				throw new IllegalArgumentException(com.stormmq.string.Formatting.format("Option '%1$s' is already one that must be present", optionName));
 			}
 		}
 
@@ -194,5 +205,57 @@ public class CommandLineArgumentsParser
 		}
 		optionSpecBuilder.requiredIf(requireIfTheseOptionsArePresent[0], copyOfRange(requireIfTheseOptionsArePresent, 1, length));
 		return optionSpecBuilder;
+	}
+
+	private static final class VerbosityValueConverter implements ValueConverter<Verbosity>
+	{
+		@Override
+		public Verbosity convert(@NotNull @NonNls final String value)
+		{
+			final int integer;
+			try
+			{
+				integer = Integer.valueOf(value, 10);
+			}
+			catch (final NumberFormatException ignored)
+			{
+				try
+				{
+					return Verbosity.valueOf(value);
+				}
+				catch (final IllegalArgumentException e)
+				{
+					throw new ValueConversionException(com.stormmq.string.Formatting.format("No verbosity level '%1$s' is known for option --%2$s", value, verbose), e);
+				}
+			}
+			if (integer < 0)
+			{
+				throw new ValueConversionException(com.stormmq.string.Formatting.format("Verbosity level '%1$s' is negative for option --%2$s", value, verbose));
+			}
+			Verbosity mostVerbosePossibilityIfValueTooHigh = None;
+			for (final Verbosity verbosity : Verbosity.values())
+			{
+				if (verbosity.ordinal() == integer)
+				{
+					return verbosity;
+				}
+				mostVerbosePossibilityIfValueTooHigh = verbosity;
+			}
+			return mostVerbosePossibilityIfValueTooHigh;
+		}
+
+		@Override
+		@NotNull
+		public Class<Verbosity> valueType()
+		{
+			return Verbosity.class;
+		}
+
+		@Override
+		@Nullable
+		public String valuePattern()
+		{
+			return null;
+		}
 	}
 }

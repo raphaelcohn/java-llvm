@@ -20,40 +20,33 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain;
+package com.stormmq.jopt.applications.timedApplicationResultsUsers;
 
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import java.io.PrintStream;
 
-public enum Linkage
+import static com.stormmq.string.Formatting.formatPrintLineAndFlushWhilstSynchronized;
+import static java.lang.System.err;
+
+public final class PrintStreamTimedApplicationResultsUser implements TimedApplicationResultsUser
 {
-	_private,
-	internal(true),
-	available_externally,
-	linkonce,
-	weak(true),
-	common,
-	appending,
-	extern_weak,
-	linkonce_odr,
-	weak_odr,
-	external(true),
-	;
+	@NonNls @NotNull private final PrintStream printStream;
 
-	public final boolean isPermittedForAlias;
-	@NotNull public final byte[] llAssemblyValue;
+	@SuppressWarnings("UseOfSystemOutOrSystemErr")
+	@NotNull
+	public static final TimedApplicationResultsUser StandardErrorTimedApplicationResultUser = new PrintStreamTimedApplicationResultsUser(err);
 
-	Linkage(final boolean isPermittedForAlias)
+	public PrintStreamTimedApplicationResultsUser(@NotNull final PrintStream printStream)
 	{
-		this.isPermittedForAlias = isPermittedForAlias;
-		final String name = name();
-		final String actualName = name.charAt(0) == '_' ? name.substring(1) : name;
-		llAssemblyValue = encodeUtf8BytesWithCertaintyValueIsValid(actualName);
+		this.printStream = printStream;
 	}
 
-	Linkage()
+	@SuppressWarnings("resource")
+	@Override
+	public void use(final long duration)
 	{
-		this(false);
+		formatPrintLineAndFlushWhilstSynchronized(printStream, "Executed in '%1$s' millisecond$%2$s%n", duration, duration == 1 ? "" : "s");
 	}
 }

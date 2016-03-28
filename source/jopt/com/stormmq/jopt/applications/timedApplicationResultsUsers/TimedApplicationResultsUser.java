@@ -20,43 +20,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.jopt;
-
-import org.jetbrains.annotations.NotNull;
-
-import static com.stormmq.jopt.CommandLineArgumentsParser.newShouldHaveExited;
-import static com.stormmq.jopt.ExitCode.ExitCodeGeneralError;
-import static com.stormmq.jopt.ExitCode.ExitCodeOk;
+package com.stormmq.jopt.applications.timedApplicationResultsUsers;
 
 @FunctionalInterface
-public interface Application
+public interface TimedApplicationResultsUser
 {
-	@NotNull
-	ExitCode execute();
-
-	@SuppressWarnings("CallToPrintStackTrace")
-	static void run(@NotNull final Application application)
-	{
-		final long start = System.currentTimeMillis();
-		final ExitCode exitCode;
-		try
-		{
-			exitCode = application.execute();
-		}
-		catch (final Throwable e)
-		{
-			e.printStackTrace();
-			ExitCodeGeneralError.exit();
-			throw newShouldHaveExited(e);
-		}
-
-		final long end = System.currentTimeMillis();
-		System.out.printf("Took %1$s milliseconds%n", end - start);
-		System.out.flush();
-
-		if (exitCode != ExitCodeOk)
-		{
-			exitCode.exit();
-		}
-	}
+	void use(final long duration);
 }

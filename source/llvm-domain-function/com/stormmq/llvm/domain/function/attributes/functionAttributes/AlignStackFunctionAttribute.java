@@ -24,12 +24,11 @@ package com.stormmq.llvm.domain.function.attributes.functionAttributes;
 
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.attributes.AttributeKind;
+import com.stormmq.string.Formatting;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import static com.stormmq.llvm.domain.attributes.AttributeKind.Defined;
-import static java.lang.String.format;
-import static java.util.Locale.ENGLISH;
 
 public final class AlignStackFunctionAttribute implements FunctionAttribute
 {
@@ -58,6 +57,6 @@ public final class AlignStackFunctionAttribute implements FunctionAttribute
 	@Override
 	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
 	{
-		byteWriter.writeUtf8EncodedStringWithCertainty(format(ENGLISH, "alignstack(%1$s)", stackAlignmentAsPowerOfTwo));
+		byteWriter.writeUtf8EncodedStringWithCertainty(Formatting.format("alignstack(%1$s)", stackAlignmentAsPowerOfTwo));
 	}
 }

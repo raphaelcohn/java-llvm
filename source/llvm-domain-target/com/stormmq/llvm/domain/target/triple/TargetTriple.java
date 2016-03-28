@@ -24,13 +24,12 @@ package com.stormmq.llvm.domain.target.triple;
 
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.Writable;
+import com.stormmq.string.Formatting;
 import org.jetbrains.annotations.*;
 
 import static com.stormmq.llvm.domain.target.triple.Architecture.x86_64;
 import static com.stormmq.llvm.domain.target.triple.TargetOperatingSystem.MacOsXMavericks;
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
-import static java.lang.String.format;
-import static java.util.Locale.ENGLISH;
 
 public final class TargetTriple implements Writable
 {
@@ -83,9 +82,10 @@ public final class TargetTriple implements Writable
 	@NotNull
 	private String toTargetTriple()
 	{
-		return environment == null ? format(ENGLISH, "%1$s-%2$s", architecture, operatingSystem) : format(ENGLISH, "%1$s-%2$s-%3$s", architecture, operatingSystem, environment);
+		return environment == null ? Formatting.format("%1$s-%2$s", architecture, operatingSystem) : Formatting.format("%1$s-%2$s-%3$s", architecture, operatingSystem, environment);
 	}
 
+	@SuppressWarnings("RedundantIfStatement")
 	@Override
 	public boolean equals(@Nullable final Object o)
 	{

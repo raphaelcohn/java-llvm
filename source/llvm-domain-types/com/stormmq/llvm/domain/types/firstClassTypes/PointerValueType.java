@@ -25,14 +25,13 @@ package com.stormmq.llvm.domain.types.firstClassTypes;
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.Writable;
 import com.stormmq.llvm.domain.types.CanBePointedToType;
+import com.stormmq.string.Formatting;
 import org.jetbrains.annotations.NotNull;
 
 import static com.stormmq.llvm.domain.types.firstClassTypes.FloatingPointValueType.*;
 import static com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType.*;
 import static com.stormmq.llvm.domain.types.firstClassTypes.X86MmxFirstClassType.x86_mmx;
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
-import static java.lang.String.format;
-import static java.util.Locale.ENGLISH;
 
 public final class PointerValueType implements PrimitiveSingleValueType
 {
@@ -56,7 +55,7 @@ public final class PointerValueType implements PrimitiveSingleValueType
 	{
 		if (addressSpace < 0)
 		{
-			throw new IllegalArgumentException(format(ENGLISH, "addressSpace can not be negative, ie not '%1$s'", addressSpace));
+			throw new IllegalArgumentException(Formatting.format("addressSpace can not be negative, ie not '%1$s'", addressSpace));
 		}
 		this.canBePointedToType = canBePointedToType;
 		this.addressSpace = addressSpace;

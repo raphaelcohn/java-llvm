@@ -1,14 +1,22 @@
 <component name="ProjectDictionaryState">
   <dictionary name="raph">
     <words>
+      <w>clinit</w>
+      <w>cohn</w>
       <w>declarator</w>
       <w>endian</w>
+      <w>fieldref</w>
       <w>ident</w>
       <w>ieee</w>
       <w>javaparser</w>
+      <w>methodref</w>
+      <w>misconfigured</w>
+      <w>noninfringement</w>
+      <w>opcode</w>
       <w>superinterface</w>
       <w>tbaa</w>
       <w>unboxed</w>
+      <w>unconfigured</w>
     </words>
   </dictionary>
 </component>

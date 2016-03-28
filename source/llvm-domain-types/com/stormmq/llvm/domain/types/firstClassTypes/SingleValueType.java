@@ -23,7 +23,6 @@
 package com.stormmq.llvm.domain.types.firstClassTypes;
 
 import com.stormmq.llvm.domain.types.*;
-import org.jetbrains.annotations.NotNull;
 
 public interface SingleValueType extends FirstClassType, VoidOrFirstClassTypeExcludingLabelAndMetadata, TypeWithSize, CanBePointedToType
 {

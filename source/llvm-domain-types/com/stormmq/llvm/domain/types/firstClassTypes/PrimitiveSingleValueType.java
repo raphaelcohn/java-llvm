@@ -22,8 +22,6 @@
 
 package com.stormmq.llvm.domain.types.firstClassTypes;
 
-import org.jetbrains.annotations.*;
-
 public interface PrimitiveSingleValueType extends SingleValueType
 {
 }

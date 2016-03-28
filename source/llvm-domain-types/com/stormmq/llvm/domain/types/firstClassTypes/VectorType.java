@@ -23,11 +23,10 @@
 package com.stormmq.llvm.domain.types.firstClassTypes;
 
 import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.string.Formatting;
 import org.jetbrains.annotations.NotNull;
 
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
-import static java.lang.String.format;
-import static java.util.Locale.ENGLISH;
 
 public final class VectorType<T extends PrimitiveSingleValueType> implements SingleValueType
 {
@@ -40,7 +39,7 @@ public final class VectorType<T extends PrimitiveSingleValueType> implements Sin
 	{
 		if (numberOfElements < 1)
 		{
-			throw new IllegalArgumentException(format(ENGLISH, "Number of element can not be '%1$s' - it must be greater than zero", numberOfElements));
+			throw new IllegalArgumentException(Formatting.format("Number of element can not be '%1$s' - it must be greater than zero", numberOfElements));
 		}
 		this.primitiveSingleValueType = primitiveSingleValueType;
 		this.numberOfElements = numberOfElements;

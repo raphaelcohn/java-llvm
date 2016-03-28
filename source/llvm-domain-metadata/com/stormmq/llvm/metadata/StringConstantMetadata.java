@@ -23,12 +23,11 @@
 package com.stormmq.llvm.metadata;
 
 import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.string.Formatting;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
-import static java.lang.String.format;
-import static java.util.Locale.ENGLISH;
 
 public final class StringConstantMetadata implements Metadata
 {
@@ -74,6 +73,6 @@ public final class StringConstantMetadata implements Metadata
 	@NotNull
 	public String toString()
 	{
-		return format(ENGLISH, "%1$s(%2$s)", getClass().getSimpleName(), value);
+		return Formatting.format("%1$s(%2$s)", getClass().getSimpleName(), value);
 	}
 }

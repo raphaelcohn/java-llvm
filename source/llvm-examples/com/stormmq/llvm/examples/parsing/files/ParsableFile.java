@@ -26,6 +26,7 @@ import com.stormmq.llvm.examples.parsing.fileParsers.FileParser;
 import com.stormmq.llvm.examples.parsing.parseFailueLogs.ParseFailureLog;
 import org.jetbrains.annotations.NotNull;
 
+@FunctionalInterface
 public interface ParsableFile
 {
 	void process(@NotNull final FileParser fileParser, @NotNull final ParseFailureLog parseFailureLog);

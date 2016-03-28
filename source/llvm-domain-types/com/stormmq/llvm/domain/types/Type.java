@@ -22,9 +22,7 @@
 
 package com.stormmq.llvm.domain.types;
 
-import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.Writable;
-import org.jetbrains.annotations.NotNull;
 
 public interface Type extends Writable
 {

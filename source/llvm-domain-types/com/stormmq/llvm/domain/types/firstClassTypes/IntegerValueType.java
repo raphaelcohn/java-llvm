@@ -23,11 +23,10 @@
 package com.stormmq.llvm.domain.types.firstClassTypes;
 
 import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.string.Formatting;
 import org.jetbrains.annotations.NotNull;
 
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
-import static java.lang.String.format;
-import static java.util.Locale.ENGLISH;
 
 public final class IntegerValueType implements PrimitiveSingleValueType
 {
@@ -47,12 +46,12 @@ public final class IntegerValueType implements PrimitiveSingleValueType
 	{
 		if (numberOfBits < 1)
 		{
-			throw new IllegalArgumentException(format(ENGLISH, "Number of bits must be 1 or more, not '%1$s'", numberOfBits));
+			throw new IllegalArgumentException(Formatting.format("Number of bits must be 1 or more, not '%1$s'", numberOfBits));
 		}
 
 		if (numberOfBits > MaximumNumberOfBits)
 		{
-			throw new IllegalArgumentException(format(ENGLISH, "Number of bits must not exceed 2^23 - 1, not '%1$s'", numberOfBits));
+			throw new IllegalArgumentException(Formatting.format("Number of bits must not exceed 2^23 - 1, not '%1$s'", numberOfBits));
 		}
 
 		stringValue = 'i' + Integer.toString(numberOfBits);

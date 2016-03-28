@@ -24,11 +24,10 @@ package com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes;
 
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.types.TypeWithSize;
+import com.stormmq.string.Formatting;
 import org.jetbrains.annotations.*;
 
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
-import static java.lang.String.format;
-import static java.util.Locale.ENGLISH;
 
 public final class ArrayType<T extends TypeWithSize> implements AggregateType
 {
@@ -50,7 +49,7 @@ public final class ArrayType<T extends TypeWithSize> implements AggregateType
 			final int dimensionLength = dimensionLengths[index];
 			if (dimensionLength < 0)
 			{
-				throw new IllegalArgumentException(format(ENGLISH, "Dimension '%1$s' (zero-based) can not be negative ('%2$s)", index, dimensionLength));
+				throw new IllegalArgumentException(Formatting.format("Dimension '%1$s' (zero-based) can not be negative ('%2$s)", index, dimensionLength));
 			}
 		}
 

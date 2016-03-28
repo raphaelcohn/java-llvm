@@ -22,6 +22,7 @@
 
 package com.stormmq.llvm.domain.target.dataLayout;
 
+import com.stormmq.string.Formatting;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,6 +43,6 @@ public final class Sizing
 	{
 		this.abi = abi;
 		this.pref = pref;
-		dataLayoutEncoding = String.format(Locale.ENGLISH, ":%1$s:%2$s", Integer.toString(abi), Integer.toString(pref));
+		dataLayoutEncoding = Formatting.format(":%1$s:%2$s", abi, pref);
 	}
 }

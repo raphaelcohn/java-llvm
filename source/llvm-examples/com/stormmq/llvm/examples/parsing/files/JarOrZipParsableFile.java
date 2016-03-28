@@ -78,11 +78,6 @@ public final class JarOrZipParsableFile implements ParsableFile
 				{
 					all = length == -1 ? retrieveAllBytesForUnknownInputStreamSize(zipFile, zipEntry, OneMegabyte) : retrieveAllBytesForKnownInputStreamSize(zipFile, zipEntry, length);
 				}
-				catch (final ZipException e)
-				{
-					parseFailureLog.failure(zipFile, zipEntry, e);
-					return;
-				}
 				catch (final IOException e)
 				{
 					parseFailureLog.failure(zipFile, zipEntry, e);

@@ -2,10 +2,10 @@ package com.stormmq.llvm.api;
 
 import org.jetbrains.annotations.NotNull;
 
-@LlvmIntrinsic(value = "i32")
+@LlvmIntrinsic("i32")
 public final class i32 extends IntegerValue<Integer>
 {
-    public i32(int value)
+    public i32(final int value)
     {
         super(value);
     }

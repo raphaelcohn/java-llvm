@@ -24,11 +24,9 @@ package com.stormmq.llvm.domain.function.attributes.functionAttributes;
 
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.attributes.AttributeKind;
+import com.stormmq.string.Formatting;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-
-import static java.lang.String.format;
-import static java.util.Locale.ENGLISH;
 
 public final class KeyOnlyFunctionAttribute implements FunctionAttribute
 {
@@ -58,6 +56,6 @@ public final class KeyOnlyFunctionAttribute implements FunctionAttribute
 	@Override
 	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
 	{
-		byteWriter.writeUtf8EncodedStringWithCertainty(format(ENGLISH, "\"%1$s\"", key));
+		byteWriter.writeUtf8EncodedStringWithCertainty(Formatting.format("\"%1$s\"", key));
 	}
 }

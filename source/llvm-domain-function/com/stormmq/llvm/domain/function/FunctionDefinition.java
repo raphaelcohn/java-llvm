@@ -31,14 +31,13 @@ import com.stormmq.llvm.domain.function.attributes.parameterAttributes.Parameter
 import com.stormmq.llvm.domain.identifiers.GlobalIdentifier;
 import com.stormmq.llvm.domain.names.SectionName;
 import com.stormmq.llvm.metadata.debugging.DISubprogramKeyedMetadataTuple;
+import com.stormmq.string.Formatting;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.stormmq.llvm.domain.Writable.writeSpace;
 import static com.stormmq.llvm.domain.function.attributes.FunctionAttributeGroup.writeFunctionAttributes;
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
-import static java.lang.String.format;
-import static java.util.Locale.ENGLISH;
 
 public final class FunctionDefinition implements Writable
 {
@@ -75,7 +74,7 @@ public final class FunctionDefinition implements Writable
 	{
 		if (alignment < AutomaticAlignment)
 		{
-			throw new IllegalArgumentException(format(ENGLISH, "Alignment ('%1$s') must not be negative", alignment));
+			throw new IllegalArgumentException(Formatting.format("Alignment ('%1$s') must not be negative", alignment));
 		}
 		this.linkage = linkage;
 		this.visibility = visibility;

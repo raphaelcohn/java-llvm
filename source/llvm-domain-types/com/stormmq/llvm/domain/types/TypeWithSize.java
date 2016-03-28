@@ -22,8 +22,6 @@
 
 package com.stormmq.llvm.domain.types;
 
-import org.jetbrains.annotations.*;
-
 public interface TypeWithSize extends Type
 {
 }

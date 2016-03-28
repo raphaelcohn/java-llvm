@@ -22,8 +22,8 @@
 
 package com.stormmq.llvm.examples;
 
-import com.stormmq.jopt.Application;
-import com.stormmq.jopt.ExitCode;
+import com.stormmq.jopt.*;
+import com.stormmq.jopt.applications.Application;
 import com.stormmq.llvm.examples.parsing.Coordination;
 import com.stormmq.llvm.examples.parsing.EnqueuePathsWalker;
 import com.stormmq.llvm.examples.parsing.fileParsers.FileParser;
@@ -39,14 +39,12 @@ import java.nio.file.Path;
 import java.util.LinkedHashSet;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import static com.stormmq.jopt.ExitCode.ExitCodeGeneralError;
-import static com.stormmq.jopt.ExitCode.ExitCodeOk;
-import static com.stormmq.llvm.examples.parsing.parseFailueLogs.PrintStreamParseFailureLog.StandardError;
-import static java.lang.System.err;
-import static java.lang.System.out;
+import static com.stormmq.jopt.ExitCode.CanNotCreate;
+import static com.stormmq.jopt.ExitCode.Failure;
+import static com.stormmq.jopt.ExitCode.Success;
+import static com.stormmq.llvm.examples.parsing.parseFailueLogs.PrintStreamParseFailureLog.standardErrorParseFailureLog;
 import static java.nio.file.Files.createDirectories;
 import static java.nio.file.Files.deleteIfExists;
-import static java.util.Locale.ENGLISH;
 
 public final class ExampleApplication implements Application
 {
@@ -55,11 +53,11 @@ public final class ExampleApplication implements Application
 	@NotNull private final ParseFailureLog parseFailureLog;
 	@NotNull private final EnqueuePathsWalker multiplePathsParser;
 
-	public ExampleApplication(@NotNull final LinkedHashSet<Path> sourcePaths, @NotNull final Path outputPath, final boolean permitConstantsInInstanceFields)
+	public ExampleApplication(@NotNull final Verbosity verbosity, @NotNull final LinkedHashSet<Path> sourcePaths, @NotNull final Path outputPath, final boolean permitConstantsInInstanceFields)
 	{
 		this.sourcePaths = sourcePaths;
 		this.outputPath = outputPath;
-		parseFailureLog = StandardError();
+		parseFailureLog = standardErrorParseFailureLog(verbosity);
 
 		final TypeInformationUser typeInformationUser = new NaiveTypeInformationUser(outputPath);
 		final FileParser javaClassFileParser = new JavaClassFileParser(parseFailureLog, permitConstantsInInstanceFields, typeInformationUser);
@@ -76,8 +74,9 @@ public final class ExampleApplication implements Application
 	{
 		if (couldNotRecreateOutputDirectory())
 		{
-			return ExitCodeGeneralError;
+			return CanNotCreate;
 		}
+
 		try
 		{
 			multiplePathsParser.parse(sourcePaths);
@@ -87,17 +86,19 @@ public final class ExampleApplication implements Application
 			final int successCount = parseFailureLog.successCount();
 			final int failureCount = parseFailureLog.failureCount();
 			final int total = successCount + failureCount;
-			//noinspection HardCodedStringLiteral
-			out.printf(ENGLISH, "Success: %1$s.  Failure: %2$s.  Total: %3$s%n.", successCount, failureCount, total);
+
+			parseFailureLog.genericSuccess("Success: %1$s.  Failure: %2$s.  Total: %3$s.", successCount, failureCount, total);
 		}
+
 		if (parseFailureLog.hasFailures())
 		{
-			return ExitCodeGeneralError;
+			return Failure;
 		}
-		return ExitCodeOk;
+
+		return Success;
 	}
 
-	public boolean couldNotRecreateOutputDirectory()
+	private boolean couldNotRecreateOutputDirectory()
 	{
 		try
 		{
@@ -114,8 +115,7 @@ public final class ExampleApplication implements Application
 		}
 		catch (final IOException e)
 		{
-			//noinspection HardCodedStringLiteral
-			err.printf(ENGLISH, "Could not create output directory (or one of its parents) because of '%1$s'%n", e.getMessage());
+			parseFailureLog.genericFailure("Could not create output directory (or one of its parents) because of '%1$s'", e.getMessage());
 			return true;
 		}
 

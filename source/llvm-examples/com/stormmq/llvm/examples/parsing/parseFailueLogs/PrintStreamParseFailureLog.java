@@ -24,35 +24,39 @@ package com.stormmq.llvm.examples.parsing.parseFailueLogs;
 
 import com.stormmq.java.classfile.parser.javaClassFileParsers.exceptions.InvalidJavaClassFileException;
 import com.stormmq.java.classfile.parser.javaClassFileParsers.exceptions.JavaClassFileContainsDataTooLongToReadException;
+import com.stormmq.jopt.Verbosity;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
-import java.io.PrintStream;
+import java.io.*;
 import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.*;
 
+import static com.stormmq.string.Formatting.formatPrintLineAndFlushWhilstSynchronized;
 import static java.lang.System.err;
-import static java.util.Locale.ENGLISH;
 
 public final class PrintStreamParseFailureLog implements ParseFailureLog
 {
 	@SuppressWarnings("UseOfSystemOutOrSystemErr")
-	@NotNull public static ParseFailureLog StandardError()
+	@NotNull public static ParseFailureLog standardErrorParseFailureLog(@NotNull final Verbosity verbosity)
 	{
-		return new PrintStreamParseFailureLog(err);
+		return new PrintStreamParseFailureLog(verbosity, err);
 	}
 
+	@NotNull private final Verbosity verbosity;
 	@NotNull private final PrintStream printStream;
 	@NotNull private final AtomicInteger failureCount;
 	@NotNull private final AtomicInteger successCount;
+	private final boolean isAtLeastVerbose;
 
-	public PrintStreamParseFailureLog(@NotNull final PrintStream printStream)
+	private PrintStreamParseFailureLog(@NotNull final Verbosity verbosity, @NotNull final PrintStream printStream)
 	{
+		this.verbosity = verbosity;
 		this.printStream = printStream;
 		failureCount = new AtomicInteger(0);
 		successCount = new AtomicInteger(0);
+		isAtLeastVerbose = verbosity.isAtLeastVerbose();
 	}
 
 	@Override
@@ -77,6 +81,25 @@ public final class PrintStreamParseFailureLog implements ParseFailureLog
 	public void success(@NotNull final String filePath)
 	{
 		successCount.getAndIncrement();
+		if (isAtLeastVerbose)
+		{
+			formatPrintLineAndFlushWhilstSynchronized(printStream, "Successfully parsed '%1$s'", filePath);
+		}
+	}
+
+	@Override
+	public void genericSuccess(@NonNls @NotNull final String messageTemplate, @NotNull final Object... arguments)
+	{
+		if (isAtLeastVerbose)
+		{
+			formatPrintLineAndFlushWhilstSynchronized(printStream, messageTemplate, arguments);
+		}
+	}
+
+	@Override
+	public void genericFailure(@NonNls @NotNull final String messageTemplate, @NotNull final Object... arguments)
+	{
+		formatPrintLineAndFlushWhilstSynchronized(printStream, messageTemplate, arguments);
 	}
 
 	@Override
@@ -121,17 +144,11 @@ public final class PrintStreamParseFailureLog implements ParseFailureLog
 		failure("File '%1$s' is larger than 2Gb and so is too big to parse. This should be exceedingly rare.");
 	}
 
-	@SuppressWarnings({"resource", "SynchronizationOnLocalVariableOrMethodParameter", "OverloadedVarargsMethod"})
+	@SuppressWarnings("OverloadedVarargsMethod")
 	private void failure(@NotNull @NonNls final String template, @NotNull final Object... arguments)
 	{
 		failureCount.getAndIncrement();
 
-		final PrintStream printStream = this.printStream;
-		synchronized (printStream)
-		{
-			printStream.format(ENGLISH, template, arguments);
-			printStream.println();
-			printStream.flush();
-		}
+		formatPrintLineAndFlushWhilstSynchronized(printStream, template, arguments);
 	}
 }

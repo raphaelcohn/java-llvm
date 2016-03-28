@@ -20,40 +20,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain;
+package com.stormmq.jopt.applications.fatalApplicationFailureActions;
 
 import org.jetbrains.annotations.NotNull;
 
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
-
-public enum Linkage
+@FunctionalInterface
+public interface FatalApplicationFailureAction
 {
-	_private,
-	internal(true),
-	available_externally,
-	linkonce,
-	weak(true),
-	common,
-	appending,
-	extern_weak,
-	linkonce_odr,
-	weak_odr,
-	external(true),
-	;
-
-	public final boolean isPermittedForAlias;
-	@NotNull public final byte[] llAssemblyValue;
-
-	Linkage(final boolean isPermittedForAlias)
-	{
-		this.isPermittedForAlias = isPermittedForAlias;
-		final String name = name();
-		final String actualName = name.charAt(0) == '_' ? name.substring(1) : name;
-		llAssemblyValue = encodeUtf8BytesWithCertaintyValueIsValid(actualName);
-	}
-
-	Linkage()
-	{
-		this(false);
-	}
+	void failure(@NotNull final Throwable error);
 }

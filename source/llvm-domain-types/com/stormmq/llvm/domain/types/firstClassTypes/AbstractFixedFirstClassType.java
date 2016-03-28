@@ -23,7 +23,6 @@
 package com.stormmq.llvm.domain.types.firstClassTypes;
 
 import com.stormmq.byteWriters.ByteWriter;
-import com.stormmq.string.StringUtilities;
 import org.jetbrains.annotations.*;
 
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;

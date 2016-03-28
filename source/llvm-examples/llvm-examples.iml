@@ -16,6 +16,8 @@
     <orderEntry type="module" module-name="llvm-domain-module" />
     <orderEntry type="module" module-name="llvm-domain-metadata-module" />
     <orderEntry type="module" module-name="llvm-domain-metadata-debugging" />
+    <orderEntry type="module" module-name="string" />
+    <orderEntry type="module" module-name="llvm-domain-asm" />
   </component>
   <component name="org.twodividedbyzero.idea.findbugs">
     <option name="_basePreferences">

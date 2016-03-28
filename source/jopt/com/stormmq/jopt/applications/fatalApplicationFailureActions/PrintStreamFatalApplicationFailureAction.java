@@ -20,40 +20,38 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain;
+package com.stormmq.jopt.applications.fatalApplicationFailureActions;
 
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.*;
 
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import java.io.PrintStream;
 
-public enum Linkage
+import static java.lang.System.err;
+
+public class PrintStreamFatalApplicationFailureAction implements FatalApplicationFailureAction
 {
-	_private,
-	internal(true),
-	available_externally,
-	linkonce,
-	weak(true),
-	common,
-	appending,
-	extern_weak,
-	linkonce_odr,
-	weak_odr,
-	external(true),
-	;
+	@SuppressWarnings("UseOfSystemOutOrSystemErr") @NotNull public static final FatalApplicationFailureAction StandardErrorFatalApplicationFailureAction = new PrintStreamFatalApplicationFailureAction(err);
 
-	public final boolean isPermittedForAlias;
-	@NotNull public final byte[] llAssemblyValue;
+	@NotNull private final PrintStream printStream;
 
-	Linkage(final boolean isPermittedForAlias)
+	public PrintStreamFatalApplicationFailureAction(@NotNull final PrintStream printStream)
 	{
-		this.isPermittedForAlias = isPermittedForAlias;
-		final String name = name();
-		final String actualName = name.charAt(0) == '_' ? name.substring(1) : name;
-		llAssemblyValue = encodeUtf8BytesWithCertaintyValueIsValid(actualName);
+		this.printStream = printStream;
 	}
 
-	Linkage()
+	@Override
+	public void failure(@NotNull final Throwable error)
 	{
-		this(false);
+		synchronized (printStream)
+		{
+			try
+			{
+				error.printStackTrace(printStream);
+				printStream.flush();
+			}
+			catch (final Throwable ignored)
+			{
+			}
+		}
 	}
 }

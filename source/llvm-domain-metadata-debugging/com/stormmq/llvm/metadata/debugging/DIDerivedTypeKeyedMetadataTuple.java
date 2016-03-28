@@ -24,10 +24,10 @@ package com.stormmq.llvm.metadata.debugging;
 
 import com.stormmq.llvm.domain.ReferenceTracker;
 import com.stormmq.llvm.metadata.metadataTuples.KeyedMetadataTuple;
+import com.stormmq.string.Formatting;
 import org.jetbrains.annotations.NotNull;
 
-import static java.lang.String.format;
-import static java.util.Locale.ENGLISH;
+import static com.stormmq.string.Formatting.format;
 
 public final class DIDerivedTypeKeyedMetadataTuple extends KeyedMetadataTuple implements TypeMetadata
 {
@@ -37,7 +37,7 @@ public final class DIDerivedTypeKeyedMetadataTuple extends KeyedMetadataTuple im
 
 		if (!tag.validForDerivedType)
 		{
-			throw new IllegalArgumentException(format(ENGLISH, "Tag '%1$s' is not valid for a derived type", tag));
+			throw new IllegalArgumentException(format("Tag '%1$s' is not valid for a derived type", tag));
 		}
 	}
 }

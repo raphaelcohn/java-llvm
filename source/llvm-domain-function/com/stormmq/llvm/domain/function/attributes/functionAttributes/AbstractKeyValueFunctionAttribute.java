@@ -24,15 +24,13 @@ package com.stormmq.llvm.domain.function.attributes.functionAttributes;
 
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.attributes.AttributeKind;
+import com.stormmq.string.Formatting;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
-
-import static java.lang.String.format;
-import static java.util.Locale.ENGLISH;
 
 public abstract class AbstractKeyValueFunctionAttribute implements FunctionAttribute
 {
@@ -88,6 +86,6 @@ public abstract class AbstractKeyValueFunctionAttribute implements FunctionAttri
 	@Override
 	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
 	{
-		byteWriter.writeUtf8EncodedStringWithCertainty(format(ENGLISH, "\"%1$s\"=\"%2$s\"", key, value));
+		byteWriter.writeUtf8EncodedStringWithCertainty(Formatting.format("\"%1$s\"=\"%2$s\"", key, value));
 	}
 }

@@ -11,5 +11,6 @@
     <orderEntry type="module" module-name="llvm-domain-metadata" exported="" />
     <orderEntry type="module" module-name="llvm-domain-identifiers" exported="" />
     <orderEntry type="module" module-name="llvm-domain-constants" exported="" />
+    <orderEntry type="module" module-name="string" />
   </component>
 </module>

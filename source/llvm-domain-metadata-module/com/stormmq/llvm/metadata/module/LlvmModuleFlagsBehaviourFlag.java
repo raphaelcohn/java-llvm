@@ -42,6 +42,6 @@ public enum LlvmModuleFlagsBehaviourFlag
 
 	LlvmModuleFlagsBehaviourFlag(final int value)
 	{
-		this.constantMetadataField = new ConstantMetadata(new IntegerConstant(i32, value));
+		constantMetadataField = new ConstantMetadata(new IntegerConstant(i32, value));
 	}
 }

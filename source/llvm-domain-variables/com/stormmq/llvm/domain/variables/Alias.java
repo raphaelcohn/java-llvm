@@ -26,11 +26,10 @@ import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.*;
 import com.stormmq.llvm.domain.identifiers.GlobalIdentifier;
 import com.stormmq.llvm.domain.types.Type;
+import com.stormmq.string.Formatting;
 import org.jetbrains.annotations.*;
 
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
-import static java.lang.String.format;
-import static java.util.Locale.ENGLISH;
 
 public final class Alias extends AbstractVariable
 {
@@ -46,7 +45,7 @@ public final class Alias extends AbstractVariable
 
 		if (!linkage.isPermittedForAlias)
 		{
-			throw new IllegalArgumentException(format(ENGLISH, "The linkage '%1$s' is not permitted for an alias", linkage));
+			throw new IllegalArgumentException(Formatting.format("The linkage '%1$s' is not permitted for an alias", linkage));
 		}
 
 		if (aliaseeTypes.length == 0)
@@ -56,7 +55,7 @@ public final class Alias extends AbstractVariable
 
 		if (identifier.equals(originalGlobalVariableOrFunctionName))
 		{
-			throw new IllegalArgumentException(format(ENGLISH, "The alias name '%1$s' can not match the name of the thing being aliased '%2$s'", identifier, originalGlobalVariableOrFunctionName));
+			throw new IllegalArgumentException(Formatting.format("The alias name '%1$s' can not match the name of the thing being aliased '%2$s'", identifier, originalGlobalVariableOrFunctionName));
 		}
 	}
 

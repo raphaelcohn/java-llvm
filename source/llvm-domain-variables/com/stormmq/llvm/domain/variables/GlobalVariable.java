@@ -29,12 +29,11 @@ import com.stormmq.llvm.domain.constants.Constant;
 import com.stormmq.llvm.domain.identifiers.GlobalIdentifier;
 import com.stormmq.llvm.domain.names.SectionName;
 import com.stormmq.llvm.domain.types.Type;
+import com.stormmq.string.Formatting;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
-import static java.lang.String.format;
-import static java.util.Locale.ENGLISH;
 
 public final class GlobalVariable<T extends Type> extends AbstractVariable
 {
@@ -57,12 +56,12 @@ public final class GlobalVariable<T extends Type> extends AbstractVariable
 		super(identifier, linkage, visibility, dllStorageClass, threadLocalStorageModel, hasUnnamedAddress);
 		if (alignmentAsPowerOfTwo < AutomaticAlignment)
 		{
-			throw new IllegalArgumentException(format(ENGLISH, "alignmentAsPowerOfTwo ('%1$s') can not be negative", alignmentAsPowerOfTwo));
+			throw new IllegalArgumentException(Formatting.format("alignmentAsPowerOfTwo ('%1$s') can not be negative", alignmentAsPowerOfTwo));
 		}
 
 		if (alignmentAsPowerOfTwo > MaximumPowerOfTwo)
 		{
-			throw new IllegalArgumentException(format(ENGLISH, "alignmentAsPowerOfTwo ('%1$s') can not be more than %2$s", alignmentAsPowerOfTwo, MaximumPowerOfTwo));
+			throw new IllegalArgumentException(Formatting.format("alignmentAsPowerOfTwo ('%1$s') can not be more than %2$s", alignmentAsPowerOfTwo, MaximumPowerOfTwo));
 		}
 
 		if (isConstant && initializerConstant == null)

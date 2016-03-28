@@ -27,9 +27,6 @@ import com.stormmq.llvm.metadata.metadataTuples.*;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import static java.lang.String.format;
-import static java.util.Locale.ENGLISH;
-
 public final class DICompositeTypeKeyedMetadataTuple extends KeyedMetadataTuple implements TypeMetadata
 {
 	public DICompositeTypeKeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final DW_TAG tag, @NonNls @NotNull final String name, @NotNull final DIFileKeyedMetadataTuple file, final int lineNumber, final int sizeInBits, final int alignmentInBits, @NotNull @NonNls final String identifier, @NotNull final TypedMetadataTuple<TypeMetadata> elements)
@@ -38,7 +35,7 @@ public final class DICompositeTypeKeyedMetadataTuple extends KeyedMetadataTuple 
 
 		if (!tag.validForCompositeType)
 		{
-			throw new IllegalArgumentException(format(ENGLISH, "Tag '%1$s' is not valid for a composite type", tag));
+			throw new IllegalArgumentException(com.stormmq.string.Formatting.format("Tag '%1$s' is not valid for a composite type", tag));
 		}
 	}
 }

@@ -35,28 +35,26 @@ import java.util.*;
 
 import static com.stormmq.jopt.CommandLineArgumentsParser.help;
 import static com.stormmq.jopt.CommandLineArgumentsParser.newShouldHaveExited;
-import static com.stormmq.jopt.ExitCode.ExitCodeGeneralError;
-import static com.stormmq.jopt.ExitCode.ExitCodeOk;
+import static com.stormmq.jopt.ExitCode.*;
+import static com.stormmq.jopt.Verbosity.None;
 import static com.stormmq.path.IsSubFolderFilter.IsSubFolder;
-import static java.lang.String.format;
-import static java.lang.System.exit;
+import static com.stormmq.string.Formatting.formatPrintLineAndFlushWhilstSynchronized;
 import static java.nio.charset.Charset.forName;
 import static java.nio.file.Files.*;
 import static java.nio.file.Paths.get;
-import static java.util.Locale.ENGLISH;
 
 final class CommandLineArguments
 {
 	@NotNull private final OptionParser optionParser;
-	@NotNull private final PrintStream standardOut;
-	@NotNull private final PrintStream standardError;
+	@NotNull private final PrintStream out;
+	@NotNull private final PrintStream error;
 	@NotNull private final OptionSet arguments;
 
-	CommandLineArguments(@NotNull final OptionParser optionParser, @NotNull final PrintStream standardOut, @NotNull final PrintStream standardError, @NotNull final Set<String> requiredOptions, @NonNls@NotNull final String... commandLineArguments)
+	CommandLineArguments(@NotNull final OptionParser optionParser, @NotNull final PrintStream out, @NotNull final PrintStream error, @NotNull final Set<String> requiredOptions, @NonNls@NotNull final String... commandLineArguments)
 	{
 		this.optionParser = optionParser;
-		this.standardOut = standardOut;
-		this.standardError = standardError;
+		this.out = out;
+		this.error = error;
 
 		arguments = parse(requiredOptions, commandLineArguments);
 	}
@@ -71,13 +69,13 @@ final class CommandLineArguments
 		}
 		catch (final OptionException e)
 		{
-			printHelp(ExitCodeGeneralError, e.getMessage());
+			printErrorMessageShowHelpAndExit(Usage, e.getMessage());
 			throw newShouldHaveExited(e);
 		}
 
 		if (arguments.has(help))
 		{
-			printHelp(ExitCodeOk);
+			printHelpAndExit(Success);
 			throw newShouldHaveExited();
 		}
 
@@ -85,39 +83,12 @@ final class CommandLineArguments
 		{
 			if (!arguments.has(requiredOption))
 			{
-				printHelp(ExitCodeGeneralError, format(ENGLISH, "Missing required option --%1$s", requiredOption));
+				printErrorMessageShowHelpAndExitWithUsageError("Missing required option --%1$s", requiredOption);
 				throw newShouldHaveExited();
 			}
 		}
 
 		return arguments;
-	}
-
-	private void printHelp(@NotNull final ExitCode exitCode, @NotNull @NonNls final String errorLineWithoutLineEnding)
-	{
-		printErrorLine(errorLineWithoutLineEnding);
-		printHelp(exitCode);
-	}
-
-	private void printHelp(@NotNull final ExitCode exitCode)
-	{
-		try
-		{
-			optionParser.printHelpOn(exitCode == ExitCodeOk ? standardOut : standardError);
-		}
-		catch (final IOException e)
-		{
-			printErrorLine(format(ENGLISH, "Unexpected failure printing help %1$s", e.getMessage()));
-			ExitCodeGeneralError.exit();
-			throw newShouldHaveExited(e);
-		}
-		exitCode.exit();
-		throw newShouldHaveExited();
-	}
-
-	private void printErrorLine(@NotNull @NonNls final String errorLineWithoutLineEnding)
-	{
-		standardError.println(errorLineWithoutLineEnding);
 	}
 
 	@NotNull
@@ -136,8 +107,7 @@ final class CommandLineArguments
 		{
 			if (!IsSubFolder.accept(potentialWritableFolderPath) || !isWritable(potentialWritableFolderPath))
 			{
-				printErrorLine(format(ENGLISH, "Option --%1$s is extant but not a readable, writable sub-folder path (%2$s)", optionName, potentialWritableFolderPath.toString()));
-				printHelp(ExitCodeGeneralError);
+				printErrorMessageShowHelpAndExit(NoInput, "Option --%1$s is extant but not a readable, writable sub-folder path (%2$s)", optionName, potentialWritableFolderPath.toString());
 			}
 		}
 		else
@@ -148,8 +118,7 @@ final class CommandLineArguments
 			}
 			catch (final IOException ignored)
 			{
-				printErrorLine(format(ENGLISH, "Option --%1$s could not be created (%2$s)", optionName, potentialWritableFolderPath.toString()));
-				printHelp(ExitCodeGeneralError);
+				printErrorMessageShowHelpAndExit(CanNotCreate, "Option --%1$s could not be created (%2$s)", optionName, potentialWritableFolderPath.toString());
 			}
 		}
 
@@ -171,8 +140,7 @@ final class CommandLineArguments
 			}
 			catch (final InvalidPathException ignored)
 			{
-				printErrorLine(format(ENGLISH, "Option --%1$s is an invalid writable path (%2$s)", optionName, rawValue));
-				printHelp(ExitCodeGeneralError);
+				printErrorMessageShowHelpAndExit(NoInput, "Option --%1$s is an invalid writable path (%2$s)", optionName, rawValue);
 				throw newShouldHaveExited();
 			}
 			extantWritableFolderPath(optionName, path);
@@ -191,8 +159,7 @@ final class CommandLineArguments
 		}
 		catch (final InvalidPathException ignored)
 		{
-			printErrorLine(format(ENGLISH, "Option --%1$s is an invalid path (%2$s)", optionName, rawValue));
-			printHelp(ExitCodeGeneralError);
+				printErrorMessageShowHelpAndExit(NoInput, "Option --%1$s is an invalid path (%2$s)", optionName, rawValue);
 			throw newShouldHaveExited();
 		}
 	}
@@ -207,19 +174,60 @@ final class CommandLineArguments
 		}
 		catch (final IllegalCharsetNameException | UnsupportedCharsetException ignored)
 		{
-			printErrorLine(format(ENGLISH, "Option --%1$s is an invalid charset (%2$s)", optionName, rawValue));
-			printHelp(ExitCodeGeneralError);
+			printErrorMessageShowHelpAndExitWithUsageError("Option --%1$s is an invalid charset (%2$s)", optionName, rawValue);
 			throw newShouldHaveExited();
 		}
+	}
+
+	@NotNull
+	public Verbosity verbosityOptionValue(@NonNls final String optionName)
+	{
+		if (arguments.has(optionName))
+		{
+			return (Verbosity) arguments.valueOf(optionName);
+		}
+		return None;
 	}
 
 	private void extantWritableFolderPath(@NotNull final String optionName, @NotNull final Path potentialWritableFolderPath)
 	{
 		if (!exists(potentialWritableFolderPath) || !IsSubFolder.accept(potentialWritableFolderPath) || !isWritable(potentialWritableFolderPath))
 		{
-			printErrorLine(format(ENGLISH, "Option --%1$s is not a readable, writable sub-folder path (%2$s)", optionName, potentialWritableFolderPath.toString()));
-			printHelp(ExitCodeGeneralError);
+			printErrorMessageShowHelpAndExit(NoInput, "Option --%1$s is not a readable, writable sub-folder path (%2$s)", optionName, potentialWritableFolderPath.toString());
 			throw newShouldHaveExited();
 		}
+	}
+
+	private void printErrorMessageShowHelpAndExitWithUsageError(@NonNls @NotNull final String errorLineTemplateWithoutLineEnding, @NotNull final Object... arguments)
+	{
+		printErrorMessageShowHelpAndExit(Usage, errorLineTemplateWithoutLineEnding, arguments);
+	}
+
+	private void printErrorMessageShowHelpAndExit(@NotNull final ExitCode exitCode, @NonNls @NotNull final String errorLineTemplateWithoutLineEnding, @NotNull final Object... arguments)
+	{
+		printErrorLine(errorLineTemplateWithoutLineEnding, arguments);
+		printHelpAndExit(exitCode);
+	}
+
+	@SuppressWarnings("resource")
+	private void printErrorLine(@NonNls @NotNull final String errorLineTemplateWithoutLineEnding, @NotNull final Object... arguments)
+	{
+		formatPrintLineAndFlushWhilstSynchronized(error, errorLineTemplateWithoutLineEnding, arguments);
+	}
+
+	private void printHelpAndExit(@NotNull final ExitCode exitCode)
+	{
+		try
+		{
+			optionParser.printHelpOn(exitCode == Success ? out : error);
+		}
+		catch (final IOException e)
+		{
+			printErrorLine("Unexpected failure printing help %1$s", e.getMessage());
+			Failure.exit();
+			throw newShouldHaveExited(e);
+		}
+		exitCode.exit();
+		throw newShouldHaveExited();
 	}
 }

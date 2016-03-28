@@ -10,5 +10,6 @@
     <orderEntry type="library" name="annotations" level="project" />
     <orderEntry type="library" name="jopt-simple" level="project" />
     <orderEntry type="module" module-name="path" />
+    <orderEntry type="module" module-name="string" />
   </component>
 </module>

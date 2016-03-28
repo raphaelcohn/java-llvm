@@ -20,40 +20,50 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain;
+package com.stormmq.jopt.applications;
 
+import com.stormmq.jopt.ExitCode;
+import com.stormmq.jopt.applications.fatalApplicationFailureActions.FatalApplicationFailureAction;
 import org.jetbrains.annotations.NotNull;
 
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import java.io.IOError;
 
-public enum Linkage
+import static com.stormmq.jopt.ExitCode.*;
+import static com.stormmq.jopt.applications.fatalApplicationFailureActions.PrintStreamFatalApplicationFailureAction.StandardErrorFatalApplicationFailureAction;
+
+@FunctionalInterface
+public interface Application
 {
-	_private,
-	internal(true),
-	available_externally,
-	linkonce,
-	weak(true),
-	common,
-	appending,
-	extern_weak,
-	linkonce_odr,
-	weak_odr,
-	external(true),
-	;
+	@NotNull
+	ExitCode execute();
 
-	public final boolean isPermittedForAlias;
-	@NotNull public final byte[] llAssemblyValue;
-
-	Linkage(final boolean isPermittedForAlias)
+	static void run(@NotNull final Application application)
 	{
-		this.isPermittedForAlias = isPermittedForAlias;
-		final String name = name();
-		final String actualName = name.charAt(0) == '_' ? name.substring(1) : name;
-		llAssemblyValue = encodeUtf8BytesWithCertaintyValueIsValid(actualName);
+		run(application, StandardErrorFatalApplicationFailureAction);
 	}
 
-	Linkage()
+	@SuppressWarnings({"ErrorNotRethrown"})
+	static void run(@NotNull final Application application, @NotNull final FatalApplicationFailureAction fatalApplicationFailureAction)
 	{
-		this(false);
+		ExitCode exitCode;
+		try
+		{
+			exitCode = application.execute();
+		}
+		catch (final IOError e)
+		{
+			exitCode = IOError;
+			fatalApplicationFailureAction.failure(e);
+		}
+		catch (final Throwable e)
+		{
+			exitCode = Software;
+			fatalApplicationFailureAction.failure(e);
+		}
+
+		if (exitCode != Success)
+		{
+			exitCode.exit();
+		}
 	}
 }

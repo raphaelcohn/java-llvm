@@ -22,7 +22,8 @@
 
 package com.stormmq.llvm.examples;
 
-import com.stormmq.jopt.CommandLineArgumentsParser;
+import com.stormmq.jopt.*;
+import com.stormmq.jopt.applications.*;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,8 +31,10 @@ import java.nio.file.Path;
 import java.util.LinkedHashSet;
 import java.util.function.Supplier;
 
-import static com.stormmq.jopt.Application.run;
+import static com.stormmq.jopt.applications.Application.run;
 import static com.stormmq.jopt.CommandLineArgumentsParser.commandLineArgumentsParser;
+import static com.stormmq.jopt.Verbosity.Everything;
+import static com.stormmq.jopt.applications.TimedApplication.standardErrorReportingTimedApplication;
 import static com.stormmq.path.Constants.CurrentFolder;
 
 public final class ConsoleEntryPoint
@@ -40,9 +43,15 @@ public final class ConsoleEntryPoint
 	public static void main(@NotNull @NonNls final String... commandLineArguments)
 	{
 		final CommandLineArgumentsParser commandLineArgumentsParser = commandLineArgumentsParser(commandLineArguments);
+		final Supplier<Verbosity> verbosity = commandLineArgumentsParser.verboseOption();
 		final Supplier<LinkedHashSet<Path>> source = commandLineArgumentsParser.extantWritableFolderPathsOption(true, "source", "source root path", "/path/to/source", CurrentFolder);
 		final Supplier<Path> outputPath = commandLineArgumentsParser.creatableFolderPathOption(true, "output", "output folder path, created if doesn't exist", "/path/to/output", "./out/llvm");
-		run(new ExampleApplication(source.get(), outputPath.get(), true));
+
+		final Verbosity chosenVerbosity = verbosity.get();
+		final Application application = new ExampleApplication(chosenVerbosity, source.get(), outputPath.get(), true);
+
+		final Application applicationToExecute = chosenVerbosity == Everything ? standardErrorReportingTimedApplication(application) : application;
+		run(applicationToExecute);
 	}
 
 	private ConsoleEntryPoint()

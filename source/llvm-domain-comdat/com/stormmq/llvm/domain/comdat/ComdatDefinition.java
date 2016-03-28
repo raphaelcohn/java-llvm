@@ -24,11 +24,10 @@ package com.stormmq.llvm.domain.comdat;
 
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.Writable;
+import com.stormmq.string.Formatting;
 import org.jetbrains.annotations.*;
 
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
-import static java.lang.String.format;
-import static java.util.Locale.ENGLISH;
 
 public final class ComdatDefinition implements Writable
 {
@@ -56,7 +55,7 @@ public final class ComdatDefinition implements Writable
 	@NotNull
 	public String toString()
 	{
-		return format(ENGLISH, "%1$s(%2$s, %3$s)". getClass().getSimpleName(), comdatIdentifier, comdatSelectionKind);
+		return Formatting.format("%1$s(%2$s, %3$s)". getClass().getSimpleName(), comdatIdentifier, comdatSelectionKind);
 	}
 
 	@Override

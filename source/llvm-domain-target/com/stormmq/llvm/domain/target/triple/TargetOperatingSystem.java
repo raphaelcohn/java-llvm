@@ -22,11 +22,10 @@
 
 package com.stormmq.llvm.domain.target.triple;
 
+import com.stormmq.string.Formatting;
 import org.jetbrains.annotations.*;
 
 import static com.stormmq.llvm.domain.target.triple.Vendor.apple;
-import static java.lang.String.format;
-import static java.util.Locale.ENGLISH;
 
 public final class TargetOperatingSystem
 {
@@ -52,9 +51,10 @@ public final class TargetOperatingSystem
 	@Override
 	public String toString()
 	{
-		return format(ENGLISH, "%1$s-%2$s", vendor, versionedName);
+		return Formatting.format("%1$s-%2$s", vendor, versionedName);
 	}
 
+	@SuppressWarnings("RedundantIfStatement")
 	@Override
 	public boolean equals(@Nullable final Object o)
 	{

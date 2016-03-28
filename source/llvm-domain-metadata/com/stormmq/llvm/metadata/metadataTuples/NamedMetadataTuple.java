@@ -26,13 +26,12 @@ import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.ReferenceTracker;
 import com.stormmq.llvm.domain.Writable;
 import com.stormmq.llvm.metadata.Metadata;
+import com.stormmq.string.Formatting;
 import org.jetbrains.annotations.*;
 
 import java.util.List;
 
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
-import static java.lang.String.format;
-import static java.util.Locale.ENGLISH;
 
 public class NamedMetadataTuple implements Writable
 {
@@ -125,7 +124,7 @@ public class NamedMetadataTuple implements Writable
 	@NotNull
 	public final String toString()
 	{
-		return format(ENGLISH, "%1$s(%2$s, %3$s)", getClass().getSimpleName(), name, tuple);
+		return Formatting.format("%1$s(%2$s, %3$s)", getClass().getSimpleName(), name, tuple);
 	}
 
 	@Override
