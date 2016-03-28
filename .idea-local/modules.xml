@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/source/byteWriters/byteWriters.iml" filepath="$PROJECT_DIR$/source/byteWriters/byteWriters.iml" />
-      <module fileurl="file://$PROJECT_DIR$/source/charsetDetector/charsetDetector.iml" filepath="$PROJECT_DIR$/source/charsetDetector/charsetDetector.iml" group="library/charsetDetector" />
       <module fileurl="file://$PROJECT_DIR$/source/java-classfile-domain/java-classfile-domain.iml" filepath="$PROJECT_DIR$/source/java-classfile-domain/java-classfile-domain.iml" group="library/java-classfile/classfile" />
       <module fileurl="file://$PROJECT_DIR$/source/java-classfile-parsing/java-classfile-parsing.iml" filepath="$PROJECT_DIR$/source/java-classfile-parsing/java-classfile-parsing.iml" group="library/java-classfile/classfile" />
       <module fileurl="file://$PROJECT_DIR$/source/java-parsing-utilities/java-parsing-utilities.iml" filepath="$PROJECT_DIR$/source/java-parsing-utilities/java-parsing-utilities.iml" group="library/java-classfile/parsing" />

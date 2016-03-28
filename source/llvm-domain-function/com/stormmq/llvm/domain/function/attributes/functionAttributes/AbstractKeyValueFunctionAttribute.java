@@ -39,24 +39,7 @@ public abstract class AbstractKeyValueFunctionAttribute implements FunctionAttri
 	protected static <V> String valueAsString(@NotNull final Collection<V> values, @NotNull final Function<V, String> conversion)
 	{
 		final StringBuilder stringBuilder = new StringBuilder(1024);
-		values.stream().map(conversion).sorted().forEach(new Consumer<String>()
-		{
-			private boolean afterFirst = false;
-
-			@Override
-			public void accept(final String s)
-			{
-				if (afterFirst)
-				{
-					stringBuilder.append(' ');
-				}
-				else
-				{
-					afterFirst = true;
-				}
-				stringBuilder.append(s);
-			}
-		});
+		values.stream().map(conversion).sorted().forEach(new StringConsumer(stringBuilder));
 		return stringBuilder.toString();
 	}
 
@@ -87,5 +70,31 @@ public abstract class AbstractKeyValueFunctionAttribute implements FunctionAttri
 	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
 	{
 		byteWriter.writeUtf8EncodedStringWithCertainty(Formatting.format("\"%1$s\"=\"%2$s\"", key, value));
+	}
+
+	private static final class StringConsumer implements Consumer<String>
+	{
+		@SuppressWarnings("StringBufferField") private final StringBuilder stringBuilder;
+		private boolean afterFirst;
+
+		private StringConsumer(final StringBuilder stringBuilder)
+		{
+			this.stringBuilder = stringBuilder;
+			afterFirst = false;
+		}
+
+		@Override
+		public void accept(final String s)
+		{
+			if (afterFirst)
+			{
+				stringBuilder.append(' ');
+			}
+			else
+			{
+				afterFirst = true;
+			}
+			stringBuilder.append(s);
+		}
 	}
 }

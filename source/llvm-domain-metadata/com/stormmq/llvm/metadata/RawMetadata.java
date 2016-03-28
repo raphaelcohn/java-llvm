@@ -23,7 +23,6 @@
 package com.stormmq.llvm.metadata;
 
 import com.stormmq.byteWriters.ByteWriter;
-import com.stormmq.java.parsing.utilities.ReservedIdentifiers;
 import com.stormmq.llvm.domain.identifiers.Identifier;
 import org.jetbrains.annotations.*;
 

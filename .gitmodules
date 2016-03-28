@@ -7,6 +7,3 @@
 [submodule "library/jopt-simple"]
 	path = library/jopt-simple
 	url = https://github.com/raphaelcohn/intellij-library-jopt-simple.git
-[submodule "library/charsetDetector"]
-	path = library/charsetDetector
-	url = https://github.com/raphaelcohn/charsetDetector.git

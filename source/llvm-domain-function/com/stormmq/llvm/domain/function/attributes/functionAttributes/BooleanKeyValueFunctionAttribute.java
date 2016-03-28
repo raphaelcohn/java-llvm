@@ -22,7 +22,6 @@
 
 package com.stormmq.llvm.domain.function.attributes.functionAttributes;
 
-import com.stormmq.java.parsing.utilities.ReservedIdentifiers;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 

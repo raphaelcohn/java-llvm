@@ -23,7 +23,6 @@
 package com.stormmq.llvm.domain.constants.simpleConstants;
 
 import com.stormmq.byteWriters.ByteWriter;
-import com.stormmq.java.parsing.utilities.ReservedIdentifiers;
 import com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
