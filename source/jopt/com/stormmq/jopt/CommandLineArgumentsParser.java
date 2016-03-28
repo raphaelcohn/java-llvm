@@ -45,19 +45,7 @@ public class CommandLineArgumentsParser
 	@NotNull @NonNls private static final String verbose = "verbose";
 	@NotNull @NonNls private static final String UTF_8 = "UTF-8";
 
-	@NotNull
-	static IllegalStateException newShouldHaveExited()
-	{
-		return new IllegalStateException("Should have exited");
-	}
-
-	@NotNull
-	public static IllegalStateException newShouldHaveExited(@SuppressWarnings("UnusedParameters") @NotNull final Throwable cause)
-	{
-		return newShouldHaveExited();
-	}
-
-	@SuppressWarnings("MethodCanBeVariableArityMethod")
+	@SuppressWarnings({"MethodCanBeVariableArityMethod", "StaticMethodOnlyUsedInOneClass"})
 	@NotNull
 	public static CommandLineArgumentsParser commandLineArgumentsParser(@NotNull final String[] commandLineArguments)
 	{

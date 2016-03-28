@@ -81,24 +81,23 @@ public final class NaiveTypeInformationUser implements TypeInformationUser
 	@Override
 	public void use(@NotNull final TypeInformation typeInformation, @NotNull final String relativeFilePath, @NotNull final Path relativeRootFolderPath)
 	{
-		final ReferenceTracker referenceTrackerStrings = new ReferenceTracker();
-		final ReferenceTracker referenceTrackerMetadataAndListsOfMetadata = referenceTrackerStrings;
-		final DIFileKeyedMetadataTuple file = new DIFileKeyedMetadataTuple(referenceTrackerMetadataAndListsOfMetadata, relativeFilePath, relativeRootFolderPath.toString());
+		final ReferenceTracker referenceTracker = new ReferenceTracker();
+		final DIFileKeyedMetadataTuple file = new DIFileKeyedMetadataTuple(referenceTracker, relativeFilePath, relativeRootFolderPath.toString());
 
 		// Will eventually carry some data
-		final TypedMetadataTuple<DISubprogramKeyedMetadataTuple> subprograms = emptyTypedMetadataTuple(referenceTrackerMetadataAndListsOfMetadata);
-		final TypedMetadataTuple<DIGlobalVariableKeyedMetadataTuple> globals = emptyTypedMetadataTuple(referenceTrackerMetadataAndListsOfMetadata);
+		final TypedMetadataTuple<DISubprogramKeyedMetadataTuple> subprograms = emptyTypedMetadataTuple(referenceTracker);
+		final TypedMetadataTuple<DIGlobalVariableKeyedMetadataTuple> globals = emptyTypedMetadataTuple(referenceTracker);
 
-		final AnonymousMetadataTuple enums = EmptyAnonymousMetadataTuple(referenceTrackerMetadataAndListsOfMetadata);
-		final AnonymousMetadataTuple retainedTypes = EmptyAnonymousMetadataTuple(referenceTrackerMetadataAndListsOfMetadata);
-		final TypedMetadataTuple<DIImportedEntityKeyedMetadataTuple> imports = emptyTypedMetadataTuple(referenceTrackerMetadataAndListsOfMetadata);
-		final TypedMetadataTuple<DIMacroFileKeyedMetadataTuple> macros = emptyTypedMetadataTuple(referenceTrackerMetadataAndListsOfMetadata);
-		final DICompileUnitKeyedMetadataTuple diCompileUnitKeyedMetadataTuple = new DICompileUnitKeyedMetadataTuple(referenceTrackerMetadataAndListsOfMetadata, DW_LANG_Java, file, enums, retainedTypes, subprograms, globals, imports, macros);
+		final AnonymousMetadataTuple enums = EmptyAnonymousMetadataTuple(referenceTracker);
+		final AnonymousMetadataTuple retainedTypes = EmptyAnonymousMetadataTuple(referenceTracker);
+		final TypedMetadataTuple<DIImportedEntityKeyedMetadataTuple> imports = emptyTypedMetadataTuple(referenceTracker);
+		final TypedMetadataTuple<DIMacroFileKeyedMetadataTuple> macros = emptyTypedMetadataTuple(referenceTracker);
+		final DICompileUnitKeyedMetadataTuple diCompileUnitKeyedMetadataTuple = new DICompileUnitKeyedMetadataTuple(referenceTracker, DW_LANG_Java, file, enums, retainedTypes, subprograms, globals, imports, macros);
 
-		final LlvmIdentNamedMetadataTuple llvmIdent = new LlvmIdentNamedMetadataTuple(referenceTrackerStrings);
-		final LlvmModuleFlagsNamedMetadataTuple llvmModuleFlags = TypicalLlvmModuleFlags(referenceTrackerStrings, referenceTrackerMetadataAndListsOfMetadata);
+		final LlvmIdentNamedMetadataTuple llvmIdent = new LlvmIdentNamedMetadataTuple(referenceTracker);
+		final LlvmModuleFlagsNamedMetadataTuple llvmModuleFlags = TypicalLlvmModuleFlags(referenceTracker);
 		final List<DICompileUnitKeyedMetadataTuple> compileUnits = singletonList(diCompileUnitKeyedMetadataTuple);
-		final LlvmDbgCuNamedMetadataTuple llvmDbgCu = new LlvmDbgCuNamedMetadataTuple(referenceTrackerStrings, compileUnits);
+		final LlvmDbgCuNamedMetadataTuple llvmDbgCu = new LlvmDbgCuNamedMetadataTuple(referenceTracker, compileUnits);
 
 		final Map<LocalIdentifier, StructureType> structureTypes = emptyMap();
 		final List<GlobalVariable<?>> globalVariablesAndConstants = emptyList();

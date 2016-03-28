@@ -22,7 +22,7 @@
 
 package com.stormmq.jopt;
 
-import static com.stormmq.jopt.CommandLineArgumentsParser.newShouldHaveExited;
+import static com.stormmq.jopt.CommandLineArguments.newShouldHaveExited;
 import static java.lang.Runtime.getRuntime;
 
 public enum ExitCode

@@ -34,7 +34,6 @@ import java.nio.file.Path;
 import java.util.*;
 
 import static com.stormmq.jopt.CommandLineArgumentsParser.help;
-import static com.stormmq.jopt.CommandLineArgumentsParser.newShouldHaveExited;
 import static com.stormmq.jopt.ExitCode.*;
 import static com.stormmq.jopt.Verbosity.None;
 import static com.stormmq.path.IsSubFolderFilter.IsSubFolder;
@@ -45,6 +44,18 @@ import static java.nio.file.Paths.get;
 
 final class CommandLineArguments
 {
+	@NotNull
+	public static IllegalStateException newShouldHaveExited(@SuppressWarnings("UnusedParameters") @NotNull final Throwable cause)
+	{
+		return newShouldHaveExited();
+	}
+
+	@NotNull
+	static IllegalStateException newShouldHaveExited()
+	{
+		return new IllegalStateException("Should have exited");
+	}
+
 	@NotNull private final OptionParser optionParser;
 	@NotNull private final PrintStream out;
 	@NotNull private final PrintStream error;

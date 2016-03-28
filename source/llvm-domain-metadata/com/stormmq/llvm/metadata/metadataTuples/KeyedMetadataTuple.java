@@ -36,7 +36,6 @@ import static java.util.Arrays.asList;
 
 public class KeyedMetadataTuple implements Metadata
 {
-	@NotNull public static final byte[] ColonSpace = {':', ' '};
 	@SuppressWarnings("HardcodedLineSeparator") @NotNull private static final byte[] CloseBracketLineFeed = encodeUtf8BytesWithCertaintyValueIsValid(")\n");
 	@NotNull private static final byte[] distinctSpace = encodeUtf8BytesWithCertaintyValueIsValid("distinct ");
 

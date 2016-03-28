@@ -42,6 +42,7 @@ public final class RawMetadata implements Metadata
 		this(value.name());
 	}
 
+	@SuppressWarnings("TypeMayBeWeakened")
 	public <E extends Enum<E>> RawMetadata(@NotNull final Set<E> values)
 	{
 		this(convertSetOfEnumFlags(values));

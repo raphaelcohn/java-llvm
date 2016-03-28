@@ -25,8 +25,7 @@ package com.stormmq.llvm.examples;
 import com.stormmq.jopt.*;
 import com.stormmq.jopt.applications.Application;
 import com.stormmq.jopt.applications.fatalApplicationFailureActions.FatalApplicationFailureAction;
-import com.stormmq.llvm.examples.parsing.Coordination;
-import com.stormmq.llvm.examples.parsing.EnqueuePathsWalker;
+import com.stormmq.llvm.examples.parsing.*;
 import com.stormmq.llvm.examples.parsing.fileParsers.FileParser;
 import com.stormmq.llvm.examples.parsing.fileParsers.JavaClassFileParser;
 import com.stormmq.llvm.examples.parsing.files.ParsableFile;
@@ -51,7 +50,7 @@ public final class ExampleApplication implements Application
 	@NotNull private final Path outputPath;
 	@NotNull private final ParseFailureLog parseFailureLog;
 	@NotNull private final EnqueuePathsWalker multiplePathsParser;
-	@NotNull private volatile ExitCode exitCode;
+	@SuppressWarnings("CanBeFinal") @NotNull private volatile ExitCode exitCode;
 
 	public ExampleApplication(@NotNull final FatalApplicationFailureAction fatalApplicationFailureAction, @NotNull final Verbosity verbosity, @NotNull final LinkedHashSet<Path> sourcePaths, @NotNull final Path outputPath, final boolean permitConstantsInInstanceFields)
 	{
@@ -70,7 +69,7 @@ public final class ExampleApplication implements Application
 			exitCode = error instanceof IOException || error instanceof java.io.IOError ? IOError : Software;
 			fatalApplicationFailureAction.failure(error);
 		});
-		multiplePathsParser = new EnqueuePathsWalker(parsableFileQueue, coordination);
+		multiplePathsParser = new EnqueuePathsWalker(coordination, new PathProcessor(parsableFileQueue));
 	}
 
 	@Override

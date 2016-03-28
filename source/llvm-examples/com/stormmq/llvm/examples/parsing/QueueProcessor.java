@@ -30,6 +30,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.*;
 
+import static java.lang.Thread.currentThread;
 import static java.lang.Thread.sleep;
 
 public final class QueueProcessor implements Runnable
@@ -58,11 +59,12 @@ public final class QueueProcessor implements Runnable
 			{
 				try
 				{
+					//noinspection BusyWait
 					sleep(1);
 				}
 				catch (final InterruptedException ignored)
 				{
-					Thread.currentThread().interrupt();
+					currentThread().interrupt();
 				}
 				continue;
 			}

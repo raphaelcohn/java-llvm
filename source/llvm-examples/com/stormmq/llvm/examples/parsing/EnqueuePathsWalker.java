@@ -22,15 +22,12 @@
 
 package com.stormmq.llvm.examples.parsing;
 
-import com.stormmq.llvm.examples.parsing.files.JarOrZipParsableFile;
-import com.stormmq.llvm.examples.parsing.files.ParsableFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 import static com.stormmq.path.FileAndFolderHelper.FollowLinks;
 import static com.stormmq.path.IsFileTypeFilter.IsClassFile;
@@ -42,12 +39,12 @@ import static java.nio.file.Files.walkFileTree;
 
 public final class EnqueuePathsWalker
 {
-	@NotNull private final ConcurrentLinkedQueue<ParsableFile> parsableFileQueue;
+	@NotNull private final PathProcessor pathProcessor;
 	@NotNull private final Coordination coordination;
 
-	public EnqueuePathsWalker(@NotNull final ConcurrentLinkedQueue<ParsableFile> parsableFileQueue, @NotNull final Coordination coordination)
+	public EnqueuePathsWalker(@NotNull final Coordination coordination, @NotNull final PathProcessor pathProcessor)
 	{
-		this.parsableFileQueue = parsableFileQueue;
+		this.pathProcessor = pathProcessor;
 		this.coordination = coordination;
 	}
 
@@ -71,11 +68,11 @@ public final class EnqueuePathsWalker
 		}
 		else if (IsJarOrZipFile.accept(fullRootPath))
 		{
-			processJarOrZipFile(fullRootPath, fullRootPath.getFileName());
+			pathProcessor.processJarOrZipFile(fullRootPath, fullRootPath.getFileName());
 		}
 		else if(IsClassFile.accept(fullRootPath))
 		{
-			processClassFile(fullRootPath, Paths.get("."), fullRootPath.getFileName());
+			pathProcessor.processClassFile(fullRootPath, Paths.get("."), fullRootPath.getFileName());
 		}
 	}
 
@@ -83,46 +80,7 @@ public final class EnqueuePathsWalker
 	{
 		try
 		{
-			walkFileTree(fullRootPath, FollowLinks, MAX_VALUE, new FileVisitor<Path>()
-			{
-				@Override
-				public FileVisitResult preVisitDirectory(@NotNull final Path directory, @NotNull final BasicFileAttributes basicFileAttributes)
-				{
-					return CONTINUE;
-				}
-
-				@Override
-				public FileVisitResult visitFile(@NotNull final Path file, @NotNull final BasicFileAttributes basicFileAttributes)
-				{
-					if (IsJarOrZipFile.accept(file))
-					{
-						final Path relativeRootFolderPath = fullRootPath.relativize(file);
-						processJarOrZipFile(file, relativeRootFolderPath);
-					}
-					else if (IsClassFile.accept(file))
-					{
-						final Path relativeRootFolderPath = fullRootPath.relativize(file).getParent();
-						processClassFile(file, relativeRootFolderPath, fullRootPath.relativize(file).getFileName());
-					}
-					return CONTINUE;
-				}
-
-				@Override
-				public FileVisitResult visitFileFailed(@NotNull final Path file, @NotNull final IOException exception)
-				{
-					if (exception instanceof FileSystemLoopException)
-					{
-						return CONTINUE;
-					}
-					throw new IllegalStateException("Could not visit file when walking tree", exception);
-				}
-
-				@Override
-				public FileVisitResult postVisitDirectory(@Nullable final Path directory, @Nullable final IOException exception)
-				{
-					return CONTINUE;
-				}
-			});
+			walkFileTree(fullRootPath, FollowLinks, MAX_VALUE, new ProcessFolderPathFileVisitor(fullRootPath, pathProcessor));
 		}
 		catch (final IOException e)
 		{
@@ -130,13 +88,53 @@ public final class EnqueuePathsWalker
 		}
 	}
 
-	private void processJarOrZipFile(@NotNull final Path jarOrZipFilePath, @NotNull final Path relativeRootFolderPath)
+	private static final class ProcessFolderPathFileVisitor implements FileVisitor<Path>
 	{
-		parsableFileQueue.add(new JarOrZipParsableFile(jarOrZipFilePath, relativeRootFolderPath, parsableFileQueue));
-	}
+		@NotNull private final Path fullRootPath;
+		@NotNull private final PathProcessor pathProcessor;
 
-	private void processClassFile(@NotNull final Path javaClassFilePath, @NotNull final Path relativeRootFolderPath, @NotNull final Path relativeJavaClassFilePath)
-	{
-		parsableFileQueue.add((fileParser, parseFailureLog) -> fileParser.parseFile(javaClassFilePath, relativeRootFolderPath, relativeJavaClassFilePath));
+		private ProcessFolderPathFileVisitor(@NotNull final Path fullRootPath, @NotNull final PathProcessor pathProcessor)
+		{
+			this.fullRootPath = fullRootPath;
+			this.pathProcessor = pathProcessor;
+		}
+
+		@Override
+		public FileVisitResult preVisitDirectory(@NotNull final Path directory, @NotNull final BasicFileAttributes basicFileAttributes)
+		{
+			return CONTINUE;
+		}
+
+		@Override
+		public FileVisitResult visitFile(@NotNull final Path file, @NotNull final BasicFileAttributes basicFileAttributes)
+		{
+			if (IsJarOrZipFile.accept(file))
+			{
+				final Path relativeRootFolderPath = fullRootPath.relativize(file);
+				pathProcessor.processJarOrZipFile(file, relativeRootFolderPath);
+			}
+			else if (IsClassFile.accept(file))
+			{
+				final Path relativeRootFolderPath = fullRootPath.relativize(file).getParent();
+				pathProcessor.processClassFile(file, relativeRootFolderPath, fullRootPath.relativize(file).getFileName());
+			}
+			return CONTINUE;
+		}
+
+		@Override
+		public FileVisitResult visitFileFailed(@NotNull final Path file, @NotNull final IOException exception)
+		{
+			if (exception instanceof FileSystemLoopException)
+			{
+				return CONTINUE;
+			}
+			throw new IllegalStateException("Could not visit file when walking tree", exception);
+		}
+
+		@Override
+		public FileVisitResult postVisitDirectory(@Nullable final Path directory, @Nullable final IOException exception)
+		{
+			return CONTINUE;
+		}
 	}
 }
