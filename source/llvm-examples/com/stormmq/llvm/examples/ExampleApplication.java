@@ -30,7 +30,7 @@ import com.stormmq.llvm.examples.parsing.fileParsers.FileParser;
 import com.stormmq.llvm.examples.parsing.fileParsers.JavaClassFileParser;
 import com.stormmq.llvm.examples.parsing.files.ParsableFile;
 import com.stormmq.llvm.examples.parsing.parseFailueLogs.ParseFailureLog;
-import com.stormmq.llvm.examples.parsing.typeInformationUsers.NaiveTypeInformationUser;
+import com.stormmq.llvm.examples.parsing.typeInformationUsers.JavaConvertingTypeInformationUser;
 import com.stormmq.llvm.examples.parsing.typeInformationUsers.TypeInformationUser;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,6 +41,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import static com.stormmq.jopt.ExitCode.*;
 import static com.stormmq.llvm.examples.parsing.parseFailueLogs.PrintStreamParseFailureLog.standardErrorParseFailureLog;
+import static com.stormmq.llvm.domain.module.TargetModuleCreator.MacOsXMavericksX86_64;
 import static java.nio.file.Files.createDirectories;
 import static java.nio.file.Files.deleteIfExists;
 
@@ -59,7 +60,7 @@ public final class ExampleApplication implements Application
 		parseFailureLog = standardErrorParseFailureLog(verbosity);
 		exitCode = Success;
 
-		final TypeInformationUser typeInformationUser = new NaiveTypeInformationUser(outputPath);
+		final TypeInformationUser typeInformationUser = new JavaConvertingTypeInformationUser(MacOsXMavericksX86_64, outputPath);
 		final FileParser javaClassFileParser = new JavaClassFileParser(parseFailureLog, permitConstantsInInstanceFields, typeInformationUser);
 		final ConcurrentLinkedQueue<ParsableFile> parsableFileQueue = new ConcurrentLinkedQueue<>();
 

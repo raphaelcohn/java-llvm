@@ -34,7 +34,7 @@ import static java.util.Arrays.asList;
 public final class LlvmModuleFlagsNamedMetadataTuple extends NamedMetadataTuple
 {
 	@NotNull
-	public static LlvmModuleFlagsNamedMetadataTuple TypicalLlvmModuleFlags(@NotNull final ReferenceTracker referenceTracker)
+	public static LlvmModuleFlagsNamedMetadataTuple typicalLlvmModuleFlags(@NotNull final ReferenceTracker referenceTracker)
 	{
 		return new LlvmModuleFlagsNamedMetadataTuple(referenceTracker, DwarfVersion2(referenceTracker), DebugInfoVersion(referenceTracker), PicLevel2(referenceTracker), armCTypeWidthEnum(referenceTracker, Wide), armCTypeWidthEnum(referenceTracker, AtLeastAsLargeAsInt));
 	}

@@ -26,19 +26,13 @@ import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.byteWriters.OutputStreamByteWriter;
 import com.stormmq.java.classfile.domain.information.TypeInformation;
 import com.stormmq.llvm.domain.ReferenceTracker;
-import com.stormmq.llvm.domain.asm.ModuleLevelInlineAsm;
-import com.stormmq.llvm.domain.comdat.ComdatDefinition;
 import com.stormmq.llvm.domain.function.FunctionDeclaration;
 import com.stormmq.llvm.domain.function.FunctionDefinition;
 import com.stormmq.llvm.domain.identifiers.LocalIdentifier;
-import com.stormmq.llvm.domain.module.Module;
-import com.stormmq.llvm.domain.target.triple.TargetTriple;
-import com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.OpaqueStructureType;
+import com.stormmq.llvm.domain.module.*;
 import com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.StructureType;
-import com.stormmq.llvm.domain.variables.Alias;
 import com.stormmq.llvm.domain.variables.GlobalVariable;
 import com.stormmq.llvm.metadata.debugging.*;
-import com.stormmq.llvm.metadata.metadataTuples.AnonymousMetadataTuple;
 import com.stormmq.llvm.metadata.metadataTuples.TypedMetadataTuple;
 import com.stormmq.llvm.metadata.module.LlvmIdentNamedMetadataTuple;
 import com.stormmq.llvm.metadata.module.LlvmModuleFlagsNamedMetadataTuple;
@@ -51,11 +45,6 @@ import java.nio.file.*;
 import java.util.List;
 import java.util.Map;
 
-import static com.stormmq.llvm.domain.target.dataLayout.DataLayoutSpecification.DarwinOnX86_64;
-import static com.stormmq.llvm.metadata.debugging.LlvmDebugLanguage.DW_LANG_Java;
-import static com.stormmq.llvm.metadata.metadataTuples.AnonymousMetadataTuple.EmptyAnonymousMetadataTuple;
-import static com.stormmq.llvm.metadata.metadataTuples.TypedMetadataTuple.emptyTypedMetadataTuple;
-import static com.stormmq.llvm.metadata.module.LlvmModuleFlagsNamedMetadataTuple.TypicalLlvmModuleFlags;
 import static java.nio.file.Files.createDirectories;
 import static java.nio.file.Files.newOutputStream;
 import static java.nio.file.StandardOpenOption.CREATE;
@@ -63,49 +52,44 @@ import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
 import static java.util.Collections.*;
 
-public final class NaiveTypeInformationUser implements TypeInformationUser
+public final class JavaConvertingTypeInformationUser implements TypeInformationUser
 {
-	@NotNull private final List<ModuleLevelInlineAsm> NoModuleLevelInlineAsm = emptyList();
-	@NotNull private static final List<ComdatDefinition> NoComdatDefinitions = emptyList();
-	@NotNull private static final Map<LocalIdentifier, OpaqueStructureType> NoOpaqueStructureTypes = emptyMap();
-	@NotNull private static final List<Alias> NoAliases = emptyList();
 	@NonNls private static final String dotLL = ".ll";
 
+	@NotNull private final TargetModuleCreator targetModuleCreator;
 	@NotNull private final Path outputRootFolderPath;
 
-	public NaiveTypeInformationUser(@NotNull final Path outputRootFolderPath)
+	public JavaConvertingTypeInformationUser(@NotNull final TargetModuleCreator targetModuleCreator, @NotNull final Path outputRootFolderPath)
 	{
+		this.targetModuleCreator = targetModuleCreator;
 		this.outputRootFolderPath = outputRootFolderPath;
 	}
 
 	@Override
 	public void use(@NotNull final TypeInformation typeInformation, @NotNull final String relativeFilePath, @NotNull final Path relativeRootFolderPath)
 	{
-		final ReferenceTracker referenceTracker = new ReferenceTracker();
-		final DIFileKeyedMetadataTuple file = new DIFileKeyedMetadataTuple(referenceTracker, relativeFilePath, relativeRootFolderPath.toString());
+		final MetadataCreator metadataCreator = new MetadataCreator();
+		final DIFileKeyedMetadataTuple file = metadataCreator.file(relativeFilePath, relativeRootFolderPath.toString());
 
 		// Will eventually carry some data
-		final TypedMetadataTuple<DISubprogramKeyedMetadataTuple> subprograms = emptyTypedMetadataTuple(referenceTracker);
-		final TypedMetadataTuple<DIGlobalVariableKeyedMetadataTuple> globals = emptyTypedMetadataTuple(referenceTracker);
-
-		final AnonymousMetadataTuple enums = EmptyAnonymousMetadataTuple(referenceTracker);
-		final AnonymousMetadataTuple retainedTypes = EmptyAnonymousMetadataTuple(referenceTracker);
-		final TypedMetadataTuple<DIImportedEntityKeyedMetadataTuple> imports = emptyTypedMetadataTuple(referenceTracker);
-		final TypedMetadataTuple<DIMacroFileKeyedMetadataTuple> macros = emptyTypedMetadataTuple(referenceTracker);
-		final DICompileUnitKeyedMetadataTuple diCompileUnitKeyedMetadataTuple = new DICompileUnitKeyedMetadataTuple(referenceTracker, DW_LANG_Java, file, enums, retainedTypes, subprograms, globals, imports, macros);
-
-		final LlvmIdentNamedMetadataTuple llvmIdent = new LlvmIdentNamedMetadataTuple(referenceTracker);
-		final LlvmModuleFlagsNamedMetadataTuple llvmModuleFlags = TypicalLlvmModuleFlags(referenceTracker);
-		final List<DICompileUnitKeyedMetadataTuple> compileUnits = singletonList(diCompileUnitKeyedMetadataTuple);
-		final LlvmDbgCuNamedMetadataTuple llvmDbgCu = new LlvmDbgCuNamedMetadataTuple(referenceTracker, compileUnits);
+		final TypedMetadataTuple<DISubprogramKeyedMetadataTuple> subprograms = metadataCreator.emptyTypedMetadataTuple();
+		final TypedMetadataTuple<DIGlobalVariableKeyedMetadataTuple> globals = metadataCreator.emptyTypedMetadataTuple();
 
 		final Map<LocalIdentifier, StructureType> structureTypes = emptyMap();
 		final List<GlobalVariable<?>> globalVariablesAndConstants = emptyList();
 		final List<FunctionDeclaration> functionDeclarations = emptyList();
 		final List<FunctionDefinition> functionsDefinitions = emptyList();
 
-		final Module module = new Module(DarwinOnX86_64, TargetTriple.MacOsXMavericksOnX86_64, NoModuleLevelInlineAsm, llvmIdent, llvmModuleFlags, llvmDbgCu, NoComdatDefinitions, structureTypes, NoOpaqueStructureTypes, globalVariablesAndConstants, functionDeclarations, functionsDefinitions, NoAliases);
+		final LlvmIdentNamedMetadataTuple identity = metadataCreator.identity();
+		final LlvmModuleFlagsNamedMetadataTuple moduleFlags = metadataCreator.moduleFlags();
+		final LlvmDbgCuNamedMetadataTuple compileUnits = metadataCreator.newJavaCompileUnits(file, subprograms, globals);
+		final Module module = targetModuleCreator.newJavaModule(identity, moduleFlags, compileUnits, structureTypes, globalVariablesAndConstants, functionDeclarations, functionsDefinitions);
 
+		writeModule(relativeFilePath, relativeRootFolderPath, module);
+	}
+
+	private void writeModule(@NotNull final String relativeFilePath, @NotNull final Path relativeRootFolderPath, final Module module)
+	{
 		final Path llvmFilePath = llvmFilePath(relativeFilePath, relativeRootFolderPath);
 		try(final OutputStream outputStream = newOutputStream(llvmFilePath, WRITE, CREATE, TRUNCATE_EXISTING))
 		{

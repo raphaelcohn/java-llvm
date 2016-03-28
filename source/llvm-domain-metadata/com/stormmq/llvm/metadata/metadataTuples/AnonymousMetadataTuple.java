@@ -39,7 +39,7 @@ public class AnonymousMetadataTuple implements Metadata
 	@NotNull private static final List<Metadata> EmptyList = emptyList();
 
 	@NotNull
-	public static AnonymousMetadataTuple EmptyAnonymousMetadataTuple(@NotNull final ReferenceTracker referenceTracker)
+	public static AnonymousMetadataTuple emptyAnonymousMetadataTuple(@NotNull final ReferenceTracker referenceTracker)
 	{
 		return new AnonymousMetadataTuple(referenceTracker, EmptyList);
 	}
