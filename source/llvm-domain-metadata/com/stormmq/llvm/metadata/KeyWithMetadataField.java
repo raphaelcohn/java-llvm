@@ -23,9 +23,10 @@
 package com.stormmq.llvm.metadata;
 
 import com.stormmq.byteWriters.ByteWriter;
-import com.stormmq.llvm.metadata.metadataTuples.KeyedMetadataTuple;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+
+import static com.stormmq.llvm.domain.Writable.ColonSpace;
 
 public final class KeyWithMetadataField
 {
@@ -66,7 +67,7 @@ public final class KeyWithMetadataField
 	public <X extends Exception> void writeKeyValue(@NotNull final ByteWriter<X> byteWriter) throws X
 	{
 		byteWriter.writeUtf8EncodedStringWithCertainty(key);
-		byteWriter.writeBytes(KeyedMetadataTuple.ColonSpace);
+		byteWriter.writeBytes(ColonSpace);
 
 		if (isConstant())
 		{

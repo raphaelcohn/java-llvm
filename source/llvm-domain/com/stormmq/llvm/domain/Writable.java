@@ -33,6 +33,8 @@ public interface Writable
 
 	@NotNull byte[] CommaSpace = encodeUtf8BytesWithCertaintyValueIsValid(", ");
 
+	@NotNull byte[] ColonSpace = encodeUtf8BytesWithCertaintyValueIsValid(": ");
+
 	@NotNull byte[] SpaceEqualsSpace = encodeUtf8BytesWithCertaintyValueIsValid(" = ");
 
 	@SuppressWarnings("SpellCheckingInspection") @NonNls String _unnamed_addr = " unnamed_addr";
