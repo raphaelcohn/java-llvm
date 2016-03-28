@@ -20,65 +20,37 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.identifiers;
+package com.stormmq.llvm.domain.asm;
 
 import com.stormmq.byteWriters.ByteWriter;
-import org.jetbrains.annotations.*;
+import com.stormmq.llvm.domain.Writable;
+import com.stormmq.llvm.domain.identifiers.LlvmString;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractIdentifier implements Identifier
+import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+
+public final class ModuleLevelInlineAsm implements Writable
 {
-	private final byte prefix;
-	@NotNull private final LlvmString identifier;
+	@NotNull private static final byte[] moduleSpaceasmSpace = encodeUtf8BytesWithCertaintyValueIsValid("module asm ");
+	@NotNull private static final byte[] sideeffectSpace = encodeUtf8BytesWithCertaintyValueIsValid("sideeffect ");
+	@NotNull private static final byte[] alignstackSpace = encodeUtf8BytesWithCertaintyValueIsValid("alignstack ");
+	@NotNull private static final byte[] inteldialectSpace = encodeUtf8BytesWithCertaintyValueIsValid("inteldialect ");
 
-	protected AbstractIdentifier(final byte prefix, @NotNull @NonNls final String identifier)
+	@NotNull private final LlvmString asm;
+
+	public ModuleLevelInlineAsm(@NotNull @NonNls final LlvmString asm)
 	{
-		this.prefix = prefix;
-		this.identifier = new LlvmString(identifier);
+		this.asm = asm;
 	}
 
 	@Override
-	public final <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
 	{
-		byteWriter.writeByte(prefix);
-		identifier.write(byteWriter);
-	}
+		byteWriter.writeBytes(moduleSpaceasmSpace);
 
-	@NotNull
-	@Override
-	public final String name()
-	{
-		return identifier.name();
-	}
+		asm.write(byteWriter);
 
-	@Override
-	@NotNull
-	public final String toString()
-	{
-		return ((char) prefix) + identifier.toString();
-	}
-
-	@Override
-	public final boolean equals(@Nullable final Object o)
-	{
-		if (this == o)
-		{
-			return true;
-		}
-		if (o == null || getClass() != o.getClass())
-		{
-			return false;
-		}
-
-		final AbstractIdentifier that = (AbstractIdentifier) o;
-
-		return prefix == that.prefix && identifier.equals(that.identifier);
-	}
-
-	@Override
-	public final int hashCode()
-	{
-		int result = prefix;
-		result = 31 * result + identifier.hashCode();
-		return result;
+		Writable.writeLineFeed(byteWriter);
 	}
 }

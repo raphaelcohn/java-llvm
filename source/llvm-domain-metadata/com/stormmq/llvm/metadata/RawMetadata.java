@@ -23,7 +23,7 @@
 package com.stormmq.llvm.metadata;
 
 import com.stormmq.byteWriters.ByteWriter;
-import com.stormmq.llvm.domain.identifiers.AbstractIdentifier;
+import com.stormmq.llvm.domain.identifiers.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -61,7 +61,7 @@ public final class RawMetadata implements Metadata
 		return stringBuilder.toString();
 	}
 
-	public RawMetadata(@NotNull final AbstractIdentifier identifier)
+	public RawMetadata(@NotNull final Identifier identifier)
 	{
 		this(identifier.name());
 	}

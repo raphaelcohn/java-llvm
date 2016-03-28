@@ -24,6 +24,7 @@ package com.stormmq.llvm.domain.module;
 
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.Writable;
+import com.stormmq.llvm.domain.asm.ModuleLevelInlineAsm;
 import com.stormmq.llvm.domain.comdat.ComdatDefinition;
 import com.stormmq.llvm.domain.function.FunctionDeclaration;
 import com.stormmq.llvm.domain.function.FunctionDefinition;
@@ -52,6 +53,7 @@ public final class Module implements Writable
 
 	@NotNull private final DataLayoutSpecification dataLayoutSpecification;
 	@NotNull private final TargetTriple targetTriple;
+	@NotNull private final List<ModuleLevelInlineAsm> moduleLevelInlineAssembly;
 	@NotNull private final LlvmIdentNamedMetadataTuple llvmIdentNamedMetadataTuple;
 	@NotNull private final LlvmModuleFlagsNamedMetadataTuple llvmModuleFlagsNamedMetadataTuple;
 	@NotNull private final LlvmDbgCuNamedMetadataTuple compileUnits;
@@ -63,10 +65,11 @@ public final class Module implements Writable
 	@NotNull private final List<FunctionDefinition> functionDefinitions;
 	@NotNull private final List<Alias> aliases;
 
-	public Module(@NotNull final DataLayoutSpecification dataLayoutSpecification, @NotNull final TargetTriple targetTriple, @NotNull final LlvmIdentNamedMetadataTuple llvmIdentNamedMetadataTuple, @NotNull final LlvmModuleFlagsNamedMetadataTuple llvmModuleFlagsNamedMetadataTuple, @NotNull final LlvmDbgCuNamedMetadataTuple compileUnits, @NotNull final List<ComdatDefinition> comdatDefinitions, @NotNull final Map<LocalIdentifier, StructureType> structureTypes, @NotNull final Map<LocalIdentifier, OpaqueStructureType> opaqueStructureTypes, @NotNull final List<GlobalVariable<?>> globalVariablesAndConstants, @NotNull final List<FunctionDeclaration> functionDeclarations, @NotNull final List<FunctionDefinition> functionDefinitions, @NotNull final List<Alias> aliases)
+	public Module(@NotNull final DataLayoutSpecification dataLayoutSpecification, @NotNull final TargetTriple targetTriple, @NotNull final List<ModuleLevelInlineAsm> moduleLevelInlineAssembly, @NotNull final LlvmIdentNamedMetadataTuple llvmIdentNamedMetadataTuple, @NotNull final LlvmModuleFlagsNamedMetadataTuple llvmModuleFlagsNamedMetadataTuple, @NotNull final LlvmDbgCuNamedMetadataTuple compileUnits, @NotNull final List<ComdatDefinition> comdatDefinitions, @NotNull final Map<LocalIdentifier, StructureType> structureTypes, @NotNull final Map<LocalIdentifier, OpaqueStructureType> opaqueStructureTypes, @NotNull final List<GlobalVariable<?>> globalVariablesAndConstants, @NotNull final List<FunctionDeclaration> functionDeclarations, @NotNull final List<FunctionDefinition> functionDefinitions, @NotNull final List<Alias> aliases)
 	{
 		this.dataLayoutSpecification = dataLayoutSpecification;
 		this.targetTriple = targetTriple;
+		this.moduleLevelInlineAssembly = moduleLevelInlineAssembly;
 		this.llvmIdentNamedMetadataTuple = llvmIdentNamedMetadataTuple;
 		this.llvmModuleFlagsNamedMetadataTuple = llvmModuleFlagsNamedMetadataTuple;
 		this.compileUnits = compileUnits;
@@ -86,12 +89,20 @@ public final class Module implements Writable
 		targetTriple.write(byteWriter);
 		Writable.writeLineFeed(byteWriter);
 
+		for (final ModuleLevelInlineAsm moduleLevelInlineAsm : moduleLevelInlineAssembly)
+		{
+			moduleLevelInlineAsm.write(byteWriter);
+		}
+		if (!moduleLevelInlineAssembly.isEmpty())
+		{
+			Writable.writeLineFeed(byteWriter);
+		}
+
 		llvmIdentNamedMetadataTuple.write(byteWriter);
 
 		llvmModuleFlagsNamedMetadataTuple.write(byteWriter);
 
 		compileUnits.write(byteWriter);
-
 		Writable.writeLineFeed(byteWriter);
 
 		write(byteWriter, comdatDefinitions);
@@ -116,7 +127,10 @@ public final class Module implements Writable
 			writable.write(byteWriter);
 			writeLineFeed(byteWriter);
 		}
-		writeLineFeed(byteWriter);
+		if (!writables.isEmpty())
+		{
+			writeLineFeed(byteWriter);
+		}
 	}
 
 	private static <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter, @NotNull final Map<LocalIdentifier, ? extends Writable> types) throws X

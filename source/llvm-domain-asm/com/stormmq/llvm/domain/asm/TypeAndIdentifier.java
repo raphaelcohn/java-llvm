@@ -20,65 +20,30 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.identifiers;
+package com.stormmq.llvm.domain.asm;
 
 import com.stormmq.byteWriters.ByteWriter;
-import org.jetbrains.annotations.*;
+import com.stormmq.llvm.domain.Writable;
+import com.stormmq.llvm.domain.identifiers.Identifier;
+import com.stormmq.llvm.domain.types.TypeExcludingVoid;
+import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractIdentifier implements Identifier
+public final class TypeAndIdentifier<I extends Identifier> implements Writable
 {
-	private final byte prefix;
-	@NotNull private final LlvmString identifier;
+	@NotNull private final TypeExcludingVoid typeExcludingVoid;
+	@NotNull private final I identifier;
 
-	protected AbstractIdentifier(final byte prefix, @NotNull @NonNls final String identifier)
+	public TypeAndIdentifier(@NotNull final TypeExcludingVoid typeExcludingVoid, @NotNull final I identifier)
 	{
-		this.prefix = prefix;
-		this.identifier = new LlvmString(identifier);
+		this.typeExcludingVoid = typeExcludingVoid;
+		this.identifier = identifier;
 	}
 
 	@Override
-	public final <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
 	{
-		byteWriter.writeByte(prefix);
+		typeExcludingVoid.write(byteWriter);
+		byteWriter.writeByte(' ');
 		identifier.write(byteWriter);
-	}
-
-	@NotNull
-	@Override
-	public final String name()
-	{
-		return identifier.name();
-	}
-
-	@Override
-	@NotNull
-	public final String toString()
-	{
-		return ((char) prefix) + identifier.toString();
-	}
-
-	@Override
-	public final boolean equals(@Nullable final Object o)
-	{
-		if (this == o)
-		{
-			return true;
-		}
-		if (o == null || getClass() != o.getClass())
-		{
-			return false;
-		}
-
-		final AbstractIdentifier that = (AbstractIdentifier) o;
-
-		return prefix == that.prefix && identifier.equals(that.identifier);
-	}
-
-	@Override
-	public final int hashCode()
-	{
-		int result = prefix;
-		result = 31 * result + identifier.hashCode();
-		return result;
 	}
 }
