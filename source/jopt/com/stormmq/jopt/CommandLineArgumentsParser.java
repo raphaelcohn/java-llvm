@@ -52,7 +52,7 @@ public class CommandLineArgumentsParser
 	}
 
 	@NotNull
-	public static IllegalStateException newShouldHaveExited(@SuppressWarnings("UnusedParameters") @NotNull final Throwable ignored)
+	public static IllegalStateException newShouldHaveExited(@SuppressWarnings("UnusedParameters") @NotNull final Throwable cause)
 	{
 		return newShouldHaveExited();
 	}
@@ -176,7 +176,7 @@ public class CommandLineArgumentsParser
 	@NotNull
 	private OptionSpecBuilder option(final boolean optionMustBePresent, @NonNls @NotNull final String optionName, @NonNls @NotNull final String description, @NonNls @NotNull final String[] requireIfTheseOptionsArePresent)
 	{
-		if (arguments != null)
+		if (haveArgumentsAlreadyParsed())
 		{
 			throw new IllegalStateException("commandLineArguments have already been parsed");
 		}
@@ -207,6 +207,12 @@ public class CommandLineArgumentsParser
 		}
 		optionSpecBuilder.requiredIf(requireIfTheseOptionsArePresent[0], copyOfRange(requireIfTheseOptionsArePresent, 1, length));
 		return optionSpecBuilder;
+	}
+
+	@SuppressWarnings("InstanceVariableUsedBeforeInitialized")
+	private boolean haveArgumentsAlreadyParsed()
+	{
+		return arguments != null;
 	}
 
 	private static final class VerbosityValueConverter implements ValueConverter<Verbosity>

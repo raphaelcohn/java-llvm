@@ -35,7 +35,6 @@ import com.stormmq.llvm.examples.parsing.typeInformationUsers.NaiveTypeInformati
 import com.stormmq.llvm.examples.parsing.typeInformationUsers.TypeInformationUser;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOError;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.LinkedHashSet;

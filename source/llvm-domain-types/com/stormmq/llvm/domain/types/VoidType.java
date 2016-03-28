@@ -32,6 +32,7 @@ import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyVal
 @Api
 public final class VoidType implements VoidOrFirstClassTypeExcludingLabelAndMetadata
 {
+	@Api
 	@NotNull public static final VoidType Void = new VoidType();
 
 	private VoidType()

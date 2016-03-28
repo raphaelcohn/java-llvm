@@ -23,10 +23,12 @@
 package com.stormmq.llvm.domain.types;
 
 import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.string.Api;
 import org.jetbrains.annotations.*;
 
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
 
+@Api
 public final class VariadicFunctionFormalParameterType implements TypeExcludingVoid
 {
 	@NotNull public static final VariadicFunctionFormalParameterType Variadic = new VariadicFunctionFormalParameterType();

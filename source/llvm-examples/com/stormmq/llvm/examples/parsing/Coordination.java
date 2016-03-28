@@ -32,7 +32,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static java.lang.System.err;
 import static java.lang.Thread.currentThread;
 
 public final class Coordination

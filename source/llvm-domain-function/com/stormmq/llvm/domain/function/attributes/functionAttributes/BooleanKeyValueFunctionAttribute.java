@@ -22,8 +22,12 @@
 
 package com.stormmq.llvm.domain.function.attributes.functionAttributes;
 
+import com.stormmq.java.parsing.utilities.ReservedIdentifiers;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+
+import static com.stormmq.java.parsing.utilities.ReservedIdentifiers._false;
+import static com.stormmq.java.parsing.utilities.ReservedIdentifiers._true;
 
 public final class BooleanKeyValueFunctionAttribute extends AbstractKeyValueFunctionAttribute
 {
@@ -43,6 +47,6 @@ public final class BooleanKeyValueFunctionAttribute extends AbstractKeyValueFunc
 
 	private BooleanKeyValueFunctionAttribute(@NonNls @NotNull final String key, final boolean value)
 	{
-		super(key, value ? "true" : "false");
+		super(key, value ? _true : _false);
 	}
 }

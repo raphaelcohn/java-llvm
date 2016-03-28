@@ -29,9 +29,9 @@ import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyVal
 
 public enum Visibility
 {
-	_default,
-	hidden,
-	_protected,
+	@SuppressWarnings("unused")_default,
+	@SuppressWarnings("unused")hidden,
+	@SuppressWarnings("unused")_protected,
 	;
 
 	@NotNull @NonNls private final String name;

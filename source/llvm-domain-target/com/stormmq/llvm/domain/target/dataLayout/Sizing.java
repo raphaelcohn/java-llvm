@@ -22,7 +22,6 @@
 
 package com.stormmq.llvm.domain.target.dataLayout;
 
-import com.stormmq.string.Formatting;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 

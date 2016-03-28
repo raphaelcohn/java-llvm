@@ -24,8 +24,8 @@ package com.stormmq.llvm.metadata.module;
 
 public enum WcharWidth
 {
-	Narrow(1, 2),
-	Wide(2, 4),
+	@SuppressWarnings("unused")Narrow(1, 2),
+	@SuppressWarnings("unused")Wide(2, 4),
 	;
 
 	public final int value;

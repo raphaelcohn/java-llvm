@@ -24,10 +24,12 @@ package com.stormmq.llvm.domain.constants.simpleConstants.floatingPointConstants
 
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.types.firstClassTypes.FloatingPointValueType;
+import com.stormmq.string.Api;
 import org.jetbrains.annotations.NotNull;
 
 import static com.stormmq.llvm.domain.types.firstClassTypes.FloatingPointValueType.x86_fp80;
 
+@Api
 public final class X86LongDoubleConstant implements FloatingPointConstant
 {
 	@NotNull private static final byte[] _0xK = {'0', 'x', 'K'};

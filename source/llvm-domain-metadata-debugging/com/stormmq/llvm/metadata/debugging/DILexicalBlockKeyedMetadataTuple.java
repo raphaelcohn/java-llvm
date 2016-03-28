@@ -35,12 +35,12 @@ public final class DILexicalBlockKeyedMetadataTuple extends KeyedMetadataTuple i
 
 		if (lineNumber < 0)
 		{
-			throw new IllegalArgumentException("lineNumber can not be negative");
+			throw new IllegalArgumentException("lexical block lineNumber can not be negative");
 		}
 
 		if (column < 0)
 		{
-			throw new IllegalArgumentException("column can not be negative");
+			throw new IllegalArgumentException("lexical block column can not be negative");
 		}
 	}
 }

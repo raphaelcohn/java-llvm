@@ -47,12 +47,12 @@ public final class DILexicalBlockFileKeyedMetadataTuple extends KeyedMetadataTup
 
 		if (lineNumber < 0)
 		{
-			throw new IllegalArgumentException("lineNumber can not be negative");
+			throw new IllegalArgumentException("lexical block file lineNumber can not be negative");
 		}
 
 		if (column < 0)
 		{
-			throw new IllegalArgumentException("column can not be negative");
+			throw new IllegalArgumentException("lexical block file column can not be negative");
 		}
 	}
 }

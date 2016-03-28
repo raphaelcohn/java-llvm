@@ -114,7 +114,7 @@ public final class EnqueuePathsWalker
 					{
 						return CONTINUE;
 					}
-					throw new IllegalStateException("Could not walk tree", exception);
+					throw new IllegalStateException("Could not visit file when walking tree", exception);
 				}
 
 				@Override

@@ -50,7 +50,7 @@ final class CommandLineArguments
 	@NotNull private final PrintStream error;
 	@NotNull private final OptionSet arguments;
 
-	CommandLineArguments(@NotNull final OptionParser optionParser, @NotNull final PrintStream out, @NotNull final PrintStream error, @NotNull final Set<String> requiredOptions, @NonNls@NotNull final String... commandLineArguments)
+	CommandLineArguments(@NotNull final OptionParser optionParser, @NotNull final PrintStream out, @NotNull final PrintStream error, @SuppressWarnings("TypeMayBeWeakened") @NotNull final Set<String> requiredOptions, @NonNls@NotNull final String... commandLineArguments)
 	{
 		this.optionParser = optionParser;
 		this.out = out;

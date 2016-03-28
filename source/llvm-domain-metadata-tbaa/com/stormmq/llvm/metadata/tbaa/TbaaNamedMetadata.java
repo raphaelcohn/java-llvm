@@ -31,7 +31,7 @@ import java.util.*;
 
 public final class TbaaNamedMetadata extends NamedMetadataTuple
 {
-	public TbaaNamedMetadata(@NotNull final ReferenceTracker referenceTracker, @NotNull final List<TbaaTriplet> tbaaTriplets)
+	public TbaaNamedMetadata(@NotNull final ReferenceTracker referenceTracker, @NotNull final Collection<TbaaTriplet> tbaaTriplets)
 	{
 		super(referenceTracker, "tbaa.struct", convert(tbaaTriplets));
 	}

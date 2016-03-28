@@ -23,11 +23,9 @@
 package com.stormmq.llvm.metadata.debugging;
 
 import com.stormmq.llvm.domain.ReferenceTracker;
-import com.stormmq.llvm.domain.identifiers.GlobalIdentifier;
 import com.stormmq.llvm.domain.identifiers.Identifier;
 import com.stormmq.llvm.metadata.Metadata;
 import com.stormmq.llvm.metadata.metadataTuples.KeyedMetadataTuple;
-import com.stormmq.llvm.metadata.metadataTuples.TypedMetadataTuple;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 

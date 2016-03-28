@@ -42,7 +42,7 @@ public class LlvmString implements Writable
 	}
 
 	@NonNls
-	private static boolean doesIdentifierNeedsEscaping(@NotNull @NonNls final String identifier)
+	private static boolean doesIdentifierNeedsEscaping(@NotNull @NonNls final CharSequence identifier)
 	{
 		final ValidatingCodePointUser codePointUser = new ValidatingCodePointUser();
 		try

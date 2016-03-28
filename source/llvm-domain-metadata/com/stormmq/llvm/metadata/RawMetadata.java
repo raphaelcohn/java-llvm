@@ -23,13 +23,15 @@
 package com.stormmq.llvm.metadata;
 
 import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.java.parsing.utilities.ReservedIdentifiers;
 import com.stormmq.llvm.domain.identifiers.Identifier;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.*;
 
 import java.util.Arrays;
 import java.util.Set;
 
+import static com.stormmq.java.parsing.utilities.ReservedIdentifiers._false;
+import static com.stormmq.java.parsing.utilities.ReservedIdentifiers._true;
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
 
 public final class RawMetadata implements Metadata
@@ -73,10 +75,10 @@ public final class RawMetadata implements Metadata
 
 	public RawMetadata(final boolean value)
 	{
-		this(value ? "true" : "false");
+		this(value ? _true : _false);
 	}
 
-	public RawMetadata(@NotNull final String value)
+	public RawMetadata(@NonNls @NotNull final String value)
 	{
 		this(encodeUtf8BytesWithCertaintyValueIsValid(value));
 	}

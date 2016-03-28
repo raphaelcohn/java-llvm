@@ -23,11 +23,13 @@
 package com.stormmq.llvm.domain.types.firstClassTypes;
 
 import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.string.Api;
 import com.stormmq.string.Formatting;
 import org.jetbrains.annotations.NotNull;
 
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
 
+@Api
 public final class VectorType<T extends PrimitiveSingleValueType> implements SingleValueType
 {
 	@NotNull private static final byte[] SpaceXSpace = encodeUtf8BytesWithCertaintyValueIsValid(" x ");

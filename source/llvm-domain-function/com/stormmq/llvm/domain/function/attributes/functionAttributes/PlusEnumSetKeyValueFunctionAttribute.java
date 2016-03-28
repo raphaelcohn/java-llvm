@@ -47,7 +47,7 @@ public final class PlusEnumSetKeyValueFunctionAttribute<E extends Enum<E>> exten
 		this(key, new HashSet<>(asList(values)));
 	}
 
-	private PlusEnumSetKeyValueFunctionAttribute(@NonNls @NotNull final String key, @NotNull final Set<E> values)
+	private PlusEnumSetKeyValueFunctionAttribute(@NonNls @NotNull final String key, @SuppressWarnings("TypeMayBeWeakened") @NotNull final Set<E> values)
 	{
 		super(key, valueAsString(values, anEnum -> '+' + anEnum.name()));
 	}

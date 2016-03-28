@@ -28,7 +28,7 @@ import java.util.Set;
 
 public final class StringSetKeyValueFunctionAttribute extends AbstractKeyValueFunctionAttribute
 {
-	public StringSetKeyValueFunctionAttribute(@NotNull final String key, @NotNull final Set<String> values)
+	public StringSetKeyValueFunctionAttribute(@NotNull final String key, @SuppressWarnings("TypeMayBeWeakened") @NotNull final Set<String> values)
 	{
 		super(key, valueAsString(values, s -> s));
 	}

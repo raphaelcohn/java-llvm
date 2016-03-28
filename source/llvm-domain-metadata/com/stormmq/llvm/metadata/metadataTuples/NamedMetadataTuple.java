@@ -145,6 +145,7 @@ public class NamedMetadataTuple implements Writable
 		{
 			return false;
 		}
+		//noinspection SimplifiableIfStatement
 		if (!name.equals(that.name))
 		{
 			return false;

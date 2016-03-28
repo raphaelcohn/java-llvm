@@ -80,7 +80,7 @@ public final class LlvmBehaviourMetadataTuple extends AnonymousMetadataTuple
 	@NotNull
 	public static LlvmBehaviourMetadataTuple linkerLibraries(@NotNull final ReferenceTracker referenceTracker, @NonNls @NotNull final String... libraries)
 	{
-		final Set<String> unique = new LinkedHashSet<>(asList(libraries));
+		final Collection<String> unique = new LinkedHashSet<>(asList(libraries));
 		@NonNls final String[] options = new String[unique.size()];
 		int index = 0;
 		for (final String library : unique)

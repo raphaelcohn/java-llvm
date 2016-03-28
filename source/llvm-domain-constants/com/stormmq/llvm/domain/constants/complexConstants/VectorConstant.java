@@ -26,8 +26,10 @@ import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.types.firstClassTypes.PrimitiveSingleValueType;
 import com.stormmq.llvm.domain.types.firstClassTypes.VectorType;
 import com.stormmq.llvm.domain.constants.Constant;
+import com.stormmq.string.Api;
 import org.jetbrains.annotations.NotNull;
 
+@Api
 public final class VectorConstant<T extends PrimitiveSingleValueType> implements ComplexConstant<VectorType<T>>
 {
 	@NotNull private static final byte[] Start = {'<', ' '};

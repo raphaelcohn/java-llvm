@@ -25,7 +25,6 @@ package com.stormmq.llvm.metadata.debugging;
 import com.stormmq.llvm.domain.ReferenceTracker;
 import com.stormmq.llvm.metadata.Metadata;
 import com.stormmq.llvm.metadata.metadataTuples.KeyedMetadataTuple;
-import com.stormmq.llvm.metadata.metadataTuples.TypedMetadataTuple;
 import org.jetbrains.annotations.NotNull;
 
 public final class DISubroutineTypeKeyedMetadataTuple extends KeyedMetadataTuple implements TypeMetadata

@@ -58,6 +58,7 @@ public final class FormalParameter implements Writable
 		return new DILocalVariableKeyedMetadataTuple(referenceTracker, name == null ? generatedName(oneBasedIndex) : name, oneBasedIndex, scope, file, lineNumber, type, NoFlags);
 	}
 
+	@SuppressWarnings("TypeMayBeWeakened")
 	@NotNull
 	private static LocalIdentifier generatedName(final int oneBasedIndex)
 	{

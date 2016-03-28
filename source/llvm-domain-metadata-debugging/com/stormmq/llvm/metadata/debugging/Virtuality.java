@@ -24,6 +24,6 @@ package com.stormmq.llvm.metadata.debugging;
 
 public enum Virtuality
 {
-	DW_VIRTUALITY_pure_virtual,
+	@SuppressWarnings("unused")DW_VIRTUALITY_pure_virtual,
 	;
 }

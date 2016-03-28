@@ -25,7 +25,6 @@ package com.stormmq.llvm.examples;
 import com.stormmq.jopt.*;
 import com.stormmq.jopt.applications.*;
 import com.stormmq.jopt.applications.fatalApplicationFailureActions.FatalApplicationFailureAction;
-import com.stormmq.jopt.applications.fatalApplicationFailureActions.PrintStreamFatalApplicationFailureAction;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 

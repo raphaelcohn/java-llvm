@@ -28,7 +28,6 @@ import com.stormmq.llvm.metadata.Metadata;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
-import java.util.List;
 
 import static com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType.i64;
 

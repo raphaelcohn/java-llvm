@@ -23,17 +23,19 @@
 package com.stormmq.llvm.domain.constants.simpleConstants;
 
 import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.java.parsing.utilities.ReservedIdentifiers;
 import com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
+import static com.stormmq.java.parsing.utilities.ReservedIdentifiers.*;
 import static com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType.i1;
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
 
 public enum BooleanConstant implements SimpleConstant<IntegerValueType>
 {
-	True("true"),
-	False("false"),
+	True(_true),
+	False(_false),
 	;
 
 	@NotNull private final byte[] llAssemblyEncoding;
