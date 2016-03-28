@@ -26,12 +26,10 @@ import com.stormmq.string.Formatting;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Locale;
+import static com.stormmq.string.Formatting.format;
 
 public final class Sizing
 {
-	private final int abi;
-	private final int pref;
 	@NonNls @NotNull public final String dataLayoutEncoding;
 
 	public Sizing(final int abi)
@@ -41,8 +39,6 @@ public final class Sizing
 
 	public Sizing(final int abi, final int pref)
 	{
-		this.abi = abi;
-		this.pref = pref;
-		dataLayoutEncoding = Formatting.format(":%1$s:%2$s", abi, pref);
+		dataLayoutEncoding = format(":%1$s:%2$s", abi, pref);
 	}
 }

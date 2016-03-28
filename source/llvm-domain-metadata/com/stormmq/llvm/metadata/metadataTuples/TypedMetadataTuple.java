@@ -38,7 +38,7 @@ public final class TypedMetadataTuple<M extends Metadata> extends AnonymousMetad
 		return new TypedMetadataTuple<>(referenceTracker, emptyList());
 	}
 
-	public TypedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final List<M> tuple)
+	private TypedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final List<M> tuple)
 	{
 		super(referenceTracker, tuple);
 	}

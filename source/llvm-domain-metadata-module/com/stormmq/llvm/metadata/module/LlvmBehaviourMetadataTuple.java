@@ -80,7 +80,7 @@ public final class LlvmBehaviourMetadataTuple extends AnonymousMetadataTuple
 	@NotNull
 	public static LlvmBehaviourMetadataTuple linkerLibraries(@NotNull final ReferenceTracker referenceTracker, @NonNls @NotNull final String... libraries)
 	{
-		final LinkedHashSet<String> unique = new LinkedHashSet<>(asList(libraries));
+		final Set<String> unique = new LinkedHashSet<>(asList(libraries));
 		@NonNls final String[] options = new String[unique.size()];
 		int index = 0;
 		for (final String library : unique)
@@ -92,7 +92,7 @@ public final class LlvmBehaviourMetadataTuple extends AnonymousMetadataTuple
 	}
 
 	@NotNull
-	public static LlvmBehaviourMetadataTuple linkerOptionsForTarget(@NotNull final ReferenceTracker referenceTracker, @NotNull final Map<String, String> parameterizedOptions, @NotNull final String... options)
+	private static LlvmBehaviourMetadataTuple linkerOptionsForTarget(@NotNull final ReferenceTracker referenceTracker, @NotNull final Map<String, String> parameterizedOptions, @NotNull final String... options)
 	{
 		final int length = options.length;
 		final List<Metadata> tuple = new ArrayList<>(parameterizedOptions.size() + length);
@@ -114,7 +114,7 @@ public final class LlvmBehaviourMetadataTuple extends AnonymousMetadataTuple
 		return new LlvmBehaviourMetadataTuple(referenceTracker, AppendUnique, "Linker Options", new AnonymousMetadataTuple(referenceTracker, tuple));
 	}
 
-	public LlvmBehaviourMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final LlvmModuleFlagsBehaviourFlag behaviourFlag, @NonNls @NotNull final String key, @NotNull final Metadata value)
+	private LlvmBehaviourMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final LlvmModuleFlagsBehaviourFlag behaviourFlag, @NonNls @NotNull final String key, @NotNull final Metadata value)
 	{
 		super(referenceTracker, convert(behaviourFlag, key, value));
 	}

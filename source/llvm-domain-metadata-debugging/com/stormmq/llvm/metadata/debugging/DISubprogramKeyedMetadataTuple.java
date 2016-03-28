@@ -24,6 +24,7 @@ package com.stormmq.llvm.metadata.debugging;
 
 import com.stormmq.llvm.domain.ReferenceTracker;
 import com.stormmq.llvm.domain.identifiers.GlobalIdentifier;
+import com.stormmq.llvm.domain.identifiers.Identifier;
 import com.stormmq.llvm.metadata.Metadata;
 import com.stormmq.llvm.metadata.metadataTuples.KeyedMetadataTuple;
 import com.stormmq.llvm.metadata.metadataTuples.TypedMetadataTuple;
@@ -34,7 +35,7 @@ import java.util.Set;
 
 public final class DISubprogramKeyedMetadataTuple extends KeyedMetadataTuple implements ScopeMetadata
 {
-	public DISubprogramKeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull @NonNls final GlobalIdentifier functionName, @NotNull @NonNls final String linkageName, @NotNull final ScopeMetadata scope, @NotNull final DIFileKeyedMetadataTuple file, final int lineNumber, @NotNull final DISubroutineTypeKeyedMetadataTuple type, final boolean isLocal, final boolean isDefinition, final int scopeLine, @NotNull final TypeMetadata containingType, @NotNull final Virtuality virtuality, final int virtualIndex, @NotNull final Set<DIFlag> flags, final boolean isOptimized, @NotNull final TypedMetadataTuple<TemplateParameterMetadata> templateParameters, @NotNull final Metadata declaration, @NotNull final TypedMetadataTuple<DILocalVariableKeyedMetadataTuple> variables)
+	public DISubprogramKeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull @NonNls final Identifier functionName, @NotNull @NonNls final String linkageName, @NotNull final Metadata scope, @NotNull final Metadata file, final int lineNumber, @NotNull final Metadata type, final boolean isLocal, final boolean isDefinition, final int scopeLine, @NotNull final Metadata containingType, @NotNull final Virtuality virtuality, final int virtualIndex, @NotNull final Set<DIFlag> flags, final boolean isOptimized, @NotNull final Metadata templateParameters, @NotNull final Metadata declaration, @NotNull final Metadata variables)
 	{
 		super(referenceTracker, true, "DISubprogram", Key.functionName.with(functionName), Key.linkageName.with(linkageName), Key.scope.with(scope), Key.file.with(file), Key.lineNumber.with(lineNumber), Key.type.with(type), Key.isLocal.with(isLocal), Key.isDefinition.with(isDefinition), Key.scopeLine.with(scopeLine), Key.containingType.with(containingType), Key.virtuality.with(virtuality), Key.virtualIndex.with(virtualIndex), Key.flags.with(flags), Key.isOptimized.with(isOptimized), Key.templateParams.with(templateParameters), Key.declaration.with(declaration), Key.variables.with(variables));
 	}

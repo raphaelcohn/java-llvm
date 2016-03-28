@@ -27,8 +27,7 @@ import com.stormmq.llvm.metadata.metadataTuples.NamedMetadataTuple;
 import com.stormmq.llvm.metadata.Metadata;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public final class TbaaNamedMetadata extends NamedMetadataTuple
 {
@@ -38,9 +37,9 @@ public final class TbaaNamedMetadata extends NamedMetadataTuple
 	}
 
 	@NotNull
-	private static List<? extends Metadata> convert(@NotNull final List<TbaaTriplet> tbaaTriplets)
+	private static List<? extends Metadata> convert(@NotNull final Collection<TbaaTriplet> tbaaTriplets)
 	{
-		final ArrayList<Metadata> converted = new ArrayList<>(tbaaTriplets.size() * 3);
+		final List<Metadata> converted = new ArrayList<>(tbaaTriplets.size() * 3);
 		for (final TbaaTriplet tbaaTriplet : tbaaTriplets)
 		{
 			tbaaTriplet.addTo(converted);

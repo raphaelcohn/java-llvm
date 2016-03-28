@@ -34,7 +34,7 @@ public enum Visibility
 	_protected,
 	;
 
-	@NotNull @NonNls public final String name;
+	@NotNull @NonNls private final String name;
 	@NotNull public final byte[] llAssemblyValue;
 
 	Visibility()

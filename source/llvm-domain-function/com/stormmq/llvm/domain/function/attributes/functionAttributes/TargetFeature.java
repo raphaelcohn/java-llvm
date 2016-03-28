@@ -28,6 +28,6 @@ public enum TargetFeature
 	sse,
 	sse2,
 	sse3,
-	ssse3,
+	@SuppressWarnings("SpellCheckingInspection")ssse3,
 	;
 }

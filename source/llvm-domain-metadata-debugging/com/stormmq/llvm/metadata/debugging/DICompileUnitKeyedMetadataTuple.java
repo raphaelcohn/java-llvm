@@ -23,6 +23,7 @@
 package com.stormmq.llvm.metadata.debugging;
 
 import com.stormmq.llvm.domain.ReferenceTracker;
+import com.stormmq.llvm.metadata.Metadata;
 import com.stormmq.llvm.metadata.metadataTuples.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,7 +32,7 @@ import static com.stormmq.llvm.metadata.debugging.Key.*;
 
 public final class DICompileUnitKeyedMetadataTuple extends KeyedMetadataTuple implements ScopeMetadata
 {
-	public DICompileUnitKeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final LlvmDebugLanguage llvmDebugLanguage, @NotNull final DIFileKeyedMetadataTuple file, @NotNull final AnonymousMetadataTuple enums, @NotNull final AnonymousMetadataTuple retainedTypes, @NotNull final TypedMetadataTuple<DISubprogramKeyedMetadataTuple> subprograms, @NotNull final TypedMetadataTuple<DIGlobalVariableKeyedMetadataTuple> globals, @NotNull final TypedMetadataTuple<DIImportedEntityKeyedMetadataTuple> imports, @NotNull final TypedMetadataTuple<DIMacroFileKeyedMetadataTuple> macros)
+	public DICompileUnitKeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final LlvmDebugLanguage llvmDebugLanguage, @NotNull final Metadata file, @NotNull final Metadata enums, @NotNull final Metadata retainedTypes, @NotNull final Metadata subprograms, @NotNull final Metadata globals, @NotNull final Metadata imports, @NotNull final Metadata macros)
 	{
 		super(referenceTracker, true, "DICompileUnit", language.with(llvmDebugLanguage), Key.file.with(file), producer.with(Producer), isOptimized.with(false), flags.with("-O0"), runtimeVersion.with(0), emissionKind.with(1), Key.enums.with(enums), Key.retainedTypes.with(retainedTypes), Key.subprograms.with(subprograms), Key.globals.with(globals), Key.imports.with(imports), Key.macros.with(macros)); // dwoId.with(dwoId)
 	}

@@ -22,6 +22,7 @@
 
 package com.stormmq.llvm.examples.parsing.typeInformationUsers;
 
+import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.byteWriters.OutputStreamByteWriter;
 import com.stormmq.java.classfile.domain.information.TypeInformation;
 import com.stormmq.llvm.domain.ReferenceTracker;
@@ -109,7 +110,7 @@ public final class NaiveTypeInformationUser implements TypeInformationUser
 		final Path llvmFilePath = llvmFilePath(relativeFilePath, relativeRootFolderPath);
 		try(final OutputStream outputStream = newOutputStream(llvmFilePath, WRITE, CREATE, TRUNCATE_EXISTING))
 		{
-			final OutputStreamByteWriter byteWriter = new OutputStreamByteWriter(outputStream);
+			final ByteWriter<IOException> byteWriter = new OutputStreamByteWriter(outputStream);
 			module.write(byteWriter);
 		}
 		catch (final IOException e)

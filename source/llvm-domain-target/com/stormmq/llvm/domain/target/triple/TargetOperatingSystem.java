@@ -29,11 +29,14 @@ import static com.stormmq.llvm.domain.target.triple.Vendor.apple;
 
 public final class TargetOperatingSystem
 {
-	@NotNull public static final TargetOperatingSystem MacOsXMavericks = new TargetOperatingSystem(apple, "macosx10.9.0");
+	@SuppressWarnings("SpellCheckingInspection") @NotNull public static final TargetOperatingSystem MacOsXMavericks = new TargetOperatingSystem(apple, "macosx10.9.0");
+	@SuppressWarnings("SpellCheckingInspection") @NotNull public static final TargetOperatingSystem MacOsXYosemite = new TargetOperatingSystem(apple, "macosx10.10.0");
+	@SuppressWarnings("SpellCheckingInspection") @NotNull public static final TargetOperatingSystem MacOsXElCapitan = new TargetOperatingSystem(apple, "macosx10.11.0");
 
 	@NotNull private final Vendor vendor;
 	@NotNull private final String versionedName;
 
+	@SuppressWarnings("WeakerAccess")
 	public TargetOperatingSystem(@NotNull final Vendor vendor, @NonNls @NotNull final String versionedName)
 	{
 		if (versionedName.isEmpty())

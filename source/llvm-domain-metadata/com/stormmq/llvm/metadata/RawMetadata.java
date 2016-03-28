@@ -47,7 +47,7 @@ public final class RawMetadata implements Metadata
 	}
 
 	@NotNull
-	private static <E extends Enum<E>> String convertSetOfEnumFlags(@NotNull final Set<E> values)
+	private static <E extends Enum<E>> String convertSetOfEnumFlags(@NotNull final Iterable<E> values)
 	{
 		final StringBuilder stringBuilder = new StringBuilder(1024);
 		for (final E value : values)
@@ -82,7 +82,7 @@ public final class RawMetadata implements Metadata
 	}
 
 	@SuppressWarnings("OverloadedVarargsMethod")
-	public RawMetadata(@NotNull final byte... llAssemblyEncoding)
+	private RawMetadata(@NotNull final byte... llAssemblyEncoding)
 	{
 		this.llAssemblyEncoding = llAssemblyEncoding;
 	}

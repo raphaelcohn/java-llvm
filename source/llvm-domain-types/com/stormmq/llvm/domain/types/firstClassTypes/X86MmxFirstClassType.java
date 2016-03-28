@@ -22,11 +22,12 @@
 
 package com.stormmq.llvm.domain.types.firstClassTypes;
 
+import com.stormmq.llvm.domain.types.CanBePointedToType;
 import org.jetbrains.annotations.NotNull;
 
 public final class X86MmxFirstClassType extends AbstractFixedFirstClassType implements SingleValueType
 {
-	@NotNull public static final X86MmxFirstClassType x86_mmx = new X86MmxFirstClassType();
+	@NotNull public static final CanBePointedToType x86_mmx = new X86MmxFirstClassType();
 
 	private X86MmxFirstClassType()
 	{

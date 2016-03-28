@@ -42,7 +42,7 @@ public final class PointerConstant implements Constant<PointerValueType>
 	@NotNull private final PointerValueType pointerValueType;
 	@Nullable private final GlobalIdentifier globalIdentifier;
 
-	public PointerConstant(@NotNull final PointerValueType pointerValueType, @Nullable final GlobalIdentifier globalIdentifier)
+	private PointerConstant(@NotNull final PointerValueType pointerValueType, @Nullable final GlobalIdentifier globalIdentifier)
 	{
 		this.pointerValueType = pointerValueType;
 		this.globalIdentifier = globalIdentifier;

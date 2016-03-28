@@ -44,7 +44,7 @@ public class AnonymousMetadataTuple implements Metadata
 		return new AnonymousMetadataTuple(referenceTracker, EmptyList);
 	}
 
-	@SuppressWarnings("FieldNotUsedInToString") @NotNull private final ReferenceTracker referenceTracker;
+	@NotNull private final ReferenceTracker referenceTracker;
 	@NotNull private final List<? extends Metadata> tuple;
 
 	public AnonymousMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final List<? extends Metadata> tuple)

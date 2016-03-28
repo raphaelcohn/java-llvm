@@ -24,15 +24,15 @@ package com.stormmq.domain.operands;
 
 public enum FastMathFlag
 {
-	nnan, // No NaNs - Allow optimizations to assume the arguments and result are not NaN. Such optimizations are required to retain defined behavior over NaNs, but the value of the result is undefined.
+	@SuppressWarnings({"SpellCheckingInspection", "unused"})nnan, // No NaNs - Allow optimizations to assume the arguments and result are not NaN. Such optimizations are required to retain defined behavior over NaNs, but the value of the result is undefined.
 
-	ninf, // No Infs - Allow optimizations to assume the arguments and result are not +/-Inf. Such optimizations are required to retain defined behavior over +/-Inf, but the value of the result is undefined.
+	@SuppressWarnings({"SpellCheckingInspection", "unused"})ninf, // No Infinities - Allow optimizations to assume the arguments and result are not +/-Inf. Such optimizations are required to retain defined behavior over +/-Inf, but the value of the result is undefined.
 
-	nsz, // No Signed Zeros - Allow optimizations to treat the sign of a zero argument or result as insignificant.
+	@SuppressWarnings("unused")nsz, // No Signed Zeros - Allow optimizations to treat the sign of a zero argument or result as insignificant.
 
-	arcp, // Allow Reciprocal - Allow optimizations to use the reciprocal of an argument rather than perform division.
+	@SuppressWarnings({"SpellCheckingInspection", "unused"})arcp, // Allow Reciprocal - Allow optimizations to use the reciprocal of an argument rather than perform division.
 
-	fast, // Fast - Allow algebraically equivalent transformations that may dramatically change results in floating point (e.g. reassociate). This flag implies all the others.
+	@SuppressWarnings("unused")fast, // Fast - Allow algebraically equivalent transformations that may dramatically change results in floating point (e.g. reassociate). This flag implies all the others.
 	;
 	
 }

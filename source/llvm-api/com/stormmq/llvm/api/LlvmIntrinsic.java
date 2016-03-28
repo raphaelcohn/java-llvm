@@ -1,9 +1,0 @@
-package com.stormmq.llvm.api;
-
-import org.jetbrains.annotations.NotNull;
-
-public @interface LlvmIntrinsic
-{
-	@NotNull
-	String value();
-}

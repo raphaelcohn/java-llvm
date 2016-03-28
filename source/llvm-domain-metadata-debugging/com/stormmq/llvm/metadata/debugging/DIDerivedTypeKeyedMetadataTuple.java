@@ -23,15 +23,15 @@
 package com.stormmq.llvm.metadata.debugging;
 
 import com.stormmq.llvm.domain.ReferenceTracker;
+import com.stormmq.llvm.metadata.Metadata;
 import com.stormmq.llvm.metadata.metadataTuples.KeyedMetadataTuple;
-import com.stormmq.string.Formatting;
 import org.jetbrains.annotations.NotNull;
 
 import static com.stormmq.string.Formatting.format;
 
 public final class DIDerivedTypeKeyedMetadataTuple extends KeyedMetadataTuple implements TypeMetadata
 {
-	public DIDerivedTypeKeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final DW_TAG tag, @NotNull final DIBasicTypeKeyedMetadataTuple baseType, final int sizeInBits, final int alignmentInBits)
+	public DIDerivedTypeKeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final DwarfTag tag, @NotNull final Metadata baseType, final int sizeInBits, final int alignmentInBits)
 	{
 		super(referenceTracker, false, "DIDerivedType", Key.tag.with(tag), Key.baseType.with(baseType), Key.size.with(sizeInBits), Key.align.with(alignmentInBits));
 

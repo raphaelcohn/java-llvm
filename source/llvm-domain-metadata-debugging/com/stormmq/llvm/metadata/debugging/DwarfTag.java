@@ -22,42 +22,42 @@
 
 package com.stormmq.llvm.metadata.debugging;
 
-public enum DW_TAG
+public enum DwarfTag
 {
-	DW_TAG_base_type,
-	DW_TAG_unspecified_type,
+	@SuppressWarnings("unused")DW_TAG_base_type,
+	@SuppressWarnings("unused")DW_TAG_unspecified_type,
 
-	DW_TAG_formal_parameter(5, true, false),
-	DW_TAG_member(13, true, false),
-	DW_TAG_pointer_type(15, true, false),
-	DW_TAG_reference_type(16, true, false),
-	DW_TAG_typedef(22, true, false),
-	DW_TAG_ptr_to_member_type(31, true, false),
-	DW_TAG_const_type(38, true, false),
-	DW_TAG_volatile_type(53, true, false),
-	DW_TAG_restrict_type(55, true, false),
+	@SuppressWarnings("unused")DW_TAG_formal_parameter(5, true, false),
+	@SuppressWarnings("unused")DW_TAG_member(13, true, false),
+	@SuppressWarnings("unused")DW_TAG_pointer_type(15, true, false),
+	@SuppressWarnings("unused")DW_TAG_reference_type(16, true, false),
+	@SuppressWarnings("unused")DW_TAG_typedef(22, true, false),
+	@SuppressWarnings("unused")DW_TAG_ptr_to_member_type(31, true, false),
+	@SuppressWarnings("unused")DW_TAG_const_type(38, true, false),
+	@SuppressWarnings("unused")DW_TAG_volatile_type(53, true, false),
+	@SuppressWarnings("unused")DW_TAG_restrict_type(55, true, false),
 
-	DW_TAG_array_type(1, false, true),
-	DW_TAG_class_type(2, false, true),
-	DW_TAG_enumeration_type(4, false, true),
-	DW_TAG_structure_type(19, false, true),
-	DW_TAG_union_type(23, false, true),
-	DW_TAG_subroutine_type(21, false, true),
-	DW_TAG_inheritance(28, false, true),
+	@SuppressWarnings("unused")DW_TAG_array_type(1, false, true),
+	@SuppressWarnings("unused")DW_TAG_class_type(2, false, true),
+	@SuppressWarnings("unused")DW_TAG_enumeration_type(4, false, true),
+	@SuppressWarnings("unused")DW_TAG_structure_type(19, false, true),
+	@SuppressWarnings("unused")DW_TAG_union_type(23, false, true),
+	@SuppressWarnings("unused")DW_TAG_subroutine_type(21, false, true),
+	@SuppressWarnings("unused")DW_TAG_inheritance(28, false, true),
 	;
 
 	private final int value;
 	public final boolean validForDerivedType;
 	public final boolean validForCompositeType;
 
-	DW_TAG()
+	DwarfTag()
 	{
 		value = -1;
 		validForDerivedType = false;
 		validForCompositeType = false;
 	}
 
-	DW_TAG(final int value, final boolean validForDerivedType, final boolean validForCompositeType)
+	DwarfTag(final int value, final boolean validForDerivedType, final boolean validForCompositeType)
 	{
 		this.value = value;
 		this.validForDerivedType = validForDerivedType;

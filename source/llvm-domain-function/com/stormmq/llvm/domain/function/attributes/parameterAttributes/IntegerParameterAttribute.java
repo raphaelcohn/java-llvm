@@ -37,12 +37,14 @@ public final class IntegerParameterAttribute implements ParameterAttribute
 		return new IntegerParameterAttribute("align", alignmentInBytes);
 	}
 
+	@SuppressWarnings("SpellCheckingInspection")
 	@NotNull
 	public static IntegerParameterAttribute dereferenceable(final int size)
 	{
 		return new IntegerParameterAttribute("dereferenceable", size);
 	}
 
+	@SuppressWarnings("SpellCheckingInspection")
 	@NotNull
 	public static IntegerParameterAttribute dereferenceableOrNull(final int size)
 	{

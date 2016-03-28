@@ -32,6 +32,7 @@ public final class X86LongDoubleConstant implements FloatingPointConstant
 {
 	@NotNull private static final byte[] _0xK = {'0', 'x', 'K'};
 	@NotNull private final String twentyHexadecimalCharacters;
+	private static final int SixteenBytes = 16;
 
 	public X86LongDoubleConstant(@NotNull final String twentyHexadecimalCharacters)
 	{
@@ -48,7 +49,7 @@ public final class X86LongDoubleConstant implements FloatingPointConstant
 	@Override
 	public int alignment()
 	{
-		return 16;
+		return SixteenBytes;
 	}
 
 	@Override

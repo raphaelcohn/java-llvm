@@ -23,7 +23,9 @@
 package com.stormmq.llvm.metadata.debugging;
 
 import com.stormmq.llvm.domain.ReferenceTracker;
+import com.stormmq.llvm.domain.identifiers.Identifier;
 import com.stormmq.llvm.domain.identifiers.LocalIdentifier;
+import com.stormmq.llvm.metadata.Metadata;
 import com.stormmq.llvm.metadata.metadataTuples.KeyedMetadataTuple;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,7 +34,7 @@ import java.util.Set;
 public final class DILocalVariableKeyedMetadataTuple extends KeyedMetadataTuple
 {
 	// oneBasedIndex is zero, then this is NOT a method variable
-	public DILocalVariableKeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final LocalIdentifier variableName, final int oneBasedIndex, @NotNull final ScopeMetadata scope, @NotNull final DIFileKeyedMetadataTuple file, final int lineNumber, @NotNull final TypeMetadata type, @NotNull final Set<DIFlag> flags)
+	public DILocalVariableKeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final Identifier variableName, final int oneBasedIndex, @NotNull final Metadata scope, @NotNull final Metadata file, final int lineNumber, @NotNull final Metadata type, @NotNull final Set<DIFlag> flags)
 	{
 		super(referenceTracker, false, "DILocalVariable", Key.name.with(variableName), Key.arg.with(oneBasedIndex), Key.scope.with(scope), Key.file.with(file), Key.lineNumber.with(lineNumber), Key.type.with(type), Key.flags.with(flags));
 	}

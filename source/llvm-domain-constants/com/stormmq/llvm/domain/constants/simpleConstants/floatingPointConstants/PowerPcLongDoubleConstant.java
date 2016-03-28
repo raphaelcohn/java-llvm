@@ -31,6 +31,7 @@ import static com.stormmq.llvm.domain.types.firstClassTypes.FloatingPointValueTy
 public final class PowerPcLongDoubleConstant implements FloatingPointConstant
 {
 	@NotNull private static final byte[] _0xM = {'0', 'x', 'M'};
+	private static final int SixteenBytes = 16;
 
 	private final long valueLeft;
 	private final long valueRight;
@@ -51,7 +52,7 @@ public final class PowerPcLongDoubleConstant implements FloatingPointConstant
 	@Override
 	public int alignment()
 	{
-		return 16;
+		return SixteenBytes;
 	}
 
 	@Override

@@ -27,6 +27,7 @@ import com.stormmq.llvm.metadata.ConstantMetadata;
 import com.stormmq.llvm.metadata.Metadata;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.List;
 
 import static com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType.i64;
@@ -44,7 +45,7 @@ public final class TbaaTriplet
 		this.tbaaTagMetadataTuple = tbaaTagMetadataTuple;
 	}
 
-	public void addTo(@NotNull final List<Metadata> metadata)
+	public void addTo(@NotNull final Collection<Metadata> metadata)
 	{
 		metadata.add(new ConstantMetadata(new IntegerConstant(i64, offset)));
 		metadata.add(new ConstantMetadata(new IntegerConstant(i64, length)));

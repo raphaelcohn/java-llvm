@@ -47,6 +47,7 @@ public final class PointerValueType implements PrimitiveSingleValueType
 	@NotNull public static final PointerValueType x86_fp80Pointer = x86_fp80.pointerTo(0);
 	@NotNull public static final PointerValueType ppc_fp128Pointer = ppc_fp128.pointerTo(0);
 	@NotNull public static final PointerValueType x86_mmxPointer = x86_mmx.pointerTo(0);
+	@SuppressWarnings("SpellCheckingInspection") @NotNull private static final byte[] addrspaceOpenBracket = encodeUtf8BytesWithCertaintyValueIsValid("addrspace(");
 
 	@NotNull private final CanBePointedToType canBePointedToType;
 	private final int addressSpace;
@@ -70,7 +71,7 @@ public final class PointerValueType implements PrimitiveSingleValueType
 
 		if (addressSpace != 0)
 		{
-			byteWriter.writeBytes(encodeUtf8BytesWithCertaintyValueIsValid("addrspace("));
+			byteWriter.writeBytes(addrspaceOpenBracket);
 			byteWriter.writeUtf8EncodedStringWithCertainty(Integer.toString(addressSpace));
 			byteWriter.writeByte(')');
 		}

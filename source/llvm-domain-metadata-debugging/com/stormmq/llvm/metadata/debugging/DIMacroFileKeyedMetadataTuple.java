@@ -23,14 +23,15 @@
 package com.stormmq.llvm.metadata.debugging;
 
 import com.stormmq.llvm.domain.ReferenceTracker;
+import com.stormmq.llvm.metadata.Metadata;
 import com.stormmq.llvm.metadata.metadataTuples.KeyedMetadataTuple;
 import com.stormmq.llvm.metadata.metadataTuples.TypedMetadataTuple;
 import org.jetbrains.annotations.NotNull;
 
 public final class DIMacroFileKeyedMetadataTuple extends KeyedMetadataTuple implements MacroMetadata
 {
-	public DIMacroFileKeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final MACINFO macinfo, final int lineNumber, @NotNull final DIFileKeyedMetadataTuple file, @NotNull final TypedMetadataTuple<MacroMetadata> nodes)
+	public DIMacroFileKeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final MacroInformationFlag macroInformationFlag, final int lineNumber, @NotNull final Metadata file, @NotNull final Metadata nodes)
 	{
-		super(referenceTracker, false, "DIMacroFile", Key.macinfo.with(macinfo), Key.line.with(lineNumber), Key.file.with(file), Key.nodes.with(nodes));
+		super(referenceTracker, false, "DIMacroFile", Key.macinfo.with(macroInformationFlag), Key.line.with(lineNumber), Key.file.with(file), Key.nodes.with(nodes));
 	}
 }

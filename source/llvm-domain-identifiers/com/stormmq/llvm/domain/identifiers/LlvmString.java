@@ -64,7 +64,7 @@ public class LlvmString implements Writable
 			byteWriter.writeByte('"');
 			try
 			{
-				encodeUtf8Bytes(value, new WritingUtf8ByteUser<X>(byteWriter));
+				encodeUtf8Bytes(value, new WritingUtf8ByteUser<>(byteWriter));
 			}
 			catch (final InvalidUtf16StringException e)
 			{

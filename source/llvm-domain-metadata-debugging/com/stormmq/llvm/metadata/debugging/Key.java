@@ -40,7 +40,7 @@ public enum Key
 	declaration,
 	directory,
 	discriminator,
-	dwoId,
+	@SuppressWarnings("unused")dwoId,
 	element,
 	emissionKind,
 	encoding,
@@ -60,7 +60,7 @@ public enum Key
 	line,
 	lineNumber,
 	linkageName,
-	macinfo,
+	@SuppressWarnings("SpellCheckingInspection")macinfo,
 	macros,
 	name,
 	nodes,
@@ -110,12 +110,6 @@ public enum Key
 	public KeyWithMetadataField with(@NonNls @NotNull final String value)
 	{
 		return with(new RawMetadata('"' + value + '"'));
-	}
-
-	@NotNull
-	public KeyWithMetadataField withUnquotedString(@NonNls @NotNull final String value)
-	{
-		return with(new RawMetadata(value));
 	}
 
 	@NotNull

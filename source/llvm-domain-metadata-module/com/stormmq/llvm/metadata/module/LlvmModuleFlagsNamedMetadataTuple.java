@@ -39,7 +39,7 @@ public final class LlvmModuleFlagsNamedMetadataTuple extends NamedMetadataTuple
 		return new LlvmModuleFlagsNamedMetadataTuple(referenceTrackerA, DwarfVersion2(referenceTrackerB), DebugInfoVersion(referenceTrackerB), PicLevel2(referenceTrackerB), armCTypeWidthEnum(referenceTrackerB, Wide), armCTypeWidthEnum(referenceTrackerB, AtLeastAsLargeAsInt));
 	}
 
-	public LlvmModuleFlagsNamedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final LlvmBehaviourMetadataTuple... llvmBehaviourMetadataTuples)
+	private LlvmModuleFlagsNamedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final LlvmBehaviourMetadataTuple... llvmBehaviourMetadataTuples)
 	{
 		super(referenceTracker, "llvm.module.flags", asList(llvmBehaviourMetadataTuples));
 	}

@@ -28,13 +28,13 @@ import java.io.PrintStream;
 
 import static java.lang.System.err;
 
-public class PrintStreamFatalApplicationFailureAction implements FatalApplicationFailureAction
+public final class PrintStreamFatalApplicationFailureAction implements FatalApplicationFailureAction
 {
 	@SuppressWarnings("UseOfSystemOutOrSystemErr") @NotNull public static final FatalApplicationFailureAction StandardErrorFatalApplicationFailureAction = new PrintStreamFatalApplicationFailureAction(err);
 
 	@NotNull private final PrintStream printStream;
 
-	public PrintStreamFatalApplicationFailureAction(@NotNull final PrintStream printStream)
+	private PrintStreamFatalApplicationFailureAction(@NotNull final PrintStream printStream)
 	{
 		this.printStream = printStream;
 	}

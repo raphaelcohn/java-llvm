@@ -22,9 +22,21 @@
 
 package com.stormmq.llvm.metadata.debugging;
 
-public enum MACINFO
+public enum DwarfTypeEncoding
 {
-	DW_MACINFO_start_file,
-	DW_MACINFO_define,
-	DW_MACINFO_undef,
+	@SuppressWarnings("unused")DW_ATE_address(1),
+	@SuppressWarnings("unused")DW_ATE_boolean(2),
+	@SuppressWarnings("unused")DW_ATE_float(4),
+	@SuppressWarnings("unused")DW_ATE_signed(5),
+	@SuppressWarnings("unused")DW_ATE_signed_char(6),
+	@SuppressWarnings("unused")DW_ATE_unsigned(7),
+	@SuppressWarnings("unused")DW_ATE_unsigned_char(8),
+	;
+
+	private final int value;
+
+	DwarfTypeEncoding(final int value)
+	{
+		this.value = value;
+	}
 }

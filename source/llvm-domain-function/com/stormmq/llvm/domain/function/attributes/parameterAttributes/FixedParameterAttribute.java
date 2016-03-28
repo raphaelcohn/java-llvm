@@ -31,17 +31,17 @@ import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyVal
 
 public enum FixedParameterAttribute implements ParameterAttribute
 {
-	zeroext,
-	signext,
-	inreg,
-	byval,
-	inalloca,
-	sret,
-	noalias,
-	nocapture,
-	nest,
-	returned,
-	nonnull,
+	@SuppressWarnings({"unused", "SpellCheckingInspection"})zeroext,
+	@SuppressWarnings({"unused", "SpellCheckingInspection"})signext,
+	@SuppressWarnings({"unused", "SpellCheckingInspection"})inreg,
+	@SuppressWarnings({"unused", "SpellCheckingInspection"})byval,
+	@SuppressWarnings({"unused", "SpellCheckingInspection"})inalloca,
+	@SuppressWarnings({"unused", "SpellCheckingInspection"})sret,
+	@SuppressWarnings({"unused", "SpellCheckingInspection"})noalias,
+	@SuppressWarnings({"unused", "SpellCheckingInspection"})nocapture,
+	@SuppressWarnings("unused")nest,
+	@SuppressWarnings("unused")returned,
+	@SuppressWarnings("unused")nonnull,
 	;
 
 	@NotNull private final byte[] llvmAssemblyEncoding;

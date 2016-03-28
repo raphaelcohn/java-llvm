@@ -39,7 +39,7 @@ public enum ExitCode
 	DiffInabilityToCompare(2),
 
 	// Based on FreeBSD man sysexits(3). BSD has been defining these since BSD 4.3; they have a very long history
-	Usage(64), // The command was used incorrectly, e.g., with the wrong number of arguments, a bad flag, a bad syntax in a parameter, or whatever.
+	@SuppressWarnings("SpellCheckingInspection")Usage(64), // The command was used incorrectly, e.g., with the wrong number of arguments, a bad flag, a bad syntax in a parameter, or whatever.
 	DataError(65), // The input data was incorrect in some way. This should only be used for user's data and not system files.
 	NoInput(66), // An input file (not a system file), did not exist or was not readable. This could also include errors like "No message" to a mailer (if it cared to catch it).
 	NoUser(67), // The user specified did not exist. This might be used for mail addresses or remote logins.
@@ -92,7 +92,7 @@ public enum ExitCode
 	// Does not work for Windows
 	public static int extractExitCodeIfSignalIncluded(final int exitCode)
 	{
-		// Compatiblity with Single Unix Specification (eg of wait() and waitpid())
+		// Compatibility with Single Unix Specification (eg of wait() and waitpid())
 		final int lowerEightBits = exitCode & 0xFF;
 
 		if (lowerEightBits > ksh93IncrementToExitCodeWithSignal)
@@ -109,9 +109,9 @@ public enum ExitCode
 	}
 
 	// Values above 128 / 256 can be interpreted as the signal value
-	public static boolean shellCommandTerminatedBecauseOfSignal(final int exitCode)
+	public static boolean wasShellCommandTerminatedBecauseOfSignal(final int exitCode)
 	{
-		// Compatiblity with Single Unix Specification (eg of wait() and waitpid())
+		// Compatibility with Single Unix Specification (eg of wait() and waitpid())
 		final int lowerEightBits = exitCode & 0xFF;
 		return lowerEightBits > ksh93IncrementToExitCodeWithSignal || lowerEightBits > posixIncrementToExitCodeWithSignal;
 	}

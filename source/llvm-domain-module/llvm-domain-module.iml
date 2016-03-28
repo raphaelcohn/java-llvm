@@ -11,7 +11,6 @@
     <orderEntry type="module" module-name="byteWriters" exported="" />
     <orderEntry type="module" module-name="string" />
     <orderEntry type="module" module-name="llvm-domain" exported="" />
-    <orderEntry type="module" module-name="llvm-domain-attributes" exported="" />
     <orderEntry type="module" module-name="llvm-domain-comdat" exported="" />
     <orderEntry type="module" module-name="llvm-domain-types" exported="" />
     <orderEntry type="module" module-name="llvm-domain-target" exported="" />

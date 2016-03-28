@@ -30,17 +30,16 @@ import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyVal
 public enum CallingConvention
 {
 	ccc("ccc"),
-	fastcc("fastcc"),
-	coldcc("coldcc"),
+	@SuppressWarnings("SpellCheckingInspection")fastcc("fastcc"),
+	@SuppressWarnings("SpellCheckingInspection")coldcc("coldcc"),
 	cc10("cc 10"),
 	cc11("cc 11"),
-	webkit_jscc("webkit_jscc"),
-	anyregcc("anyregcc"),
-	preserve_mostcc("preserve_mostcc"),
-	preserve_allcc("preserve_allcc"),
-	cxx_fast_tlscc("cxx_fast_tlscc"),
+	@SuppressWarnings("SpellCheckingInspection")webkit_jscc("webkit_jscc"),
+	@SuppressWarnings("SpellCheckingInspection")anyregcc("anyregcc"),
+	@SuppressWarnings("SpellCheckingInspection")preserve_mostcc("preserve_mostcc"),
+	@SuppressWarnings("SpellCheckingInspection")preserve_allcc("preserve_allcc"),
+	@SuppressWarnings("SpellCheckingInspection")cxx_fast_tlscc("cxx_fast_tlscc"),
 	cc64("cc 64"),
-	/*cc64, */
 	;
 
 	@NotNull public final byte[] llAssemblyValue;

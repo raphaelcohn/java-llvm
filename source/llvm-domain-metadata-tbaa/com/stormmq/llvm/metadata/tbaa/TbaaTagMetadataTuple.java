@@ -44,7 +44,7 @@ public final class TbaaTagMetadataTuple extends AnonymousMetadataTuple
 	}
 
 	@NotNull
-	private static List<? extends Metadata> convert(@NotNull final StringConstantMetadata identifier, @Nullable final TbaaTagMetadataTuple parent, final boolean isConstant)
+	private static List<? extends Metadata> convert(@NotNull final Metadata identifier, @Nullable final Metadata parent, final boolean isConstant)
 	{
 		final List<Metadata> tuple = new ArrayList<>(3);
 		tuple.add(identifier);

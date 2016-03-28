@@ -36,7 +36,7 @@ public abstract class AbstractKeyValueFunctionAttribute implements FunctionAttri
 {
 	@NonNls
 	@NotNull
-	protected static <V> String valueAsString(@NotNull final Set<V> values, @NotNull final Function<V, String> conversion)
+	protected static <V> String valueAsString(@NotNull final Collection<V> values, @NotNull final Function<V, String> conversion)
 	{
 		final StringBuilder stringBuilder = new StringBuilder(1024);
 		values.stream().map(conversion).sorted().forEach(new Consumer<String>()

@@ -38,7 +38,7 @@ public class KeyedMetadataTuple implements Metadata
 {
 	@NotNull public static final byte[] ColonSpace = {':', ' '};
 	@SuppressWarnings("HardcodedLineSeparator") @NotNull private static final byte[] CloseBracketLineFeed = encodeUtf8BytesWithCertaintyValueIsValid(")\n");
-	@NotNull public static final byte[] distinctSpace = encodeUtf8BytesWithCertaintyValueIsValid("distinct ");
+	@NotNull private static final byte[] distinctSpace = encodeUtf8BytesWithCertaintyValueIsValid("distinct ");
 
 	@NotNull private final ReferenceTracker referenceTracker;
 	private final boolean isDistinct;
@@ -46,12 +46,12 @@ public class KeyedMetadataTuple implements Metadata
 	@NotNull private final List<KeyWithMetadataField> fields;
 
 	@SuppressWarnings("OverloadedVarargsMethod")
-	public KeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, final boolean isDistinct, @NotNull @NonNls final String name, @NotNull final KeyWithMetadataField... fields)
+	protected KeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, final boolean isDistinct, @NotNull @NonNls final String name, @NotNull final KeyWithMetadataField... fields)
 	{
 		this(referenceTracker, isDistinct, name, asList(fields));
 	}
 
-	public KeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, final boolean isDistinct, @NotNull @NonNls final String name, @NotNull final List<KeyWithMetadataField> fields)
+	protected KeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, final boolean isDistinct, @NotNull @NonNls final String name, @NotNull final List<KeyWithMetadataField> fields)
 	{
 		this.referenceTracker = referenceTracker;
 		this.isDistinct = isDistinct;

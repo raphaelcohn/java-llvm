@@ -35,6 +35,10 @@ public interface Writable
 
 	@NotNull byte[] SpaceEqualsSpace = encodeUtf8BytesWithCertaintyValueIsValid(" = ");
 
+	@SuppressWarnings("SpellCheckingInspection") @NonNls String _unnamed_addr = " unnamed_addr";
+
+	@NonNls String _align_ = " align ";
+
 	static <X extends Exception> void writeSpace(@NotNull final ByteWriter<X> byteWriter) throws X
 	{
 		byteWriter.writeByte(' ');

@@ -40,8 +40,7 @@ import com.stormmq.llvm.metadata.module.LlvmIdentNamedMetadataTuple;
 import com.stormmq.llvm.metadata.module.LlvmModuleFlagsNamedMetadataTuple;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
@@ -49,7 +48,7 @@ import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyVal
 public final class Module implements Writable
 {
 	@SuppressWarnings("HardcodedLineSeparator") private static final byte LineFeed = '\n';
-	@SuppressWarnings("HardcodedLineSeparator") private static final byte[] SpaceEqualsSpaceTypeSpace = encodeUtf8BytesWithCertaintyValueIsValid(" = type ");
+	private static final byte[] SpaceEqualsSpaceTypeSpace = encodeUtf8BytesWithCertaintyValueIsValid(" = type ");
 
 	@NotNull private final DataLayoutSpecification dataLayoutSpecification;
 	@NotNull private final TargetTriple targetTriple;
@@ -120,7 +119,7 @@ public final class Module implements Writable
 		write(byteWriter, functionDefinitions);
 	}
 
-	private static <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter, @NotNull final List<? extends Writable> writables) throws X
+	private static <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter, @NotNull final Collection<? extends Writable> writables) throws X
 	{
 		for (final Writable writable : writables)
 		{

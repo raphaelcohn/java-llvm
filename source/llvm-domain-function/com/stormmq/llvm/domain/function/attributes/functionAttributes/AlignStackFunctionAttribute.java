@@ -57,6 +57,7 @@ public final class AlignStackFunctionAttribute implements FunctionAttribute
 	@Override
 	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
 	{
+		//noinspection SpellCheckingInspection
 		byteWriter.writeUtf8EncodedStringWithCertainty(Formatting.format("alignstack(%1$s)", stackAlignmentAsPowerOfTwo));
 	}
 }

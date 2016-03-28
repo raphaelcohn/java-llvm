@@ -23,12 +23,13 @@
 package com.stormmq.llvm.metadata.debugging;
 
 import com.stormmq.llvm.domain.ReferenceTracker;
+import com.stormmq.llvm.metadata.Metadata;
 import com.stormmq.llvm.metadata.metadataTuples.KeyedMetadataTuple;
 import org.jetbrains.annotations.NotNull;
 
 public final class DILexicalBlockKeyedMetadataTuple extends KeyedMetadataTuple implements ScopeMetadata
 {
-	public DILexicalBlockKeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final ScopeMetadata scope, @NotNull final DIFileKeyedMetadataTuple file, final int lineNumber, final int column)
+	public DILexicalBlockKeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final Metadata scope, @NotNull final Metadata file, final int lineNumber, final int column)
 	{
 		super(referenceTracker, false, "DILexicalBlock", Key.scope.with(scope), Key.file.with(file), Key.line.with(lineNumber), Key.column.with(column));
 

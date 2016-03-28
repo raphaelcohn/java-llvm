@@ -30,10 +30,10 @@ import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyVal
 
 public enum ThreadLocalStorageModel
 {
-	generaldynamic(true), // Default, not exposed
-	localdynamic,
-	initialexec,
-	localexec,
+	@SuppressWarnings({"SpellCheckingInspection", "unused"})generaldynamic(true), // Default, not exposed
+	@SuppressWarnings({"SpellCheckingInspection", "unused"})localdynamic,
+	@SuppressWarnings({"SpellCheckingInspection", "unused"})initialexec,
+	@SuppressWarnings({"SpellCheckingInspection", "unused"})localexec,
 	;
 
 	@NotNull public final byte[] llvmAssemblyEncoding;

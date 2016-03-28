@@ -30,7 +30,7 @@ public final class IntegerKeyValueFunctionAttribute extends AbstractKeyValueFunc
 	@NotNull public static final FunctionAttribute StackProtectorBufferSize_8 = StackProtectorBufferSize(8);
 
 	@NotNull
-	public static FunctionAttribute StackProtectorBufferSize(final int sizeInBytes)
+	private static FunctionAttribute StackProtectorBufferSize(final int sizeInBytes)
 	{
 		return new IntegerKeyValueFunctionAttribute("stack-protector-buffer-size", sizeInBytes);
 	}

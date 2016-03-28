@@ -35,14 +35,14 @@ import static java.util.EnumSet.of;
 public enum ComdatSelectionKind
 {
 	any(true),
-	exactmatch,
+	@SuppressWarnings("SpellCheckingInspection")exactmatch,
 	largest,
-	noduplicates,
-	samesize,
+	@SuppressWarnings("SpellCheckingInspection")noduplicates,
+	@SuppressWarnings("SpellCheckingInspection")samesize,
 	;
 
 	@NotNull public final byte[] llAssemblyValueWithLineFeed;
-	@NotNull public final EnumSet<ObjectFileFormat> supportedObjectFileFormats;
+	@NotNull private final EnumSet<ObjectFileFormat> supportedObjectFileFormats;
 
 	@SuppressWarnings("HardcodedLineSeparator")
 	ComdatSelectionKind(final boolean isSupportedByElf)

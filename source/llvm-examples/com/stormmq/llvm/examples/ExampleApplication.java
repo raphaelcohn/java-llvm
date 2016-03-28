@@ -24,6 +24,7 @@ package com.stormmq.llvm.examples;
 
 import com.stormmq.jopt.*;
 import com.stormmq.jopt.applications.Application;
+import com.stormmq.jopt.applications.fatalApplicationFailureActions.FatalApplicationFailureAction;
 import com.stormmq.llvm.examples.parsing.Coordination;
 import com.stormmq.llvm.examples.parsing.EnqueuePathsWalker;
 import com.stormmq.llvm.examples.parsing.fileParsers.FileParser;
@@ -34,14 +35,13 @@ import com.stormmq.llvm.examples.parsing.typeInformationUsers.NaiveTypeInformati
 import com.stormmq.llvm.examples.parsing.typeInformationUsers.TypeInformationUser;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOError;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.LinkedHashSet;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import static com.stormmq.jopt.ExitCode.CanNotCreate;
-import static com.stormmq.jopt.ExitCode.Failure;
-import static com.stormmq.jopt.ExitCode.Success;
+import static com.stormmq.jopt.ExitCode.*;
 import static com.stormmq.llvm.examples.parsing.parseFailueLogs.PrintStreamParseFailureLog.standardErrorParseFailureLog;
 import static java.nio.file.Files.createDirectories;
 import static java.nio.file.Files.deleteIfExists;
@@ -52,19 +52,25 @@ public final class ExampleApplication implements Application
 	@NotNull private final Path outputPath;
 	@NotNull private final ParseFailureLog parseFailureLog;
 	@NotNull private final EnqueuePathsWalker multiplePathsParser;
+	@NotNull private volatile ExitCode exitCode;
 
-	public ExampleApplication(@NotNull final Verbosity verbosity, @NotNull final LinkedHashSet<Path> sourcePaths, @NotNull final Path outputPath, final boolean permitConstantsInInstanceFields)
+	public ExampleApplication(@NotNull final FatalApplicationFailureAction fatalApplicationFailureAction, @NotNull final Verbosity verbosity, @NotNull final LinkedHashSet<Path> sourcePaths, @NotNull final Path outputPath, final boolean permitConstantsInInstanceFields)
 	{
 		this.sourcePaths = sourcePaths;
 		this.outputPath = outputPath;
 		parseFailureLog = standardErrorParseFailureLog(verbosity);
+		exitCode = Success;
 
 		final TypeInformationUser typeInformationUser = new NaiveTypeInformationUser(outputPath);
 		final FileParser javaClassFileParser = new JavaClassFileParser(parseFailureLog, permitConstantsInInstanceFields, typeInformationUser);
 		final ConcurrentLinkedQueue<ParsableFile> parsableFileQueue = new ConcurrentLinkedQueue<>();
 
 		// Can easily become saturated with JAR file processing
-		final Coordination coordination = new Coordination(16, parsableFileQueue, javaClassFileParser, parseFailureLog);
+		final Coordination coordination = new Coordination(16, parsableFileQueue, javaClassFileParser, parseFailureLog, error ->
+		{
+			exitCode = error instanceof IOException || error instanceof java.io.IOError ? IOError : Software;
+			fatalApplicationFailureAction.failure(error);
+		});
 		multiplePathsParser = new EnqueuePathsWalker(parsableFileQueue, coordination);
 	}
 
@@ -90,12 +96,17 @@ public final class ExampleApplication implements Application
 			parseFailureLog.genericSuccess("Success: %1$s.  Failure: %2$s.  Total: %3$s.", successCount, failureCount, total);
 		}
 
+		if (exitCode != Success)
+		{
+			return exitCode;
+		}
+
 		if (parseFailureLog.hasFailures())
 		{
 			return Failure;
 		}
 
-		return Success;
+		return exitCode;
 	}
 
 	private boolean couldNotRecreateOutputDirectory()

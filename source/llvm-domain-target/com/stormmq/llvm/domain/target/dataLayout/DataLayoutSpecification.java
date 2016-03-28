@@ -35,26 +35,26 @@ import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyVal
 
 public final class DataLayoutSpecification implements Writable
 {
-	@NotNull private static final byte[] TargetDataLayoutStart = encodeUtf8BytesWithCertaintyValueIsValid("target datalayout = \"");
+	@SuppressWarnings("SpellCheckingInspection") @NotNull private static final byte[] TargetDataLayoutStart = encodeUtf8BytesWithCertaintyValueIsValid("target datalayout = \"");
 	@SuppressWarnings("HardcodedLineSeparator") @NotNull private static final byte[] End = encodeUtf8BytesWithCertaintyValueIsValid("\"\n");
 	private static final byte Hyphen = '-';
 
 	@NotNull public static final Endianness DefaultEndianness = BigEndian; // Mach OS X is LittleEndian
 	public static final int DefaultStackAlignmentSizeInBytes = 0; // Mac OS X is 16
-	@NotNull public static final Sizing DefaultPointer64Sizing = new Sizing(64);
-	@NotNull public static final Sizing DefaultBooleanSizing = new Sizing(8);
-	@NotNull public static final Sizing DefaultByteSizing = new Sizing(8);
-	@NotNull public static final Sizing DefaultShortSizing = new Sizing(16);
-	@NotNull public static final Sizing DefaultIntSizing = new Sizing(32);
+	@NotNull private static final Sizing DefaultPointer64Sizing = new Sizing(64);
+	@NotNull private static final Sizing DefaultBooleanSizing = new Sizing(8);
+	@NotNull private static final Sizing DefaultByteSizing = new Sizing(8);
+	@NotNull private static final Sizing DefaultShortSizing = new Sizing(16);
+	@NotNull private static final Sizing DefaultIntSizing = new Sizing(32);
 	@NotNull public static final Sizing DefaultLongSizing = new Sizing(32, 64); // Mac OS X is 64, 64
-	@NotNull public static final Sizing DefaultHalfSizing = new Sizing(16);
-	@NotNull public static final Sizing DefaultFloatSizing = new Sizing(32);
-	@NotNull public static final Sizing DefaultDoubleSizing = new Sizing(64);
+	@NotNull private static final Sizing DefaultHalfSizing = new Sizing(16);
+	@NotNull private static final Sizing DefaultFloatSizing = new Sizing(32);
+	@NotNull private static final Sizing DefaultDoubleSizing = new Sizing(64);
 	// @NotNull public static final Sizing DefaultLongDoubleSizing = new Sizing(128); // Mac OS X is 128
-	@NotNull public static final Sizing DefaultQuadSizing = new Sizing(128);
-	@NotNull public static final Sizing DefaultVector64Sizing = new Sizing(64);
-	@NotNull public static final Sizing DefaultVector128Sizing = new Sizing(128);
-	@NotNull public static final Sizing DefaultAggregateSizing = new Sizing(0, 64);
+	@NotNull private static final Sizing DefaultQuadSizing = new Sizing(128);
+	@NotNull private static final Sizing DefaultVector64Sizing = new Sizing(64);
+	@NotNull private static final Sizing DefaultVector128Sizing = new Sizing(128);
+	@NotNull private static final Sizing DefaultAggregateSizing = new Sizing(0, 64);
 	@Nullable public static final Mangling DefaultMangling = null; // Mac OS X is MachO
 
 	@NotNull public static final DataLayoutSpecification DarwinOnX86_64 = new DataLayoutSpecification(LittleEndian, 16, DefaultPointer64Sizing, DefaultBooleanSizing, DefaultByteSizing, DefaultShortSizing, DefaultIntSizing, new Sizing(64, 64), DefaultHalfSizing, DefaultFloatSizing, DefaultDoubleSizing, new Sizing(128), DefaultQuadSizing, DefaultVector64Sizing, DefaultVector128Sizing, DefaultAggregateSizing, MachO, x86_64);
@@ -78,7 +78,7 @@ public final class DataLayoutSpecification implements Writable
 	@NotNull private final Mangling mangling;
 	@NotNull private final Architecture architecture;
 
-	public DataLayoutSpecification(@NotNull final Endianness endianness, final int stackAlignmentSizeInBytes, @NotNull final Sizing pointer64Sizing, @NotNull final Sizing booleanSizing, @NotNull final Sizing byteSizing, @NotNull final Sizing shortSizing, @NotNull final Sizing intSizing, @NotNull final Sizing longSizing, @NotNull final Sizing halfSizing, @NotNull final Sizing floatSizing, @NotNull final Sizing doubleSizing, @NotNull final Sizing longDoubleSizing, @NotNull final Sizing quadSizing, @NotNull final Sizing vector64Sizing, @NotNull final Sizing vector128Sizing, @NotNull final Sizing aggregateTypeAlignment, @NotNull final Mangling mangling, @NotNull final Architecture architecture)
+	private DataLayoutSpecification(@NotNull final Endianness endianness, final int stackAlignmentSizeInBytes, @NotNull final Sizing pointer64Sizing, @NotNull final Sizing booleanSizing, @NotNull final Sizing byteSizing, @NotNull final Sizing shortSizing, @NotNull final Sizing intSizing, @NotNull final Sizing longSizing, @NotNull final Sizing halfSizing, @NotNull final Sizing floatSizing, @NotNull final Sizing doubleSizing, @NotNull final Sizing longDoubleSizing, @NotNull final Sizing quadSizing, @NotNull final Sizing vector64Sizing, @NotNull final Sizing vector128Sizing, @NotNull final Sizing aggregateTypeAlignment, @NotNull final Mangling mangling, @NotNull final Architecture architecture)
 	{
 		if (stackAlignmentSizeInBytes < 0)
 		{

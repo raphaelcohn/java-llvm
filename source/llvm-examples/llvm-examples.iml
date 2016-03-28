@@ -7,7 +7,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="llvm-api" />
     <orderEntry type="library" name="annotations" level="project" />
     <orderEntry type="module" module-name="java-classfile-parsing" />
     <orderEntry type="module" module-name="java-classfile-domain" />

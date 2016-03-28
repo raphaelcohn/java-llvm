@@ -38,7 +38,7 @@ import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyVal
 public final class GlobalVariable<T extends Type> extends AbstractVariable
 {
 	private static final int MaximumPowerOfTwo = 29;
-	@NotNull private static final byte[] SpaceAddressSpaceStart = encodeUtf8BytesWithCertaintyValueIsValid(" addrspace(");
+	@SuppressWarnings("SpellCheckingInspection") @NotNull private static final byte[] SpaceAddressSpaceStart = encodeUtf8BytesWithCertaintyValueIsValid(" addrspace(");
 	@NotNull private static final byte[] SpaceGlobal = encodeUtf8BytesWithCertaintyValueIsValid(" global");
 	@NotNull private static final byte[] SpaceConstant = encodeUtf8BytesWithCertaintyValueIsValid(" constant");
 	@NotNull private static final byte[] CommaSpaceAlignSpace = encodeUtf8BytesWithCertaintyValueIsValid(", align ");
@@ -78,6 +78,7 @@ public final class GlobalVariable<T extends Type> extends AbstractVariable
 		this.alignmentAsPowerOfTwo = alignmentAsPowerOfTwo;
 	}
 
+	@SuppressWarnings("SpellCheckingInspection")
 	// [@<GlobalVarName> =] [Linkage] [Visibility] [DLLStorageClass] [ThreadLocal] [unnamed_addr] [AddrSpace] [ExternallyInitialized] <global | constant> <Type> [<InitializerConstant>] [, section "name"] [, comdat [($name)]] [, align <Alignment>]
 	@Override
 	protected <X extends Exception> void writeVariable(@NotNull final ByteWriter<X> byteWriter) throws X

@@ -43,7 +43,7 @@ public class NamedMetadataTuple implements Writable
 	@NotNull private final List<? extends Metadata> tuple;
 	@SuppressWarnings("FieldNotUsedInToString") @NotNull private final byte[] llAssemblyEncoding;
 
-	public NamedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull @NonNls final String name, @NotNull final List<? extends Metadata> tuple)
+	protected NamedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull @NonNls final String name, @NotNull final List<? extends Metadata> tuple)
 	{
 		this.referenceTracker = referenceTracker;
 		this.name = name;

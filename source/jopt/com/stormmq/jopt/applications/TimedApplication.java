@@ -40,7 +40,7 @@ public final class TimedApplication implements Application
 	@NotNull private final Application application;
 	@NotNull private final TimedApplicationResultsUser timedApplicationResultsUser;
 
-	public TimedApplication(@NotNull final Application application, @NotNull final TimedApplicationResultsUser timedApplicationResultsUser)
+	private TimedApplication(@NotNull final Application application, @NotNull final TimedApplicationResultsUser timedApplicationResultsUser)
 	{
 		this.application = application;
 		this.timedApplicationResultsUser = timedApplicationResultsUser;

@@ -28,15 +28,15 @@ import org.jetbrains.annotations.NotNull;
 public final class BooleanKeyValueFunctionAttribute extends AbstractKeyValueFunctionAttribute
 {
 	@NotNull public static final FunctionAttribute DisableTailCalls_Off = falseBooleanKey("disable-tail-calls");
-	@NotNull public static final FunctionAttribute NoFramePointerElimination_Off = falseBooleanKey("no-frame-pointer-elim");
-	@NotNull public static final FunctionAttribute LessPreciseFloatingPointMath_Off = falseBooleanKey("less-precise-fpmad");
-	@NotNull public static final FunctionAttribute NoInfinitiesFloatingPointMath_Off = falseBooleanKey("no-infs-fp-math");
+	@SuppressWarnings("SpellCheckingInspection") @NotNull public static final FunctionAttribute NoFramePointerElimination_Off = falseBooleanKey("no-frame-pointer-elim");
+	@SuppressWarnings("SpellCheckingInspection") @NotNull public static final FunctionAttribute LessPreciseFloatingPointMath_Off = falseBooleanKey("less-precise-fpmad");
+	@SuppressWarnings("SpellCheckingInspection") @NotNull public static final FunctionAttribute NoInfinitiesFloatingPointMath_Off = falseBooleanKey("no-infs-fp-math");
 	@NotNull public static final FunctionAttribute NoNotANumbersFloatingPointMath_Off = falseBooleanKey("no-nans-fp-math");
 	@NotNull public static final FunctionAttribute UnsafeFloatingPointMath_Off = falseBooleanKey("unsafe-fp-math");
 	@NotNull public static final FunctionAttribute UseSoftFloat_Off = falseBooleanKey("use-soft-float");
 
 	@NotNull
-	private static BooleanKeyValueFunctionAttribute falseBooleanKey(@NonNls @NotNull final String key)
+	private static FunctionAttribute falseBooleanKey(@NonNls @NotNull final String key)
 	{
 		return new BooleanKeyValueFunctionAttribute(key, false);
 	}

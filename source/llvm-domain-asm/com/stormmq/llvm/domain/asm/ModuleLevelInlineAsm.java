@@ -32,10 +32,7 @@ import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyVal
 
 public final class ModuleLevelInlineAsm implements Writable
 {
-	@NotNull private static final byte[] moduleSpaceasmSpace = encodeUtf8BytesWithCertaintyValueIsValid("module asm ");
-	@NotNull private static final byte[] sideeffectSpace = encodeUtf8BytesWithCertaintyValueIsValid("sideeffect ");
-	@NotNull private static final byte[] alignstackSpace = encodeUtf8BytesWithCertaintyValueIsValid("alignstack ");
-	@NotNull private static final byte[] inteldialectSpace = encodeUtf8BytesWithCertaintyValueIsValid("inteldialect ");
+	@SuppressWarnings("SpellCheckingInspection") @NotNull private static final byte[] moduleSpaceasmSpace = encodeUtf8BytesWithCertaintyValueIsValid("module asm ");
 
 	@NotNull private final LlvmString asm;
 

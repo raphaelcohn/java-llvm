@@ -60,7 +60,7 @@ final class CommandLineArguments
 	}
 
 	@NotNull
-	private OptionSet parse(@NotNull final Set<String> requiredOptions, @NonNls @NotNull final String... commandLineArguments)
+	private OptionSet parse(@NotNull final Iterable<String> requiredOptions, @NonNls @NotNull final String... commandLineArguments)
 	{
 		final OptionSet arguments;
 		try
@@ -125,11 +125,11 @@ final class CommandLineArguments
 		return potentialWritableFolderPath;
 	}
 
-	@SuppressWarnings({"ThrowInsideCatchBlockWhichIgnoresCaughtException", "CollectionDeclaredAsConcreteClass"})
+	@SuppressWarnings("CollectionDeclaredAsConcreteClass")
 	@NotNull
 	public LinkedHashSet<Path> extantWritableFolderPathsOptionValue(@NotNull final String optionName)
 	{
-		@SuppressWarnings("unchecked") final List<String> rawValues = (List<String>) arguments.valuesOf(optionName);
+		@SuppressWarnings("unchecked") final Collection<String> rawValues = (List<String>) arguments.valuesOf(optionName);
 		final LinkedHashSet<Path> paths = new LinkedHashSet<>(rawValues.size());
 		for (final String rawValue : rawValues)
 		{
@@ -209,7 +209,6 @@ final class CommandLineArguments
 		printHelpAndExit(exitCode);
 	}
 
-	@SuppressWarnings("resource")
 	private void printErrorLine(@NonNls @NotNull final String errorLineTemplateWithoutLineEnding, @NotNull final Object... arguments)
 	{
 		formatPrintLineAndFlushWhilstSynchronized(error, errorLineTemplateWithoutLineEnding, arguments);

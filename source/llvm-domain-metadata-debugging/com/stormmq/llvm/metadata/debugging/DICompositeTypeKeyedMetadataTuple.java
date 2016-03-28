@@ -23,19 +23,21 @@
 package com.stormmq.llvm.metadata.debugging;
 
 import com.stormmq.llvm.domain.ReferenceTracker;
+import com.stormmq.llvm.metadata.Metadata;
 import com.stormmq.llvm.metadata.metadataTuples.*;
+import com.stormmq.string.Formatting;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 public final class DICompositeTypeKeyedMetadataTuple extends KeyedMetadataTuple implements TypeMetadata
 {
-	public DICompositeTypeKeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final DW_TAG tag, @NonNls @NotNull final String name, @NotNull final DIFileKeyedMetadataTuple file, final int lineNumber, final int sizeInBits, final int alignmentInBits, @NotNull @NonNls final String identifier, @NotNull final TypedMetadataTuple<TypeMetadata> elements)
+	public DICompositeTypeKeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final DwarfTag tag, @NonNls @NotNull final String name, @NotNull final Metadata file, final int lineNumber, final int sizeInBits, final int alignmentInBits, @NotNull @NonNls final String identifier, @NotNull final Metadata elements)
 	{
 		super(referenceTracker, false, "DICompositeType", Key.tag.with(tag), Key.name.with(name), Key.file.with(file), Key.lineNumber.with(lineNumber), Key.size.with(sizeInBits), Key.align.with(alignmentInBits), Key.identifier.with(identifier), Key.element.with(elements));
 
 		if (!tag.validForCompositeType)
 		{
-			throw new IllegalArgumentException(com.stormmq.string.Formatting.format("Tag '%1$s' is not valid for a composite type", tag));
+			throw new IllegalArgumentException(Formatting.format("Tag '%1$s' is not valid for a composite type", tag));
 		}
 	}
 }

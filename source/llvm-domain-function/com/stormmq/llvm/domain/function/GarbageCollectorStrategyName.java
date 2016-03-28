@@ -29,10 +29,10 @@ import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyVal
 public enum GarbageCollectorStrategyName
 {
 	shadow_stack,
-	erlang,
-	ocaml,
-	statepoint_example,
-	coreclr,
+	@SuppressWarnings("SpellCheckingInspection")erlang,
+	@SuppressWarnings("SpellCheckingInspection")ocaml,
+	@SuppressWarnings("SpellCheckingInspection")statepoint_example,
+	@SuppressWarnings("SpellCheckingInspection")coreclr,
 	;
 
 	@NotNull public final byte[] llvmAssemblyEncoding;

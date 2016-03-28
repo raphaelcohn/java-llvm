@@ -33,7 +33,7 @@ public abstract class AbstractVariable implements Writable
 {
 	@NotNull private static final byte[] CommaSpace = {',', ' '};
 	@NotNull private static final byte[] SpaceEqualsSpace = encodeUtf8BytesWithCertaintyValueIsValid(" = ");
-	@NotNull private static final byte[] SpaceUnnamedAddress = encodeUtf8BytesWithCertaintyValueIsValid(" unnamed_addr");
+	@NotNull private static final byte[] SpaceUnnamedAddress = encodeUtf8BytesWithCertaintyValueIsValid(_unnamed_addr);
 
 	@NotNull private final GlobalIdentifier identifier;
 	@NotNull private final Linkage linkage;

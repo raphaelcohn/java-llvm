@@ -49,7 +49,7 @@ public enum LlvmDebugLanguage
 	DW_LANG_Haskell,
 	DW_LANG_C_plus_plus_03,
 	DW_LANG_C_plus_plus_11,
-	DW_LANG_OCaml,
+	@SuppressWarnings("SpellCheckingInspection")DW_LANG_OCaml,
 	DW_LANG_Rust,
 	DW_LANG_C11,
 	DW_LANG_Swift,

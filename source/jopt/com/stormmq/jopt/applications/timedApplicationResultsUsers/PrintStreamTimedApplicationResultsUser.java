@@ -38,12 +38,11 @@ public final class PrintStreamTimedApplicationResultsUser implements TimedApplic
 	@NotNull
 	public static final TimedApplicationResultsUser StandardErrorTimedApplicationResultUser = new PrintStreamTimedApplicationResultsUser(err);
 
-	public PrintStreamTimedApplicationResultsUser(@NotNull final PrintStream printStream)
+	private PrintStreamTimedApplicationResultsUser(@NotNull final PrintStream printStream)
 	{
 		this.printStream = printStream;
 	}
 
-	@SuppressWarnings("resource")
 	@Override
 	public void use(final long duration)
 	{

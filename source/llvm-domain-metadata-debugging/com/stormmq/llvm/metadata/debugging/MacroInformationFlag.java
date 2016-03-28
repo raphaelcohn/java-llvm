@@ -22,21 +22,9 @@
 
 package com.stormmq.llvm.metadata.debugging;
 
-public enum DW_ATE
+public enum MacroInformationFlag
 {
-	DW_ATE_address(1),
-	DW_ATE_boolean(2),
-	DW_ATE_float(4),
-	DW_ATE_signed(5),
-	DW_ATE_signed_char(6),
-	DW_ATE_unsigned(7),
-	DW_ATE_unsigned_char(8),
-	;
-
-	private final int value;
-
-	DW_ATE(final int value)
-	{
-		this.value = value;
-	}
+	DW_MACINFO_start_file,
+	DW_MACINFO_define,
+	DW_MACINFO_undef,
 }

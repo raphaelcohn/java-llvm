@@ -42,10 +42,10 @@ import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyVal
 public final class FunctionDefinition implements Writable
 {
 	@NotNull private static final byte[] defineSpace = encodeUtf8BytesWithCertaintyValueIsValid("define ");
-	@NotNull private static final byte[] UnnamedAddress = encodeUtf8BytesWithCertaintyValueIsValid(" unnamed_addr");
+	@NotNull private static final byte[] UnnamedAddress = encodeUtf8BytesWithCertaintyValueIsValid(_unnamed_addr);
 	@NotNull private static final byte[] SpaceSection = encodeUtf8BytesWithCertaintyValueIsValid(" section \"");
 	@NotNull private static final byte[] SpaceComdatSpaceOpenBracket = encodeUtf8BytesWithCertaintyValueIsValid(" comdat (");
-	@NotNull private static final byte[] SpaceAlignSpace = encodeUtf8BytesWithCertaintyValueIsValid(" align ");
+	@NotNull private static final byte[] SpaceAlignSpace = encodeUtf8BytesWithCertaintyValueIsValid(_align_);
 	@NotNull private static final byte[] SpaceExclamationMarkDbgSpace = encodeUtf8BytesWithCertaintyValueIsValid(" !dbg ");
 	@SuppressWarnings("HardcodedLineSeparator") @NotNull private static final byte[] NewLineOpenBrace = encodeUtf8BytesWithCertaintyValueIsValid("\n{");
 	@SuppressWarnings("HardcodedLineSeparator") @NotNull private static final byte[] CloseBraceNewLine = encodeUtf8BytesWithCertaintyValueIsValid("}\n");

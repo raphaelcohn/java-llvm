@@ -30,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
 
 public final class KeyOnlyFunctionAttribute implements FunctionAttribute
 {
-	@NotNull public static final FunctionAttribute NoFramePointerEliminationNonLeaf = new KeyOnlyFunctionAttribute("no-frame-pointer-elim-non-leaf");
+	@SuppressWarnings("SpellCheckingInspection") @NotNull public static final FunctionAttribute NoFramePointerEliminationNonLeaf = new KeyOnlyFunctionAttribute("no-frame-pointer-elim-non-leaf");
 
 	@NotNull private final String key;
 

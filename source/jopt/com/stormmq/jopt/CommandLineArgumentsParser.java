@@ -22,6 +22,7 @@
 
 package com.stormmq.jopt;
 
+import com.stormmq.string.Formatting;
 import joptsimple.*;
 import org.jetbrains.annotations.*;
 
@@ -71,12 +72,13 @@ public class CommandLineArgumentsParser
 	@NotNull private final Set<String> optionsThatMustBePresent;
 	@Nullable private CommandLineArguments arguments;
 
-	@SuppressWarnings({"UseOfSystemOutOrSystemErr", "MethodCanBeVariableArityMethod"})
+	@SuppressWarnings({"UseOfSystemOutOrSystemErr", "MethodCanBeVariableArityMethod", "WeakerAccess"})
 	public CommandLineArgumentsParser(@NotNull final String[] commandLineArguments)
 	{
 		this(commandLineArguments, out, err);
 	}
 
+	@SuppressWarnings("WeakerAccess")
 	public CommandLineArgumentsParser(@NotNull final String[] commandLineArguments, @NotNull final PrintStream standardOut, @NotNull final PrintStream standardError)
 	{
 		this.commandLineArguments = commandLineArguments;
@@ -97,7 +99,7 @@ public class CommandLineArgumentsParser
 		optionParser.accepts(help, show_help).forHelp();
 		allKnownOptions.add(help);
 
-		optionWithOptionalValue(false, verbose, com.stormmq.string.Formatting.format("verbosity level (%1$s - %2$s)", None.ordinal(), Verbosity.Everything.ordinal()), "1").withValuesConvertedBy(new VerbosityValueConverter()).defaultsTo(Verbose);
+		optionWithOptionalValue(false, verbose, Formatting.format("verbosity level (%1$s - %2$s)", None.ordinal(), Verbosity.Everything.ordinal()), "1").withValuesConvertedBy(new VerbosityValueConverter()).defaultsTo(Verbose);
 
 		return optionParser;
 	}
@@ -160,7 +162,7 @@ public class CommandLineArgumentsParser
 	}
 
 	@NotNull
-	protected final ArgumentAcceptingOptionSpec<String> optionWithOptionalValue(final boolean optionMustBePresent, @NotNull @NonNls final String optionName, @NotNull @NonNls final String description, @NotNull @NonNls final String valueExample, @NotNull @NonNls final String... requireIfTheseOptionsArePresent)
+	private ArgumentAcceptingOptionSpec<String> optionWithOptionalValue(final boolean optionMustBePresent, @NotNull @NonNls final String optionName, @NotNull @NonNls final String description, @NotNull @NonNls final String valueExample, @NotNull @NonNls final String... requireIfTheseOptionsArePresent)
 	{
 		return option(optionMustBePresent, optionName, description, requireIfTheseOptionsArePresent).withOptionalArg().describedAs(valueExample);
 	}
@@ -181,14 +183,14 @@ public class CommandLineArgumentsParser
 
 		if (!allKnownOptions.add(optionName))
 		{
-			throw new IllegalStateException(com.stormmq.string.Formatting.format("Option '%1$s' has already been added", optionName));
+			throw new IllegalStateException(Formatting.format("Option '%1$s' has already been added", optionName));
 		}
 
 		if (optionMustBePresent)
 		{
 			if (!optionsThatMustBePresent.add(optionName))
 			{
-				throw new IllegalArgumentException(com.stormmq.string.Formatting.format("Option '%1$s' is already one that must be present", optionName));
+				throw new IllegalArgumentException(Formatting.format("Option '%1$s' is already one that must be present", optionName));
 			}
 		}
 
@@ -225,12 +227,12 @@ public class CommandLineArgumentsParser
 				}
 				catch (final IllegalArgumentException e)
 				{
-					throw new ValueConversionException(com.stormmq.string.Formatting.format("No verbosity level '%1$s' is known for option --%2$s", value, verbose), e);
+					throw new ValueConversionException(Formatting.format("No verbosity level '%1$s' is known for option --%2$s", value, verbose), e);
 				}
 			}
 			if (integer < 0)
 			{
-				throw new ValueConversionException(com.stormmq.string.Formatting.format("Verbosity level '%1$s' is negative for option --%2$s", value, verbose));
+				throw new ValueConversionException(Formatting.format("Verbosity level '%1$s' is negative for option --%2$s", value, verbose));
 			}
 			Verbosity mostVerbosePossibilityIfValueTooHigh = None;
 			for (final Verbosity verbosity : Verbosity.values())

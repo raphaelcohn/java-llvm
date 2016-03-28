@@ -26,6 +26,7 @@ import com.stormmq.llvm.domain.Writable;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
+@SuppressWarnings("InterfaceMayBeAnnotatedFunctional")
 public interface Identifier extends Writable
 {
 	@NotNull

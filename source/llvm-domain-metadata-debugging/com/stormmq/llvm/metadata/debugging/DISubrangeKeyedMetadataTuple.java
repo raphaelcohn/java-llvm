@@ -32,8 +32,8 @@ import java.util.List;
 
 public final class DISubrangeKeyedMetadataTuple extends KeyedMetadataTuple implements TypeMetadata
 {
-	public static final int EmptyCount = -1;
-	public static final int EmptyLowerBound = -1;
+	private static final int EmptyCount = -1;
+	private static final int EmptyLowerBound = -1;
 
 	@NotNull
 	public static DISubrangeKeyedMetadataTuple EmptyArray(@NotNull final ReferenceTracker referenceTracker)
@@ -41,13 +41,14 @@ public final class DISubrangeKeyedMetadataTuple extends KeyedMetadataTuple imple
 		return new DISubrangeKeyedMetadataTuple(referenceTracker, EmptyCount, EmptyLowerBound);
 	}
 
+	@SuppressWarnings("WeakerAccess")
 	public DISubrangeKeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, final int count, final int lowerBound)
 	{
 		super(referenceTracker, false, "DISubrange", with(count, lowerBound));
 	}
 
 	@NotNull
-	public static List<KeyWithMetadataField> with(final int count, final int lowerBound)
+	private static List<KeyWithMetadataField> with(final int count, final int lowerBound)
 	{
 		if (lowerBound == EmptyLowerBound)
 		{
@@ -60,7 +61,7 @@ public final class DISubrangeKeyedMetadataTuple extends KeyedMetadataTuple imple
 		{
 			if (count == EmptyCount)
 			{
-				throw new IllegalArgumentException("if lower vound is -1 then count must be -1");
+				throw new IllegalArgumentException("if lower bound is -1 then count must be -1");
 			}
 		}
 

@@ -22,6 +22,7 @@
 
 package com.stormmq.llvm.examples.parsing;
 
+import com.stormmq.jopt.applications.fatalApplicationFailureActions.FatalApplicationFailureAction;
 import com.stormmq.llvm.examples.parsing.fileParsers.FileParser;
 import com.stormmq.llvm.examples.parsing.files.ParsableFile;
 import com.stormmq.llvm.examples.parsing.parseFailueLogs.ParseFailureLog;
@@ -39,9 +40,11 @@ public final class Coordination
 	@NotNull private final Thread[] queueProcessors;
 	@NotNull private final AtomicBoolean finish;
 	@NotNull private final CountDownLatch countDownLatch;
+	@NotNull private final FatalApplicationFailureAction fatalApplicationFailureAction;
 
-	public Coordination(final int count, @NotNull final ConcurrentLinkedQueue<ParsableFile> parsableFileQueue, @NotNull final FileParser fileParser, @NotNull final ParseFailureLog parseFailureLog)
+	public Coordination(final int count, @NotNull final ConcurrentLinkedQueue<ParsableFile> parsableFileQueue, @NotNull final FileParser fileParser, @NotNull final ParseFailureLog parseFailureLog, @NotNull final FatalApplicationFailureAction fatalApplicationFailureAction)
 	{
+		this.fatalApplicationFailureAction = fatalApplicationFailureAction;
 		queueProcessors = new Thread[count];
 		for(int index = 0; index < count; index++)
 		{
@@ -59,7 +62,7 @@ public final class Coordination
 		{
 			queueProcessor.setUncaughtExceptionHandler((t, e) ->
 			{
-				e.printStackTrace(err);
+				fatalApplicationFailureAction.failure(e);
 				countDownLatch.countDown();
 				finish.set(true);
 			});
@@ -86,7 +89,7 @@ public final class Coordination
 		return !isFinished();
 	}
 
-	public boolean isFinished()
+	private boolean isFinished()
 	{
 		return finish.get();
 	}

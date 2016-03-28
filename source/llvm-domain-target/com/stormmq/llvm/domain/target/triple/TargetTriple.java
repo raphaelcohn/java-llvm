@@ -41,7 +41,7 @@ public final class TargetTriple implements Writable
 	@SuppressWarnings("FieldNotUsedInToString") @NotNull private final TargetOperatingSystem operatingSystem;
 	@SuppressWarnings("FieldNotUsedInToString") @Nullable private final String environment;
 
-	public TargetTriple(@NotNull final Architecture architecture, @NotNull final TargetOperatingSystem operatingSystem, @Nullable final String environment)
+	private TargetTriple(@NotNull final Architecture architecture, @NotNull final TargetOperatingSystem operatingSystem, @Nullable final String environment)
 	{
 		if (environment != null)
 		{

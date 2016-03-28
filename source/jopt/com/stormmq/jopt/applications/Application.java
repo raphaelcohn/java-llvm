@@ -42,7 +42,7 @@ public interface Application
 		run(application, StandardErrorFatalApplicationFailureAction);
 	}
 
-	@SuppressWarnings({"ErrorNotRethrown"})
+	@SuppressWarnings("ErrorNotRethrown")
 	static void run(@NotNull final Application application, @NotNull final FatalApplicationFailureAction fatalApplicationFailureAction)
 	{
 		ExitCode exitCode;

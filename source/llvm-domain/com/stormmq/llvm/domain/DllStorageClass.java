@@ -28,8 +28,8 @@ import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyVal
 
 public enum DllStorageClass
 {
-	dllimport,
-	dllexport,
+	@SuppressWarnings("SpellCheckingInspection")dllimport,
+	@SuppressWarnings("SpellCheckingInspection")dllexport,
 	;
 
 	@NotNull public final byte[] llAssemblyValue;

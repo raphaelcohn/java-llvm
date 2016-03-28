@@ -34,23 +34,24 @@ import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyVal
 public final class InlineAsm implements Writable
 {
 	@NotNull private static final byte[] asmSpace = encodeUtf8BytesWithCertaintyValueIsValid("asm ");
-	@NotNull private static final byte[] sideeffectSpace = encodeUtf8BytesWithCertaintyValueIsValid("sideeffect ");
-	@NotNull private static final byte[] alignstackSpace = encodeUtf8BytesWithCertaintyValueIsValid("alignstack ");
-	@NotNull private static final byte[] inteldialectSpace = encodeUtf8BytesWithCertaintyValueIsValid("inteldialect ");
+	@SuppressWarnings("SpellCheckingInspection") @NotNull private static final byte[] sideeffectSpace = encodeUtf8BytesWithCertaintyValueIsValid("sideeffect ");
+	@SuppressWarnings("SpellCheckingInspection") @NotNull private static final byte[] alignstackSpace = encodeUtf8BytesWithCertaintyValueIsValid("alignstack ");
+	@SuppressWarnings("SpellCheckingInspection") @NotNull private static final byte[] inteldialectSpace = encodeUtf8BytesWithCertaintyValueIsValid("inteldialect ");
 
 	@NotNull private final LlvmString templateWithEscapedDollarSigns;
 	@NotNull private final LlvmString constraintLetters;
 	private final boolean hasSideEffects;
-	private final boolean alignstack;
+	private final boolean shouldAlignStack;
 	@NotNull private final Dialect dialect;
 	@NotNull private final TypeAndIdentifier<LocalIdentifier>[] parameters;
 
-	public InlineAsm(@NotNull @NonNls final LlvmString templateWithEscapedDollarSigns, @NotNull @NonNls final LlvmString constraintLetters, final boolean hasSideEffects, final boolean alignstack, @NotNull final Dialect dialect, @NotNull final TypeAndIdentifier<LocalIdentifier>... parameters)
+	@SafeVarargs
+	public InlineAsm(@NotNull @NonNls final LlvmString templateWithEscapedDollarSigns, @NotNull @NonNls final LlvmString constraintLetters, final boolean hasSideEffects, final boolean shouldAlignStack, @NotNull final Dialect dialect, @NotNull final TypeAndIdentifier<LocalIdentifier>... parameters)
 	{
 		this.templateWithEscapedDollarSigns = templateWithEscapedDollarSigns;
 		this.constraintLetters = constraintLetters;
 		this.hasSideEffects = hasSideEffects;
-		this.alignstack = alignstack;
+		this.shouldAlignStack = shouldAlignStack;
 		this.dialect = dialect;
 		this.parameters = parameters;
 	}
@@ -65,7 +66,7 @@ public final class InlineAsm implements Writable
 			byteWriter.writeBytes(sideeffectSpace);
 		}
 
-		if (alignstack)
+		if (shouldAlignStack)
 		{
 			byteWriter.writeBytes(alignstackSpace);
 		}

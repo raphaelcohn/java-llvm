@@ -25,8 +25,8 @@ package com.stormmq.llvm.domain;
 public enum ObjectFileFormat
 {
 	ELF,
-	PECOFF,
-	MachO,
+	@SuppressWarnings("SpellCheckingInspection")PECOFF,
+	@SuppressWarnings("unused")MachO,
 	;
 	
 	ObjectFileFormat()

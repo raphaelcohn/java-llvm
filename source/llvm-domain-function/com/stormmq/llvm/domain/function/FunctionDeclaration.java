@@ -38,8 +38,8 @@ import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyVal
 public final class FunctionDeclaration implements Writable
 {
 	@NotNull private static final byte[] declareSpace = encodeUtf8BytesWithCertaintyValueIsValid("declare ");
-	@NotNull private static final byte[] UnnamedAddress = encodeUtf8BytesWithCertaintyValueIsValid(" unnamed_addr");
-	@NotNull private static final byte[] SpaceAlignSpace = encodeUtf8BytesWithCertaintyValueIsValid(" align ");
+	@NotNull private static final byte[] UnnamedAddress = encodeUtf8BytesWithCertaintyValueIsValid(_unnamed_addr);
+	@NotNull private static final byte[] SpaceAlignSpace = encodeUtf8BytesWithCertaintyValueIsValid(_align_);
 
 	@NotNull private final Linkage linkage;
 	@NotNull private final Visibility visibility;

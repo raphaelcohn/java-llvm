@@ -1,22 +1,46 @@
 <component name="ProjectDictionaryState">
   <dictionary name="raph">
     <words>
+      <w>builtins</w>
       <w>clinit</w>
+      <w>codepoint</w>
       <w>cohn</w>
+      <w>comdat</w>
       <w>declarator</w>
       <w>endian</w>
+      <w>endianness</w>
       <w>fieldref</w>
+      <w>getuid</w>
+      <w>glibc</w>
       <w>ident</w>
       <w>ieee</w>
+      <w>instanceof</w>
       <w>javaparser</w>
+      <w>logins</w>
       <w>methodref</w>
       <w>misconfigured</w>
+      <w>modula</w>
       <w>noninfringement</w>
+      <w>nullable</w>
+      <w>nullary</w>
       <w>opcode</w>
+      <w>parameterized</w>
+      <w>parsable</w>
+      <w>passwd</w>
+      <w>reassociate</w>
+      <w>sendmail</w>
+      <w>subprocess</w>
+      <w>subrange</w>
       <w>superinterface</w>
       <w>tbaa</w>
+      <w>tuples</w>
       <w>unboxed</w>
       <w>unconfigured</w>
+      <w>unkeyed</w>
+      <w>variadic</w>
+      <w>virtuality</w>
+      <w>waitpid</w>
+      <w>writables</w>
     </words>
   </dictionary>
 </component>

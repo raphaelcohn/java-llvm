@@ -33,7 +33,7 @@ import static java.util.Arrays.asList;
 public final class PlusEnumSetKeyValueFunctionAttribute<E extends Enum<E>> extends AbstractKeyValueFunctionAttribute
 {
 	@NotNull
-	public static FunctionAttribute TargetFeatures(@NotNull final TargetFeature... targetFeatures)
+	private static FunctionAttribute TargetFeatures(@NotNull final TargetFeature... targetFeatures)
 	{
 		return new PlusEnumSetKeyValueFunctionAttribute<>("target-features", targetFeatures);
 	}
@@ -42,12 +42,12 @@ public final class PlusEnumSetKeyValueFunctionAttribute<E extends Enum<E>> exten
 
 	@SuppressWarnings("OverloadedVarargsMethod")
 	@SafeVarargs
-	public PlusEnumSetKeyValueFunctionAttribute(@NonNls @NotNull final String key, @NotNull final E... values)
+	private PlusEnumSetKeyValueFunctionAttribute(@NonNls @NotNull final String key, @NotNull final E... values)
 	{
 		this(key, new HashSet<>(asList(values)));
 	}
 
-	public PlusEnumSetKeyValueFunctionAttribute(@NonNls @NotNull final String key, @NotNull final Set<E> values)
+	private PlusEnumSetKeyValueFunctionAttribute(@NonNls @NotNull final String key, @NotNull final Set<E> values)
 	{
 		super(key, valueAsString(values, anEnum -> '+' + anEnum.name()));
 	}

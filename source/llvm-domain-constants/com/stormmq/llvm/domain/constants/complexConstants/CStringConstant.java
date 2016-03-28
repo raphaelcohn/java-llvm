@@ -63,6 +63,7 @@ public final class CStringConstant implements ComplexConstant<ArrayType<IntegerV
 		return 1;
 	}
 
+	@SuppressWarnings("MagicNumber")
 	@Override
 	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
 	{

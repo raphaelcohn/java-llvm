@@ -34,13 +34,13 @@ import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyVal
 public final class Alias extends AbstractVariable
 {
 	@NotNull private static final byte[] SpaceAlias = encodeUtf8BytesWithCertaintyValueIsValid(" alias");
-	@NotNull private final Type[] aliaseeTypes;
+	@NotNull private final Type[] aliasedTypes;
 	@NotNull private final GlobalIdentifier originalGlobalVariableOrFunctionName;
 
-	public Alias(@NotNull final GlobalIdentifier identifier, @NotNull final Linkage linkage, @NotNull final Visibility visibility, @Nullable final DllStorageClass dllStorageClass, @Nullable final ThreadLocalStorageModel threadLocalStorageModel, final boolean hasUnnamedAddress, @NotNull final Type[] aliaseeTypes, @NotNull final GlobalIdentifier originalGlobalVariableOrFunctionName)
+	public Alias(@NotNull final GlobalIdentifier identifier, @NotNull final Linkage linkage, @NotNull final Visibility visibility, @Nullable final DllStorageClass dllStorageClass, @Nullable final ThreadLocalStorageModel threadLocalStorageModel, final boolean hasUnnamedAddress, @NotNull final Type[] aliasedTypes, @NotNull final GlobalIdentifier originalGlobalVariableOrFunctionName)
 	{
 		super(identifier, linkage, visibility, dllStorageClass, threadLocalStorageModel, hasUnnamedAddress);
-		this.aliaseeTypes = aliaseeTypes;
+		this.aliasedTypes = aliasedTypes;
 		this.originalGlobalVariableOrFunctionName = originalGlobalVariableOrFunctionName;
 
 		if (!linkage.isPermittedForAlias)
@@ -48,9 +48,9 @@ public final class Alias extends AbstractVariable
 			throw new IllegalArgumentException(Formatting.format("The linkage '%1$s' is not permitted for an alias", linkage));
 		}
 
-		if (aliaseeTypes.length == 0)
+		if (aliasedTypes.length == 0)
 		{
-			throw new IllegalArgumentException("There must be at least one aliasee");
+			throw new IllegalArgumentException("There must be at least one aliased type");
 		}
 
 		if (identifier.equals(originalGlobalVariableOrFunctionName))
@@ -59,13 +59,14 @@ public final class Alias extends AbstractVariable
 		}
 	}
 
+	@SuppressWarnings("SpellCheckingInspection")
 	// @<Name> = [Linkage] [Visibility] [DLLStorageClass] [ThreadLocal] [unnamed_addr] alias <AliaseeTy>, <AliaseeTy>* @<Aliasee>
 	@Override
 	protected <X extends Exception> void writeVariable(@NotNull final ByteWriter<X> byteWriter) throws X
 	{
 		byteWriter.writeBytes(SpaceAlias);
 
-		final int length = aliaseeTypes.length;
+		final int length = aliasedTypes.length;
 		for(int index = 0; index < length; index++)
 		{
 			if (index == 0)
@@ -76,7 +77,7 @@ public final class Alias extends AbstractVariable
 			{
 				writeCommaSpace(byteWriter);
 			}
-			aliaseeTypes[index].write(byteWriter);
+			aliasedTypes[index].write(byteWriter);
 		}
 
 		Writable.writeSpace(byteWriter);
