@@ -26,6 +26,7 @@ import com.stormmq.byteWriters.ByteWriter;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
+import static com.stormmq.string.Formatting.format;
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
 
 public enum FloatingPointValueType implements PrimitiveSingleValueType
@@ -38,10 +39,38 @@ public enum FloatingPointValueType implements PrimitiveSingleValueType
 	ppc_fp128(128), // AKA double-double
 	;
 
+	@SuppressWarnings("MagicNumber")
+	@NotNull
+	public static FloatingPointValueType floatingPointValueTypeFromSizeInBits(final int sizeInBits)
+	{
+		switch (sizeInBits)
+		{
+			case 16:
+				return half;
+
+			case 32:
+				return _float;
+
+			case 64:
+				return _double;
+
+			case 80:
+				return x86_fp80;
+
+			case 128:
+				return fp128;
+
+			default:
+				throw new IllegalArgumentException(format("floating point sizeInBits can not be '%1$s'", sizeInBits));
+		}
+	}
+
 	@NotNull private final byte[] llvmAssemblyEncoding;
+	private final int numberOfBits;
 
 	FloatingPointValueType(final int numberOfBits)
 	{
+		this.numberOfBits = numberOfBits;
 		final String name = name();
 		@NotNull @NonNls final String stringValue = name.charAt(0) == '_' ? name.substring(1) : name;
 		llvmAssemblyEncoding = encodeUtf8BytesWithCertaintyValueIsValid(stringValue);

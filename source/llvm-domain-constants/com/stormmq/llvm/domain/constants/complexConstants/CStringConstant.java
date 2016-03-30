@@ -34,7 +34,6 @@ import static com.stormmq.string.StringUtilities.encodeUtf8Bytes;
 
 public final class CStringConstant implements ComplexConstant<ArrayType<IntegerValueType>>
 {
-	@SuppressWarnings("HardcodedFileSeparator") private static final char Slash = '\\';
 	@NotNull private final byte[] valueExcludingTerminalNul;
 	@NotNull private static final byte[] Start = {'c', '"'};
 
@@ -76,7 +75,7 @@ public final class CStringConstant implements ComplexConstant<ArrayType<IntegerV
 			// 0 - 31 and > 0x80 (ie top bit set)
 			if (value < 0x20)
 			{
-				byteWriter.writeByte(Slash);
+				byteWriter.writeSlash();
 				byteWriter.writeUtf8EncodedStringWithCertainty(Integer.toHexString(value & 0xFF));
 			}
 			else
@@ -85,9 +84,8 @@ public final class CStringConstant implements ComplexConstant<ArrayType<IntegerV
 			}
 		}
 
-		// ASCII NUL terminator
-		byteWriter.writeByte(0);
+		byteWriter.writeNul();
 
-		byteWriter.writeByte('"');
+		byteWriter.writeDoubleQuote();
 	}
 }

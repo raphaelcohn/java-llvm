@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$" isTestSource="false" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="annotations" level="project" />
+    <orderEntry type="module" module-name="java-classfile-parsing" />
+    <orderEntry type="module" module-name="java-classfile-domain" />
+    <orderEntry type="module" module-name="jopt" />
+    <orderEntry type="module" module-name="path" />
+    <orderEntry type="module" module-name="llvm-domain-module" />
+    <orderEntry type="module" module-name="llvm-domain-metadata-module" />
+    <orderEntry type="module" module-name="llvm-domain-metadata-debugging" />
+    <orderEntry type="module" module-name="string" />
+    <orderEntry type="module" module-name="llvm-domain-asm" />
+    <orderEntry type="module" module-name="java-parsing-utilities" />
+    <orderEntry type="module" module-name="java-classfile-processing" />
+    <orderEntry type="module" module-name="java-llvm-api" />
+  </component>
+</module>

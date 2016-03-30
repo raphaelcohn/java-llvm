@@ -24,27 +24,22 @@ package com.stormmq.llvm.domain.variables;
 
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.*;
+import com.stormmq.llvm.domain.identifiers.AbstractGloballyIdentified;
 import com.stormmq.llvm.domain.identifiers.GlobalIdentifier;
-import org.jetbrains.annotations.*;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
-
-public abstract class AbstractVariable implements Writable
+public abstract class AbstractVariable extends AbstractGloballyIdentified
 {
-	@NotNull private static final byte[] CommaSpace = {',', ' '};
-	@NotNull private static final byte[] SpaceEqualsSpace = encodeUtf8BytesWithCertaintyValueIsValid(" = ");
-	@NotNull private static final byte[] SpaceUnnamedAddress = encodeUtf8BytesWithCertaintyValueIsValid(_unnamed_addr);
-
-	@NotNull private final GlobalIdentifier identifier;
 	@NotNull private final Linkage linkage;
 	@NotNull private final Visibility visibility;
 	@Nullable private final DllStorageClass dllStorageClass;
 	@Nullable private final ThreadLocalStorageModel threadLocalStorageModel;
 	private final boolean hasUnnamedAddress;
 
-	protected AbstractVariable(@NotNull final GlobalIdentifier identifier, @NotNull final Linkage linkage, @NotNull final Visibility visibility, @Nullable final DllStorageClass dllStorageClass, @Nullable final ThreadLocalStorageModel threadLocalStorageModel, final boolean hasUnnamedAddress)
+	protected AbstractVariable(@NotNull final GlobalIdentifier globalIdentifier, @NotNull final Linkage linkage, @NotNull final Visibility visibility, @Nullable final DllStorageClass dllStorageClass, @Nullable final ThreadLocalStorageModel threadLocalStorageModel, final boolean hasUnnamedAddress)
 	{
-		this.identifier = identifier;
+		super(globalIdentifier);
 		this.linkage = linkage;
 		this.visibility = visibility;
 		this.dllStorageClass = dllStorageClass;
@@ -53,26 +48,26 @@ public abstract class AbstractVariable implements Writable
 	}
 
 	@Override
-	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	public final <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
 	{
-		identifier.write(byteWriter);
+		globalIdentifier().write(byteWriter);
 
 		byteWriter.writeBytes(SpaceEqualsSpace);
 
 		byteWriter.writeBytes(linkage.llAssemblyValue);
 
-		Writable.writeSpace(byteWriter);
+		byteWriter.writeSpace();
 		byteWriter.writeBytes(visibility.llAssemblyValue);
 
 		if (dllStorageClass != null)
 		{
-			Writable.writeSpace(byteWriter);
+			byteWriter.writeSpace();
 			byteWriter.writeBytes(dllStorageClass.llAssemblyValue);
 		}
 
 		if (threadLocalStorageModel != null)
 		{
-			Writable.writeSpace(byteWriter);
+			byteWriter.writeSpace();
 			byteWriter.writeBytes(threadLocalStorageModel.llvmAssemblyEncoding);
 		}
 
@@ -83,7 +78,7 @@ public abstract class AbstractVariable implements Writable
 
 		writeVariable(byteWriter);
 
-		Writable.writeLineFeed(byteWriter);
+		byteWriter.writeLineFeed();
 	}
 
 	protected abstract <X extends Exception> void writeVariable(@NotNull final ByteWriter<X> byteWriter) throws X;

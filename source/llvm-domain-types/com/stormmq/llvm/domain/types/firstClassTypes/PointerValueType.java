@@ -23,7 +23,6 @@
 package com.stormmq.llvm.domain.types.firstClassTypes;
 
 import com.stormmq.byteWriters.ByteWriter;
-import com.stormmq.llvm.domain.Writable;
 import com.stormmq.llvm.domain.types.CanBePointedToType;
 import com.stormmq.string.Formatting;
 import org.jetbrains.annotations.NotNull;
@@ -67,14 +66,14 @@ public final class PointerValueType implements PrimitiveSingleValueType
 	{
 		canBePointedToType.write(byteWriter);
 
-		Writable.writeSpace(byteWriter);
+		byteWriter.writeSpace();
 
 		if (addressSpace != 0)
 		{
 			byteWriter.writeBytes(addrspaceOpenBracket);
 			byteWriter.writeUtf8EncodedStringWithCertainty(Integer.toString(addressSpace));
-			byteWriter.writeByte(')');
+			byteWriter.writeCloseBracket();
 		}
-		byteWriter.writeByte('*');
+		byteWriter.writeAsterisk();
 	}
 }

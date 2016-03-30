@@ -22,45 +22,29 @@
 
 package com.stormmq.llvm.domain.module;
 
-import com.stormmq.llvm.domain.ReferenceTracker;
 import com.stormmq.llvm.domain.asm.ModuleLevelInlineAsm;
-import com.stormmq.llvm.domain.comdat.ComdatDefinition;
 import com.stormmq.llvm.domain.function.FunctionDeclaration;
 import com.stormmq.llvm.domain.function.FunctionDefinition;
 import com.stormmq.llvm.domain.identifiers.LocalIdentifier;
 import com.stormmq.llvm.domain.target.dataLayout.DataLayoutSpecification;
+import com.stormmq.llvm.domain.target.triple.Architecture;
 import com.stormmq.llvm.domain.target.triple.TargetTriple;
-import com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.OpaqueStructureType;
 import com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.StructureType;
 import com.stormmq.llvm.domain.variables.Alias;
 import com.stormmq.llvm.domain.variables.GlobalVariable;
-import com.stormmq.llvm.metadata.debugging.*;
-import com.stormmq.llvm.metadata.metadataTuples.AnonymousMetadataTuple;
-import com.stormmq.llvm.metadata.metadataTuples.TypedMetadataTuple;
+import com.stormmq.llvm.metadata.debugging.LlvmDbgCuNamedMetadataTuple;
 import com.stormmq.llvm.metadata.module.LlvmIdentNamedMetadataTuple;
 import com.stormmq.llvm.metadata.module.LlvmModuleFlagsNamedMetadataTuple;
-import org.jetbrains.annotations.*;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.stormmq.llvm.domain.target.dataLayout.DataLayoutSpecification.DarwinOnX86_64;
 import static com.stormmq.llvm.domain.target.triple.TargetTriple.MacOsXMavericksOnX86_64;
-import static com.stormmq.llvm.metadata.debugging.LlvmDebugLanguage.DW_LANG_Java;
-import static com.stormmq.llvm.metadata.metadataTuples.AnonymousMetadataTuple.emptyAnonymousMetadataTuple;
-import static com.stormmq.llvm.metadata.metadataTuples.TypedMetadataTuple.emptyTypedMetadataTuple;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
-import static java.util.Collections.singletonList;
 
 public final class TargetModuleCreator
 {
 	@NotNull public static final TargetModuleCreator MacOsXMavericksX86_64 = new TargetModuleCreator(DarwinOnX86_64, MacOsXMavericksOnX86_64);
-
-	@NotNull private final List<ModuleLevelInlineAsm> NoModuleLevelInlineAsm = emptyList();
-	@NotNull private static final List<ComdatDefinition> NoComdatDefinitions = emptyList();
-	@NotNull private static final Map<LocalIdentifier, OpaqueStructureType> NoOpaqueStructureTypes = emptyMap();
-	@NotNull private static final List<Alias> NoAliases = emptyList();
 
 	@NotNull private final DataLayoutSpecification dataLayoutSpecification;
 	@NotNull private final TargetTriple targetTriple;
@@ -73,8 +57,8 @@ public final class TargetModuleCreator
 	}
 
 	@NotNull
-	public Module newJavaModule(@NotNull final LlvmIdentNamedMetadataTuple identity, @NotNull final LlvmModuleFlagsNamedMetadataTuple moduleFlags, @NotNull final LlvmDbgCuNamedMetadataTuple compileUnits, @NotNull final Map<LocalIdentifier, StructureType> structureTypes, @NotNull final List<GlobalVariable<?>> globalVariablesAndConstants, @NotNull final List<FunctionDeclaration> functionDeclarations, @NotNull final List<FunctionDefinition> functionsDefinitions)
+	public Module newModule(@NotNull final Map<Architecture, List<ModuleLevelInlineAsm>> moduleLevelInlineAssembly, @NotNull final LlvmIdentNamedMetadataTuple identity, @NotNull final LlvmModuleFlagsNamedMetadataTuple moduleFlags, @NotNull final LlvmDbgCuNamedMetadataTuple compileUnits, @NotNull final Map<LocalIdentifier, StructureType> structureTypes, @NotNull final Set<GlobalVariable<?>> globalVariablesAndConstants, @NotNull final Set<FunctionDeclaration> functionDeclarations, @NotNull final Set<FunctionDefinition> functionsDefinitions, @NotNull final Set<Alias> aliases)
 	{
-		return new Module(dataLayoutSpecification, targetTriple, NoModuleLevelInlineAsm, identity, moduleFlags, compileUnits, NoComdatDefinitions, structureTypes, NoOpaqueStructureTypes, globalVariablesAndConstants, functionDeclarations, functionsDefinitions, NoAliases);
+		return new Module(dataLayoutSpecification, targetTriple, moduleLevelInlineAssembly, identity, moduleFlags, compileUnits, structureTypes, globalVariablesAndConstants, functionDeclarations, functionsDefinitions, aliases);
 	}
 }

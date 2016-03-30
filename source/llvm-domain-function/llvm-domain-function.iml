@@ -18,5 +18,6 @@
     <orderEntry type="module" module-name="llvm-domain-names" exported="" />
     <orderEntry type="module" module-name="llvm-domain-metadata-debugging" />
     <orderEntry type="module" module-name="java-parsing-utilities" />
+    <orderEntry type="module" module-name="llvm-domain-target" />
   </component>
 </module>

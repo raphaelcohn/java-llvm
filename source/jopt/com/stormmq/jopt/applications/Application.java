@@ -23,13 +23,14 @@
 package com.stormmq.jopt.applications;
 
 import com.stormmq.jopt.ExitCode;
-import com.stormmq.jopt.applications.fatalApplicationFailureActions.FatalApplicationFailureAction;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOError;
+import java.lang.Thread.UncaughtExceptionHandler;
 
 import static com.stormmq.jopt.ExitCode.*;
-import static com.stormmq.jopt.applications.fatalApplicationFailureActions.PrintStreamFatalApplicationFailureAction.StandardErrorFatalApplicationFailureAction;
+import static com.stormmq.jopt.applications.uncaughtExceptionHandlers.PrintStreamUncaughtExceptionHandler.StandardErrorUncaughtExceptionHandler;
+import static java.lang.Thread.currentThread;
 
 @FunctionalInterface
 public interface Application
@@ -39,11 +40,11 @@ public interface Application
 
 	static void run(@NotNull final Application application)
 	{
-		run(application, StandardErrorFatalApplicationFailureAction);
+		run(application, StandardErrorUncaughtExceptionHandler);
 	}
 
 	@SuppressWarnings("ErrorNotRethrown")
-	static void run(@NotNull final Application application, @NotNull final FatalApplicationFailureAction fatalApplicationFailureAction)
+	static void run(@NotNull final Application application, @NotNull final UncaughtExceptionHandler uncaughtExceptionHandler)
 	{
 		ExitCode exitCode;
 		try
@@ -52,18 +53,23 @@ public interface Application
 		}
 		catch (final IOError e)
 		{
-			exitCode = IOError;
-			fatalApplicationFailureAction.failure(e);
+			exitCode = handle(uncaughtExceptionHandler, e, IOError);
 		}
 		catch (final Throwable e)
 		{
-			exitCode = Software;
-			fatalApplicationFailureAction.failure(e);
+			exitCode = handle(uncaughtExceptionHandler, e, Software);
 		}
 
 		if (exitCode != Success)
 		{
 			exitCode.exit();
 		}
+	}
+
+	@NotNull
+	static ExitCode handle(@NotNull final UncaughtExceptionHandler uncaughtExceptionHandler, @NotNull final Throwable throwable, @NotNull final ExitCode exitCode)
+	{
+		uncaughtExceptionHandler.uncaughtException(currentThread(), throwable);
+		return exitCode;
 	}
 }

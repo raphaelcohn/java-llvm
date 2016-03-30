@@ -76,7 +76,7 @@ public class AttributeGroup<A extends Attribute> implements Writable
 		{
 			if (afterFirst)
 			{
-				Writable.writeSpace(byteWriter);
+				byteWriter.writeSpace();
 			}
 			else
 			{

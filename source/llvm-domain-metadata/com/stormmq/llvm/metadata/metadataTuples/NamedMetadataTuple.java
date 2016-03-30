@@ -36,7 +36,6 @@ import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyVal
 public class NamedMetadataTuple implements Writable
 {
 	@NotNull private static final byte[] SpaceEqualsSpaceExclamationMarkOpenBrace = encodeUtf8BytesWithCertaintyValueIsValid(" = !{");
-	@SuppressWarnings("HardcodedLineSeparator") @NotNull private static final byte[] CloseBraceLineFeed = encodeUtf8BytesWithCertaintyValueIsValid("}\n");
 
 	@SuppressWarnings("FieldNotUsedInToString") @NotNull private final ReferenceTracker referenceTracker;
 	@NotNull private final String name;
@@ -62,7 +61,7 @@ public class NamedMetadataTuple implements Writable
 	{
 		if (hasBeenWritten())
 		{
-			byteWriter.writeByte('!');
+			byteWriter.writeExclamationMark();
 			byteWriter.writeBytes(llAssemblyEncoding);
 			return;
 		}
@@ -94,7 +93,7 @@ public class NamedMetadataTuple implements Writable
 			}
 		}
 
-		byteWriter.writeByte('!');
+		byteWriter.writeExclamationMark();
 		byteWriter.writeBytes(llAssemblyEncoding);
 
 		byteWriter.writeBytes(SpaceEqualsSpaceExclamationMarkOpenBrace);
@@ -112,12 +111,12 @@ public class NamedMetadataTuple implements Writable
 			}
 			else
 			{
-				byteWriter.writeByte('!');
+				byteWriter.writeExclamationMark();
 				byteWriter.writeUtf8EncodedStringWithCertainty(Integer.toString(referenceIndices[index]));
 			}
 		}
 		byteWriter.writeBytes(CloseBraceLineFeed);
-		Writable.writeLineFeed(byteWriter);
+		byteWriter.writeLineFeed();
 	}
 
 	@Override

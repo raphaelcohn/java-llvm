@@ -24,36 +24,43 @@ package com.stormmq.llvm.domain.variables;
 
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.*;
-import com.stormmq.llvm.domain.comdat.ComdatIdentifier;
+import com.stormmq.llvm.domain.comdat.ComdatDefinition;
+import com.stormmq.llvm.domain.comdat.MayHaveComdatDefinition;
 import com.stormmq.llvm.domain.constants.Constant;
 import com.stormmq.llvm.domain.identifiers.GlobalIdentifier;
 import com.stormmq.llvm.domain.names.SectionName;
+import com.stormmq.llvm.domain.target.triple.TargetTriple;
 import com.stormmq.llvm.domain.types.Type;
 import com.stormmq.string.Formatting;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Set;
+
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
 
-public final class GlobalVariable<T extends Type> extends AbstractVariable
+public final class GlobalVariable<T extends Type> extends AbstractVariable implements MayHaveComdatDefinition
 {
 	private static final int MaximumPowerOfTwo = 29;
 	@SuppressWarnings("SpellCheckingInspection") @NotNull private static final byte[] SpaceAddressSpaceStart = encodeUtf8BytesWithCertaintyValueIsValid(" addrspace(");
+	@NotNull private static final byte[] SpaceExternallyInitialized = encodeUtf8BytesWithCertaintyValueIsValid(" externally_initialized");
 	@NotNull private static final byte[] SpaceGlobal = encodeUtf8BytesWithCertaintyValueIsValid(" global");
 	@NotNull private static final byte[] SpaceConstant = encodeUtf8BytesWithCertaintyValueIsValid(" constant");
 	@NotNull private static final byte[] CommaSpaceAlignSpace = encodeUtf8BytesWithCertaintyValueIsValid(", align ");
 
 	private final int addressSpace;
+	private final boolean isExternallyInitialized;
 	private final boolean isConstant;
 	@NotNull private final T type;
 	@Nullable private final Constant<T> initializerConstant;
 	@Nullable private final SectionName sectionName;
-	@Nullable private final ComdatIdentifier comdatIdentifier;
+	@Nullable private ComdatDefinition comdatDefinition;
 	private final int alignmentAsPowerOfTwo;
 
-	public GlobalVariable(@NotNull final GlobalIdentifier identifier, @NotNull final Linkage linkage, @NotNull final Visibility visibility, @Nullable final DllStorageClass dllStorageClass, @Nullable final ThreadLocalStorageModel threadLocalStorageModel, final boolean hasUnnamedAddress, final int addressSpace, final boolean isConstant, @NotNull final T type, @Nullable final Constant<T> initializerConstant, @Nullable final SectionName sectionName, @Nullable final ComdatIdentifier comdatIdentifier, final int alignmentAsPowerOfTwo)
+	public GlobalVariable(@NotNull final GlobalIdentifier globalIdentifier, @NotNull final Linkage linkage, @NotNull final Visibility visibility, @Nullable final DllStorageClass dllStorageClass, @Nullable final ThreadLocalStorageModel threadLocalStorageModel, final boolean hasUnnamedAddress, final int addressSpace, final boolean isExternallyInitialized, final boolean isConstant, @NotNull final T type, @Nullable final Constant<T> initializerConstant, @Nullable final SectionName sectionName, @Nullable final ComdatDefinition comdatDefinition, final int alignmentAsPowerOfTwo)
 	{
-		super(identifier, linkage, visibility, dllStorageClass, threadLocalStorageModel, hasUnnamedAddress);
+		super(globalIdentifier, linkage, visibility, dllStorageClass, threadLocalStorageModel, hasUnnamedAddress);
+		this.isExternallyInitialized = isExternallyInitialized;
 		if (alignmentAsPowerOfTwo < AutomaticAlignment)
 		{
 			throw new IllegalArgumentException(Formatting.format("alignmentAsPowerOfTwo ('%1$s') can not be negative", alignmentAsPowerOfTwo));
@@ -74,7 +81,7 @@ public final class GlobalVariable<T extends Type> extends AbstractVariable
 		this.type = type;
 		this.initializerConstant = initializerConstant;
 		this.sectionName = sectionName;
-		this.comdatIdentifier = comdatIdentifier;
+		this.comdatDefinition = comdatDefinition;
 		this.alignmentAsPowerOfTwo = alignmentAsPowerOfTwo;
 	}
 
@@ -87,15 +94,18 @@ public final class GlobalVariable<T extends Type> extends AbstractVariable
 		{
 			byteWriter.writeBytes(SpaceAddressSpaceStart);
 			byteWriter.writeUtf8EncodedStringWithCertainty(Integer.toString(addressSpace));
-			byteWriter.writeByte(')');
+			byteWriter.writeCloseBracket();
 		}
 
-		// TODO: ExternallyInitialized
+		if (isExternallyInitialized)
+		{
+			byteWriter.writeBytes(SpaceExternallyInitialized);
+		}
 
 		final byte[] globalOrConstant = isConstant ? SpaceConstant : SpaceGlobal;
 		byteWriter.writeBytes(globalOrConstant);
 
-		Writable.writeSpace(byteWriter);
+		byteWriter.writeSpace();
 		type.write(byteWriter);
 
 		if (initializerConstant != null)
@@ -109,10 +119,10 @@ public final class GlobalVariable<T extends Type> extends AbstractVariable
 			sectionName.write(byteWriter);
 		}
 
-		if (comdatIdentifier != null)
+		if (comdatDefinition != null)
 		{
 			writeCommaSpace(byteWriter);
-			comdatIdentifier.write(byteWriter);
+			comdatDefinition.writeComdatIdentifier(byteWriter);
 		}
 
 		if (alignmentAsPowerOfTwo != AutomaticAlignment)
@@ -121,5 +131,11 @@ public final class GlobalVariable<T extends Type> extends AbstractVariable
 			byteWriter.writeBytes(CommaSpaceAlignSpace);
 			byteWriter.writeUtf8EncodedStringWithCertainty(Integer.toString(alignmentInBytes));
 		}
+	}
+
+	@Override
+	public void adjustComdatDefinition(@NotNull final Set<ComdatDefinition> comdatDefinitions, @NotNull final TargetTriple targetTriple)
+	{
+		comdatDefinition = MayHaveComdatDefinition.adjustComdatDefinition(comdatDefinitions, comdatDefinition, targetTriple);
 	}
 }

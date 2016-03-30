@@ -11,10 +11,16 @@ int main()
 	return 5;
 }
 
+typedef struct OtherClass OtherClass;
+
+typedef struct MyClassExample MyClassExample;
 struct MyClassExample
 {
-	size_t length;
+	int x;
+	MyClassExample* y;
+	OtherClass* z;
 };
+
 
 signed int example(struct MyClassExample* ref, _Bool aa, signed char bb, unsigned char cc, signed short ee, unsigned short ff, signed int gg, unsigned int hh, int64_t ii, uint64_t jj, float kk, double ll)
 {

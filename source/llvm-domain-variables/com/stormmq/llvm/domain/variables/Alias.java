@@ -37,9 +37,9 @@ public final class Alias extends AbstractVariable
 	@NotNull private final Type[] aliasedTypes;
 	@NotNull private final GlobalIdentifier originalGlobalVariableOrFunctionName;
 
-	public Alias(@NotNull final GlobalIdentifier identifier, @NotNull final Linkage linkage, @NotNull final Visibility visibility, @Nullable final DllStorageClass dllStorageClass, @Nullable final ThreadLocalStorageModel threadLocalStorageModel, final boolean hasUnnamedAddress, @NotNull final Type[] aliasedTypes, @NotNull final GlobalIdentifier originalGlobalVariableOrFunctionName)
+	public Alias(@NotNull final GlobalIdentifier globalIdentifier, @NotNull final Linkage linkage, @NotNull final Visibility visibility, @Nullable final DllStorageClass dllStorageClass, @Nullable final ThreadLocalStorageModel threadLocalStorageModel, final boolean hasUnnamedAddress, @NotNull final Type[] aliasedTypes, @NotNull final GlobalIdentifier originalGlobalVariableOrFunctionName)
 	{
-		super(identifier, linkage, visibility, dllStorageClass, threadLocalStorageModel, hasUnnamedAddress);
+		super(globalIdentifier, linkage, visibility, dllStorageClass, threadLocalStorageModel, hasUnnamedAddress);
 		this.aliasedTypes = aliasedTypes;
 		this.originalGlobalVariableOrFunctionName = originalGlobalVariableOrFunctionName;
 
@@ -53,9 +53,9 @@ public final class Alias extends AbstractVariable
 			throw new IllegalArgumentException("There must be at least one aliased type");
 		}
 
-		if (identifier.equals(originalGlobalVariableOrFunctionName))
+		if (globalIdentifier.equals(originalGlobalVariableOrFunctionName))
 		{
-			throw new IllegalArgumentException(Formatting.format("The alias name '%1$s' can not match the name of the thing being aliased '%2$s'", identifier, originalGlobalVariableOrFunctionName));
+			throw new IllegalArgumentException(Formatting.format("The alias name '%1$s' can not match the name of the thing being aliased '%2$s'", globalIdentifier, originalGlobalVariableOrFunctionName));
 		}
 	}
 
@@ -71,7 +71,7 @@ public final class Alias extends AbstractVariable
 		{
 			if (index == 0)
 			{
-				Writable.writeSpace(byteWriter);
+				byteWriter.writeSpace();
 			}
 			else
 			{
@@ -80,7 +80,7 @@ public final class Alias extends AbstractVariable
 			aliasedTypes[index].write(byteWriter);
 		}
 
-		Writable.writeSpace(byteWriter);
+		byteWriter.writeSpace();
 		originalGlobalVariableOrFunctionName.write(byteWriter);
 	}
 }

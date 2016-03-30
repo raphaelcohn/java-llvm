@@ -28,7 +28,6 @@ import org.jetbrains.annotations.*;
 public final class FunctionType implements TypeExcludingVoid, CanBePointedToType
 {
 	@NotNull private static final byte[] SpaceOpenBracket = {' ', '('};
-	@NotNull private static final byte[] CommaSpace = {',', ' '};
 
 	@NotNull private final VoidOrFirstClassTypeExcludingLabelAndMetadata returnType;
 	@NotNull private final TypeExcludingVoid[] formalParameterTypes;
@@ -56,6 +55,6 @@ public final class FunctionType implements TypeExcludingVoid, CanBePointedToType
 			formalParameterTypes[index].write(byteWriter);
 		}
 
-		byteWriter.writeByte(')');
+		byteWriter.writeCloseBracket();
 	}
 }

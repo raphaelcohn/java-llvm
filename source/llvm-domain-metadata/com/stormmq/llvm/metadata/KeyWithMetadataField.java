@@ -75,7 +75,7 @@ public final class KeyWithMetadataField
 		}
 		else
 		{
-			byteWriter.writeByte('!');
+			byteWriter.writeExclamationMark();
 			byteWriter.writeUtf8EncodedStringWithCertainty(Integer.toString(underlying.referenceIndex()));
 		}
 	}

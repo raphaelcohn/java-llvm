@@ -37,20 +37,17 @@ public interface Writable
 
 	@NotNull byte[] SpaceEqualsSpace = encodeUtf8BytesWithCertaintyValueIsValid(" = ");
 
-	@SuppressWarnings("SpellCheckingInspection") @NonNls String _unnamed_addr = " unnamed_addr";
+	@NotNull byte[] SpaceUnnamedAddress = encodeUtf8BytesWithCertaintyValueIsValid(" unnamed_addr");
 
-	@NonNls String _align_ = " align ";
+	@NotNull byte[] SpaceAlignSpace = encodeUtf8BytesWithCertaintyValueIsValid(" align ");
 
-	static <X extends Exception> void writeSpace(@NotNull final ByteWriter<X> byteWriter) throws X
-	{
-		byteWriter.writeByte(' ');
-	}
+	@NotNull byte[] OpenBracketSpace = {'{', ' '};
 
-	@SuppressWarnings("HardcodedLineSeparator")
-	static <X extends Exception> void writeLineFeed(@NotNull final ByteWriter<X> byteWriter) throws X
-	{
-		byteWriter.writeByte((byte) '\n');
-	}
+	@NotNull byte[] SpaceCloseBracket = {' ', '}'};
+
+	@SuppressWarnings("HardcodedLineSeparator") @NotNull byte[] CloseBracketLineFeed = {')', '\n'};
+
+	@SuppressWarnings("HardcodedLineSeparator") @NotNull byte[] CloseBraceLineFeed = {'}', '\n'};
 
 	<X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X;
 }

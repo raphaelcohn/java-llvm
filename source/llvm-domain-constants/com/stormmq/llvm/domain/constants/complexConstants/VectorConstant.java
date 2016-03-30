@@ -33,7 +33,6 @@ import org.jetbrains.annotations.NotNull;
 public final class VectorConstant<T extends PrimitiveSingleValueType> implements ComplexConstant<VectorType<T>>
 {
 	@NotNull private static final byte[] Start = {'<', ' '};
-	@NotNull private static final byte[] CommaSpace = {',', ' '};
 	@NotNull private static final byte[] End = {' ', '>'};
 
 	@NotNull private final VectorType<T> vectorType;

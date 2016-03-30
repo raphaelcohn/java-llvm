@@ -27,11 +27,11 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
 
-public final class OpaqueStructureType implements AggregateType
+public final class OpaqueStructureType implements StructureType
 {
 	@NotNull private static final byte[] Bytes = encodeUtf8BytesWithCertaintyValueIsValid("opaque");
 
-	@NotNull public static final AggregateType OpaqueStructure = new OpaqueStructureType();
+	@NotNull public static final OpaqueStructureType OpaqueStructure = new OpaqueStructureType();
 
 	private OpaqueStructureType()
 	{

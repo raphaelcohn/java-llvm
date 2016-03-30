@@ -48,6 +48,6 @@ public final class ModuleLevelInlineAsm implements Writable
 
 		asm.write(byteWriter);
 
-		Writable.writeLineFeed(byteWriter);
+		byteWriter.writeLineFeed();
 	}
 }

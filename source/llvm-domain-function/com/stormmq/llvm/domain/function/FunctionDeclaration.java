@@ -27,19 +27,16 @@ import com.stormmq.llvm.domain.*;
 import com.stormmq.llvm.domain.attributes.AttributeGroup;
 import com.stormmq.llvm.domain.function.attributes.FunctionAttributeGroup;
 import com.stormmq.llvm.domain.function.attributes.parameterAttributes.ParameterAttribute;
-import com.stormmq.llvm.domain.identifiers.GlobalIdentifier;
+import com.stormmq.llvm.domain.identifiers.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.stormmq.llvm.domain.Writable.writeSpace;
 import static com.stormmq.llvm.domain.function.attributes.FunctionAttributeGroup.writeFunctionAttributes;
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
 
-public final class FunctionDeclaration implements Writable
+public final class FunctionDeclaration extends AbstractGloballyIdentified
 {
 	@NotNull private static final byte[] declareSpace = encodeUtf8BytesWithCertaintyValueIsValid("declare ");
-	@NotNull private static final byte[] UnnamedAddress = encodeUtf8BytesWithCertaintyValueIsValid(_unnamed_addr);
-	@NotNull private static final byte[] SpaceAlignSpace = encodeUtf8BytesWithCertaintyValueIsValid(_align_);
 
 	@NotNull private final Linkage linkage;
 	@NotNull private final Visibility visibility;
@@ -47,7 +44,6 @@ public final class FunctionDeclaration implements Writable
 	@NotNull private final CallingConvention callingConvention;
 	@NotNull private final AttributeGroup<ParameterAttribute> returnAttributes;
 	@NotNull private final FormalParameter resultType;
-	@NotNull private final GlobalIdentifier functionIdentifier;
 	@NotNull private final FormalParameter[] parameters;
 	private final boolean hasUnnamedAddress;
 	@NotNull private final FunctionAttributeGroup functionAttributes;
@@ -55,15 +51,15 @@ public final class FunctionDeclaration implements Writable
 	@Nullable private final GarbageCollectorStrategyName garbageCollectorStrategyName;
 
 	// also prefix, prologue
-	public FunctionDeclaration(@NotNull final Linkage linkage, @NotNull final Visibility visibility, @Nullable final DllStorageClass dllStorageClass, @NotNull final CallingConvention callingConvention, @NotNull final AttributeGroup<ParameterAttribute> returnAttributes, @NotNull final FormalParameter resultType, @NotNull final GlobalIdentifier functionIdentifier, @NotNull final FormalParameter[] parameters, final boolean hasUnnamedAddress, @NotNull final FunctionAttributeGroup functionAttributes, final int alignment, @Nullable final GarbageCollectorStrategyName garbageCollectorStrategyName)
+	public FunctionDeclaration(@NotNull final Linkage linkage, @NotNull final Visibility visibility, @Nullable final DllStorageClass dllStorageClass, @NotNull final CallingConvention callingConvention, @NotNull final AttributeGroup<ParameterAttribute> returnAttributes, @NotNull final FormalParameter resultType, @NotNull final GlobalIdentifier globalIdentifier, @NotNull final FormalParameter[] parameters, final boolean hasUnnamedAddress, @NotNull final FunctionAttributeGroup functionAttributes, final int alignment, @Nullable final GarbageCollectorStrategyName garbageCollectorStrategyName)
 	{
+		super(globalIdentifier);
 		this.linkage = linkage;
 		this.visibility = visibility;
 		this.dllStorageClass = dllStorageClass;
 		this.callingConvention = callingConvention;
 		this.returnAttributes = returnAttributes;
 		this.resultType = resultType;
-		this.functionIdentifier = functionIdentifier;
 		this.parameters = parameters;
 		this.hasUnnamedAddress = hasUnnamedAddress;
 		this.functionAttributes = functionAttributes;
@@ -79,37 +75,37 @@ public final class FunctionDeclaration implements Writable
 		byteWriter.writeBytes(declareSpace);
 		byteWriter.writeBytes(linkage.llAssemblyValue);
 
-		writeSpace(byteWriter);
+		byteWriter.writeSpace();
 		byteWriter.writeBytes(visibility.llAssemblyValue);
 
 		if (dllStorageClass != null)
 		{
-			writeSpace(byteWriter);
+			byteWriter.writeSpace();
 			byteWriter.writeBytes(dllStorageClass.llAssemblyValue);
 		}
 
-		writeSpace(byteWriter);
+		byteWriter.writeSpace();
 		byteWriter.writeBytes(callingConvention.llAssemblyValue);
 
-		writeSpace(byteWriter);
+		byteWriter.writeSpace();
 		returnAttributes.write(byteWriter);
 
-		writeSpace(byteWriter);
+		byteWriter.writeSpace();
 		resultType.write(byteWriter);
 
-		writeSpace(byteWriter);
-		functionIdentifier.write(byteWriter);
+		byteWriter.writeSpace();
+		globalIdentifier().write(byteWriter);
 
-		byteWriter.writeByte('(');
+		byteWriter.writeOpenBracket();
 		for (final FormalParameter parameter : parameters)
 		{
 			parameter.write(byteWriter);
 		}
-		byteWriter.writeByte(')');
+		byteWriter.writeCloseBracket();
 
 		if (hasUnnamedAddress)
 		{
-			byteWriter.writeBytes(UnnamedAddress);
+			byteWriter.writeBytes(SpaceUnnamedAddress);
 		}
 
 		writeFunctionAttributes(byteWriter, referenceIndex);
@@ -122,10 +118,10 @@ public final class FunctionDeclaration implements Writable
 
 		if (garbageCollectorStrategyName != null)
 		{
-			writeSpace(byteWriter);
+			byteWriter.writeSpace();
 			byteWriter.writeBytes(garbageCollectorStrategyName.llvmAssemblyEncoding);
 		}
 
-		Writable.writeLineFeed(byteWriter);
+		byteWriter.writeLineFeed();
 	}
 }

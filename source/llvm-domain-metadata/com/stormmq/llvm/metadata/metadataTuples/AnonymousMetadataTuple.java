@@ -76,7 +76,7 @@ public class AnonymousMetadataTuple implements Metadata
 	{
 		if (hasBeenWritten())
 		{
-			byteWriter.writeByte('!');
+			byteWriter.writeExclamationMark();
 			byteWriter.writeUtf8EncodedStringWithCertainty(Integer.toString(referenceIndex()));
 			return;
 		}

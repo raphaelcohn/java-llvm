@@ -22,7 +22,6 @@
 
 package com.stormmq.jopt;
 
-import com.stormmq.string.Formatting;
 import joptsimple.*;
 import org.jetbrains.annotations.*;
 
@@ -32,8 +31,8 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Supplier;
 
-import static com.stormmq.jopt.Verbosity.None;
-import static com.stormmq.jopt.Verbosity.Verbose;
+import static com.stormmq.jopt.Verbosity.*;
+import static com.stormmq.string.Formatting.format;
 import static java.lang.System.err;
 import static java.lang.System.out;
 import static java.util.Arrays.copyOfRange;
@@ -73,23 +72,21 @@ public class CommandLineArgumentsParser
 		this.standardOut = standardOut;
 		this.standardError = standardError;
 		allKnownOptions = new HashSet<>(16);
-		optionParser = newOptionParser();
+		optionParser = new OptionParser();
 		optionsThatMustBePresent = new LinkedHashSet<>(8);
 		arguments = null;
+
+		configureOptionParser();
 	}
 
-	@NotNull
-	private OptionParser newOptionParser()
+	private void configureOptionParser()
 	{
-		final OptionParser optionParser = new OptionParser();
 		optionParser.posixlyCorrect(true);
 
 		optionParser.accepts(help, show_help).forHelp();
 		allKnownOptions.add(help);
 
-		optionWithOptionalValue(false, verbose, Formatting.format("verbosity level (%1$s - %2$s)", None.ordinal(), Verbosity.Everything.ordinal()), "1").withValuesConvertedBy(new VerbosityValueConverter()).defaultsTo(Verbose);
-
-		return optionParser;
+		optionWithOptionalValue(false, verbose, format("verbosity level (%1$s - %2$s)", None.ordinal(), Everything.ordinal()), Integer.toString(Verbose.ordinal())).withValuesConvertedBy(new VerbosityValueConverter()).defaultsTo(Verbose);
 	}
 
 	@NotNull
@@ -171,14 +168,14 @@ public class CommandLineArgumentsParser
 
 		if (!allKnownOptions.add(optionName))
 		{
-			throw new IllegalStateException(Formatting.format("Option '%1$s' has already been added", optionName));
+			throw new IllegalStateException(format("Option '%1$s' has already been added", optionName));
 		}
 
 		if (optionMustBePresent)
 		{
 			if (!optionsThatMustBePresent.add(optionName))
 			{
-				throw new IllegalArgumentException(Formatting.format("Option '%1$s' is already one that must be present", optionName));
+				throw new IllegalArgumentException(format("Option '%1$s' is already one that must be present", optionName));
 			}
 		}
 
@@ -221,12 +218,12 @@ public class CommandLineArgumentsParser
 				}
 				catch (final IllegalArgumentException e)
 				{
-					throw new ValueConversionException(Formatting.format("No verbosity level '%1$s' is known for option --%2$s", value, verbose), e);
+					throw new ValueConversionException(format("No verbosity level '%1$s' is known for option --%2$s", value, verbose), e);
 				}
 			}
 			if (integer < 0)
 			{
-				throw new ValueConversionException(Formatting.format("Verbosity level '%1$s' is negative for option --%2$s", value, verbose));
+				throw new ValueConversionException(format("Verbosity level '%1$s' is negative for option --%2$s", value, verbose));
 			}
 			Verbosity mostVerbosePossibilityIfValueTooHigh = None;
 			for (final Verbosity verbosity : Verbosity.values())

@@ -22,50 +22,6 @@
 
 package com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes;
 
-import com.stormmq.byteWriters.ByteWriter;
-import com.stormmq.llvm.domain.types.Type;
-import org.jetbrains.annotations.NotNull;
-
-public final class StructureType implements AggregateType
+public interface StructureType extends AggregateType
 {
-	@NotNull private static final byte[] Start = {'{', ' '};
-	@NotNull private static final byte[] CommaSpace = {',', ' '};
-	@NotNull private static final byte[] End = {' ', '}'};
-
-	private final boolean isPacked;
-	@NotNull private final Type[] types;
-
-	public StructureType(final boolean isPacked, @NotNull final Type... types)
-	{
-		this.isPacked = isPacked;
-		this.types = types;
-	}
-
-	// when defining, needs to have 'type '
-	@Override
-	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
-	{
-		if (isPacked)
-		{
-			byteWriter.writeByte('<');
-		}
-		byteWriter.writeBytes(Start);
-
-		final int length = types.length;
-		for (int index = 0; index < length; index++)
-		{
-			final Type type = types[index];
-			if (index != 0)
-			{
-				byteWriter.writeBytes(CommaSpace);
-			}
-			type.write(byteWriter);
-		}
-
-		byteWriter.writeBytes(End);
-		if (isPacked)
-		{
-			byteWriter.writeByte('>');
-		}
-	}
 }

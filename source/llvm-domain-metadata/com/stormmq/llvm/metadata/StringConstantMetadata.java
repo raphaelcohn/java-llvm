@@ -66,7 +66,7 @@ public final class StringConstantMetadata implements Metadata
 	{
 		byteWriter.writeBytes(ExclamationMarkDoubleQuote);
 		byteWriter.writeBytes(llAssembleEncoding);
-		byteWriter.writeByte('"');
+		byteWriter.writeDoubleQuote();
 	}
 
 	@Override

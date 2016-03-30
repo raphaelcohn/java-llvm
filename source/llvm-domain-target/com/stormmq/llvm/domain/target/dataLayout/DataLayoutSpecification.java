@@ -37,7 +37,6 @@ public final class DataLayoutSpecification implements Writable
 {
 	@SuppressWarnings("SpellCheckingInspection") @NotNull private static final byte[] TargetDataLayoutStart = encodeUtf8BytesWithCertaintyValueIsValid("target datalayout = \"");
 	@SuppressWarnings("HardcodedLineSeparator") @NotNull private static final byte[] End = encodeUtf8BytesWithCertaintyValueIsValid("\"\n");
-	private static final byte Hyphen = '-';
 
 	@NotNull public static final Endianness DefaultEndianness = BigEndian; // Mach OS X is LittleEndian
 	public static final int DefaultStackAlignmentSizeInBytes = 0; // Mac OS X is 16
@@ -133,7 +132,7 @@ public final class DataLayoutSpecification implements Writable
 
 	private static <X extends Exception> void writeField(@NotNull final ByteWriter<X> byteWriter, @NotNull @NonNls final String dataLayoutEncodingA, @NotNull @NonNls final String dataLayoutEncodingB) throws X
 	{
-		byteWriter.writeByte(Hyphen);
+		byteWriter.writeHyphen();
 		byteWriter.writeUtf8EncodedStringWithCertainty(dataLayoutEncodingA);
 		byteWriter.writeUtf8EncodedStringWithCertainty(dataLayoutEncodingB);
 	}

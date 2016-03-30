@@ -61,7 +61,7 @@ public class LlvmString implements Writable
 	{
 		if (valueNeedsEscaping)
 		{
-			byteWriter.writeByte('"');
+			byteWriter.writeDoubleQuote();
 			try
 			{
 				encodeUtf8Bytes(value, new WritingUtf8ByteUser<>(byteWriter));
@@ -70,7 +70,7 @@ public class LlvmString implements Writable
 			{
 				throw new IllegalStateException("Should never happen", e);
 			}
-			byteWriter.writeByte('"');
+			byteWriter.writeDoubleQuote();
 		}
 		else
 		{
@@ -455,7 +455,7 @@ public class LlvmString implements Writable
 
 		private void writeEscapedByte(final int utf8Byte) throws X
 		{
-			byteWriter.writeByte(Slash);
+			byteWriter.writeSlash();
 			byteWriter.writeUtf8EncodedStringWithCertainty(Integer.toHexString(utf8Byte));
 		}
 	}

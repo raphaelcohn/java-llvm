@@ -28,17 +28,17 @@ import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyVal
 
 public enum Linkage
 {
-	_private,
-	internal(true),
-	available_externally,
-	@SuppressWarnings("SpellCheckingInspection")linkonce,
-	weak(true),
-	common,
-	appending,
-	extern_weak,
-	@SuppressWarnings("SpellCheckingInspection")linkonce_odr,
-	weak_odr,
-	external(true),
+	@SuppressWarnings("unused")_private,
+	@SuppressWarnings("unused")internal(true),
+	@SuppressWarnings("unused")available_externally,
+	@SuppressWarnings({"unused", "SpellCheckingInspection"})linkonce,
+	@SuppressWarnings("unused")weak(true),
+	@SuppressWarnings("unused")common,
+	@SuppressWarnings("unused")appending,
+	@SuppressWarnings("unused")extern_weak,
+	@SuppressWarnings({"unused", "SpellCheckingInspection"})linkonce_odr,
+	@SuppressWarnings("unused")weak_odr,
+	@SuppressWarnings("unused")external(true),
 	;
 
 	public final boolean isPermittedForAlias;

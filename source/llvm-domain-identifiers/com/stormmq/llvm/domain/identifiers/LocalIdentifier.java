@@ -22,9 +22,11 @@
 
 package com.stormmq.llvm.domain.identifiers;
 
-import org.jetbrains.annotations.*;
+import com.stormmq.llvm.domain.types.CanBePointedToType;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
-public final class LocalIdentifier extends AbstractIdentifier
+public final class LocalIdentifier extends AbstractIdentifier implements CanBePointedToType
 {
 	private static final byte Percent = (byte) '%';
 

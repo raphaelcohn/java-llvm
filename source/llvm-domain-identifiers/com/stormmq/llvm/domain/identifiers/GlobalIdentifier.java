@@ -22,9 +22,10 @@
 
 package com.stormmq.llvm.domain.identifiers;
 
+import com.stormmq.llvm.domain.types.CanBePointedToType;
 import org.jetbrains.annotations.*;
 
-public final class GlobalIdentifier extends AbstractIdentifier
+public final class GlobalIdentifier extends AbstractIdentifier implements CanBePointedToType
 {
 	private static final byte At = (byte) '@';
 

@@ -35,10 +35,10 @@ import static java.util.EnumSet.of;
 public enum ComdatSelectionKind
 {
 	any(true),
-	@SuppressWarnings("SpellCheckingInspection")exactmatch,
-	largest,
-	@SuppressWarnings("SpellCheckingInspection")noduplicates,
-	@SuppressWarnings("SpellCheckingInspection")samesize,
+	@SuppressWarnings({"SpellCheckingInspection", "unused"})exactmatch,
+	@SuppressWarnings("unused")largest,
+	@SuppressWarnings({"SpellCheckingInspection", "unused"})noduplicates,
+	@SuppressWarnings({"SpellCheckingInspection", "unused"})samesize,
 	;
 
 	@NotNull public final byte[] llAssemblyValueWithLineFeed;

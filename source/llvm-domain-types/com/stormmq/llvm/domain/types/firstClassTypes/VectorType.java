@@ -50,12 +50,12 @@ public final class VectorType<T extends PrimitiveSingleValueType> implements Sin
 	@Override
 	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
 	{
-		byteWriter.writeByte('<');
+		byteWriter.writeOpenAngleBracket();
 
 		byteWriter.writeUtf8EncodedStringWithCertainty(Integer.toString(numberOfElements));
 		byteWriter.writeBytes(SpaceXSpace);
 		primitiveSingleValueType.write(byteWriter);
 
-		byteWriter.writeByte('>');
+		byteWriter.writeCloseAngleBracket();
 	}
 }

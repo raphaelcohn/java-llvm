@@ -58,7 +58,7 @@ public final class ConstantMetadata implements Metadata
 	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
 	{
 		value.type().write(byteWriter);
-		byteWriter.writeByte(' ');
+		byteWriter.writeSpace();
 		value.write(byteWriter);
 	}
 

@@ -24,7 +24,6 @@ package com.stormmq.llvm.metadata.metadataTuples;
 
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.ReferenceTracker;
-import com.stormmq.llvm.domain.Writable;
 import com.stormmq.llvm.metadata.KeyWithMetadataField;
 import com.stormmq.llvm.metadata.Metadata;
 import org.jetbrains.annotations.*;
@@ -36,7 +35,6 @@ import static java.util.Arrays.asList;
 
 public class KeyedMetadataTuple implements Metadata
 {
-	@SuppressWarnings("HardcodedLineSeparator") @NotNull private static final byte[] CloseBracketLineFeed = encodeUtf8BytesWithCertaintyValueIsValid(")\n");
 	@NotNull private static final byte[] distinctSpace = encodeUtf8BytesWithCertaintyValueIsValid("distinct ");
 
 	@NotNull private final ReferenceTracker referenceTracker;
@@ -81,7 +79,7 @@ public class KeyedMetadataTuple implements Metadata
 	{
 		if (hasBeenWritten())
 		{
-			byteWriter.writeByte('!');
+			byteWriter.writeExclamationMark();
 			byteWriter.writeUtf8EncodedStringWithCertainty(Integer.toString(referenceIndex()));
 			return;
 		}
@@ -91,7 +89,7 @@ public class KeyedMetadataTuple implements Metadata
 			field.writeIfNotAConstant(byteWriter);
 		}
 
-		byteWriter.writeByte('!');
+		byteWriter.writeExclamationMark();
 		byteWriter.writeUtf8EncodedStringWithCertainty(Integer.toString(referenceIndex()));
 
 		byteWriter.writeBytes(SpaceEqualsSpace);
@@ -100,9 +98,9 @@ public class KeyedMetadataTuple implements Metadata
 			byteWriter.writeBytes(distinctSpace);
 		}
 
-		byteWriter.writeByte('!');
+		byteWriter.writeExclamationMark();
 		byteWriter.writeUtf8EncodedStringWithCertainty(name);
-		byteWriter.writeByte('(');
+		byteWriter.writeOpenBracket();
 
 		boolean isAfterFirst = false;
 		for (final KeyWithMetadataField field : fields)
@@ -119,7 +117,7 @@ public class KeyedMetadataTuple implements Metadata
 			field.writeKeyValue(byteWriter);
 		}
 		byteWriter.writeBytes(CloseBracketLineFeed);
-		Writable.writeLineFeed(byteWriter);
+		byteWriter.writeLineFeed();
 	}
 
 	@SuppressWarnings("SimplifiableIfStatement")

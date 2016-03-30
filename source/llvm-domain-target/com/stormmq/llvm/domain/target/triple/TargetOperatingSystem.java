@@ -22,42 +22,41 @@
 
 package com.stormmq.llvm.domain.target.triple;
 
+import com.stormmq.llvm.domain.ObjectFileFormat;
 import com.stormmq.string.Formatting;
 import org.jetbrains.annotations.*;
 
+import static com.stormmq.llvm.domain.ObjectFileFormat.MachO;
 import static com.stormmq.llvm.domain.target.triple.Vendor.apple;
 
 public final class TargetOperatingSystem
 {
-	@SuppressWarnings("SpellCheckingInspection") @NotNull public static final TargetOperatingSystem MacOsXMavericks = new TargetOperatingSystem(apple, "macosx10.9.0");
-	@SuppressWarnings("SpellCheckingInspection") @NotNull public static final TargetOperatingSystem MacOsXYosemite = new TargetOperatingSystem(apple, "macosx10.10.0");
-	@SuppressWarnings("SpellCheckingInspection") @NotNull public static final TargetOperatingSystem MacOsXElCapitan = new TargetOperatingSystem(apple, "macosx10.11.0");
+	@SuppressWarnings("SpellCheckingInspection") @NotNull public static final TargetOperatingSystem MacOsXMavericks = new TargetOperatingSystem(apple, MachO, "macosx10.9.0");
+	@SuppressWarnings("SpellCheckingInspection") @NotNull public static final TargetOperatingSystem MacOsXYosemite = new TargetOperatingSystem(apple, MachO, "macosx10.10.0");
+	@SuppressWarnings("SpellCheckingInspection") @NotNull public static final TargetOperatingSystem MacOsXElCapitan = new TargetOperatingSystem(apple, MachO, "macosx10.11.0");
 
 	@NotNull private final Vendor vendor;
+	@SuppressWarnings("FieldNotUsedInToString") @NotNull private final ObjectFileFormat objectFileFormat;
 	@NotNull private final String versionedName;
 
 	@SuppressWarnings("WeakerAccess")
-	public TargetOperatingSystem(@NotNull final Vendor vendor, @NonNls @NotNull final String versionedName)
+	public TargetOperatingSystem(@NotNull final Vendor vendor, @NotNull final ObjectFileFormat objectFileFormat, @NonNls@NotNull final String versionedName)
 	{
 		if (versionedName.isEmpty())
 		{
 			throw new IllegalArgumentException("versionedName is empty");
 		}
+
 		if (versionedName.contains("-"))
 		{
 			throw new IllegalArgumentException("versionedName contains a hyphen");
 		}
+
 		this.vendor = vendor;
+		this.objectFileFormat = objectFileFormat;
 		this.versionedName = versionedName;
 	}
 
-	@Override
-	public String toString()
-	{
-		return Formatting.format("%1$s-%2$s", vendor, versionedName);
-	}
-
-	@SuppressWarnings("RedundantIfStatement")
 	@Override
 	public boolean equals(@Nullable final Object o)
 	{
@@ -72,16 +71,7 @@ public final class TargetOperatingSystem
 
 		final TargetOperatingSystem that = (TargetOperatingSystem) o;
 
-		if (vendor != that.vendor)
-		{
-			return false;
-		}
-		if (!versionedName.equals(that.versionedName))
-		{
-			return false;
-		}
-
-		return true;
+		return vendor == that.vendor && versionedName.equals(that.versionedName) && objectFileFormat == that.objectFileFormat;
 	}
 
 	@Override
@@ -89,11 +79,25 @@ public final class TargetOperatingSystem
 	{
 		int result = vendor.hashCode();
 		result = 31 * result + versionedName.hashCode();
+		result = 31 * result + objectFileFormat.hashCode();
 		return result;
 	}
+
+	@Override
+	public String toString()
+	{
+		return Formatting.format("%1$s-%2$s", vendor, versionedName);
+	}
+
 
 	public boolean doesNotSupport(@NotNull final Architecture architecture)
 	{
 		return vendor.doesNotSupport(architecture);
+	}
+
+	@NotNull
+	public ObjectFileFormat objectFileFormat()
+	{
+		return objectFileFormat;
 	}
 }

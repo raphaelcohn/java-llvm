@@ -31,7 +31,6 @@ import org.jetbrains.annotations.NotNull;
 public final class ArrayConstant<T extends TypeWithSize> implements ComplexConstant<ArrayType<T>>
 {
 	@NotNull private static final byte[] Start = {'[', ' '};
-	@NotNull private static final byte[] CommaSpace = {',', ' '};
 	@NotNull private static final byte[] End = {' ', ']'};
 
 	@NotNull private final ArrayType<T> arrayType;

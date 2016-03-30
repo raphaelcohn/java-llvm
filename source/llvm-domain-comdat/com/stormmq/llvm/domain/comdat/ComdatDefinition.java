@@ -23,10 +23,14 @@
 package com.stormmq.llvm.domain.comdat;
 
 import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.llvm.domain.ObjectFileFormat;
 import com.stormmq.llvm.domain.Writable;
+import com.stormmq.llvm.domain.target.triple.TargetTriple;
 import com.stormmq.string.Formatting;
-import org.jetbrains.annotations.*;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import static com.stormmq.llvm.domain.comdat.ComdatSelectionKind.any;
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
 
 public final class ComdatDefinition implements Writable
@@ -46,7 +50,7 @@ public final class ComdatDefinition implements Writable
 	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
 	{
 		// $foo = comdat largest
-		comdatIdentifier.write(byteWriter);
+		writeComdatIdentifier(byteWriter);
 		byteWriter.writeBytes(Middle);
 		byteWriter.writeBytes(comdatSelectionKind.llAssemblyValueWithLineFeed);
 	}
@@ -72,14 +76,41 @@ public final class ComdatDefinition implements Writable
 
 		final ComdatDefinition that = (ComdatDefinition) o;
 
-		return comdatIdentifier.equals(that.comdatIdentifier) && comdatSelectionKind == that.comdatSelectionKind;
+		return comdatIdentifier.equals(that.comdatIdentifier);
 	}
 
 	@Override
 	public int hashCode()
 	{
-		int result = comdatIdentifier.hashCode();
-		result = 31 * result + comdatSelectionKind.hashCode();
-		return result;
+		return comdatIdentifier.hashCode();
+	}
+
+	public <X extends Exception> void writeComdatIdentifier(@NotNull final ByteWriter<X> byteWriter) throws X
+	{
+		comdatIdentifier.write(byteWriter);
+	}
+
+	@NotNull
+	public ComdatIdentifier comdatIdentifier()
+	{
+		return comdatIdentifier;
+	}
+
+	@Nullable
+	public ComdatDefinition adjustComdatDefinition(@NotNull final TargetTriple targetTriple)
+	{
+		final ObjectFileFormat objectFileFormat = targetTriple.objectFileFormat();
+
+		if (comdatSelectionKind.isSupportedByObjectFileFormat(objectFileFormat))
+		{
+			return this;
+		}
+
+		if (any.isSupportedByObjectFileFormat(objectFileFormat))
+		{
+			return new ComdatDefinition(comdatIdentifier, any);
+		}
+
+		return null;
 	}
 }

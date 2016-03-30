@@ -65,7 +65,7 @@ public final class ArrayType<T extends TypeWithSize> implements AggregateType
 
 		for (int index = 0; index < length; index++)
 		{
-			byteWriter.writeByte('[');
+			byteWriter.writeOpenSquareBracket();
 			byteWriter.writeUtf8EncodedStringWithCertainty(Integer.toString(dimensionLengths[index]));
 			byteWriter.writeBytes(SpaceXSpace);
 		}
@@ -74,7 +74,7 @@ public final class ArrayType<T extends TypeWithSize> implements AggregateType
 
 		for (int index = 0; index < length; index++)
 		{
-			byteWriter.writeByte(']');
+			byteWriter.writeCloseSquareBracket();
 		}
 	}
 }

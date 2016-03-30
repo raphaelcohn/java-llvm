@@ -25,30 +25,31 @@ package com.stormmq.llvm.domain.function;
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.*;
 import com.stormmq.llvm.domain.attributes.AttributeGroup;
-import com.stormmq.llvm.domain.comdat.ComdatIdentifier;
+import com.stormmq.llvm.domain.comdat.ComdatDefinition;
+import com.stormmq.llvm.domain.comdat.MayHaveComdatDefinition;
 import com.stormmq.llvm.domain.function.attributes.FunctionAttributeGroup;
 import com.stormmq.llvm.domain.function.attributes.parameterAttributes.ParameterAttribute;
+import com.stormmq.llvm.domain.identifiers.AbstractGloballyIdentified;
 import com.stormmq.llvm.domain.identifiers.GlobalIdentifier;
 import com.stormmq.llvm.domain.names.SectionName;
+import com.stormmq.llvm.domain.target.triple.TargetTriple;
 import com.stormmq.llvm.metadata.debugging.DISubprogramKeyedMetadataTuple;
-import com.stormmq.string.Formatting;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.stormmq.llvm.domain.Writable.writeSpace;
+import java.util.Set;
+
 import static com.stormmq.llvm.domain.function.attributes.FunctionAttributeGroup.writeFunctionAttributes;
+import static com.stormmq.string.Formatting.format;
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
 
-public final class FunctionDefinition implements Writable
+public final class FunctionDefinition extends AbstractGloballyIdentified implements MayHaveComdatDefinition
 {
 	@NotNull private static final byte[] defineSpace = encodeUtf8BytesWithCertaintyValueIsValid("define ");
-	@NotNull private static final byte[] UnnamedAddress = encodeUtf8BytesWithCertaintyValueIsValid(_unnamed_addr);
 	@NotNull private static final byte[] SpaceSection = encodeUtf8BytesWithCertaintyValueIsValid(" section \"");
 	@NotNull private static final byte[] SpaceComdatSpaceOpenBracket = encodeUtf8BytesWithCertaintyValueIsValid(" comdat (");
-	@NotNull private static final byte[] SpaceAlignSpace = encodeUtf8BytesWithCertaintyValueIsValid(_align_);
 	@NotNull private static final byte[] SpaceExclamationMarkDbgSpace = encodeUtf8BytesWithCertaintyValueIsValid(" !dbg ");
 	@SuppressWarnings("HardcodedLineSeparator") @NotNull private static final byte[] NewLineOpenBrace = encodeUtf8BytesWithCertaintyValueIsValid("\n{");
-	@SuppressWarnings("HardcodedLineSeparator") @NotNull private static final byte[] CloseBraceNewLine = encodeUtf8BytesWithCertaintyValueIsValid("}\n");
 
 	@NotNull private final Linkage linkage;
 	@NotNull private final Visibility visibility;
@@ -56,12 +57,11 @@ public final class FunctionDefinition implements Writable
 	@NotNull private final CallingConvention callingConvention;
 	@NotNull private final AttributeGroup<ParameterAttribute> returnAttributes;
 	@NotNull private final FormalParameter resultType;
-	@NotNull private final GlobalIdentifier functionIdentifier;
 	@NotNull private final FormalParameter[] parameters;
 	private final boolean hasUnnamedAddress;
 	@NotNull private final FunctionAttributeGroup functionAttributes;
 	@Nullable private final SectionName sectionName;
-	@Nullable private final ComdatIdentifier comdatIdentifier;
+	@Nullable private ComdatDefinition comdatDefinition;
 	private final int alignment;
 	@Nullable private final GarbageCollectorStrategyName garbageCollectorStrategyName;
 	@NotNull private final DISubprogramKeyedMetadataTuple debuggingInformation;
@@ -70,24 +70,26 @@ public final class FunctionDefinition implements Writable
 	// prologue
 	// personality
 
-	public FunctionDefinition(@NotNull final Linkage linkage, @NotNull final Visibility visibility, @Nullable final DllStorageClass dllStorageClass, @NotNull final CallingConvention callingConvention, @NotNull final AttributeGroup<ParameterAttribute> returnAttributes, @NotNull final FormalParameter resultType, @NotNull final GlobalIdentifier functionIdentifier, @NotNull final FormalParameter[] parameters, final boolean hasUnnamedAddress, @NotNull final FunctionAttributeGroup functionAttributes, @Nullable final SectionName sectionName, @Nullable final ComdatIdentifier comdatIdentifier, final int alignment, @Nullable final GarbageCollectorStrategyName garbageCollectorStrategyName, @NotNull final DISubprogramKeyedMetadataTuple debuggingInformation)
+	public FunctionDefinition(@NotNull final Linkage linkage, @NotNull final Visibility visibility, @Nullable final DllStorageClass dllStorageClass, @NotNull final CallingConvention callingConvention, @NotNull final AttributeGroup<ParameterAttribute> returnAttributes, @NotNull final FormalParameter resultType, @NotNull final GlobalIdentifier globalIdentifier, @NotNull final FormalParameter[] parameters, final boolean hasUnnamedAddress, @NotNull final FunctionAttributeGroup functionAttributes, @Nullable final SectionName sectionName, @Nullable final ComdatDefinition comdatDefinition, final int alignment, @Nullable final GarbageCollectorStrategyName garbageCollectorStrategyName, @NotNull final DISubprogramKeyedMetadataTuple debuggingInformation)
 	{
+		super(globalIdentifier);
+
 		if (alignment < AutomaticAlignment)
 		{
-			throw new IllegalArgumentException(Formatting.format("Alignment ('%1$s') must not be negative", alignment));
+			throw new IllegalArgumentException(format("Alignment ('%1$s') must not be negative", alignment));
 		}
+
 		this.linkage = linkage;
 		this.visibility = visibility;
 		this.dllStorageClass = dllStorageClass;
 		this.callingConvention = callingConvention;
 		this.returnAttributes = returnAttributes;
-		this.functionIdentifier = functionIdentifier;
 		this.resultType = resultType;
 		this.parameters = parameters;
 		this.hasUnnamedAddress = hasUnnamedAddress;
 		this.functionAttributes = functionAttributes;
 		this.sectionName = sectionName;
-		this.comdatIdentifier = comdatIdentifier;
+		this.comdatDefinition = comdatDefinition;
 		this.alignment = alignment;
 		this.garbageCollectorStrategyName = garbageCollectorStrategyName;
 		this.debuggingInformation = debuggingInformation;
@@ -101,37 +103,37 @@ public final class FunctionDefinition implements Writable
 		byteWriter.writeBytes(defineSpace);
 		byteWriter.writeBytes(linkage.llAssemblyValue);
 
-		writeSpace(byteWriter);
+		byteWriter.writeSpace();
 		byteWriter.writeBytes(visibility.llAssemblyValue);
 
 		if (dllStorageClass != null)
 		{
-			writeSpace(byteWriter);
+			byteWriter.writeSpace();
 			byteWriter.writeBytes(dllStorageClass.llAssemblyValue);
 		}
 
-		writeSpace(byteWriter);
+		byteWriter.writeSpace();
 		byteWriter.writeBytes(callingConvention.llAssemblyValue);
 
-		writeSpace(byteWriter);
+		byteWriter.writeSpace();
 		returnAttributes.write(byteWriter);
 
-		writeSpace(byteWriter);
+		byteWriter.writeSpace();
 		resultType.write(byteWriter);
 
-		writeSpace(byteWriter);
-		functionIdentifier.write(byteWriter);
+		byteWriter.writeSpace();
+		globalIdentifier().write(byteWriter);
 
-		byteWriter.writeByte('(');
+		byteWriter.writeOpenBracket();
 		for (final FormalParameter parameter : parameters)
 		{
 			parameter.write(byteWriter);
 		}
-		byteWriter.writeByte(')');
+		byteWriter.writeCloseBracket();
 
 		if (hasUnnamedAddress)
 		{
-			byteWriter.writeBytes(UnnamedAddress);
+			byteWriter.writeBytes(SpaceUnnamedAddress);
 		}
 
 		writeFunctionAttributes(byteWriter, referenceIndex);
@@ -140,14 +142,14 @@ public final class FunctionDefinition implements Writable
 		{
 			byteWriter.writeBytes(SpaceSection);
 			sectionName.write(byteWriter);
-			byteWriter.writeByte('"');
+			byteWriter.writeDoubleQuote();
 		}
 
-		if (comdatIdentifier != null)
+		if (comdatDefinition != null)
 		{
 			byteWriter.writeBytes(SpaceComdatSpaceOpenBracket);
-			comdatIdentifier.write(byteWriter);
-			byteWriter.writeByte(')');
+			comdatDefinition.writeComdatIdentifier(byteWriter);
+			byteWriter.writeCloseBracket();
 		}
 
 		if (alignment != AutomaticAlignment)
@@ -158,7 +160,7 @@ public final class FunctionDefinition implements Writable
 
 		if (garbageCollectorStrategyName != null)
 		{
-			writeSpace(byteWriter);
+			byteWriter.writeSpace();
 			byteWriter.writeBytes(garbageCollectorStrategyName.llvmAssemblyEncoding);
 		}
 
@@ -169,7 +171,12 @@ public final class FunctionDefinition implements Writable
 
 		// write code
 
-		byteWriter.writeBytes(CloseBraceNewLine);
+		byteWriter.writeBytes(Writable.CloseBraceLineFeed);
 	}
 
+	@Override
+	public void adjustComdatDefinition(@NotNull final Set<ComdatDefinition> comdatDefinitions, @NotNull final TargetTriple targetTriple)
+	{
+		comdatDefinition = MayHaveComdatDefinition.adjustComdatDefinition(comdatDefinitions, comdatDefinition, targetTriple);
+	}
 }

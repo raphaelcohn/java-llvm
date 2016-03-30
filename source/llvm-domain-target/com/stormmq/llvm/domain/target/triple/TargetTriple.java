@@ -23,12 +23,15 @@
 package com.stormmq.llvm.domain.target.triple;
 
 import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.llvm.domain.ObjectFileFormat;
 import com.stormmq.llvm.domain.Writable;
-import com.stormmq.string.Formatting;
 import org.jetbrains.annotations.*;
+
+import java.util.Map;
 
 import static com.stormmq.llvm.domain.target.triple.Architecture.x86_64;
 import static com.stormmq.llvm.domain.target.triple.TargetOperatingSystem.MacOsXMavericks;
+import static com.stormmq.string.Formatting.format;
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
 
 public final class TargetTriple implements Writable
@@ -63,6 +66,18 @@ public final class TargetTriple implements Writable
 		this.environment = environment;
 	}
 
+	@NotNull
+	public <V> V chooseForArchitecture(@NotNull final Map<Architecture, V> choices, @NotNull final V defaultValue)
+	{
+		return choices.getOrDefault(architecture, defaultValue);
+	}
+
+	@NotNull
+	public ObjectFileFormat objectFileFormat()
+	{
+		return operatingSystem.objectFileFormat();
+	}
+
 	@Override
 	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
 	{
@@ -82,7 +97,7 @@ public final class TargetTriple implements Writable
 	@NotNull
 	private String toTargetTriple()
 	{
-		return environment == null ? Formatting.format("%1$s-%2$s", architecture, operatingSystem) : Formatting.format("%1$s-%2$s-%3$s", architecture, operatingSystem, environment);
+		return environment == null ? format("%1$s-%2$s", architecture, operatingSystem) : format("%1$s-%2$s-%3$s", architecture, operatingSystem, environment);
 	}
 
 	@SuppressWarnings("RedundantIfStatement")

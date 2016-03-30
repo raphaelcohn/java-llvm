@@ -38,8 +38,8 @@ public final class FunctionAttributeGroup extends AttributeGroup<FunctionAttribu
 
 	public static <X extends Exception> void writeFunctionAttributes(@NotNull final ByteWriter<X> byteWriter, final int referenceIndex) throws X
 	{
-		Writable.writeSpace(byteWriter);
-		byteWriter.writeByte('#');
+		byteWriter.writeSpace();
+		byteWriter.writeHash();
 		byteWriter.writeUtf8EncodedStringWithCertainty(Integer.toString(referenceIndex));
 	}
 

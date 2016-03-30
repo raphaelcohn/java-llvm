@@ -38,4 +38,81 @@ public interface ByteWriter<X extends Exception> extends AutoCloseable
 	void writeUtf8EncodedString(@NotNull @NonNls final String value) throws InvalidUtf16StringException, X;
 
 	void writeUtf8EncodedStringWithCertainty(@NotNull @NonNls final String value) throws X;
+
+	default void writeSpace() throws X
+	{
+		writeByte(' ');
+	}
+
+	@SuppressWarnings("HardcodedLineSeparator")
+	default void writeLineFeed() throws X
+	{
+		writeByte('\n');
+	}
+
+	default void writeNul() throws X
+	{
+		writeByte(0);
+	}
+
+	@SuppressWarnings("HardcodedFileSeparator")
+	default void writeSlash() throws X
+	{
+		writeByte('\\');
+	}
+
+	default void writeDoubleQuote() throws X
+	{
+		writeByte('"');
+	}
+
+	default void writeOpenBracket() throws X
+	{
+		writeByte('(');
+	}
+
+	default void writeCloseBracket() throws X
+	{
+		writeByte(')');
+	}
+
+	default void writeOpenAngleBracket() throws X
+	{
+		writeByte('<');
+	}
+
+	default void writeCloseAngleBracket() throws X
+	{
+		writeByte('>');
+	}
+
+	default void writeOpenSquareBracket() throws X
+	{
+		writeByte('[');
+	}
+
+	default void writeCloseSquareBracket() throws X
+	{
+		writeByte(']');
+	}
+
+	default void writeHash() throws X
+	{
+		writeByte('#');
+	}
+
+	default void writeAsterisk() throws X
+	{
+		writeByte('*');
+	}
+
+	default void writeHyphen() throws X
+	{
+		writeByte('-');
+	}
+
+	default void writeExclamationMark() throws X
+	{
+		writeByte('!');
+	}
 }

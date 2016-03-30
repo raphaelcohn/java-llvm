@@ -23,20 +23,55 @@
 package com.stormmq.llvm.domain.types.firstClassTypes;
 
 import com.stormmq.byteWriters.ByteWriter;
-import com.stormmq.llvm.domain.types.CanBePointedToType;
-import com.stormmq.string.Formatting;
 import org.jetbrains.annotations.NotNull;
 
+import static com.stormmq.string.Formatting.format;
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
 
 public final class IntegerValueType implements PrimitiveSingleValueType
 {
 	@NotNull public static final IntegerValueType i1 = new IntegerValueType(1, 1);
 	@NotNull public static final IntegerValueType i8 = new IntegerValueType(8, 1);
-	@NotNull public static final CanBePointedToType i16 = new IntegerValueType(16, 2);
+	@NotNull public static final IntegerValueType i16 = new IntegerValueType(16, 2);
 	@NotNull public static final IntegerValueType i32 = new IntegerValueType(32, 4);
 	@NotNull public static final IntegerValueType i64 = new IntegerValueType(64, 8);
-	@NotNull public static final CanBePointedToType i128 = new IntegerValueType(128, 16);
+	@NotNull public static final IntegerValueType i128 = new IntegerValueType(128, 16);
+
+	@SuppressWarnings("MagicNumber")
+	@NotNull
+	public static IntegerValueType integerValueTypeFromSizeInBits(final int sizeInBits)
+	{
+		if (sizeInBits < 1)
+		{
+			throw new IllegalArgumentException(format("integer sizeInBits can not be '%1$s'", sizeInBits));
+		}
+		switch (sizeInBits)
+		{
+			case 1:
+				return i1;
+
+			case 8:
+				return i8;
+
+			case 16:
+				return i16;
+
+			case 32:
+				return i32;
+
+			case 64:
+				return i64;
+
+			case 128:
+				return i128;
+
+			default:
+				final int divided = sizeInBits >> 3;
+				final int remainder = sizeInBits % 8;
+				final int toScale = remainder == 0 ? 0 : 1;
+				return new IntegerValueType(sizeInBits, divided + toScale);
+		}
+	}
 
 	private static final int MaximumNumberOfBits = 2 << 23 - 1;
 	@NotNull private final String stringValue;
@@ -47,12 +82,12 @@ public final class IntegerValueType implements PrimitiveSingleValueType
 	{
 		if (numberOfBits < 1)
 		{
-			throw new IllegalArgumentException(Formatting.format("Number of bits must be 1 or more, not '%1$s'", numberOfBits));
+			throw new IllegalArgumentException(format("Number of bits must be 1 or more, not '%1$s'", numberOfBits));
 		}
 
 		if (numberOfBits > MaximumNumberOfBits)
 		{
-			throw new IllegalArgumentException(Formatting.format("Number of bits must not exceed 2^23 - 1, not '%1$s'", numberOfBits));
+			throw new IllegalArgumentException(format("Number of bits must not exceed 2^23 - 1, not '%1$s'", numberOfBits));
 		}
 
 		stringValue = 'i' + Integer.toString(numberOfBits);

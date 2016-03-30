@@ -43,7 +43,7 @@ public final class TypeAndIdentifier<I extends Identifier> implements Writable
 	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
 	{
 		typeExcludingVoid.write(byteWriter);
-		byteWriter.writeByte(' ');
+		byteWriter.writeSpace();
 		identifier.write(byteWriter);
 	}
 }

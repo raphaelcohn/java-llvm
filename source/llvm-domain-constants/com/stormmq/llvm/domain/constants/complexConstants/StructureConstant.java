@@ -23,30 +23,26 @@
 package com.stormmq.llvm.domain.constants.complexConstants;
 
 import com.stormmq.byteWriters.ByteWriter;
-import com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.StructureType;
+import com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.KnownStructureType;
 import com.stormmq.llvm.domain.constants.Constant;
 import org.jetbrains.annotations.NotNull;
 
-public final class StructureConstant implements ComplexConstant<StructureType>
+public final class StructureConstant implements ComplexConstant<KnownStructureType>
 {
-	@NotNull private static final byte[] Start = {'{', ' '};
-	@NotNull private static final byte[] CommaSpace = {',', ' '};
-	@NotNull private static final byte[] End = {' ', '}'};
-
-	@NotNull private final StructureType structureType;
+	@NotNull private final KnownStructureType knownStructureType;
 	@NotNull private final Constant<?>[] values;
 
-	public StructureConstant(@NotNull final StructureType structureType, @NotNull final Constant<?>... values)
+	public StructureConstant(@NotNull final KnownStructureType knownStructureType, @NotNull final Constant<?>... values)
 	{
-		this.structureType = structureType;
+		this.knownStructureType = knownStructureType;
 		this.values = values;
 	}
 
 	@NotNull
 	@Override
-	public StructureType type()
+	public KnownStructureType type()
 	{
-		return structureType;
+		return knownStructureType;
 	}
 
 	@Override
@@ -58,7 +54,7 @@ public final class StructureConstant implements ComplexConstant<StructureType>
 	@Override
 	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
 	{
-		byteWriter.writeBytes(Start);
+		byteWriter.writeBytes(OpenBracketSpace);
 
 		final int length = values.length;
 		for (int index = 0; index < length; index++)
@@ -70,6 +66,6 @@ public final class StructureConstant implements ComplexConstant<StructureType>
 			values[index].write(byteWriter);
 		}
 
-		byteWriter.writeBytes(End);
+		byteWriter.writeBytes(SpaceCloseBracket);
 	}
 }

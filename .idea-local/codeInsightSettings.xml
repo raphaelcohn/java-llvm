@@ -2,8 +2,33 @@
 <project version="4">
   <component name="JavaProjectCodeInsightSettings">
     <excluded-names>
+      <name>apple.laf</name>
+      <name>com.apple.laf</name>
+      <name>java.beans</name>
+      <name>java.rmi</name>
+      <name>javafx.animation</name>
       <name>javafx.beans</name>
+      <name>javafx.collections</name>
+      <name>javafx.fxml</name>
+      <name>javafx.geometry</name>
+      <name>javafx.scene</name>
+      <name>javafx.util</name>
+      <name>javax.activation</name>
+      <name>javax.annotation.PostConstruct</name>
+      <name>javax.annotation.PreDestroy</name>
+      <name>javax.annotation.Resource</name>
+      <name>javax.annotation.Resources</name>
+      <name>javax.annotation.processing</name>
+      <name>javax.jnlp</name>
+      <name>javax.jws</name>
+      <name>javax.management</name>
+      <name>javax.naming.spi</name>
+      <name>javax.print</name>
+      <name>javax.rmi</name>
       <name>javax.sound</name>
+      <name>javax.swing</name>
+      <name>javax.xml.ws</name>
+      <name>org.intellij.lang.annotations.JdkConstants</name>
       <name>org.omg</name>
     </excluded-names>
   </component>

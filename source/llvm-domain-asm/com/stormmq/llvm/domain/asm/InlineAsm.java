@@ -29,6 +29,7 @@ import com.stormmq.llvm.domain.identifiers.LocalIdentifier;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
+import static com.stormmq.llvm.domain.asm.Dialect.Intel;
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
 
 public final class InlineAsm implements Writable
@@ -71,7 +72,7 @@ public final class InlineAsm implements Writable
 			byteWriter.writeBytes(alignstackSpace);
 		}
 
-		if (dialect == Dialect.Intel)
+		if (dialect == Intel)
 		{
 			byteWriter.writeBytes(inteldialectSpace);
 		}
@@ -81,7 +82,7 @@ public final class InlineAsm implements Writable
 
 		constraintLetters.write(byteWriter);
 
-		byteWriter.writeByte('(');
+		byteWriter.writeOpenBracket();
 		final int length = parameters.length;
 		for(int index = 0; index < length; index++)
 		{
@@ -91,7 +92,6 @@ public final class InlineAsm implements Writable
 			}
 			parameters[index].write(byteWriter);
 		}
-		byteWriter.writeByte(')');
-		Writable.writeLineFeed(byteWriter);
+		byteWriter.writeBytes(Writable.CloseBracketLineFeed);
 	}
 }
