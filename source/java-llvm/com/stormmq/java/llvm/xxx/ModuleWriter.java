@@ -26,11 +26,11 @@ import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.byteWriters.OutputStreamByteWriter;
 import com.stormmq.java.classfile.processing.typeInformationUsers.TypeInformationTriplet;
 import com.stormmq.llvm.domain.asm.ModuleLevelInlineAsm;
-import com.stormmq.llvm.domain.function.*;
-import com.stormmq.llvm.domain.identifiers.LocalIdentifier;
+import com.stormmq.llvm.domain.function.FunctionDeclaration;
+import com.stormmq.llvm.domain.function.FunctionDefinition;
 import com.stormmq.llvm.domain.module.*;
 import com.stormmq.llvm.domain.target.triple.Architecture;
-import com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.StructureType;
+import com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.structureTypes.LocallyIdentifiedStructureType;
 import com.stormmq.llvm.domain.variables.Alias;
 import com.stormmq.llvm.domain.variables.GlobalVariable;
 import com.stormmq.llvm.metadata.debugging.*;
@@ -62,25 +62,25 @@ public final class ModuleWriter
 		this.outputRootFolderPath = outputRootFolderPath;
 	}
 
-	public void createAndWriteModule(@NotNull final TypeInformationTriplet typeInformationTriplet, @NotNull final MetadataCreator metadataCreator, @NotNull final Map<Architecture, List<ModuleLevelInlineAsm>> moduleLevelInlineAssembly, @NotNull final Map<LocalIdentifier, StructureType> structureTypes, @NotNull final Set<GlobalVariable<?>> globalVariablesAndConstants, @NotNull final Set<FunctionDeclaration> functionDeclarations, @NotNull final Set<FunctionDefinition> functionsDefinitions, @NotNull final TypedMetadataTuple<DISubprogramKeyedMetadataTuple> subprograms, @NotNull final TypedMetadataTuple<DIGlobalVariableKeyedMetadataTuple> globals, @NotNull final Set<Alias> aliases)
+	public void createAndWriteModule(@NotNull final TypeInformationTriplet typeInformationTriplet, @NotNull final MetadataCreator metadataCreator, @NotNull final Map<Architecture, List<ModuleLevelInlineAsm>> moduleLevelInlineAssembly, @NotNull final Set<LocallyIdentifiedStructureType> locallyIdentifiedStructureTypes, @NotNull final Set<GlobalVariable<?>> globalVariablesAndConstants, @NotNull final Set<FunctionDeclaration> functionDeclarations, @NotNull final Set<FunctionDefinition> functionsDefinitions, @NotNull final TypedMetadataTuple<DISubprogramKeyedMetadataTuple> subprograms, @NotNull final TypedMetadataTuple<DIGlobalVariableKeyedMetadataTuple> globals, @NotNull final Set<Alias> aliases)
 	{
 		final String relativeFilePath = typeInformationTriplet.relativeFilePath;
 		final Path relativeRootFolderPath = typeInformationTriplet.relativeRootFolderPath;
 
-		final Module module = createModule(relativeFilePath, relativeRootFolderPath, metadataCreator, moduleLevelInlineAssembly, structureTypes, globalVariablesAndConstants, functionDeclarations, functionsDefinitions, subprograms, globals, aliases);
+		final Module module = createModule(relativeFilePath, relativeRootFolderPath, metadataCreator, moduleLevelInlineAssembly, locallyIdentifiedStructureTypes, globalVariablesAndConstants, functionDeclarations, functionsDefinitions, subprograms, globals, aliases);
 		writeModule(relativeFilePath, relativeRootFolderPath, module);
 	}
 
 	@NotNull
 	private Module createModule(@NotNull final String relativeFilePath, @NotNull final Path relativeRootFolderPath, @NotNull
-	final MetadataCreator metadataCreator, @NotNull final Map<Architecture, List<ModuleLevelInlineAsm>> moduleLevelInlineAssembly, @NotNull final Map<LocalIdentifier, StructureType> structureTypes, @NotNull final Set<GlobalVariable<?>> globalVariablesAndConstants, final Set<FunctionDeclaration> functionDeclarations, @NotNull final Set<FunctionDefinition> functionsDefinitions, @NotNull final TypedMetadataTuple<DISubprogramKeyedMetadataTuple> subprograms, @NotNull final TypedMetadataTuple<DIGlobalVariableKeyedMetadataTuple> globals, @NotNull final Set<Alias> aliases)
+	final MetadataCreator metadataCreator, @NotNull final Map<Architecture, List<ModuleLevelInlineAsm>> moduleLevelInlineAssembly, @NotNull final Set<LocallyIdentifiedStructureType> locallyIdentifiedStructureTypes, @NotNull final Set<GlobalVariable<?>> globalVariablesAndConstants, final Set<FunctionDeclaration> functionDeclarations, @NotNull final Set<FunctionDefinition> functionsDefinitions, @NotNull final TypedMetadataTuple<DISubprogramKeyedMetadataTuple> subprograms, @NotNull final TypedMetadataTuple<DIGlobalVariableKeyedMetadataTuple> globals, @NotNull final Set<Alias> aliases)
 	{
 		final DIFileKeyedMetadataTuple file = metadataCreator.file(relativeFilePath, relativeRootFolderPath.toString());
 		final LlvmIdentNamedMetadataTuple identity = metadataCreator.identity();
 		final LlvmModuleFlagsNamedMetadataTuple moduleFlags = metadataCreator.moduleFlags();
 		final LlvmDbgCuNamedMetadataTuple compileUnits = metadataCreator.newJavaCompileUnits(file, subprograms, globals);
 
-		return targetModuleCreator.newModule(moduleLevelInlineAssembly, identity, moduleFlags, compileUnits, structureTypes, globalVariablesAndConstants, functionDeclarations, functionsDefinitions, aliases);
+		return targetModuleCreator.newModule(moduleLevelInlineAssembly, identity, moduleFlags, compileUnits, locallyIdentifiedStructureTypes, globalVariablesAndConstants, functionDeclarations, functionsDefinitions, aliases);
 	}
 
 	private void writeModule(@NotNull final String relativeFilePath, @NotNull final Path relativeRootFolderPath, @NotNull final Module module)

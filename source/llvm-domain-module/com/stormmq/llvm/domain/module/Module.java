@@ -33,7 +33,7 @@ import com.stormmq.llvm.domain.identifiers.*;
 import com.stormmq.llvm.domain.target.dataLayout.DataLayoutSpecification;
 import com.stormmq.llvm.domain.target.triple.Architecture;
 import com.stormmq.llvm.domain.target.triple.TargetTriple;
-import com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.StructureType;
+import com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.structureTypes.LocallyIdentifiedStructureType;
 import com.stormmq.llvm.domain.variables.Alias;
 import com.stormmq.llvm.domain.variables.GlobalVariable;
 import com.stormmq.llvm.metadata.debugging.LlvmDbgCuNamedMetadataTuple;
@@ -43,17 +43,14 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.Map.Entry;
 
 import static com.stormmq.string.Formatting.format;
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 
 public final class Module implements Writable
 {
 	@NotNull private static final List<ModuleLevelInlineAsm> NoModuleLevelInlineAsm = emptyList();
-	@NotNull private static final byte[] SpaceEqualsSpaceTypeSpace = encodeUtf8BytesWithCertaintyValueIsValid(" = type ");
 
 	@NotNull private final DataLayoutSpecification dataLayoutSpecification;
 	@NotNull private final TargetTriple targetTriple;
@@ -62,13 +59,13 @@ public final class Module implements Writable
 	@NotNull private final LlvmModuleFlagsNamedMetadataTuple llvmModuleFlagsNamedMetadataTuple;
 	@NotNull private final LlvmDbgCuNamedMetadataTuple compileUnits;
 	@NotNull private final Set<ComdatDefinition> comdatDefinitions;
-	@NotNull private final Map<LocalIdentifier, StructureType> structureTypes;
+	@NotNull private final Set<LocallyIdentifiedStructureType> locallyIdentifiedStructureTypes;
 	@NotNull private final Set<GlobalVariable<?>> globalVariablesAndConstants;
 	@NotNull private final Set<FunctionDeclaration> functionDeclarations;
 	@NotNull private final Set<FunctionDefinition> functionDefinitions;
 	@NotNull private final Set<Alias> aliases;
 
-	public Module(@NotNull final DataLayoutSpecification dataLayoutSpecification, @NotNull final TargetTriple targetTriple, @NotNull final Map<Architecture, List<ModuleLevelInlineAsm>> moduleLevelInlineAssembly, @NotNull final LlvmIdentNamedMetadataTuple llvmIdentNamedMetadataTuple, @NotNull final LlvmModuleFlagsNamedMetadataTuple llvmModuleFlagsNamedMetadataTuple, @NotNull final LlvmDbgCuNamedMetadataTuple compileUnits, @NotNull final Map<LocalIdentifier, StructureType> structureTypes, @NotNull final Set<GlobalVariable<?>> globalVariablesAndConstants, @NotNull final Set<FunctionDeclaration> functionDeclarations, @NotNull final Set<FunctionDefinition> functionDefinitions, @NotNull final Set<Alias> aliases)
+	public Module(@NotNull final DataLayoutSpecification dataLayoutSpecification, @NotNull final TargetTriple targetTriple, @NotNull final Map<Architecture, List<ModuleLevelInlineAsm>> moduleLevelInlineAssembly, @NotNull final LlvmIdentNamedMetadataTuple llvmIdentNamedMetadataTuple, @NotNull final LlvmModuleFlagsNamedMetadataTuple llvmModuleFlagsNamedMetadataTuple, @NotNull final LlvmDbgCuNamedMetadataTuple compileUnits, @NotNull final Set<LocallyIdentifiedStructureType> locallyIdentifiedStructureTypes, @NotNull final Set<GlobalVariable<?>> globalVariablesAndConstants, @NotNull final Set<FunctionDeclaration> functionDeclarations, @NotNull final Set<FunctionDefinition> functionDefinitions, @NotNull final Set<Alias> aliases)
 	{
 		guardDuplicateIdentifiers(globalVariablesAndConstants, functionDeclarations, functionDefinitions, aliases);
 
@@ -79,7 +76,7 @@ public final class Module implements Writable
 		this.llvmModuleFlagsNamedMetadataTuple = llvmModuleFlagsNamedMetadataTuple;
 		this.compileUnits = compileUnits;
 		comdatDefinitions = findComdatDefinitions(globalVariablesAndConstants, functionDefinitions);
-		this.structureTypes = structureTypes;
+		this.locallyIdentifiedStructureTypes = locallyIdentifiedStructureTypes;
 		this.globalVariablesAndConstants = globalVariablesAndConstants;
 		this.functionDeclarations = functionDeclarations;
 		this.functionDefinitions = functionDefinitions;
@@ -147,7 +144,7 @@ public final class Module implements Writable
 
 		write(byteWriter, comdatDefinitions);
 
-		write(byteWriter, structureTypes);
+		writeX(byteWriter, locallyIdentifiedStructureTypes);
 
 		write(byteWriter, globalVariablesAndConstants);
 
@@ -171,21 +168,22 @@ public final class Module implements Writable
 		}
 	}
 
-	private static <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter, @NotNull final Map<? extends Identifier, ? extends Writable> types) throws X
+	private static <X extends Exception> void writeX(@NotNull final ByteWriter<X> byteWriter, @NotNull final Set<? extends LocallyIdentifiedStructureType> locallyIdentifiedStructureTypes) throws X
 	{
-		for (final Entry<? extends Identifier, ? extends Writable> entry : types.entrySet())
+		// For known structures, we can also do:-
+		// @Struct_size = constant i32 ptrtoint (%Struct* getelementptr (%Struct* null, i32 1)) to i32
+		for (final LocallyIdentifiedStructureType locallyIdentifiedStructureType : locallyIdentifiedStructureTypes)
 		{
-			writeKeyValue(byteWriter, entry.getKey(), entry.getValue());
+			final Identifier identifier = locallyIdentifiedStructureType.localIdentifier();
+			identifier.write(byteWriter);
+			byteWriter.writeBytes(SpaceEqualsSpace);
+			locallyIdentifiedStructureType.write(byteWriter);
+			byteWriter.writeLineFeed();
 		}
-		byteWriter.writeLineFeed();
+		if (!locallyIdentifiedStructureTypes.isEmpty())
+		{
+			byteWriter.writeLineFeed();
+		}
 	}
 
-	private static <X extends Exception> void writeKeyValue(@NotNull final ByteWriter<X> byteWriter, @NotNull final Writable key, @NotNull final Writable value) throws X
-	{
-		key.write(byteWriter);
-		byteWriter.writeBytes(SpaceEqualsSpaceTypeSpace);
-		value.write(byteWriter);
-		byteWriter.writeLineFeed();
-		byteWriter.writeLineFeed();
-	}
 }

@@ -404,6 +404,41 @@ main()
 	
 	case "$operation" in
 		
+		-h|--help|help)
+		printf '%s' "
+llvm-tool <action> [action arguments...]
+
+Actions are:-
+
+compile    /path/to/one/or/more/files/ending.c.or.cpp
+           Compiles C or C++ code to ll, bc, optimised ll, AT&T assembler, Intel assembler, coverage and debug forms.
+
+assemble   /path/to/one/or/more/files/ending.ll
+           Like compile but works with .ll files. Useful for linting ll assembly is correct.
+
+jit        /path/to/one/or/more/files/ending.ll
+           Runs code.
+
+architecture
+
+archive    /path/to/one/or/more/files/ending.ll
+           Creates LLVM .a archives.
+
+link       /path/to/one/or/more/files/ending.ll.or.a
+
+nm         /path/to/one/or/more/files/ending.ll.or.a
+           Lists symbols.
+
+bcanalyzer /path/to/one/or/more/files/ending.bc
+           Lists bitcode file statistics. Not really that interesting
+		   
+*.c        If file ends .c, uses compile action
+*.cpp      if file ends .cpp, uses compile action
+*.ll       If file ends .ll, uses assemble action
+*.bc       If file ends .bc, uses bcanalyzer action
+"
+		;;
+		
 		compile)
 			compile "$@"
 		;;
@@ -435,6 +470,18 @@ main()
 		
 		bcanalyzer)
 			bcanalyzer "$@"
+		;;
+		
+		*.ll)
+			assemble "$operation" "$@"
+		;;
+		
+		*.c|*.cpp)
+			compile "$operation" "$@"
+		;;
+		
+		*.bc)
+			bcanalyzer "$operation" "$@"
 		;;
 		
 		*)

@@ -50,7 +50,7 @@ public interface ByteWriter<X extends Exception> extends AutoCloseable
 		writeByte('\n');
 	}
 
-	default void writeNul() throws X
+	default void writeAsciiNull() throws X
 	{
 		writeByte(0);
 	}

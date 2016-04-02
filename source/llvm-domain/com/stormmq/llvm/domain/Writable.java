@@ -41,13 +41,23 @@ public interface Writable
 
 	@NotNull byte[] SpaceAlignSpace = encodeUtf8BytesWithCertaintyValueIsValid(" align ");
 
+	@SuppressWarnings("HardcodedLineSeparator") @NotNull byte[] CloseBracketLineFeed = {')', '\n'};
+
+	@SuppressWarnings("HardcodedLineSeparator") @NotNull byte[] CloseBraceLineFeed = {'}', '\n'};
+
 	@NotNull byte[] OpenBracketSpace = {'{', ' '};
 
 	@NotNull byte[] SpaceCloseBracket = {' ', '}'};
 
-	@SuppressWarnings("HardcodedLineSeparator") @NotNull byte[] CloseBracketLineFeed = {')', '\n'};
+	@NotNull byte[] OpenSquareBracketSpace = {'[', ' '};
 
-	@SuppressWarnings("HardcodedLineSeparator") @NotNull byte[] CloseBraceLineFeed = {'}', '\n'};
+	@NotNull byte[] SpaceCloseSquareBracket = {' ', ']'};
+
+	@NotNull byte[] OpenAngleBracketSpace = {'<', ' '};
+
+	@NotNull byte[] SpaceCloseAngleBracket = {' ', '>'};
+
+	@NotNull byte[] SpaceToSpace = encodeUtf8BytesWithCertaintyValueIsValid(" to ");
 
 	<X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X;
 }

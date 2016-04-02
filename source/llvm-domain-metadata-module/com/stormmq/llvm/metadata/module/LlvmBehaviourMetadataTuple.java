@@ -23,7 +23,6 @@
 package com.stormmq.llvm.metadata.module;
 
 import com.stormmq.llvm.domain.ReferenceTracker;
-import com.stormmq.llvm.domain.constants.simpleConstants.IntegerConstant;
 import com.stormmq.llvm.metadata.*;
 import com.stormmq.llvm.metadata.metadataTuples.AnonymousMetadataTuple;
 import org.jetbrains.annotations.NonNls;
@@ -32,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.Map.Entry;
 
-import static com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType.i32;
+import static com.stormmq.llvm.domain.typedValues.constantTypedValues.simpleConstantExpressions.IntegerConstantTypedValue.i32;
 import static com.stormmq.llvm.metadata.module.LlvmModuleFlagsBehaviourFlag.*;
 import static com.stormmq.llvm.metadata.module.LlvmModuleFlagsBehaviourFlag.Error;
 import static java.util.Arrays.asList;
@@ -44,7 +43,7 @@ public final class LlvmBehaviourMetadataTuple extends AnonymousMetadataTuple
 	@NotNull
 	private static LlvmBehaviourMetadataTuple llvmBehaviourMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final LlvmModuleFlagsBehaviourFlag behaviourFlag, @NonNls @NotNull final String key, final int value)
 	{
-		return new LlvmBehaviourMetadataTuple(referenceTracker, behaviourFlag, key, new ConstantMetadata(new IntegerConstant(i32, value)));
+		return new LlvmBehaviourMetadataTuple(referenceTracker, behaviourFlag, key, new ConstantMetadata(i32(value)));
 	}
 
 	@NotNull

@@ -27,10 +27,10 @@ import org.jetbrains.annotations.NotNull;
 
 public interface CanBePointedToType extends Type
 {
-	@SuppressWarnings("ClassReferencesSubclass")
+	@SuppressWarnings({"ClassReferencesSubclass", "unchecked"})
 	@NotNull
-	default PointerValueType pointerTo(final int addressSpace)
+	default <T extends CanBePointedToType> PointerValueType<T> pointerTo(final int addressSpace)
 	{
-		return new PointerValueType(this, addressSpace);
+		return (PointerValueType<T>) new PointerValueType<>(this, addressSpace);
 	}
 }

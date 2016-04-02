@@ -25,7 +25,7 @@ package com.stormmq.java.llvm.xxx;
 import com.stormmq.java.classfile.domain.InternalTypeName;
 import com.stormmq.java.classfile.domain.InvalidInternalTypeNameException;
 import com.stormmq.java.classfile.domain.descriptors.FieldDescriptor;
-import com.stormmq.java.classfile.domain.information.FieldInformation;
+import com.stormmq.java.classfile.domain.fieldConstants.FieldConstant;
 import com.stormmq.java.classfile.domain.uniqueness.FieldUniqueness;
 import com.stormmq.java.classfile.processing.Records;
 import com.stormmq.java.classfile.processing.typeInformationUsers.TypeInformationTriplet;
@@ -33,24 +33,31 @@ import com.stormmq.java.llvm.api.Packed;
 import com.stormmq.java.parsing.utilities.names.typeNames.TypeName;
 import com.stormmq.java.parsing.utilities.names.typeNames.TypeNameCategory;
 import com.stormmq.java.parsing.utilities.names.typeNames.referenceTypeNames.KnownReferenceTypeName;
+import com.stormmq.llvm.domain.typedValues.constantTypedValues.ConstantTypedValue;
+import com.stormmq.llvm.domain.identifiers.GlobalIdentifier;
 import com.stormmq.llvm.domain.identifiers.LocalIdentifier;
-import com.stormmq.llvm.domain.types.CanBePointedToType;
-import com.stormmq.llvm.domain.types.Type;
+import com.stormmq.llvm.domain.types.*;
 import com.stormmq.llvm.domain.types.firstClassTypes.PointerValueType;
-import com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.KnownStructureType;
-import com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.StructureType;
-import org.jetbrains.annotations.NotNull;
+import com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.structureTypes.*;
+import com.stormmq.llvm.domain.variables.GlobalVariable;
+import org.jetbrains.annotations.*;
 
 import java.util.*;
 
+import static com.stormmq.java.llvm.xxx.ToLlvmConstantFieldConstantUser.toLlvmConstant;
+import static com.stormmq.llvm.domain.Linkage.external;
+import static com.stormmq.llvm.domain.Visibility._default;
+import static com.stormmq.llvm.domain.Writable.AutomaticAlignment;
 import static com.stormmq.llvm.domain.types.firstClassTypes.FloatingPointValueType.floatingPointValueTypeFromSizeInBits;
 import static com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType.integerValueTypeFromSizeInBits;
-import static com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.OpaqueStructureType.OpaqueStructure;
 import static java.util.Collections.reverse;
-import static java.util.Comparator.reverseOrder;
 
 public final class ReferencedClasses
 {
+	@NonNls @NotNull private static final String FieldIdentifierPrefix = "field.";
+	@NonNls @NotNull private static final String ClassIdentifierPrefix = "class.";
+
+	private static final int BestGuessOfNumberOfParentFields = 64;
 	@NotNull private final KnownReferenceTypeName thisClass;
 	@NotNull private final LocalIdentifier thisIdentifier;
 	@NotNull private final Set<LocalIdentifier> referencedClassesOtherThanThis;
@@ -63,45 +70,63 @@ public final class ReferencedClasses
 	}
 
 	@NotNull
-	public Map<LocalIdentifier, StructureType> structureTypes(@NotNull final Records records, @NotNull final TypeInformationTriplet typeInformationTriplet)
+	public Set<GlobalVariable<?>> globalVariables(@NotNull final TypeInformationTriplet typeInformationTriplet)
 	{
-		final boolean isPacked = records.hasInheritedAnnotation(typeInformationTriplet, Packed.class);
-		final Type[] fieldTypes = fieldTypesIncludingParents(records, typeInformationTriplet);
-		final KnownStructureType thisClassKnownStructureType = new KnownStructureType(isPacked, fieldTypes);
-
-		final Map<LocalIdentifier, StructureType> structureTypes = new HashMap<>(referencedClassesOtherThanThis.size() + 1);
-		for (final LocalIdentifier referencedClassOtherThanThis : referencedClassesOtherThanThis)
+		final Set<GlobalVariable<?>> globals = new HashSet<>(typeInformationTriplet.numberOfStaticAndInstanceFields());
+		typeInformationTriplet.forEachInstanceFieldInReverseOrder((fieldUniqueness, fieldInformation) ->
 		{
-			structureTypes.put(referencedClassOtherThanThis, OpaqueStructure);
-		}
-		structureTypes.put(thisIdentifier, thisClassKnownStructureType);
-		return structureTypes;
+			final GlobalIdentifier globalIdentifier = createFieldIdentifier(fieldUniqueness);
+
+			final Type llvmType = convertFieldToLlvmType(fieldUniqueness);
+			@Nullable final FieldConstant constantValue = fieldInformation.constantValue;
+
+			@Nullable final ConstantTypedValue<Type> initializerConstantTypedValue = toLlvmConstant(llvmType, constantValue);
+			final boolean isConstant = initializerConstantTypedValue != null;
+			globals.add(new GlobalVariable<>(globalIdentifier, external, _default, null, null, false, 0, false, isConstant, llvmType, initializerConstantTypedValue, null, null, AutomaticAlignment));
+		});
+
+		return globals;
 	}
 
 	@NotNull
-	private Type[] fieldTypesIncludingParents(@NotNull final Records records, @NotNull final TypeInformationTriplet typeInformationTriplet)
+	public Set<LocallyIdentifiedStructureType> structureTypes(@NotNull final Records records, @NotNull final TypeInformationTriplet typeInformationTriplet)
 	{
-		final List<Type> fieldTypesInWrongOrder = new ArrayList<>(64 + typeInformationTriplet.typeInformation.fields.size());
-		records.loopOverSelfAndParents(typeInformationTriplet, value ->
+		final boolean isPacked = records.hasInheritedAnnotation(typeInformationTriplet, Packed.class);
+		final Type[] fieldTypes = fieldTypesIncludingParents(records, typeInformationTriplet);
+		final IdentifiedStructureType thisClassIdentifiedStructureType = new IdentifiedStructureType(thisIdentifier, isPacked, fieldTypes);
+
+		final Set<LocallyIdentifiedStructureType> locallyIdentifiedStructureTypes = new HashSet<>(referencedClassesOtherThanThis.size() + 1);
+		for (final LocalIdentifier referencedClassOtherThanThis : referencedClassesOtherThanThis)
 		{
-			final Map<FieldUniqueness, FieldInformation> fields = value.typeInformation.fields;
-			final SortedMap<FieldUniqueness, FieldInformation> sortedFields = new TreeMap<>(reverseOrder());
-			sortedFields.putAll(fields);
-			sortedFields.forEach((fieldUniqueness, fieldInformation) ->
+			locallyIdentifiedStructureTypes.add(new OpaqueStructureType(referencedClassOtherThanThis));
+		}
+		locallyIdentifiedStructureTypes.add(thisClassIdentifiedStructureType);
+		return locallyIdentifiedStructureTypes;
+	}
+
+	@NotNull
+	private Type[] fieldTypesIncludingParents(@NotNull final Records records, @NotNull final TypeInformationTriplet self)
+	{
+		final List<Type> fieldTypesInWrongOrder = new ArrayList<>(self.numberOfStaticAndInstanceFields() + BestGuessOfNumberOfParentFields);
+		records.loopOverSelfAndParents(self, value ->
+		{
+			value.forEachStaticFieldInReverseOrder((fieldUniqueness, fieldInformation) ->
 			{
-				if (fieldInformation.isStatic)
-				{
-					return;
-				}
-				final FieldDescriptor fieldDescriptor = fieldUniqueness.fieldDescriptor;
-				final InternalTypeName internalTypeName = fieldDescriptor.internalTypeName;
-				final Type type = convertInternalTypeNameToLlvmType(internalTypeName);
+				final Type type = convertFieldToLlvmType(fieldUniqueness);
 				fieldTypesInWrongOrder.add(type);
 			});
 			return false;
 		});
 		reverse(fieldTypesInWrongOrder);
 		return fieldTypesInWrongOrder.toArray(new Type[fieldTypesInWrongOrder.size()]);
+	}
+
+	@NotNull
+	private Type convertFieldToLlvmType(@NotNull final FieldUniqueness fieldUniqueness)
+	{
+		final FieldDescriptor fieldDescriptor = fieldUniqueness.fieldDescriptor;
+		final InternalTypeName internalTypeName = fieldDescriptor.internalTypeName;
+		return convertInternalTypeNameToLlvmType(internalTypeName);
 	}
 
 	@NotNull
@@ -123,7 +148,7 @@ public final class ReferencedClasses
 		if (internalTypeName.isArray())
 		{
 			// TODO: Handle arrays
-			throw new UnsupportedOperationException("Arrays are not yet supported");
+			System.err.println("Arrays are not yet supported");
 		}
 
 		final TypeName typeName = internalTypeName.typeName();
@@ -142,16 +167,16 @@ public final class ReferencedClasses
 				throw new IllegalStateException("Should not be void");
 
 			case Reference:
-				final CanBePointedToType referencedClass;
+				final AddressableIdentifierType referencedClass;
 				try
 				{
-					referencedClass = add(internalTypeName.toKnownReferenceTypeName());
+					referencedClass = new AddressableIdentifierType(add(internalTypeName.toKnownReferenceTypeName()));
 				}
 				catch (final InvalidInternalTypeNameException e)
 				{
 					throw new IllegalStateException("What went wrong, when this typeNameCategory is Reference?", e);
 				}
-				return new PointerValueType(referencedClass, 0);
+				return new PointerValueType<>(referencedClass, 0);
 
 			default:
 				throw new IllegalStateException("Unexpected typeNameCategory");
@@ -161,6 +186,24 @@ public final class ReferencedClasses
 	@NotNull
 	private static LocalIdentifier createLocalIdentifier(@NotNull final KnownReferenceTypeName referencedTypeName)
 	{
-		return new LocalIdentifier("class." + referencedTypeName.name());
+		return new LocalIdentifier(classIdentifier(referencedTypeName));
+	}
+
+	@NotNull
+	private GlobalIdentifier createFieldIdentifier(final FieldUniqueness fieldUniqueness)
+	{
+		return new GlobalIdentifier(fieldIdentifier(thisClass, fieldUniqueness));
+	}
+
+	@NotNull
+	private static String classIdentifier(@NotNull final KnownReferenceTypeName referencedTypeName)
+	{
+		return ClassIdentifierPrefix + referencedTypeName.name();
+	}
+
+	@NotNull
+	private static String fieldIdentifier(@NotNull final KnownReferenceTypeName referencedTypeName, @NotNull final FieldUniqueness fieldUniqueness)
+	{
+		return FieldIdentifierPrefix + referencedTypeName.name() + '.' + fieldUniqueness.uniqueName();
 	}
 }

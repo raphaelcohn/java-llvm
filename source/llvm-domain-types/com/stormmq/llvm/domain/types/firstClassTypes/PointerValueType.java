@@ -24,47 +24,46 @@ package com.stormmq.llvm.domain.types.firstClassTypes;
 
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.types.CanBePointedToType;
-import com.stormmq.string.Formatting;
 import org.jetbrains.annotations.NotNull;
 
 import static com.stormmq.llvm.domain.types.firstClassTypes.FloatingPointValueType.*;
 import static com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType.*;
-import static com.stormmq.llvm.domain.types.firstClassTypes.X86MmxFirstClassType.x86_mmx;
+import static com.stormmq.string.Formatting.format;
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
 
-public final class PointerValueType implements PrimitiveSingleValueType
+public final class PointerValueType<T extends CanBePointedToType> implements PrimitiveSingleValueType
 {
-	@NotNull public static final PointerValueType i8Pointer = i8.pointerTo(0);
-	@NotNull public static final PointerValueType i16Pointer = i16.pointerTo(0);
-	@NotNull public static final PointerValueType i32Pointer = i32.pointerTo(0);
-	@NotNull public static final PointerValueType i64Pointer = i64.pointerTo(0);
-	@NotNull public static final PointerValueType i128Pointer = i128.pointerTo(0);
-	@NotNull public static final PointerValueType halfPointer = half.pointerTo(0);
-	@NotNull public static final PointerValueType floatPointer = _float.pointerTo(0);
-	@NotNull public static final PointerValueType doublePointer = _double.pointerTo(0);
-	@NotNull public static final PointerValueType fp128Pointer = fp128.pointerTo(0);
-	@NotNull public static final PointerValueType x86_fp80Pointer = x86_fp80.pointerTo(0);
-	@NotNull public static final PointerValueType ppc_fp128Pointer = ppc_fp128.pointerTo(0);
-	@NotNull public static final PointerValueType x86_mmxPointer = x86_mmx.pointerTo(0);
+	@SuppressWarnings("unused") @NotNull public static final PointerValueType<IntegerValueType> i8Pointer = i8.pointerTo(0);
+	@SuppressWarnings("unused") @NotNull public static final PointerValueType<IntegerValueType> i16Pointer = i16.pointerTo(0);
+	@SuppressWarnings("unused") @NotNull public static final PointerValueType<IntegerValueType> i32Pointer = i32.pointerTo(0);
+	@SuppressWarnings("unused") @NotNull public static final PointerValueType<IntegerValueType> i64Pointer = i64.pointerTo(0);
+	@SuppressWarnings("unused") @NotNull public static final PointerValueType<IntegerValueType> i128Pointer = i128.pointerTo(0);
+	@SuppressWarnings("unused") @NotNull public static final PointerValueType<FloatingPointValueType> halfPointer = half.pointerTo(0);
+	@SuppressWarnings("unused") @NotNull public static final PointerValueType<FloatingPointValueType> floatPointer = _float.pointerTo(0);
+	@SuppressWarnings("unused") @NotNull public static final PointerValueType<FloatingPointValueType> doublePointer = _double.pointerTo(0);
+	@SuppressWarnings("unused") @NotNull public static final PointerValueType<FloatingPointValueType> fp128Pointer = fp128.pointerTo(0);
+	@SuppressWarnings("unused") @NotNull public static final PointerValueType<FloatingPointValueType> x86_fp80Pointer = x86_fp80.pointerTo(0);
+	@SuppressWarnings("unused") @NotNull public static final PointerValueType<FloatingPointValueType> ppc_fp128Pointer = ppc_fp128.pointerTo(0);
+
 	@SuppressWarnings("SpellCheckingInspection") @NotNull private static final byte[] addrspaceOpenBracket = encodeUtf8BytesWithCertaintyValueIsValid("addrspace(");
 
-	@NotNull private final CanBePointedToType canBePointedToType;
+	@NotNull public final T pointsTo;
 	private final int addressSpace;
 
-	public PointerValueType(@NotNull final CanBePointedToType canBePointedToType, final int addressSpace)
+	public PointerValueType(@NotNull final T pointsTo, final int addressSpace)
 	{
 		if (addressSpace < 0)
 		{
-			throw new IllegalArgumentException(Formatting.format("addressSpace can not be negative, ie not '%1$s'", addressSpace));
+			throw new IllegalArgumentException(format("addressSpace can not be negative, ie not '%1$s'", addressSpace));
 		}
-		this.canBePointedToType = canBePointedToType;
+		this.pointsTo = pointsTo;
 		this.addressSpace = addressSpace;
 	}
 
 	@Override
 	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
 	{
-		canBePointedToType.write(byteWriter);
+		pointsTo.write(byteWriter);
 
 		byteWriter.writeSpace();
 

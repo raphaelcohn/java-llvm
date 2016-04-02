@@ -30,12 +30,12 @@ import org.jetbrains.annotations.*;
 import static com.stormmq.string.StringUtilities.encodeUtf8Bytes;
 import static com.stormmq.string.StringUtilities.iterateOverStringCodePoints;
 
-public class LlvmString implements Writable
+public final class LlvmString implements Writable
 {
 	@NotNull private final String value;
 	@SuppressWarnings("FieldNotUsedInToString") private final boolean valueNeedsEscaping;
 
-	protected LlvmString(@NonNls @NotNull final String value)
+	public LlvmString(@NonNls @NotNull final String value)
 	{
 		this.value = value;
 		valueNeedsEscaping = value.isEmpty() || doesIdentifierNeedsEscaping(value);
@@ -110,7 +110,7 @@ public class LlvmString implements Writable
 
 	@NotNull
 	@NonNls
-	public final String name()
+	public String name()
 	{
 		return value;
 	}

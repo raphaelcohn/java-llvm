@@ -23,8 +23,6 @@
 package com.stormmq.llvm.metadata.tbaa;
 
 import com.stormmq.llvm.domain.ReferenceTracker;
-import com.stormmq.llvm.domain.constants.simpleConstants.IntegerConstant;
-import com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType;
 import com.stormmq.llvm.metadata.*;
 import com.stormmq.llvm.metadata.metadataTuples.AnonymousMetadataTuple;
 import org.jetbrains.annotations.NotNull;
@@ -33,9 +31,11 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.stormmq.llvm.domain.typedValues.constantTypedValues.simpleConstantExpressions.IntegerConstantTypedValue.i64;
+
 public final class TbaaTagMetadataTuple extends AnonymousMetadataTuple
 {
-	@NotNull private static final Metadata IsConstant = new ConstantMetadata(new IntegerConstant(IntegerValueType.i64, 1L));
+	@NotNull private static final Metadata IsConstant = new ConstantMetadata(i64(1L));
 
 	// identifier is typically a type name, eg float, const float, etc
 	public TbaaTagMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @SuppressWarnings("TypeMayBeWeakened") @NotNull final StringConstantMetadata identifier, @SuppressWarnings("TypeMayBeWeakened") @Nullable final TbaaTagMetadataTuple parent, final boolean isConstant)

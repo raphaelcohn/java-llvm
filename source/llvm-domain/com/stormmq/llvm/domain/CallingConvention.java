@@ -29,17 +29,17 @@ import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyVal
 
 public enum CallingConvention
 {
-	ccc("ccc"),
-	@SuppressWarnings("SpellCheckingInspection")fastcc("fastcc"),
-	@SuppressWarnings("SpellCheckingInspection")coldcc("coldcc"),
-	cc10("cc 10"),
-	cc11("cc 11"),
-	@SuppressWarnings("SpellCheckingInspection")webkit_jscc("webkit_jscc"),
-	@SuppressWarnings("SpellCheckingInspection")anyregcc("anyregcc"),
-	@SuppressWarnings("SpellCheckingInspection")preserve_mostcc("preserve_mostcc"),
-	@SuppressWarnings("SpellCheckingInspection")preserve_allcc("preserve_allcc"),
-	@SuppressWarnings("SpellCheckingInspection")cxx_fast_tlscc("cxx_fast_tlscc"),
-	cc64("cc 64"),
+	@SuppressWarnings("unused")ccc("ccc"),
+	@SuppressWarnings({"SpellCheckingInspection", "unused"})fastcc("fastcc"),
+	@SuppressWarnings({"SpellCheckingInspection", "unused"})coldcc("coldcc"),
+	@SuppressWarnings("unused")cc10("cc 10"),
+	@SuppressWarnings("unused")cc11("cc 11"),
+	@SuppressWarnings({"SpellCheckingInspection", "unused"})webkit_jscc("webkit_jscc"),
+	@SuppressWarnings({"SpellCheckingInspection", "unused"})anyregcc("anyregcc"),
+	@SuppressWarnings({"SpellCheckingInspection", "unused"})preserve_mostcc("preserve_mostcc"),
+	@SuppressWarnings({"SpellCheckingInspection", "unused"})preserve_allcc("preserve_allcc"),
+	@SuppressWarnings({"SpellCheckingInspection", "unused"})cxx_fast_tlscc("cxx_fast_tlscc"),
+	@SuppressWarnings("unused")cc64("cc 64"),
 	;
 
 	@NotNull public final byte[] llAssemblyValue;

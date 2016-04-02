@@ -11,7 +11,7 @@
     <orderEntry type="module" module-name="byteWriters" />
     <orderEntry type="module" module-name="string" />
     <orderEntry type="module" module-name="llvm-domain-identifiers" />
-    <orderEntry type="module" module-name="llvm-domain-constants" />
+    <orderEntry type="module" module-name="llvm-domain-typedValues" />
     <orderEntry type="module" module-name="java-parsing-utilities" />
   </component>
 </module>

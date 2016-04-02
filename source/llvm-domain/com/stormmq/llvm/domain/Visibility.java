@@ -22,7 +22,6 @@
 
 package com.stormmq.llvm.domain;
 
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
@@ -34,13 +33,11 @@ public enum Visibility
 	@SuppressWarnings("unused")_protected,
 	;
 
-	@NotNull @NonNls private final String name;
 	@NotNull public final byte[] llAssemblyValue;
 
 	Visibility()
 	{
 		final String name = name();
-		this.name = name.charAt(0) == '_' ? name.substring(1) : name;
-		llAssemblyValue = encodeUtf8BytesWithCertaintyValueIsValid(name);
+		llAssemblyValue = encodeUtf8BytesWithCertaintyValueIsValid(name.charAt(0) == '_' ? name.substring(1) : name);
 	}
 }

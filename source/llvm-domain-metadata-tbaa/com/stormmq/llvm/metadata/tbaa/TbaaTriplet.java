@@ -22,14 +22,13 @@
 
 package com.stormmq.llvm.metadata.tbaa;
 
-import com.stormmq.llvm.domain.constants.simpleConstants.IntegerConstant;
 import com.stormmq.llvm.metadata.ConstantMetadata;
 import com.stormmq.llvm.metadata.Metadata;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
-import static com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType.i64;
+import static com.stormmq.llvm.domain.typedValues.constantTypedValues.simpleConstantExpressions.IntegerConstantTypedValue.i64;
 
 public final class TbaaTriplet
 {
@@ -46,8 +45,8 @@ public final class TbaaTriplet
 
 	public void addTo(@NotNull final Collection<Metadata> metadata)
 	{
-		metadata.add(new ConstantMetadata(new IntegerConstant(i64, offset)));
-		metadata.add(new ConstantMetadata(new IntegerConstant(i64, length)));
+		metadata.add(new ConstantMetadata(i64(offset)));
+		metadata.add(new ConstantMetadata(i64(length)));
 		metadata.add(tbaaTagMetadataTuple);
 	}
 }

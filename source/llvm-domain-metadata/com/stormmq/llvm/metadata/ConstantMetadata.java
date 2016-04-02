@@ -23,15 +23,15 @@
 package com.stormmq.llvm.metadata;
 
 import com.stormmq.byteWriters.ByteWriter;
-import com.stormmq.llvm.domain.constants.Constant;
+import com.stormmq.llvm.domain.typedValues.constantTypedValues.ConstantTypedValue;
 import com.stormmq.string.Formatting;
 import org.jetbrains.annotations.NotNull;
 
 public final class ConstantMetadata implements Metadata
 {
-	@NotNull private final Constant<?> value;
+	@NotNull private final ConstantTypedValue<?> value;
 
-	public ConstantMetadata(@NotNull final Constant<?> value)
+	public ConstantMetadata(@NotNull final ConstantTypedValue<?> value)
 	{
 		this.value = value;
 	}
@@ -57,8 +57,6 @@ public final class ConstantMetadata implements Metadata
 	@Override
 	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
 	{
-		value.type().write(byteWriter);
-		byteWriter.writeSpace();
 		value.write(byteWriter);
 	}
 

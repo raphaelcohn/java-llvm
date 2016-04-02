@@ -26,7 +26,7 @@ import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.*;
 import com.stormmq.llvm.domain.comdat.ComdatDefinition;
 import com.stormmq.llvm.domain.comdat.MayHaveComdatDefinition;
-import com.stormmq.llvm.domain.constants.Constant;
+import com.stormmq.llvm.domain.typedValues.constantTypedValues.ConstantTypedValue;
 import com.stormmq.llvm.domain.identifiers.GlobalIdentifier;
 import com.stormmq.llvm.domain.names.SectionName;
 import com.stormmq.llvm.domain.target.triple.TargetTriple;
@@ -52,12 +52,12 @@ public final class GlobalVariable<T extends Type> extends AbstractVariable imple
 	private final boolean isExternallyInitialized;
 	private final boolean isConstant;
 	@NotNull private final T type;
-	@Nullable private final Constant<T> initializerConstant;
+	@Nullable private final ConstantTypedValue<T> initializerConstantTypedValue;
 	@Nullable private final SectionName sectionName;
 	@Nullable private ComdatDefinition comdatDefinition;
 	private final int alignmentAsPowerOfTwo;
 
-	public GlobalVariable(@NotNull final GlobalIdentifier globalIdentifier, @NotNull final Linkage linkage, @NotNull final Visibility visibility, @Nullable final DllStorageClass dllStorageClass, @Nullable final ThreadLocalStorageModel threadLocalStorageModel, final boolean hasUnnamedAddress, final int addressSpace, final boolean isExternallyInitialized, final boolean isConstant, @NotNull final T type, @Nullable final Constant<T> initializerConstant, @Nullable final SectionName sectionName, @Nullable final ComdatDefinition comdatDefinition, final int alignmentAsPowerOfTwo)
+	public GlobalVariable(@NotNull final GlobalIdentifier globalIdentifier, @NotNull final Linkage linkage, @NotNull final Visibility visibility, @Nullable final DllStorageClass dllStorageClass, @Nullable final ThreadLocalStorageModel threadLocalStorageModel, final boolean hasUnnamedAddress, final int addressSpace, final boolean isExternallyInitialized, final boolean isConstant, @NotNull final T type, @Nullable final ConstantTypedValue<T> initializerConstantTypedValue, @Nullable final SectionName sectionName, @Nullable final ComdatDefinition comdatDefinition, final int alignmentAsPowerOfTwo)
 	{
 		super(globalIdentifier, linkage, visibility, dllStorageClass, threadLocalStorageModel, hasUnnamedAddress);
 		this.isExternallyInitialized = isExternallyInitialized;
@@ -71,7 +71,7 @@ public final class GlobalVariable<T extends Type> extends AbstractVariable imple
 			throw new IllegalArgumentException(Formatting.format("alignmentAsPowerOfTwo ('%1$s') can not be more than %2$s", alignmentAsPowerOfTwo, MaximumPowerOfTwo));
 		}
 
-		if (isConstant && initializerConstant == null)
+		if (isConstant && initializerConstantTypedValue == null)
 		{
 			throw new IllegalArgumentException("Constants must have a non-null initializerConstant");
 		}
@@ -79,7 +79,7 @@ public final class GlobalVariable<T extends Type> extends AbstractVariable imple
 		this.addressSpace = addressSpace;
 		this.isConstant = isConstant;
 		this.type = type;
-		this.initializerConstant = initializerConstant;
+		this.initializerConstantTypedValue = initializerConstantTypedValue;
 		this.sectionName = sectionName;
 		this.comdatDefinition = comdatDefinition;
 		this.alignmentAsPowerOfTwo = alignmentAsPowerOfTwo;
@@ -108,9 +108,10 @@ public final class GlobalVariable<T extends Type> extends AbstractVariable imple
 		byteWriter.writeSpace();
 		type.write(byteWriter);
 
-		if (initializerConstant != null)
+		if (initializerConstantTypedValue != null)
 		{
-			initializerConstant.write(byteWriter);
+			byteWriter.writeSpace();
+			initializerConstantTypedValue.write(byteWriter);
 		}
 
 		if (sectionName != null)

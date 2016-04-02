@@ -22,7 +22,7 @@
 
 package com.stormmq.llvm.metadata.debugging;
 
-import com.stormmq.llvm.domain.constants.Constant;
+import com.stormmq.llvm.domain.typedValues.constantTypedValues.ConstantTypedValue;
 import com.stormmq.llvm.domain.identifiers.Identifier;
 import com.stormmq.llvm.metadata.*;
 import org.jetbrains.annotations.NonNls;
@@ -101,7 +101,7 @@ public enum Key
 	}
 
 	@NotNull
-	public KeyWithMetadataField with(@NonNls @NotNull final Constant<?> value)
+	public KeyWithMetadataField with(@NonNls @NotNull final ConstantTypedValue<?> value)
 	{
 		return with(new ConstantMetadata(value));
 	}

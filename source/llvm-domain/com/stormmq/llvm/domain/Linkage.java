@@ -48,8 +48,7 @@ public enum Linkage
 	{
 		this.isPermittedForAlias = isPermittedForAlias;
 		final String name = name();
-		final String actualName = name.charAt(0) == '_' ? name.substring(1) : name;
-		llAssemblyValue = encodeUtf8BytesWithCertaintyValueIsValid(actualName);
+		llAssemblyValue = encodeUtf8BytesWithCertaintyValueIsValid(name.charAt(0) == '_' ? name.substring(1) : name);
 	}
 
 	Linkage()

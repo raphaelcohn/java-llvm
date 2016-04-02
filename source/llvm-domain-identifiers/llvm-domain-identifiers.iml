@@ -11,6 +11,5 @@
     <orderEntry type="module" module-name="byteWriters" exported="" />
     <orderEntry type="module" module-name="string" />
     <orderEntry type="module" module-name="llvm-domain" exported="" />
-    <orderEntry type="module" module-name="llvm-domain-types" />
   </component>
 </module>

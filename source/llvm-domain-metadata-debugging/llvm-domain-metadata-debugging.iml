@@ -10,7 +10,7 @@
     <orderEntry type="library" name="annotations" level="project" />
     <orderEntry type="module" module-name="llvm-domain-metadata" exported="" />
     <orderEntry type="module" module-name="llvm-domain-identifiers" exported="" />
-    <orderEntry type="module" module-name="llvm-domain-constants" exported="" />
+    <orderEntry type="module" module-name="llvm-domain-typedValues" exported="" />
     <orderEntry type="module" module-name="string" />
   </component>
 </module>

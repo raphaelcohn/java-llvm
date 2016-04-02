@@ -22,26 +22,25 @@
 
 package com.stormmq.llvm.metadata.module;
 
-import com.stormmq.llvm.domain.constants.simpleConstants.IntegerConstant;
 import com.stormmq.llvm.metadata.ConstantMetadata;
 import org.jetbrains.annotations.NotNull;
 
-import static com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType.i32;
+import static com.stormmq.llvm.domain.typedValues.constantTypedValues.simpleConstantExpressions.IntegerConstantTypedValue.i32;
 
 public enum LlvmModuleFlagsBehaviourFlag
 {
-	Error(1),
-	Warning(2),
-	Require(3),
-	Override(4),
-	Append(5),
-	AppendUnique(6),
+	@SuppressWarnings("unused")Error(1),
+	@SuppressWarnings("unused")Warning(2),
+	@SuppressWarnings("unused")Require(3),
+	@SuppressWarnings("unused")Override(4),
+	@SuppressWarnings("unused")Append(5),
+	@SuppressWarnings("unused")AppendUnique(6),
 	;
 
 	@NotNull public final ConstantMetadata constantMetadataField;
 
 	LlvmModuleFlagsBehaviourFlag(final int value)
 	{
-		constantMetadataField = new ConstantMetadata(new IntegerConstant(i32, value));
+		constantMetadataField = new ConstantMetadata(i32(value));
 	}
 }

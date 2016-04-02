@@ -22,17 +22,15 @@
 
 package com.stormmq.java.llvm.xxx;
 
-import com.stormmq.java.classfile.domain.information.TypeInformation;
-import com.stormmq.java.classfile.processing.TypeInformationTripletUser;
 import com.stormmq.java.classfile.processing.Records;
+import com.stormmq.java.classfile.processing.TypeInformationTripletUser;
 import com.stormmq.java.classfile.processing.typeInformationUsers.TypeInformationTriplet;
 import com.stormmq.llvm.domain.asm.ModuleLevelInlineAsm;
 import com.stormmq.llvm.domain.function.FunctionDeclaration;
 import com.stormmq.llvm.domain.function.FunctionDefinition;
-import com.stormmq.llvm.domain.identifiers.LocalIdentifier;
 import com.stormmq.llvm.domain.module.MetadataCreator;
 import com.stormmq.llvm.domain.target.triple.Architecture;
-import com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.StructureType;
+import com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.structureTypes.LocallyIdentifiedStructureType;
 import com.stormmq.llvm.domain.variables.Alias;
 import com.stormmq.llvm.domain.variables.GlobalVariable;
 import com.stormmq.llvm.metadata.debugging.DIGlobalVariableKeyedMetadataTuple;
@@ -60,13 +58,12 @@ public final class JavaConvertingTypeInformationTripletUser implements TypeInfor
 	@Override
 	public void use(@NotNull final Records records, @NotNull final TypeInformationTriplet typeInformationTriplet)
 	{
-		final TypeInformation typeInformation = typeInformationTriplet.typeInformation;
-
-		final ReferencedClasses referencedClasses = new ReferencedClasses(typeInformation.thisClassTypeName);
+		final ReferencedClasses referencedClasses = new ReferencedClasses(typeInformationTriplet.thisClassTypeName());
 
 
-		final Map<LocalIdentifier, StructureType> structureTypes = referencedClasses.structureTypes(records, typeInformationTriplet);
-		final Set<GlobalVariable<?>> globalVariablesAndConstants = emptySet();
+		final Set<GlobalVariable<?>> globalVariablesAndConstants = referencedClasses.globalVariables(typeInformationTriplet);
+		final Set<LocallyIdentifiedStructureType> locallyIdentifiedStructureTypes = referencedClasses.structureTypes(records, typeInformationTriplet);
+
 		final Set<FunctionDeclaration> functionDeclarations = emptySet();
 		final Set<FunctionDefinition> functionsDefinitions = emptySet();
 
@@ -74,7 +71,7 @@ public final class JavaConvertingTypeInformationTripletUser implements TypeInfor
 		final TypedMetadataTuple<DISubprogramKeyedMetadataTuple> subprograms = metadataCreator.emptyTypedMetadataTuple();
 		final TypedMetadataTuple<DIGlobalVariableKeyedMetadataTuple> globals = metadataCreator.emptyTypedMetadataTuple();
 
-		moduleWriter.createAndWriteModule(typeInformationTriplet, metadataCreator, NoModuleLevelInlineAssembly, structureTypes, globalVariablesAndConstants, functionDeclarations, functionsDefinitions, subprograms, globals, NoAliases);
+		moduleWriter.createAndWriteModule(typeInformationTriplet, metadataCreator, NoModuleLevelInlineAssembly, locallyIdentifiedStructureTypes, globalVariablesAndConstants, functionDeclarations, functionsDefinitions, subprograms, globals, NoAliases);
 	}
 
 }

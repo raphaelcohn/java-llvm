@@ -25,11 +25,10 @@ package com.stormmq.llvm.domain.module;
 import com.stormmq.llvm.domain.asm.ModuleLevelInlineAsm;
 import com.stormmq.llvm.domain.function.FunctionDeclaration;
 import com.stormmq.llvm.domain.function.FunctionDefinition;
-import com.stormmq.llvm.domain.identifiers.LocalIdentifier;
 import com.stormmq.llvm.domain.target.dataLayout.DataLayoutSpecification;
 import com.stormmq.llvm.domain.target.triple.Architecture;
 import com.stormmq.llvm.domain.target.triple.TargetTriple;
-import com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.StructureType;
+import com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.structureTypes.LocallyIdentifiedStructureType;
 import com.stormmq.llvm.domain.variables.Alias;
 import com.stormmq.llvm.domain.variables.GlobalVariable;
 import com.stormmq.llvm.metadata.debugging.LlvmDbgCuNamedMetadataTuple;
@@ -57,8 +56,8 @@ public final class TargetModuleCreator
 	}
 
 	@NotNull
-	public Module newModule(@NotNull final Map<Architecture, List<ModuleLevelInlineAsm>> moduleLevelInlineAssembly, @NotNull final LlvmIdentNamedMetadataTuple identity, @NotNull final LlvmModuleFlagsNamedMetadataTuple moduleFlags, @NotNull final LlvmDbgCuNamedMetadataTuple compileUnits, @NotNull final Map<LocalIdentifier, StructureType> structureTypes, @NotNull final Set<GlobalVariable<?>> globalVariablesAndConstants, @NotNull final Set<FunctionDeclaration> functionDeclarations, @NotNull final Set<FunctionDefinition> functionsDefinitions, @NotNull final Set<Alias> aliases)
+	public Module newModule(@NotNull final Map<Architecture, List<ModuleLevelInlineAsm>> moduleLevelInlineAssembly, @NotNull final LlvmIdentNamedMetadataTuple identity, @NotNull final LlvmModuleFlagsNamedMetadataTuple moduleFlags, @NotNull final LlvmDbgCuNamedMetadataTuple compileUnits, @NotNull final Set<LocallyIdentifiedStructureType> locallyIdentifiedStructureTypes, @NotNull final Set<GlobalVariable<?>> globalVariablesAndConstants, @NotNull final Set<FunctionDeclaration> functionDeclarations, @NotNull final Set<FunctionDefinition> functionsDefinitions, @NotNull final Set<Alias> aliases)
 	{
-		return new Module(dataLayoutSpecification, targetTriple, moduleLevelInlineAssembly, identity, moduleFlags, compileUnits, structureTypes, globalVariablesAndConstants, functionDeclarations, functionsDefinitions, aliases);
+		return new Module(dataLayoutSpecification, targetTriple, moduleLevelInlineAssembly, identity, moduleFlags, compileUnits, locallyIdentifiedStructureTypes, globalVariablesAndConstants, functionDeclarations, functionsDefinitions, aliases);
 	}
 }

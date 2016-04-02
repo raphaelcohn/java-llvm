@@ -35,7 +35,7 @@ public final class VectorType<T extends PrimitiveSingleValueType> implements Sin
 	@NotNull private static final byte[] SpaceXSpace = encodeUtf8BytesWithCertaintyValueIsValid(" x ");
 
 	@NotNull private final T primitiveSingleValueType;
-	public final int numberOfElements;
+	private final int numberOfElements;
 
 	public VectorType(@NotNull final T primitiveSingleValueType, final int numberOfElements)
 	{
@@ -57,5 +57,10 @@ public final class VectorType<T extends PrimitiveSingleValueType> implements Sin
 		primitiveSingleValueType.write(byteWriter);
 
 		byteWriter.writeCloseAngleBracket();
+	}
+
+	public boolean hasNumberOfElements(final int numberOfElements)
+	{
+		return this.numberOfElements == numberOfElements;
 	}
 }

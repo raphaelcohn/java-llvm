@@ -34,11 +34,11 @@ public final class ArrayType<T extends TypeWithSize> implements AggregateType
 	@NotNull private static final byte[] SpaceXSpace = encodeUtf8BytesWithCertaintyValueIsValid(" x ");
 
 	@NotNull private final T elementType;
-	private final int[] dimensionLengths;
+	private final int[] lengthsOfDimensions;
 
-	public ArrayType(@NotNull final T elementType, final int... dimensionLengths)
+	public ArrayType(@NotNull final T elementType, final int... lengthsOfDimensions)
 	{
-		final int length = dimensionLengths.length;
+		final int length = lengthsOfDimensions.length;
 		if (length == 0)
 		{
 			throw new IllegalArgumentException("dimensionLengths can not be empty");
@@ -46,7 +46,7 @@ public final class ArrayType<T extends TypeWithSize> implements AggregateType
 
 		for (int index = 0; index < length; index++)
 		{
-			final int dimensionLength = dimensionLengths[index];
+			final int dimensionLength = lengthsOfDimensions[index];
 			if (dimensionLength < 0)
 			{
 				throw new IllegalArgumentException(Formatting.format("Dimension '%1$s' (zero-based) can not be negative ('%2$s)", index, dimensionLength));
@@ -54,19 +54,34 @@ public final class ArrayType<T extends TypeWithSize> implements AggregateType
 		}
 
 		this.elementType = elementType;
-		this.dimensionLengths = dimensionLengths;
+		this.lengthsOfDimensions = lengthsOfDimensions;
+	}
+
+	public boolean isMultidimensional()
+	{
+		return lengthsOfDimensions.length > 1;
+	}
+
+	public int lengthOfZerothDimension()
+	{
+		return lengthOfDimension(0);
+	}
+
+	private int lengthOfDimension(final int zeroBasedDimensionIndex)
+	{
+		return lengthsOfDimensions[zeroBasedDimensionIndex];
 	}
 
 	@SuppressWarnings("ForLoopReplaceableByForEach")
 	@Override
 	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
 	{
-		final int length = dimensionLengths.length;
+		final int length = lengthsOfDimensions.length;
 
-		for (int index = 0; index < length; index++)
+		for (int zeroBasedDimensionIndex = 0; zeroBasedDimensionIndex < length; zeroBasedDimensionIndex++)
 		{
 			byteWriter.writeOpenSquareBracket();
-			byteWriter.writeUtf8EncodedStringWithCertainty(Integer.toString(dimensionLengths[index]));
+			byteWriter.writeUtf8EncodedStringWithCertainty(Integer.toString(lengthOfDimension(zeroBasedDimensionIndex)));
 			byteWriter.writeBytes(SpaceXSpace);
 		}
 
