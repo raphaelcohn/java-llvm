@@ -24,6 +24,7 @@ package com.stormmq.llvm.domain.typedValues.constantTypedValues.complexConstantE
 
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.typedValues.AbstractTypedValue;
+import com.stormmq.llvm.domain.typedValues.constantTypedValues.ConstantTypedValue;
 import com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType;
 import com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.ArrayType;
 import com.stormmq.string.InvalidUtf16StringException;
@@ -34,7 +35,7 @@ import static com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType.i8;
 import static com.stormmq.string.StringUtilities.encodeUtf8Bytes;
 import static java.lang.Integer.toHexString;
 
-public final class CStringConstantTypedValue extends AbstractTypedValue<ArrayType<IntegerValueType>>
+public final class CStringConstantTypedValue extends AbstractTypedValue<ArrayType<IntegerValueType>> implements ConstantTypedValue<ArrayType<IntegerValueType>>
 {
 	private static final int LessThan32OrTopBitSet = 0x20;
 	private static final int ByteMask = 0xFF;

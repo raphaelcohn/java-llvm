@@ -81,4 +81,10 @@ public enum FloatingPointValueType implements PrimitiveSingleValueType
 	{
 		byteWriter.writeBytes(llvmAssemblyEncoding);
 	}
+
+	@SuppressWarnings("MagicNumber")
+	public boolean isWiderThan64Bits()
+	{
+		return numberOfBits > 64;
+	}
 }

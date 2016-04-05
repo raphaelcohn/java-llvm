@@ -453,10 +453,11 @@ public final class LlvmString implements Writable
 			byteWriter.writeByte(utf8Byte);
 		}
 
+		@SuppressWarnings("NumericCastThatLosesPrecision")
 		private void writeEscapedByte(final int utf8Byte) throws X
 		{
 			byteWriter.writeSlash();
-			byteWriter.writeUtf8EncodedStringWithCertainty(Integer.toHexString(utf8Byte));
+			byteWriter.writeUtf8EncodedStringWithCertainty(Formatting.zeroPaddedUpperCaseHexString((byte) utf8Byte));
 		}
 	}
 }

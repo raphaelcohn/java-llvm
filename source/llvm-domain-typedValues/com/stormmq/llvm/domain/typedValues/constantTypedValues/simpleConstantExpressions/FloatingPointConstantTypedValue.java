@@ -28,67 +28,62 @@ import com.stormmq.llvm.domain.typedValues.constantTypedValues.ConstantTypedValu
 import com.stormmq.llvm.domain.types.firstClassTypes.FloatingPointValueType;
 import org.jetbrains.annotations.NotNull;
 
+import static com.stormmq.llvm.domain.types.firstClassTypes.FloatingPointValueType.half;
+import static com.stormmq.string.Formatting.zeroPaddedUpperCaseHexString;
+
 public final class FloatingPointConstantTypedValue extends AbstractTypedValue<FloatingPointValueType> implements ConstantTypedValue<FloatingPointValueType>
 {
-	@NotNull private static final byte[] _0xH = {'0', 'x', 'H'}; // Half
-	@NotNull private static final byte[] _0x = {'0', 'x'}; // Float and Double
-	@NotNull private static final byte[] _0xL = {'0', 'x', 'L'}; // Quad
-	@NotNull private static final byte[] _0xM = {'0', 'x', 'M'}; // PPC
-	@NotNull private static final byte[] _0xK = {'0', 'x', 'K'}; // X86 long double
-
 	@NotNull
-	public static FloatingPointConstantTypedValue half(final int value)
+	public static FloatingPointConstantTypedValue half(final short value)
 	{
-		return new FloatingPointConstantTypedValue(FloatingPointValueType.half, 0L, value, _0xH);
+		return new FloatingPointConstantTypedValue(half, 0L, value, FloatingPointBitsWriter.Half);
 	}
 
 	@NotNull
 	public static FloatingPointConstantTypedValue _float(final float value)
 	{
-		return new FloatingPointConstantTypedValue(FloatingPointValueType._float, 0L, Float.floatToIntBits(value), _0x);
+		return new FloatingPointConstantTypedValue(FloatingPointValueType._float, 0L, Float.floatToIntBits(value), FloatingPointBitsWriter.Float);
 	}
 
 	@NotNull
 	public static FloatingPointConstantTypedValue _double(final long doubleValueAsRawLongBitsAsJavaLosesNaNInformationOnConversion)
 	{
-		return new FloatingPointConstantTypedValue(FloatingPointValueType._double, 0L, doubleValueAsRawLongBitsAsJavaLosesNaNInformationOnConversion, _0x);
+		return new FloatingPointConstantTypedValue(FloatingPointValueType._double, 0L, doubleValueAsRawLongBitsAsJavaLosesNaNInformationOnConversion, FloatingPointBitsWriter.Double);
 	}
 
 	@NotNull
 	public static FloatingPointConstantTypedValue quad(final long left, final long right)
 	{
-		return new FloatingPointConstantTypedValue(FloatingPointValueType.fp128, left, right, _0xL);
+		return new FloatingPointConstantTypedValue(FloatingPointValueType.fp128, left, right, FloatingPointBitsWriter.Quad);
 	}
 
 	@NotNull
 	public static FloatingPointConstantTypedValue powerPcDoubleDouble(final long left, final long right)
 	{
-		return new FloatingPointConstantTypedValue(FloatingPointValueType.ppc_fp128, left, right, _0xM);
+		return new FloatingPointConstantTypedValue(FloatingPointValueType.ppc_fp128, left, right, FloatingPointBitsWriter.PowerPcDoubleDouble);
 	}
 
 	@NotNull
 	public static FloatingPointConstantTypedValue x86LongDouble(final char left, final long right)
 	{
-		return new FloatingPointConstantTypedValue(FloatingPointValueType.x86_fp80, left, right, _0xK);
+		return new FloatingPointConstantTypedValue(FloatingPointValueType.x86_fp80, left, right, FloatingPointBitsWriter.X86LongDouble);
 	}
 
 	private final long left;
 	private final long right;
-	@NotNull private final byte[] prefix;
+	@NotNull private final FloatingPointBitsWriter floatingPointBitsWriter;
 
-	private FloatingPointConstantTypedValue(@NotNull final FloatingPointValueType floatingPointValueType, final long left, final long right, @NotNull final byte[] prefix)
+	private FloatingPointConstantTypedValue(@NotNull final FloatingPointValueType floatingPointValueType, final long left, final long right, @NotNull final FloatingPointBitsWriter floatingPointBitsWriter)
 	{
 		super(floatingPointValueType);
 		this.left = left;
 		this.right = right;
-		this.prefix = prefix;
+		this.floatingPointBitsWriter = floatingPointBitsWriter;
 	}
 
 	@Override
 	protected <X extends Exception> void writeValue(@NotNull final ByteWriter<X> byteWriter) throws X
 	{
-		byteWriter.writeBytes(prefix);
-		byteWriter.writeUtf8EncodedStringWithCertainty(Long.toHexString(left));
-		byteWriter.writeUtf8EncodedStringWithCertainty(Long.toHexString(right));
+		floatingPointBitsWriter.write(byteWriter, left, right);
 	}
 }
