@@ -7,3 +7,6 @@
 [submodule "library/jopt-simple"]
 	path = library/jopt-simple
 	url = https://github.com/raphaelcohn/intellij-library-jopt-simple.git
+[submodule "examples/llvm.tmbundle"]
+	path = examples/llvm.tmbundle
+	url = https://github.com/whitequark/llvm.tmbundle
