@@ -22,6 +22,7 @@
 
 package com.stormmq.llvm.metadata.tbaa;
 
+import com.stormmq.functions.ListHelper;
 import com.stormmq.llvm.domain.ReferenceTracker;
 import com.stormmq.llvm.metadata.metadataTuples.NamedMetadataTuple;
 import com.stormmq.llvm.metadata.Metadata;
@@ -39,12 +40,13 @@ public final class TbaaNamedMetadata extends NamedMetadataTuple
 	@NotNull
 	private static List<? extends Metadata> convert(@NotNull final Collection<TbaaTriplet> tbaaTriplets)
 	{
-		final List<Metadata> converted = new ArrayList<>(tbaaTriplets.size() * 3);
-		for (final TbaaTriplet tbaaTriplet : tbaaTriplets)
+		return ListHelper.newArrayList(tbaaTriplets.size() * 3, converted ->
 		{
-			tbaaTriplet.addTo(converted);
-		}
-		return converted;
+			for (final TbaaTriplet tbaaTriplet : tbaaTriplets)
+			{
+				tbaaTriplet.addTo(converted);
+			}
+		});
 	}
 
 }

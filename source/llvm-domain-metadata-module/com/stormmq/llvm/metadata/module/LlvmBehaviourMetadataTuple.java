@@ -22,6 +22,7 @@
 
 package com.stormmq.llvm.metadata.module;
 
+import com.stormmq.functions.ListHelper;
 import com.stormmq.llvm.domain.ReferenceTracker;
 import com.stormmq.llvm.metadata.*;
 import com.stormmq.llvm.metadata.metadataTuples.AnonymousMetadataTuple;
@@ -94,23 +95,25 @@ public final class LlvmBehaviourMetadataTuple extends AnonymousMetadataTuple
 	private static LlvmBehaviourMetadataTuple linkerOptionsForTarget(@NotNull final ReferenceTracker referenceTracker, @NotNull final Map<String, String> parameterizedOptions, @NotNull final String... options)
 	{
 		final int length = options.length;
-		final List<Metadata> tuple = new ArrayList<>(parameterizedOptions.size() + length);
-
-		for (final Entry<String, String> entry : parameterizedOptions.entrySet())
+		final List<Metadata> tupleX = ListHelper.newArrayList(parameterizedOptions.size() + length, tuple ->
 		{
-			final ArrayList<Metadata> keyedTuple = new ArrayList<>(2);
-			keyedTuple.add(new StringConstantMetadata(entry.getKey()));
-			keyedTuple.add(new StringConstantMetadata(entry.getValue()));
-			tuple.add(new AnonymousMetadataTuple(referenceTracker, keyedTuple));
-		}
+			for (final Entry<String, String> entry : parameterizedOptions.entrySet())
+			{
+				tuple.add(new AnonymousMetadataTuple(referenceTracker, ListHelper.newArrayList(2, keyedTuple ->
+				{
+					keyedTuple.add(new StringConstantMetadata(entry.getKey()));
+					keyedTuple.add(new StringConstantMetadata(entry.getValue()));
+				})));
+			}
 
-		for (final String option : options)
-		{
-			final List<Metadata> unkeyedTuple = singletonList(new StringConstantMetadata(option));
-			tuple.add(new AnonymousMetadataTuple(referenceTracker, unkeyedTuple));
-		}
+			for (final String option : options)
+			{
+				final List<Metadata> unkeyedTuple = singletonList(new StringConstantMetadata(option));
+				tuple.add(new AnonymousMetadataTuple(referenceTracker, unkeyedTuple));
+			}
+		});
 
-		return new LlvmBehaviourMetadataTuple(referenceTracker, AppendUnique, "Linker Options", new AnonymousMetadataTuple(referenceTracker, tuple));
+		return new LlvmBehaviourMetadataTuple(referenceTracker, AppendUnique, "Linker Options", new AnonymousMetadataTuple(referenceTracker, tupleX));
 	}
 
 	private LlvmBehaviourMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final LlvmModuleFlagsBehaviourFlag behaviourFlag, @NonNls @NotNull final String key, @NotNull final Metadata value)
@@ -118,12 +121,14 @@ public final class LlvmBehaviourMetadataTuple extends AnonymousMetadataTuple
 		super(referenceTracker, convert(behaviourFlag, key, value));
 	}
 
+	@NotNull
 	private static List<? extends Metadata> convert(@NotNull final LlvmModuleFlagsBehaviourFlag behaviourFlag, @NonNls @NotNull final String key, @NotNull final Metadata value)
 	{
-		final List<Metadata> tuple = new ArrayList<>(3);
-		tuple.add(behaviourFlag.constantMetadataField);
-		tuple.add(new StringConstantMetadata(key));
-		tuple.add(value);
-		return tuple;
+		return ListHelper.newArrayList(3, tuple ->
+		{
+			tuple.add(behaviourFlag.constantMetadataField);
+			tuple.add(new StringConstantMetadata(key));
+			tuple.add(value);
+		});
 	}
 }

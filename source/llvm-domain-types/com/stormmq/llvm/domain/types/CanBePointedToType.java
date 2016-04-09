@@ -22,6 +22,7 @@
 
 package com.stormmq.llvm.domain.types;
 
+import com.stormmq.llvm.domain.AddressSpace;
 import com.stormmq.llvm.domain.types.firstClassTypes.PointerValueType;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,7 +30,7 @@ public interface CanBePointedToType extends Type
 {
 	@SuppressWarnings({"ClassReferencesSubclass", "unchecked"})
 	@NotNull
-	default <T extends CanBePointedToType> PointerValueType<T> pointerTo(final int addressSpace)
+	default <T extends CanBePointedToType> PointerValueType<T> pointerTo(@NotNull final AddressSpace addressSpace)
 	{
 		return (PointerValueType<T>) new PointerValueType<>(this, addressSpace);
 	}

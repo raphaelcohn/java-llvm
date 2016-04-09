@@ -26,4 +26,6 @@ import com.stormmq.llvm.metadata.Metadata;
 
 public interface ScopeMetadata extends Metadata
 {
+	// LLVM line numbers are one-based
+	int UnknownLineNumber = 1;
 }

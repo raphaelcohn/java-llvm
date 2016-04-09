@@ -37,7 +37,7 @@ public final class Alias extends AbstractVariable
 	@NotNull private final Type[] aliasedTypes;
 	@NotNull private final GlobalIdentifier originalGlobalVariableOrFunctionName;
 
-	public Alias(@NotNull final GlobalIdentifier globalIdentifier, @NotNull final Linkage linkage, @NotNull final Visibility visibility, @Nullable final DllStorageClass dllStorageClass, @Nullable final ThreadLocalStorageModel threadLocalStorageModel, final boolean hasUnnamedAddress, @NotNull final Type[] aliasedTypes, @NotNull final GlobalIdentifier originalGlobalVariableOrFunctionName)
+	public Alias(@NotNull final GlobalIdentifier globalIdentifier, @NotNull final Linkage linkage, @NotNull final Visibility visibility, @NotNull final DllStorageClass dllStorageClass, @NotNull final ThreadLocalStorageModel threadLocalStorageModel, final boolean hasUnnamedAddress, @NotNull final Type[] aliasedTypes, @NotNull final GlobalIdentifier originalGlobalVariableOrFunctionName)
 	{
 		super(globalIdentifier, linkage, visibility, dllStorageClass, threadLocalStorageModel, hasUnnamedAddress);
 		this.aliasedTypes = aliasedTypes;

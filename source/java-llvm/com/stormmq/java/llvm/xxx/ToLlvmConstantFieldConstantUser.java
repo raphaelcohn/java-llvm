@@ -25,23 +25,29 @@ package com.stormmq.java.llvm.xxx;
 import com.stormmq.java.classfile.domain.RawDouble;
 import com.stormmq.java.classfile.domain.fieldConstants.FieldConstant;
 import com.stormmq.java.classfile.domain.fieldConstants.FieldConstantUser;
+import com.stormmq.java.classfile.domain.information.FieldInformation;
 import com.stormmq.llvm.domain.typedValues.constantTypedValues.ConstantTypedValue;
 import com.stormmq.llvm.domain.typedValues.constantTypedValues.simpleConstantExpressions.FloatingPointConstantTypedValue;
 import com.stormmq.llvm.domain.typedValues.constantTypedValues.simpleConstantExpressions.IntegerConstantTypedValue;
+import com.stormmq.llvm.domain.types.CanBePointedToType;
 import com.stormmq.llvm.domain.types.Type;
 import com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.stormmq.llvm.domain.typedValues.constantTypedValues.complexConstantExpressions.CStringConstantTypedValue.cStringValueTypeConstant;
+import static com.stormmq.llvm.domain.typedValues.constantTypedValues.simpleConstantExpressions.FloatingPointConstantTypedValue._double;
+import static com.stormmq.llvm.domain.typedValues.constantTypedValues.simpleConstantExpressions.FloatingPointConstantTypedValue._float;
+import static com.stormmq.llvm.domain.typedValues.constantTypedValues.simpleConstantExpressions.IntegerConstantTypedValue.i64;
 import static com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType.i32;
 
-public final class ToLlvmConstantFieldConstantUser implements FieldConstantUser<ConstantTypedValue<?>>
+public final class ToLlvmConstantFieldConstantUser<T extends CanBePointedToType> implements FieldConstantUser<ConstantTypedValue<T>>
 {
 	@Nullable
-	public static ConstantTypedValue<Type> toLlvmConstant(@NotNull final Type llvmType, @Nullable final FieldConstant constantValue)
+	public static <T extends CanBePointedToType> ConstantTypedValue<T> toLlvmConstant(@NotNull final FieldInformation fieldInformation, @NotNull final T llvmType)
 	{
-		return new ToLlvmConstantFieldConstantUser(llvmType instanceof IntegerValueType ? (IntegerValueType) llvmType : i32).initializerConstant(constantValue);
+		@Nullable final FieldConstant constantValue = fieldInformation.constantValue;
+		return new ToLlvmConstantFieldConstantUser<T>(llvmType instanceof IntegerValueType ? (IntegerValueType) llvmType : i32).initializerConstant(constantValue);
 	}
 
 	@NotNull private final IntegerValueType integerValueType;
@@ -53,43 +59,48 @@ public final class ToLlvmConstantFieldConstantUser implements FieldConstantUser<
 
 	@SuppressWarnings("unchecked")
 	@Nullable
-	private ConstantTypedValue<Type> initializerConstant(@Nullable final FieldConstant constantValue)
+	private ConstantTypedValue<T> initializerConstant(@Nullable final FieldConstant constantValue)
 	{
-		return constantValue != null ? (ConstantTypedValue<Type>) constantValue.use(this) : null;
+		return constantValue != null ? constantValue.use(this) : null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@NotNull
 	@Override
-	public ConstantTypedValue<?> useString(@NotNull final String value)
+	public ConstantTypedValue<T> useString(@NotNull final String value)
 	{
-		return cStringValueTypeConstant(value, true);
+		return (ConstantTypedValue<T>) cStringValueTypeConstant(value, true);
 	}
 
+	@SuppressWarnings("unchecked")
 	@NotNull
 	@Override
-	public ConstantTypedValue<?> useFloat(final float value)
+	public ConstantTypedValue<T> useFloat(final float value)
 	{
-		return FloatingPointConstantTypedValue._float(value);
+		return (ConstantTypedValue<T>) _float(value);
 	}
 
+	@SuppressWarnings("unchecked")
 	@NotNull
 	@Override
-	public ConstantTypedValue<?> useDouble(@NotNull final RawDouble value)
+	public ConstantTypedValue<T> useDouble(@NotNull final RawDouble value)
 	{
-		return FloatingPointConstantTypedValue._double(value.asLong());
+		return (ConstantTypedValue<T>) _double(value.asLong());
 	}
 
+	@SuppressWarnings("unchecked")
 	@NotNull
 	@Override
-	public ConstantTypedValue<?> useInteger(final int value)
+	public ConstantTypedValue<T> useInteger(final int value)
 	{
-		return new IntegerConstantTypedValue(integerValueType, value);
+		return (ConstantTypedValue<T>) new IntegerConstantTypedValue(integerValueType, value);
 	}
 
+	@SuppressWarnings("unchecked")
 	@NotNull
 	@Override
-	public ConstantTypedValue<?> useLong(final long value)
+	public ConstantTypedValue<T> useLong(final long value)
 	{
-		return IntegerConstantTypedValue.i64(value);
+		return (ConstantTypedValue<T>) i64(value);
 	}
 }

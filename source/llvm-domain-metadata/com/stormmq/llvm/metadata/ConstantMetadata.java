@@ -23,15 +23,16 @@
 package com.stormmq.llvm.metadata;
 
 import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.llvm.domain.typedValues.TypedValue;
 import com.stormmq.llvm.domain.typedValues.constantTypedValues.ConstantTypedValue;
 import com.stormmq.string.Formatting;
 import org.jetbrains.annotations.NotNull;
 
 public final class ConstantMetadata implements Metadata
 {
-	@NotNull private final ConstantTypedValue<?> value;
+	@NotNull private final TypedValue<?> value;
 
-	public ConstantMetadata(@NotNull final ConstantTypedValue<?> value)
+	public ConstantMetadata(@NotNull final TypedValue<?> value)
 	{
 		this.value = value;
 	}

@@ -25,8 +25,9 @@ package com.stormmq.llvm.domain.comdat;
 import com.stormmq.llvm.domain.ObjectFileFormat;
 import org.jetbrains.annotations.*;
 
-import java.util.EnumSet;
+import java.util.Set;
 
+import static com.stormmq.functions.CollectionHelper.addOnce;
 import static com.stormmq.llvm.domain.ObjectFileFormat.ELF;
 import static com.stormmq.llvm.domain.ObjectFileFormat.PECOFF;
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
@@ -42,7 +43,7 @@ public enum ComdatSelectionKind
 	;
 
 	@NotNull public final byte[] llAssemblyValueWithLineFeed;
-	@NotNull private final EnumSet<ObjectFileFormat> supportedObjectFileFormats;
+	@NotNull private final Set<ObjectFileFormat> supportedObjectFileFormats;
 
 	@SuppressWarnings("HardcodedLineSeparator")
 	ComdatSelectionKind(final boolean isSupportedByElf)
@@ -52,7 +53,7 @@ public enum ComdatSelectionKind
 		supportedObjectFileFormats = of(PECOFF);
 		if (isSupportedByElf)
 		{
-			supportedObjectFileFormats.add(ELF);
+			addOnce(supportedObjectFileFormats, ELF);
 		}
 	}
 

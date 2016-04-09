@@ -23,14 +23,31 @@
 package com.stormmq.llvm.metadata.debugging;
 
 import com.stormmq.llvm.domain.ReferenceTracker;
-import com.stormmq.llvm.metadata.Metadata;
+import com.stormmq.llvm.metadata.RawConstantMetadata;
 import com.stormmq.llvm.metadata.metadataTuples.KeyedMetadataTuple;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-public final class DINamespaceKeyedMetadataTuple extends KeyedMetadataTuple implements TypeMetadata
+import static com.stormmq.java.parsing.utilities.ReservedIdentifiers._null;
+
+public final class DINamespaceKeyedMetadataTuple extends KeyedMetadataTuple implements TypeMetadata, NamespaceScopeMetadata
 {
-	public DINamespaceKeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final String name, @NotNull final Metadata scope, @NotNull final Metadata file, final int lineNumber)
+	@NonNls @NotNull private final String name;
+	@NotNull private final NamespaceScopeMetadata parentScope;
+
+	// scope can be null
+	public DINamespaceKeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NonNls @NotNull final String name, @NotNull final NamespaceScopeMetadata parentScope, @NotNull final DIFileKeyedMetadataTuple file, final int lineNumber)
 	{
-		super(referenceTracker, false, "DINamespace", Key.name.with(name), Key.scope.with(scope), Key.file.with(file), Key.line.with(lineNumber));
+		super(referenceTracker, false, "DINamespace", Key.name.with(name), Key.scope.with(parentScope), Key.file.with(file), Key.line.with(lineNumber));
+		this.name = name;
+		this.parentScope = parentScope;
+	}
+
+	@Override
+	@NonNls
+	@NotNull
+	public String fullyQualifiedNamespace(@NonNls @NotNull final String separator)
+	{
+		return parentScope.fullyQualifiedNamespace(separator) + separator + name;
 	}
 }

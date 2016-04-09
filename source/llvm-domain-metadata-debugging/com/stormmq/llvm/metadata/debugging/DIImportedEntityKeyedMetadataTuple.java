@@ -24,13 +24,14 @@ package com.stormmq.llvm.metadata.debugging;
 
 import com.stormmq.llvm.domain.ReferenceTracker;
 import com.stormmq.llvm.metadata.Metadata;
+import com.stormmq.llvm.metadata.debugging.dwarfTags.BaseDwarfTag;
 import com.stormmq.llvm.metadata.metadataTuples.KeyedMetadataTuple;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 public final class DIImportedEntityKeyedMetadataTuple extends KeyedMetadataTuple implements MacroMetadata
 {
-	public DIImportedEntityKeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final DwarfTag tag, @NonNls @NotNull final String name, @NotNull final Metadata scope, @NotNull final Metadata entity, final int lineNumber)
+	public DIImportedEntityKeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final BaseDwarfTag tag, @NonNls @NotNull final String name, @NotNull final Metadata scope, @NotNull final Metadata entity, final int lineNumber)
 	{
 		super(referenceTracker, false, "DIImportedEntity", Key.tag.with(tag), Key.name.with(name), Key.scope.with(scope), Key.entity.with(entity), Key.line.with(lineNumber));
 	}

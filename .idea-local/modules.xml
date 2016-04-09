@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/source/byteWriters/byteWriters.iml" filepath="$PROJECT_DIR$/source/byteWriters/byteWriters.iml" />
+      <module fileurl="file://$PROJECT_DIR$/source/byteReaders/byteReaders.iml" filepath="$PROJECT_DIR$/source/byteReaders/byteReaders.iml" />
       <module fileurl="file://$PROJECT_DIR$/source/java-classfile-domain/java-classfile-domain.iml" filepath="$PROJECT_DIR$/source/java-classfile-domain/java-classfile-domain.iml" group="library/java-classfile/classfile" />
       <module fileurl="file://$PROJECT_DIR$/source/java-classfile-parsing/java-classfile-parsing.iml" filepath="$PROJECT_DIR$/source/java-classfile-parsing/java-classfile-parsing.iml" group="library/java-classfile/classfile" />
       <module fileurl="file://$PROJECT_DIR$/source/java-classfile-processing/java-classfile-processing.iml" filepath="$PROJECT_DIR$/source/java-classfile-processing/java-classfile-processing.iml" group="library/java-classfile/classfile" />
@@ -17,6 +18,7 @@
       <module fileurl="file://$PROJECT_DIR$/source/llvm-domain-comdat/llvm-domain-comdat.iml" filepath="$PROJECT_DIR$/source/llvm-domain-comdat/llvm-domain-comdat.iml" group="llvm/domain" />
       <module fileurl="file://$PROJECT_DIR$/source/llvm-domain-function/llvm-domain-function.iml" filepath="$PROJECT_DIR$/source/llvm-domain-function/llvm-domain-function.iml" group="llvm/domain" />
       <module fileurl="file://$PROJECT_DIR$/source/llvm-domain-identifiers/llvm-domain-identifiers.iml" filepath="$PROJECT_DIR$/source/llvm-domain-identifiers/llvm-domain-identifiers.iml" group="llvm/domain" />
+      <module fileurl="file://$PROJECT_DIR$/source/llvm-domain-instructions/llvm-domain-instructions.iml" filepath="$PROJECT_DIR$/source/llvm-domain-instructions/llvm-domain-instructions.iml" group="llvm/domain" />
       <module fileurl="file://$PROJECT_DIR$/source/llvm-domain-metadata/llvm-domain-metadata.iml" filepath="$PROJECT_DIR$/source/llvm-domain-metadata/llvm-domain-metadata.iml" group="llvm/domain/metadata" />
       <module fileurl="file://$PROJECT_DIR$/source/llvm-domain-metadata-debugging/llvm-domain-metadata-debugging.iml" filepath="$PROJECT_DIR$/source/llvm-domain-metadata-debugging/llvm-domain-metadata-debugging.iml" group="llvm/domain/metadata" />
       <module fileurl="file://$PROJECT_DIR$/source/llvm-domain-metadata-module/llvm-domain-metadata-module.iml" filepath="$PROJECT_DIR$/source/llvm-domain-metadata-module/llvm-domain-metadata-module.iml" group="llvm/domain/metadata" />
@@ -30,6 +32,8 @@
       <module fileurl="file://$PROJECT_DIR$/source/llvm-domain-variables/llvm-domain-variables.iml" filepath="$PROJECT_DIR$/source/llvm-domain-variables/llvm-domain-variables.iml" group="llvm/domain" />
       <module fileurl="file://$PROJECT_DIR$/source/path/path.iml" filepath="$PROJECT_DIR$/source/path/path.iml" group="library/path" />
       <module fileurl="file://$PROJECT_DIR$/source/string/string.iml" filepath="$PROJECT_DIR$/source/string/string.iml" group="library/string" />
+      <module fileurl="file://$PROJECT_DIR$/source/functions/functions.iml" filefunctions="$PROJECT_DIR$/source/functions/functions.iml" group="library/functions" />
+      <module fileurl="file://$PROJECT_DIR$/source/annotations/annotations.iml" fileannotations="$PROJECT_DIR$/source/annotations/annotations.iml" group="library/annotations" />
     </modules>
   </component>
 </project>

@@ -22,13 +22,20 @@
 
 package com.stormmq.llvm.metadata.debugging;
 
-import com.stormmq.llvm.domain.typedValues.constantTypedValues.ConstantTypedValue;
+import com.stormmq.functions.ListHelper;
+import com.stormmq.llvm.domain.ReferenceTracker;
+import com.stormmq.llvm.domain.typedValues.TypedValue;
 import com.stormmq.llvm.domain.identifiers.Identifier;
 import com.stormmq.llvm.metadata.*;
+import com.stormmq.llvm.metadata.metadataTuples.AnonymousMetadataTuple;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Set;
+import java.util.*;
+import java.util.function.Consumer;
+
+import static com.stormmq.functions.ListHelper.newArrayList;
+import static java.util.Collections.addAll;
 
 public enum Key
 {
@@ -64,6 +71,7 @@ public enum Key
 	macros,
 	name,
 	nodes,
+	offset,
 	producer,
 	retainedTypes,
 	runtimeVersion,
@@ -85,23 +93,23 @@ public enum Key
 	@NotNull
 	public <E extends Enum<E>> KeyWithMetadataField with(@NotNull final Set<E> value)
 	{
-		return with(new RawMetadata(value));
+		return with(new RawConstantMetadata(value));
 	}
 
 	@NotNull
 	public KeyWithMetadataField with(@NotNull final Enum<?> value)
 	{
-		return with(new RawMetadata(value));
+		return with(new RawConstantMetadata(value));
 	}
 
 	@NotNull
 	public KeyWithMetadataField with(@NotNull final Identifier identifier)
 	{
-		return with(new RawMetadata(identifier));
+		return with(new RawConstantMetadata(identifier));
 	}
 
 	@NotNull
-	public KeyWithMetadataField with(@NonNls @NotNull final ConstantTypedValue<?> value)
+	public KeyWithMetadataField with(@NonNls @NotNull final TypedValue<?> value)
 	{
 		return with(new ConstantMetadata(value));
 	}
@@ -109,24 +117,35 @@ public enum Key
 	@NotNull
 	public KeyWithMetadataField with(@NonNls @NotNull final String value)
 	{
-		return with(new RawMetadata('"' + value + '"'));
+		return with(new RawConstantMetadata('"' + value + '"'));
 	}
 
 	@NotNull
 	public KeyWithMetadataField with(final boolean value)
 	{
-		return with(new RawMetadata(value));
+		return with(new RawConstantMetadata(value));
 	}
 
 	@NotNull
 	public KeyWithMetadataField with(final int value)
 	{
-		return with(new RawMetadata(value));
+		return with(new RawConstantMetadata(value));
 	}
 
 	@NotNull
 	public KeyWithMetadataField with(@NotNull final Metadata value)
 	{
 		return new KeyWithMetadataField(toString(), value);
+	}
+
+	@SuppressWarnings("MethodCanBeVariableArityMethod")
+	@NotNull
+	public KeyWithMetadataField with(@NotNull final ReferenceTracker referenceTracker, @NotNull final Metadata firstValue, @NotNull final Metadata[] subsequentValues)
+	{
+		return new KeyWithMetadataField(toString(), new AnonymousMetadataTuple(referenceTracker, newArrayList(subsequentValues.length + 1, list ->
+		{
+			list.add(firstValue);
+			addAll(list, subsequentValues);
+		})));
 	}
 }

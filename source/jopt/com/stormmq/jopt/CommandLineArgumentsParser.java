@@ -31,6 +31,7 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Supplier;
 
+import static com.stormmq.functions.CollectionHelper.addOnce;
 import static com.stormmq.jopt.Verbosity.*;
 import static com.stormmq.string.Formatting.format;
 import static java.lang.System.err;
@@ -84,7 +85,7 @@ public class CommandLineArgumentsParser
 		optionParser.posixlyCorrect(true);
 
 		optionParser.accepts(help, show_help).forHelp();
-		allKnownOptions.add(help);
+		addOnce(allKnownOptions, help);
 
 		optionWithOptionalValue(false, verbose, format("verbosity level (%1$s - %2$s)", None.ordinal(), Everything.ordinal()), Integer.toString(Verbose.ordinal())).withValuesConvertedBy(new VerbosityValueConverter()).defaultsTo(Verbose);
 	}
@@ -120,7 +121,7 @@ public class CommandLineArgumentsParser
 	}
 
 	@NotNull
-	public final Supplier<LinkedHashSet<Path>> extantWritableFolderPathsOption(final boolean optionMustBePresent, @NotNull @NonNls final String optionName, @NotNull @NonNls final String description, @NotNull @NonNls final String valueExample, @NotNull @NonNls final String defaultsTo, @NotNull @NonNls final String... requireIfTheseOptionsArePresent)
+	public final Supplier<List<Path>> extantWritableFolderPathsOption(final boolean optionMustBePresent, @NotNull @NonNls final String optionName, @NotNull @NonNls final String description, @NotNull @NonNls final String valueExample, @NotNull @NonNls final String defaultsTo, @NotNull @NonNls final String... requireIfTheseOptionsArePresent)
 	{
 		optionWithRequiredValue(optionMustBePresent, optionName, description, valueExample, requireIfTheseOptionsArePresent).withValuesSeparatedBy(':').ofType(String.class).defaultsTo(defaultsTo);
 		return () -> newArgumentsOnce().extantWritableFolderPathsOptionValue(optionName);
@@ -166,17 +167,11 @@ public class CommandLineArgumentsParser
 			throw new IllegalStateException("commandLineArguments have already been parsed");
 		}
 
-		if (!allKnownOptions.add(optionName))
-		{
-			throw new IllegalStateException(format("Option '%1$s' has already been added", optionName));
-		}
+		addOnce(allKnownOptions, optionName);
 
 		if (optionMustBePresent)
 		{
-			if (!optionsThatMustBePresent.add(optionName))
-			{
-				throw new IllegalArgumentException(format("Option '%1$s' is already one that must be present", optionName));
-			}
+			addOnce(optionsThatMustBePresent, optionName);
 		}
 
 		final OptionSpecBuilder optionSpecBuilder = optionParser.accepts(optionName, description);

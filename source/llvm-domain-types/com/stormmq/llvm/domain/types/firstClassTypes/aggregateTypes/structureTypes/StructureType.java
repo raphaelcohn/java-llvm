@@ -22,8 +22,45 @@
 
 package com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.structureTypes;
 
+import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.llvm.domain.types.Type;
 import com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.AggregateType;
+import org.jetbrains.annotations.NotNull;
 
 public interface StructureType extends AggregateType
 {
+	@NotNull byte[] OpenAngleBracketOpenBracketSpace = {'<', '{', ' '};
+
+	@NotNull byte[] SpaceCloseBracketCloseAngleBracket = {' ', '}', '>'};
+
+	static <X extends Exception> void writeBracedContent(@NotNull final ByteWriter<X> byteWriter, final boolean isPacked, @NotNull final Type[] types) throws X
+	{
+		final byte[] open;
+		final byte[] close;
+		if (isPacked)
+		{
+			open = OpenAngleBracketOpenBracketSpace;
+			close = SpaceCloseBracketCloseAngleBracket;
+		}
+		else
+		{
+			open = OpenBracketSpace;
+			close = SpaceCloseBracket;
+		}
+
+		byteWriter.writeBytes(open);
+
+		final int length = types.length;
+		for (int index = 0; index < length; index++)
+		{
+			final Type type = types[index];
+			if (index != 0)
+			{
+				byteWriter.writeBytes(CommaSpace);
+			}
+			type.write(byteWriter);
+		}
+
+		byteWriter.writeBytes(close);
+	}
 }

@@ -11,5 +11,6 @@
     <orderEntry type="library" name="jopt-simple" level="project" />
     <orderEntry type="module" module-name="path" />
     <orderEntry type="module" module-name="string" />
+    <orderEntry type="module" module-name="functions" />
   </component>
 </module>

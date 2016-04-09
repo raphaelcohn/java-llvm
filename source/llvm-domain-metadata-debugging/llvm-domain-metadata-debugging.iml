@@ -12,5 +12,9 @@
     <orderEntry type="module" module-name="llvm-domain-identifiers" exported="" />
     <orderEntry type="module" module-name="llvm-domain-typedValues" exported="" />
     <orderEntry type="module" module-name="string" />
+    <orderEntry type="module" module-name="llvm-domain-variables" />
+    <orderEntry type="module" module-name="java-parsing-utilities" />
+    <orderEntry type="module" module-name="functions" />
+    <orderEntry type="module" module-name="llvm-domain-target" />
   </component>
 </module>

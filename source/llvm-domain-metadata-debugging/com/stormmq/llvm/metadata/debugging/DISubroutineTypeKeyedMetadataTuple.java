@@ -23,14 +23,19 @@
 package com.stormmq.llvm.metadata.debugging;
 
 import com.stormmq.llvm.domain.ReferenceTracker;
-import com.stormmq.llvm.metadata.Metadata;
 import com.stormmq.llvm.metadata.metadataTuples.KeyedMetadataTuple;
 import org.jetbrains.annotations.NotNull;
 
 public final class DISubroutineTypeKeyedMetadataTuple extends KeyedMetadataTuple implements TypeMetadata
 {
-	public DISubroutineTypeKeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final Metadata types)
+	public DISubroutineTypeKeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final TypeMetadata returnType, @NotNull final TypeMetadata... formalParameterTypes)
 	{
-		super(referenceTracker, false, "DISubroutineType", Key.types.with(types));
+		super(referenceTracker, false, "DISubroutineType", Key.types.with(referenceTracker, returnType, formalParameterTypes));
 	}
+
+	public DISubroutineTypeKeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final NullTypeMetadata returnType, @NotNull final TypeMetadata... formalParameterTypes)
+	{
+		super(referenceTracker, false, "DISubroutineType", Key.types.with(referenceTracker, returnType, formalParameterTypes));
+	}
+
 }

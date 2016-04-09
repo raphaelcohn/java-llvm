@@ -28,18 +28,29 @@ import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyVal
 
 public enum GarbageCollectorStrategyName
 {
-	shadow_stack,
-	@SuppressWarnings("SpellCheckingInspection")erlang,
-	@SuppressWarnings("SpellCheckingInspection")ocaml,
-	@SuppressWarnings("SpellCheckingInspection")statepoint_example,
-	@SuppressWarnings("SpellCheckingInspection")coreclr,
+	@SuppressWarnings("unused")shadow_stack,
+	@SuppressWarnings({"SpellCheckingInspection", "unused"})erlang,
+	@SuppressWarnings({"SpellCheckingInspection", "unused"})ocaml,
+	@SuppressWarnings({"SpellCheckingInspection", "unused"})statepoint_example,
+	@SuppressWarnings({"SpellCheckingInspection", "unused"})coreclr,
 	;
 
 	@NotNull public final byte[] llvmAssemblyEncoding;
+	public final boolean shouldBeEncoded;
 	
+	@SuppressWarnings("ZeroLengthArrayAllocation")
 	GarbageCollectorStrategyName()
 	{
-		final String name = name().replace('_', '-');
-		llvmAssemblyEncoding = encodeUtf8BytesWithCertaintyValueIsValid("gc \"" + name + '"');
+		@NonNls final String name = name().replace('_', '-');
+		if (name.equals("NoGarbageCollectorStrategyName"))
+		{
+			llvmAssemblyEncoding = new byte[0];
+			shouldBeEncoded = false;
+		}
+		else
+		{
+			llvmAssemblyEncoding = encodeUtf8BytesWithCertaintyValueIsValid("gc \"" + name + '"');
+			shouldBeEncoded = true;
+		}
 	}
 }

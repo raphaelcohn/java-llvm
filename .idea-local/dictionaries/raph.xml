@@ -15,6 +15,7 @@
       <w>ident</w>
       <w>ieee</w>
       <w>instanceof</w>
+      <w>itanium</w>
       <w>javaparser</w>
       <w>logins</w>
       <w>methodref</w>
@@ -29,6 +30,7 @@
       <w>passwd</w>
       <w>reassociate</w>
       <w>sendmail</w>
+      <w>sizings</w>
       <w>subprocess</w>
       <w>subrange</w>
       <w>superinterface</w>

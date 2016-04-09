@@ -138,25 +138,25 @@ final class CommandLineArguments
 
 	@SuppressWarnings("CollectionDeclaredAsConcreteClass")
 	@NotNull
-	public LinkedHashSet<Path> extantWritableFolderPathsOptionValue(@NotNull final String optionName)
+	public List<Path> extantWritableFolderPathsOptionValue(@NotNull final String optionName)
 	{
 		@SuppressWarnings("unchecked") final Collection<String> rawValues = (List<String>) arguments.valuesOf(optionName);
-		final LinkedHashSet<Path> paths = new LinkedHashSet<>(rawValues.size());
-		for (final String rawValue : rawValues)
+		final List<Path> paths = new ArrayList<>(rawValues.size());
+		rawValues.stream().map(rawValue ->
 		{
-			final Path path;
+			final Path rawPath = get(rawValue);
+			final Path absolutePath;
 			try
 			{
-				path = get(rawValue).toAbsolutePath();
+				absolutePath = rawPath.toAbsolutePath();
 			}
 			catch (final InvalidPathException ignored)
 			{
 				printErrorMessageShowHelpAndExit(NoInput, "Option --%1$s is an invalid writable path (%2$s)", optionName, rawValue);
 				throw newShouldHaveExited();
 			}
-			extantWritableFolderPath(optionName, path);
-			paths.add(path);
-		}
+			return extantWritableFolderPath(optionName, absolutePath);
+		}).forEach(paths::add);
 		return paths;
 	}
 
@@ -200,13 +200,15 @@ final class CommandLineArguments
 		return None;
 	}
 
-	private void extantWritableFolderPath(@NotNull final String optionName, @NotNull final Path potentialWritableFolderPath)
+	@NotNull
+	private Path extantWritableFolderPath(@NotNull final String optionName, @NotNull final Path potentialWritableFolderPath)
 	{
 		if (!exists(potentialWritableFolderPath) || !IsSubFolder.accept(potentialWritableFolderPath) || !isWritable(potentialWritableFolderPath))
 		{
 			printErrorMessageShowHelpAndExit(NoInput, "Option --%1$s is not a readable, writable sub-folder path (%2$s)", optionName, potentialWritableFolderPath.toString());
 			throw newShouldHaveExited();
 		}
+		return potentialWritableFolderPath;
 	}
 
 	private void printErrorMessageShowHelpAndExitWithUsageError(@NonNls @NotNull final String errorLineTemplateWithoutLineEnding, @NotNull final Object... arguments)

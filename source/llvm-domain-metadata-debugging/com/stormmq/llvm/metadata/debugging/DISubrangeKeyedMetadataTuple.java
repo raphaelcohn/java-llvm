@@ -22,13 +22,16 @@
 
 package com.stormmq.llvm.metadata.debugging;
 
+import com.stormmq.functions.ListHelper;
 import com.stormmq.llvm.domain.ReferenceTracker;
 import com.stormmq.llvm.metadata.metadataTuples.KeyedMetadataTuple;
 import com.stormmq.llvm.metadata.KeyWithMetadataField;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import static com.stormmq.llvm.metadata.debugging.Key.align;
+import static com.stormmq.llvm.metadata.debugging.Key.size;
 
 public final class DISubrangeKeyedMetadataTuple extends KeyedMetadataTuple implements TypeMetadata
 {
@@ -64,13 +67,13 @@ public final class DISubrangeKeyedMetadataTuple extends KeyedMetadataTuple imple
 				throw new IllegalArgumentException("if lower bound is -1 then count must be -1");
 			}
 		}
-
-		final List<KeyWithMetadataField> tuple = new ArrayList<>(2);
-		tuple.add(Key.size.with(count));
-		if (lowerBound != EmptyLowerBound)
+		return ListHelper.newArrayList(2, (tuple) ->
 		{
-			tuple.add(Key.align.with(lowerBound));
-		}
-		return tuple;
+			tuple.add(size.with(count));
+			if (lowerBound != EmptyLowerBound)
+			{
+				tuple.add(align.with(lowerBound));
+			}
+		});
 	}
 }

@@ -24,14 +24,14 @@ package com.stormmq.llvm.domain.typedValues.constantTypedValues.complexConstantE
 
 import com.stormmq.llvm.domain.typedValues.constantTypedValues.ConstantTypedValue;
 import com.stormmq.llvm.domain.types.TypeWithSize;
-import com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.structureTypes.IdentifiedStructureType;
+import com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.structureTypes.IdentifiedLocallyIdentifiedStructureType;
 import com.stormmq.string.Formatting;
 import org.jetbrains.annotations.NotNull;
 
-public final class KnownStructureConstantTypedValue extends AbstractComplexConstantTypedValue<IdentifiedStructureType, TypeWithSize>
+public final class KnownStructureConstantTypedValue extends AbstractComplexConstantTypedValue<IdentifiedLocallyIdentifiedStructureType, TypeWithSize>
 {
 	@SafeVarargs
-	public KnownStructureConstantTypedValue(@NotNull final IdentifiedStructureType identifiedStructureType, @NotNull final ConstantTypedValue<TypeWithSize>... values)
+	public KnownStructureConstantTypedValue(@NotNull final IdentifiedLocallyIdentifiedStructureType identifiedStructureType, @NotNull final ConstantTypedValue<TypeWithSize>... values)
 	{
 		super(identifiedStructureType, values);
 		final int numberOfElements = numberOfElements();

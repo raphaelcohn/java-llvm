@@ -26,7 +26,9 @@ import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.types.Type;
 import org.jetbrains.annotations.NotNull;
 
-public final class UnidentifiedStructureType extends AbstractStructureType
+import static com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.structureTypes.StructureType.writeBracedContent;
+
+public final class UnidentifiedStructureType implements StructureType
 {
 	private final boolean isPacked;
 	@NotNull private final Type[] types;

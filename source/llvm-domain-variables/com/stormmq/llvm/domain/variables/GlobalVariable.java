@@ -26,11 +26,13 @@ import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.*;
 import com.stormmq.llvm.domain.comdat.ComdatDefinition;
 import com.stormmq.llvm.domain.comdat.MayHaveComdatDefinition;
+import com.stormmq.llvm.domain.typedValues.AddressableIdentifierTypedValue;
 import com.stormmq.llvm.domain.typedValues.constantTypedValues.ConstantTypedValue;
 import com.stormmq.llvm.domain.identifiers.GlobalIdentifier;
 import com.stormmq.llvm.domain.names.SectionName;
 import com.stormmq.llvm.domain.target.triple.TargetTriple;
-import com.stormmq.llvm.domain.types.Type;
+import com.stormmq.llvm.domain.types.CanBePointedToType;
+import com.stormmq.llvm.domain.types.firstClassTypes.PointerValueType;
 import com.stormmq.string.Formatting;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,16 +41,15 @@ import java.util.Set;
 
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
 
-public final class GlobalVariable<T extends Type> extends AbstractVariable implements MayHaveComdatDefinition
+public final class GlobalVariable<T extends CanBePointedToType> extends AbstractVariable implements MayHaveComdatDefinition
 {
 	private static final int MaximumPowerOfTwo = 29;
-	@SuppressWarnings("SpellCheckingInspection") @NotNull private static final byte[] SpaceAddressSpaceStart = encodeUtf8BytesWithCertaintyValueIsValid(" addrspace(");
 	@NotNull private static final byte[] SpaceExternallyInitialized = encodeUtf8BytesWithCertaintyValueIsValid(" externally_initialized");
 	@NotNull private static final byte[] SpaceGlobal = encodeUtf8BytesWithCertaintyValueIsValid(" global");
 	@NotNull private static final byte[] SpaceConstant = encodeUtf8BytesWithCertaintyValueIsValid(" constant");
 	@NotNull private static final byte[] CommaSpaceAlignSpace = encodeUtf8BytesWithCertaintyValueIsValid(", align ");
 
-	private final int addressSpace;
+	@NotNull private final AddressSpace addressSpace;
 	private final boolean isExternallyInitialized;
 	private final boolean isConstant;
 	@NotNull private final T type;
@@ -57,10 +58,10 @@ public final class GlobalVariable<T extends Type> extends AbstractVariable imple
 	@Nullable private ComdatDefinition comdatDefinition;
 	private final int alignmentAsPowerOfTwo;
 
-	public GlobalVariable(@NotNull final GlobalIdentifier globalIdentifier, @NotNull final Linkage linkage, @NotNull final Visibility visibility, @Nullable final DllStorageClass dllStorageClass, @Nullable final ThreadLocalStorageModel threadLocalStorageModel, final boolean hasUnnamedAddress, final int addressSpace, final boolean isExternallyInitialized, final boolean isConstant, @NotNull final T type, @Nullable final ConstantTypedValue<T> initializerConstantTypedValue, @Nullable final SectionName sectionName, @Nullable final ComdatDefinition comdatDefinition, final int alignmentAsPowerOfTwo)
+	public GlobalVariable(@NotNull final GlobalIdentifier globalIdentifier, @NotNull final Linkage linkage, @NotNull final Visibility visibility, @NotNull final DllStorageClass dllStorageClass, @NotNull final ThreadLocalStorageModel threadLocalStorageModel, final boolean hasUnnamedAddress, @NotNull final AddressSpace addressSpace, final boolean isExternallyInitialized, @NotNull final T type, @Nullable final ConstantTypedValue<T> initializerConstantTypedValue, @Nullable final SectionName sectionName, @Nullable final ComdatDefinition comdatDefinition, final int alignmentAsPowerOfTwo)
 	{
 		super(globalIdentifier, linkage, visibility, dllStorageClass, threadLocalStorageModel, hasUnnamedAddress);
-		this.isExternallyInitialized = isExternallyInitialized;
+
 		if (alignmentAsPowerOfTwo < AutomaticAlignment)
 		{
 			throw new IllegalArgumentException(Formatting.format("alignmentAsPowerOfTwo ('%1$s') can not be negative", alignmentAsPowerOfTwo));
@@ -71,13 +72,9 @@ public final class GlobalVariable<T extends Type> extends AbstractVariable imple
 			throw new IllegalArgumentException(Formatting.format("alignmentAsPowerOfTwo ('%1$s') can not be more than %2$s", alignmentAsPowerOfTwo, MaximumPowerOfTwo));
 		}
 
-		if (isConstant && initializerConstantTypedValue == null)
-		{
-			throw new IllegalArgumentException("Constants must have a non-null initializerConstant");
-		}
-
 		this.addressSpace = addressSpace;
-		this.isConstant = isConstant;
+		this.isExternallyInitialized = isExternallyInitialized;
+		isConstant = initializerConstantTypedValue != null;
 		this.type = type;
 		this.initializerConstantTypedValue = initializerConstantTypedValue;
 		this.sectionName = sectionName;
@@ -85,16 +82,27 @@ public final class GlobalVariable<T extends Type> extends AbstractVariable imple
 		this.alignmentAsPowerOfTwo = alignmentAsPowerOfTwo;
 	}
 
+	@NotNull
+	public T type()
+	{
+		return type;
+	}
+
+	@NotNull
+	public AddressableIdentifierTypedValue<PointerValueType<T>, GlobalIdentifier> pointer()
+	{
+		final PointerValueType<T> pointerTo = type.pointerTo(addressSpace);
+		return new AddressableIdentifierTypedValue<>(pointerTo, globalIdentifier);
+	}
+
 	@SuppressWarnings("SpellCheckingInspection")
 	// [@<GlobalVarName> =] [Linkage] [Visibility] [DLLStorageClass] [ThreadLocal] [unnamed_addr] [AddrSpace] [ExternallyInitialized] <global | constant> <Type> [<InitializerConstant>] [, section "name"] [, comdat [($name)]] [, align <Alignment>]
 	@Override
 	protected <X extends Exception> void writeVariable(@NotNull final ByteWriter<X> byteWriter) throws X
 	{
-		if (addressSpace != 0)
+		if (addressSpace.isNotZero())
 		{
-			byteWriter.writeBytes(SpaceAddressSpaceStart);
-			byteWriter.writeUtf8EncodedStringWithCertainty(Integer.toString(addressSpace));
-			byteWriter.writeCloseBracket();
+			addressSpace.write(byteWriter);
 		}
 
 		if (isExternallyInitialized)
@@ -138,5 +146,10 @@ public final class GlobalVariable<T extends Type> extends AbstractVariable imple
 	public void adjustComdatDefinition(@NotNull final Set<ComdatDefinition> comdatDefinitions, @NotNull final TargetTriple targetTriple)
 	{
 		comdatDefinition = MayHaveComdatDefinition.adjustComdatDefinition(comdatDefinitions, comdatDefinition, targetTriple);
+	}
+
+	public boolean isConstant()
+	{
+		return isConstant;
 	}
 }

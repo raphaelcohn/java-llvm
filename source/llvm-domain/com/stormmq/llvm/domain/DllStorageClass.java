@@ -28,14 +28,27 @@ import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyVal
 
 public enum DllStorageClass
 {
-	@SuppressWarnings("SpellCheckingInspection")dllimport,
-	@SuppressWarnings("SpellCheckingInspection")dllexport,
+	@SuppressWarnings({"SpellCheckingInspection", "unused"})dllimport,
+	@SuppressWarnings({"SpellCheckingInspection", "unused"})dllexport,
+	@SuppressWarnings("unused")NoDllStorageClass,
 	;
 
 	@NotNull public final byte[] llAssemblyValue;
+	public final boolean shouldBeEncoded;
 
+	@SuppressWarnings("ZeroLengthArrayAllocation")
 	DllStorageClass()
 	{
-		llAssemblyValue = encodeUtf8BytesWithCertaintyValueIsValid(name());
+		final String name = name();
+		if (name.equals("NoDllStorageClass"))
+		{
+			llAssemblyValue = new byte[0];
+			shouldBeEncoded = false;
+		}
+		else
+		{
+			llAssemblyValue = encodeUtf8BytesWithCertaintyValueIsValid(name());
+			shouldBeEncoded = true;
+		}
 	}
 }

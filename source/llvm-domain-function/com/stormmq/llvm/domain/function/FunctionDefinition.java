@@ -53,7 +53,7 @@ public final class FunctionDefinition extends AbstractGloballyIdentified impleme
 
 	@NotNull private final Linkage linkage;
 	@NotNull private final Visibility visibility;
-	@Nullable private final DllStorageClass dllStorageClass;
+	@NotNull private final DllStorageClass dllStorageClass;
 	@NotNull private final CallingConvention callingConvention;
 	@NotNull private final AttributeGroup<ParameterAttribute> returnAttributes;
 	@NotNull private final FormalParameter resultType;
@@ -63,14 +63,14 @@ public final class FunctionDefinition extends AbstractGloballyIdentified impleme
 	@Nullable private final SectionName sectionName;
 	@Nullable private ComdatDefinition comdatDefinition;
 	private final int alignment;
-	@Nullable private final GarbageCollectorStrategyName garbageCollectorStrategyName;
+	@NotNull private final GarbageCollectorStrategyName garbageCollectorStrategyName;
 	@NotNull private final DISubprogramKeyedMetadataTuple debuggingInformation;
 
 	// prefix
 	// prologue
 	// personality
 
-	public FunctionDefinition(@NotNull final Linkage linkage, @NotNull final Visibility visibility, @Nullable final DllStorageClass dllStorageClass, @NotNull final CallingConvention callingConvention, @NotNull final AttributeGroup<ParameterAttribute> returnAttributes, @NotNull final FormalParameter resultType, @NotNull final GlobalIdentifier globalIdentifier, @NotNull final FormalParameter[] parameters, final boolean hasUnnamedAddress, @NotNull final FunctionAttributeGroup functionAttributes, @Nullable final SectionName sectionName, @Nullable final ComdatDefinition comdatDefinition, final int alignment, @Nullable final GarbageCollectorStrategyName garbageCollectorStrategyName, @NotNull final DISubprogramKeyedMetadataTuple debuggingInformation)
+	public FunctionDefinition(@NotNull final Linkage linkage, @NotNull final Visibility visibility, @NotNull final DllStorageClass dllStorageClass, @NotNull final CallingConvention callingConvention, @NotNull final AttributeGroup<ParameterAttribute> returnAttributes, @NotNull final FormalParameter resultType, @NotNull final GlobalIdentifier globalIdentifier, @NotNull final FormalParameter[] parameters, final boolean hasUnnamedAddress, @NotNull final FunctionAttributeGroup functionAttributes, @Nullable final SectionName sectionName, @Nullable final ComdatDefinition comdatDefinition, final int alignment, @NotNull final GarbageCollectorStrategyName garbageCollectorStrategyName, @NotNull final DISubprogramKeyedMetadataTuple debuggingInformation)
 	{
 		super(globalIdentifier);
 
@@ -106,7 +106,7 @@ public final class FunctionDefinition extends AbstractGloballyIdentified impleme
 		byteWriter.writeSpace();
 		byteWriter.writeBytes(visibility.llAssemblyValue);
 
-		if (dllStorageClass != null)
+		if (dllStorageClass.shouldBeEncoded)
 		{
 			byteWriter.writeSpace();
 			byteWriter.writeBytes(dllStorageClass.llAssemblyValue);
@@ -158,7 +158,7 @@ public final class FunctionDefinition extends AbstractGloballyIdentified impleme
 			byteWriter.writeUtf8EncodedStringWithCertainty(Integer.toString(alignment));
 		}
 
-		if (garbageCollectorStrategyName != null)
+		if (garbageCollectorStrategyName.shouldBeEncoded)
 		{
 			byteWriter.writeSpace();
 			byteWriter.writeBytes(garbageCollectorStrategyName.llvmAssemblyEncoding);

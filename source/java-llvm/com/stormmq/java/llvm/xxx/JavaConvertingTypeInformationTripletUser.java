@@ -25,10 +25,11 @@ package com.stormmq.java.llvm.xxx;
 import com.stormmq.java.classfile.processing.Records;
 import com.stormmq.java.classfile.processing.TypeInformationTripletUser;
 import com.stormmq.java.classfile.processing.typeInformationUsers.TypeInformationTriplet;
+import com.stormmq.java.llvm.xxx.debugging.MetadataCreator;
+import com.stormmq.java.parsing.utilities.names.PackageName;
 import com.stormmq.llvm.domain.asm.ModuleLevelInlineAsm;
 import com.stormmq.llvm.domain.function.FunctionDeclaration;
 import com.stormmq.llvm.domain.function.FunctionDefinition;
-import com.stormmq.llvm.domain.module.MetadataCreator;
 import com.stormmq.llvm.domain.target.triple.Architecture;
 import com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.structureTypes.LocallyIdentifiedStructureType;
 import com.stormmq.llvm.domain.variables.Alias;
@@ -48,30 +49,32 @@ public final class JavaConvertingTypeInformationTripletUser implements TypeInfor
 	@NotNull private static final Map<Architecture, List<ModuleLevelInlineAsm>> NoModuleLevelInlineAssembly = emptyMap();
 	@NotNull private static final Set<Alias> NoAliases = emptySet();
 
-	@NotNull private final ModuleWriter moduleWriter;
+	@NotNull private final ModuleCreatorAndWriter moduleCreatorAndWriter;
 
-	public JavaConvertingTypeInformationTripletUser(@NotNull final ModuleWriter moduleWriter)
+	public JavaConvertingTypeInformationTripletUser(@NotNull final ModuleCreatorAndWriter moduleCreatorAndWriter)
 	{
-		this.moduleWriter = moduleWriter;
+		this.moduleCreatorAndWriter = moduleCreatorAndWriter;
 	}
 
 	@Override
 	public void use(@NotNull final Records records, @NotNull final TypeInformationTriplet typeInformationTriplet)
 	{
-		final ReferencedClasses referencedClasses = new ReferencedClasses(typeInformationTriplet.thisClassTypeName());
+		final Process process = new Process(records, typeInformationTriplet);
 
 
-		final Set<GlobalVariable<?>> globalVariablesAndConstants = referencedClasses.globalVariables(typeInformationTriplet);
-		final Set<LocallyIdentifiedStructureType> locallyIdentifiedStructureTypes = referencedClasses.structureTypes(records, typeInformationTriplet);
+		process.process();
+
+		final Set<GlobalVariable<?>> globalVariablesAndConstants = process.globalVariables();
+		final Set<LocallyIdentifiedStructureType> locallyIdentifiedStructureTypes = process.structureTypes();
 
 		final Set<FunctionDeclaration> functionDeclarations = emptySet();
 		final Set<FunctionDefinition> functionsDefinitions = emptySet();
 
-		final MetadataCreator metadataCreator = new MetadataCreator();
+		final MetadataCreator<PackageName> metadataCreator = new MetadataCreator<>(typeInformationTriplet.relativeFilePath, typeInformationTriplet.relativeRootFolderPath);
 		final TypedMetadataTuple<DISubprogramKeyedMetadataTuple> subprograms = metadataCreator.emptyTypedMetadataTuple();
 		final TypedMetadataTuple<DIGlobalVariableKeyedMetadataTuple> globals = metadataCreator.emptyTypedMetadataTuple();
 
-		moduleWriter.createAndWriteModule(typeInformationTriplet, metadataCreator, NoModuleLevelInlineAssembly, locallyIdentifiedStructureTypes, globalVariablesAndConstants, functionDeclarations, functionsDefinitions, subprograms, globals, NoAliases);
+		moduleCreatorAndWriter.createAndWriteModule(typeInformationTriplet, metadataCreator, NoModuleLevelInlineAssembly, locallyIdentifiedStructureTypes, globalVariablesAndConstants, functionDeclarations, functionsDefinitions, subprograms, globals, NoAliases);
 	}
 
 }

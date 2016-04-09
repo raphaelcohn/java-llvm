@@ -40,7 +40,7 @@ public final class FunctionDeclaration extends AbstractGloballyIdentified
 
 	@NotNull private final Linkage linkage;
 	@NotNull private final Visibility visibility;
-	@Nullable private final DllStorageClass dllStorageClass;
+	@NotNull private final DllStorageClass dllStorageClass;
 	@NotNull private final CallingConvention callingConvention;
 	@NotNull private final AttributeGroup<ParameterAttribute> returnAttributes;
 	@NotNull private final FormalParameter resultType;
@@ -48,10 +48,10 @@ public final class FunctionDeclaration extends AbstractGloballyIdentified
 	private final boolean hasUnnamedAddress;
 	@NotNull private final FunctionAttributeGroup functionAttributes;
 	private final int alignment;
-	@Nullable private final GarbageCollectorStrategyName garbageCollectorStrategyName;
+	@NotNull private final GarbageCollectorStrategyName garbageCollectorStrategyName;
 
 	// also prefix, prologue
-	public FunctionDeclaration(@NotNull final Linkage linkage, @NotNull final Visibility visibility, @Nullable final DllStorageClass dllStorageClass, @NotNull final CallingConvention callingConvention, @NotNull final AttributeGroup<ParameterAttribute> returnAttributes, @NotNull final FormalParameter resultType, @NotNull final GlobalIdentifier globalIdentifier, @NotNull final FormalParameter[] parameters, final boolean hasUnnamedAddress, @NotNull final FunctionAttributeGroup functionAttributes, final int alignment, @Nullable final GarbageCollectorStrategyName garbageCollectorStrategyName)
+	public FunctionDeclaration(@NotNull final Linkage linkage, @NotNull final Visibility visibility, @NotNull final DllStorageClass dllStorageClass, @NotNull final CallingConvention callingConvention, @NotNull final AttributeGroup<ParameterAttribute> returnAttributes, @NotNull final FormalParameter resultType, @NotNull final GlobalIdentifier globalIdentifier, @NotNull final FormalParameter[] parameters, final boolean hasUnnamedAddress, @NotNull final FunctionAttributeGroup functionAttributes, final int alignment, @NotNull final GarbageCollectorStrategyName garbageCollectorStrategyName)
 	{
 		super(globalIdentifier);
 		this.linkage = linkage;
@@ -78,7 +78,7 @@ public final class FunctionDeclaration extends AbstractGloballyIdentified
 		byteWriter.writeSpace();
 		byteWriter.writeBytes(visibility.llAssemblyValue);
 
-		if (dllStorageClass != null)
+		if (dllStorageClass.shouldBeEncoded)
 		{
 			byteWriter.writeSpace();
 			byteWriter.writeBytes(dllStorageClass.llAssemblyValue);
@@ -116,7 +116,7 @@ public final class FunctionDeclaration extends AbstractGloballyIdentified
 			byteWriter.writeUtf8EncodedStringWithCertainty(Integer.toString(alignment));
 		}
 
-		if (garbageCollectorStrategyName != null)
+		if (garbageCollectorStrategyName.shouldBeEncoded)
 		{
 			byteWriter.writeSpace();
 			byteWriter.writeBytes(garbageCollectorStrategyName.llvmAssemblyEncoding);

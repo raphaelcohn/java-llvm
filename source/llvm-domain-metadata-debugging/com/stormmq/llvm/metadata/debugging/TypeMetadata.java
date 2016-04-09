@@ -26,4 +26,7 @@ import com.stormmq.llvm.metadata.Metadata;
 
 public interface TypeMetadata extends Metadata
 {
+	int sizeInBits();
+
+	int alignmentInBits();
 }

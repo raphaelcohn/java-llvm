@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class AbstractGloballyIdentified implements GloballyIdentified
 {
-	@NotNull private final GlobalIdentifier globalIdentifier;
+	@NotNull protected final GlobalIdentifier globalIdentifier;
 
 	protected AbstractGloballyIdentified(@NotNull final GlobalIdentifier globalIdentifier)
 	{

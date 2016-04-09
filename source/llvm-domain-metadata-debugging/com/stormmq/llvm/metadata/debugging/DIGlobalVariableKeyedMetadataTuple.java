@@ -23,8 +23,8 @@
 package com.stormmq.llvm.metadata.debugging;
 
 import com.stormmq.llvm.domain.ReferenceTracker;
-import com.stormmq.llvm.domain.typedValues.constantTypedValues.ConstantTypedValue;
-import com.stormmq.llvm.domain.identifiers.Identifier;
+import com.stormmq.llvm.domain.types.CanBePointedToType;
+import com.stormmq.llvm.domain.variables.GlobalVariable;
 import com.stormmq.llvm.metadata.Metadata;
 import com.stormmq.llvm.metadata.metadataTuples.KeyedMetadataTuple;
 import org.jetbrains.annotations.NonNls;
@@ -32,8 +32,8 @@ import org.jetbrains.annotations.NotNull;
 
 public final class DIGlobalVariableKeyedMetadataTuple extends KeyedMetadataTuple implements TypeMetadata
 {
-	public DIGlobalVariableKeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final Identifier globalIdentifier, @NotNull @NonNls final String linkageName, @NotNull final Metadata scope, @NotNull final Metadata file, final int lineNumber, @NotNull final Metadata type, final boolean isLocal, final boolean isDefinition, @NotNull final ConstantTypedValue<?> variable, @NotNull final Metadata declaration)
+	public <T extends CanBePointedToType> DIGlobalVariableKeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final String name, @NotNull final Metadata scope, @NotNull final DIFileKeyedMetadataTuple file, final int lineNumber, @NotNull final Metadata type, final boolean isLocal, final boolean isDefinition, @NotNull final GlobalVariable<?> globalVariable)
 	{
-		super(referenceTracker, false, "DIGlobalVariable", Key.name.with(globalIdentifier), Key.linkageName.with(linkageName), Key.scope.with(scope), Key.file.with(file), Key.line.with(lineNumber), Key.type.with(type), Key.isLocal.with(isLocal), Key.isDefinition.with(isDefinition), Key.variable.with(variable), Key.declaration.with(declaration));
+		super(referenceTracker, false, "DIGlobalVariable", Key.name.with(name), Key.linkageName.with(globalVariable.globalIdentifier().name()), Key.scope.with(scope), Key.file.with(file), Key.line.with(lineNumber), Key.type.with(type), Key.isLocal.with(isLocal), Key.isDefinition.with(isDefinition), Key.variable.with(globalVariable.pointer())); // Key.declaration.with(declaration)
 	}
 }

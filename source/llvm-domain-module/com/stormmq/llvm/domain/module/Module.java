@@ -44,7 +44,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-import static com.stormmq.string.Formatting.format;
+import static com.stormmq.functions.CollectionHelper.addOnce;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 
@@ -97,10 +97,7 @@ public final class Module implements Writable
 		for (final GloballyIdentified globallyIdentifier : globalVariablesAndConstants)
 		{
 			final GlobalIdentifier globalIdentifier = globallyIdentifier.globalIdentifier();
-			if (!globalIdentifiers.add(globalIdentifier))
-			{
-				throw new IllegalArgumentException(format("%1$s uses an already taken global identifier '%2$s'", description, globalIdentifier));
-			}
+			addOnce(globalIdentifiers, globalIdentifier);
 		}
 	}
 

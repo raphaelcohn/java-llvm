@@ -29,17 +29,17 @@ import org.jetbrains.annotations.NotNull;
 
 public final class AddressableIdentifierTypedValue<T extends Type, I extends AddressableIdentifier> extends AbstractTypedValue<T>
 {
-	@NotNull private final I localIdentifier;
+	@NotNull private final I addressableIdentifier;
 
-	public AddressableIdentifierTypedValue(@NotNull final T type, @NotNull final I localIdentifier)
+	public AddressableIdentifierTypedValue(@NotNull final T type, @NotNull final I addressableIdentifier)
 	{
 		super(type);
-		this.localIdentifier = localIdentifier;
+		this.addressableIdentifier = addressableIdentifier;
 	}
 
 	@Override
 	protected <X extends Exception> void writeValue(@NotNull final ByteWriter<X> byteWriter) throws X
 	{
-		localIdentifier.write(byteWriter);
+		addressableIdentifier.write(byteWriter);
 	}
 }

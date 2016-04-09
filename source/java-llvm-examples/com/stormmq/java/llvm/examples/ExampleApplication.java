@@ -28,23 +28,23 @@ import com.stormmq.java.llvm.xxx.*;
 import com.stormmq.jopt.Verbosity;
 import com.stormmq.jopt.applications.AbstractMultithreadedApplication;
 import com.stormmq.jopt.applications.uncaughtExceptionHandlers.MustExitBecauseOfFailureException;
+import com.stormmq.llvm.domain.module.ModuleWriter;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.nio.file.Path;
-import java.util.LinkedHashSet;
 
 import static com.stormmq.java.classfile.processing.processLogs.PrintStreamProcessLog.standardErrorParseFailureLog;
 import static com.stormmq.llvm.domain.module.TargetModuleCreator.MacOsXMavericksX86_64;
 
 public final class ExampleApplication extends AbstractMultithreadedApplication
 {
-	@NotNull private final LinkedHashSet<Path> sourcePaths;
+	@NotNull private final Iterable<Path> sourcePaths;
 	@NotNull private final Path outputPath;
 	@NotNull private final Processor processor;
 	@NotNull private final TypeInformationTripletUser typeInformationTripletUser;
 
-	public ExampleApplication(@NotNull final UncaughtExceptionHandler delegate, @NotNull final Verbosity verbosity, @NotNull final LinkedHashSet<Path> sourcePaths, @NotNull final Path outputPath, final boolean permitConstantsInInstanceFields)
+	public ExampleApplication(@NotNull final UncaughtExceptionHandler delegate, @NotNull final Verbosity verbosity, @NotNull final Iterable<Path> sourcePaths, @NotNull final Path outputPath, final boolean permitConstantsInInstanceFields)
 	{
 		super(delegate);
 
@@ -53,7 +53,7 @@ public final class ExampleApplication extends AbstractMultithreadedApplication
 
 		final ProcessLog processLog = new ExitCodeSettingProcessLog(standardErrorParseFailureLog(verbosity.isAtLeastVerbose()), exitCode);
 		processor = new Processor(permitConstantsInInstanceFields, processLog, exitCodeSettingUncaughtExceptionHandler);
-		typeInformationTripletUser = new JavaConvertingTypeInformationTripletUser(new ModuleWriter(MacOsXMavericksX86_64, outputPath));
+		typeInformationTripletUser = new JavaConvertingTypeInformationTripletUser(new ModuleCreatorAndWriter(MacOsXMavericksX86_64, new ModuleWriter(outputPath)));
 	}
 
 	@Override

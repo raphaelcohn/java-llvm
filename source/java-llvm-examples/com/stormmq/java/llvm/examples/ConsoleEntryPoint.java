@@ -48,7 +48,7 @@ public final class ConsoleEntryPoint
 
 		final CommandLineArgumentsParser commandLineArgumentsParser = commandLineArgumentsParser(commandLineArguments);
 		final Supplier<Verbosity> verbosity = commandLineArgumentsParser.verboseOption();
-		final Supplier<LinkedHashSet<Path>> source = commandLineArgumentsParser.extantWritableFolderPathsOption(true, "source", "source root path", "/path/to/source", CurrentFolder);
+		final Supplier<Iterable<Path>> source = commandLineArgumentsParser.extantWritableFolderPathsOption(true, "source", "source root path", "/path/to/source", CurrentFolder);
 		final Supplier<Path> outputPath = commandLineArgumentsParser.creatableFolderPathOption(true, "output", "output folder path, created if doesn't exist", "/path/to/output", "./out/llvm");
 
 		final Verbosity chosenVerbosity = verbosity.get();

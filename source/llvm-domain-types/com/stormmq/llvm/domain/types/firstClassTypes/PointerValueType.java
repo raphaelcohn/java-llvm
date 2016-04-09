@@ -23,39 +23,33 @@
 package com.stormmq.llvm.domain.types.firstClassTypes;
 
 import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.llvm.domain.AddressSpace;
 import com.stormmq.llvm.domain.types.CanBePointedToType;
 import org.jetbrains.annotations.NotNull;
 
+import static com.stormmq.llvm.domain.AddressSpace.DefaultAddressSpace;
 import static com.stormmq.llvm.domain.types.firstClassTypes.FloatingPointValueType.*;
 import static com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType.*;
-import static com.stormmq.string.Formatting.format;
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
 
 public final class PointerValueType<T extends CanBePointedToType> implements PrimitiveSingleValueType
 {
-	@SuppressWarnings("unused") @NotNull public static final PointerValueType<IntegerValueType> i8Pointer = i8.pointerTo(0);
-	@SuppressWarnings("unused") @NotNull public static final PointerValueType<IntegerValueType> i16Pointer = i16.pointerTo(0);
-	@SuppressWarnings("unused") @NotNull public static final PointerValueType<IntegerValueType> i32Pointer = i32.pointerTo(0);
-	@SuppressWarnings("unused") @NotNull public static final PointerValueType<IntegerValueType> i64Pointer = i64.pointerTo(0);
-	@SuppressWarnings("unused") @NotNull public static final PointerValueType<IntegerValueType> i128Pointer = i128.pointerTo(0);
-	@SuppressWarnings("unused") @NotNull public static final PointerValueType<FloatingPointValueType> halfPointer = half.pointerTo(0);
-	@SuppressWarnings("unused") @NotNull public static final PointerValueType<FloatingPointValueType> floatPointer = _float.pointerTo(0);
-	@SuppressWarnings("unused") @NotNull public static final PointerValueType<FloatingPointValueType> doublePointer = _double.pointerTo(0);
-	@SuppressWarnings("unused") @NotNull public static final PointerValueType<FloatingPointValueType> fp128Pointer = fp128.pointerTo(0);
-	@SuppressWarnings("unused") @NotNull public static final PointerValueType<FloatingPointValueType> x86_fp80Pointer = x86_fp80.pointerTo(0);
-	@SuppressWarnings("unused") @NotNull public static final PointerValueType<FloatingPointValueType> ppc_fp128Pointer = ppc_fp128.pointerTo(0);
+	@SuppressWarnings("unused") @NotNull public static final PointerValueType<IntegerValueType> i8Pointer = i8.pointerTo(DefaultAddressSpace);
+	@SuppressWarnings("unused") @NotNull public static final PointerValueType<IntegerValueType> i16Pointer = i16.pointerTo(DefaultAddressSpace);
+	@SuppressWarnings("unused") @NotNull public static final PointerValueType<IntegerValueType> i32Pointer = i32.pointerTo(DefaultAddressSpace);
+	@SuppressWarnings("unused") @NotNull public static final PointerValueType<IntegerValueType> i64Pointer = i64.pointerTo(DefaultAddressSpace);
+	@SuppressWarnings("unused") @NotNull public static final PointerValueType<IntegerValueType> i128Pointer = i128.pointerTo(DefaultAddressSpace);
+	@SuppressWarnings("unused") @NotNull public static final PointerValueType<FloatingPointValueType> halfPointer = half.pointerTo(DefaultAddressSpace);
+	@SuppressWarnings("unused") @NotNull public static final PointerValueType<FloatingPointValueType> floatPointer = _float.pointerTo(DefaultAddressSpace);
+	@SuppressWarnings("unused") @NotNull public static final PointerValueType<FloatingPointValueType> doublePointer = _double.pointerTo(DefaultAddressSpace);
+	@SuppressWarnings("unused") @NotNull public static final PointerValueType<FloatingPointValueType> fp128Pointer = fp128.pointerTo(DefaultAddressSpace);
+	@SuppressWarnings("unused") @NotNull public static final PointerValueType<FloatingPointValueType> x86_fp80Pointer = x86_fp80.pointerTo(DefaultAddressSpace);
+	@SuppressWarnings("unused") @NotNull public static final PointerValueType<FloatingPointValueType> ppc_fp128Pointer = ppc_fp128.pointerTo(DefaultAddressSpace);
 
-	@SuppressWarnings("SpellCheckingInspection") @NotNull private static final byte[] addrspaceOpenBracket = encodeUtf8BytesWithCertaintyValueIsValid("addrspace(");
+	@NotNull private final T pointsTo;
+	private final AddressSpace addressSpace;
 
-	@NotNull public final T pointsTo;
-	private final int addressSpace;
-
-	public PointerValueType(@NotNull final T pointsTo, final int addressSpace)
+	public PointerValueType(@NotNull final T pointsTo, @NotNull final AddressSpace addressSpace)
 	{
-		if (addressSpace < 0)
-		{
-			throw new IllegalArgumentException(format("addressSpace can not be negative, ie not '%1$s'", addressSpace));
-		}
 		this.pointsTo = pointsTo;
 		this.addressSpace = addressSpace;
 	}
@@ -65,14 +59,15 @@ public final class PointerValueType<T extends CanBePointedToType> implements Pri
 	{
 		pointsTo.write(byteWriter);
 
-		byteWriter.writeSpace();
-
-		if (addressSpace != 0)
+		if (addressSpace.isZero())
 		{
-			byteWriter.writeBytes(addrspaceOpenBracket);
-			byteWriter.writeUtf8EncodedStringWithCertainty(Integer.toString(addressSpace));
-			byteWriter.writeCloseBracket();
+			byteWriter.writeSpace();
+		}
+		else
+		{
+			addressSpace.write(byteWriter);
 		}
 		byteWriter.writeAsterisk();
 	}
+
 }

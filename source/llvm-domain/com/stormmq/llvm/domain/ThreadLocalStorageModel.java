@@ -26,26 +26,38 @@ import com.stormmq.string.Formatting;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
+import static com.stormmq.string.Formatting.format;
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
 
 public enum ThreadLocalStorageModel
 {
-	@SuppressWarnings({"SpellCheckingInspection", "unused"})generaldynamic(true), // Default, not exposed
-	@SuppressWarnings({"SpellCheckingInspection", "unused"})localdynamic,
-	@SuppressWarnings({"SpellCheckingInspection", "unused"})initialexec,
-	@SuppressWarnings({"SpellCheckingInspection", "unused"})localexec,
+	@SuppressWarnings({"SpellCheckingInspection", "unused"})NoThreadLocalStorageModel(false, false),
+	@SuppressWarnings({"SpellCheckingInspection", "unused"})generaldynamic(true, true),
+	@SuppressWarnings({"SpellCheckingInspection", "unused"})localdynamic(true, false),
+	@SuppressWarnings({"SpellCheckingInspection", "unused"})initialexec(true, false),
+	@SuppressWarnings({"SpellCheckingInspection", "unused"})localexec(true, false),
 	;
 
 	@NotNull public final byte[] llvmAssemblyEncoding;
+	public final boolean shouldBeEncoded;
 
-	ThreadLocalStorageModel(final boolean isDefault)
+	@SuppressWarnings("ZeroLengthArrayAllocation")
+	ThreadLocalStorageModel(final boolean shouldBeEncoded, final boolean isDefault)
 	{
-		@NonNls final String llAssemblyValueString = isDefault ? "thread_local" : Formatting.format("thread_local(%1$s)", name());
-		llvmAssemblyEncoding = encodeUtf8BytesWithCertaintyValueIsValid(llAssemblyValueString);
-	}
-
-	ThreadLocalStorageModel()
-	{
-		this(false);
+		if (shouldBeEncoded)
+		{
+			@NonNls final String llAssemblyValueString = isDefault ? "thread_local" : format("thread_local(%1$s)", name());
+			llvmAssemblyEncoding = encodeUtf8BytesWithCertaintyValueIsValid(llAssemblyValueString);
+			this.shouldBeEncoded = true;
+		}
+		else
+		{
+			if (isDefault)
+			{
+				throw new IllegalArgumentException("isDefault can not be false is shouldbeEncoded is false");
+			}
+			llvmAssemblyEncoding = new byte[0];
+			this.shouldBeEncoded = false;
+		}
 	}
 }

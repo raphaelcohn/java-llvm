@@ -23,6 +23,7 @@
 package com.stormmq.llvm.domain.typedValues.constantTypedValues.simpleConstantExpressions;
 
 import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.java.parsing.utilities.ReservedIdentifiers;
 import com.stormmq.llvm.domain.typedValues.AbstractTypedValue;
 import com.stormmq.llvm.domain.typedValues.constantTypedValues.ConstantTypedValue;
 import com.stormmq.llvm.domain.types.CanBePointedToType;
@@ -33,7 +34,7 @@ import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyVal
 
 public final class NullPointerConstantTypedValue<T extends CanBePointedToType> extends AbstractTypedValue<PointerValueType<T>> implements ConstantTypedValue<PointerValueType<T>>
 {
-	@NotNull private static final byte[] llAssemblyValue = encodeUtf8BytesWithCertaintyValueIsValid("null");
+	@NotNull private static final byte[] llAssemblyValue = encodeUtf8BytesWithCertaintyValueIsValid(ReservedIdentifiers._null);
 
 	public NullPointerConstantTypedValue(@NotNull final PointerValueType<T> type)
 	{

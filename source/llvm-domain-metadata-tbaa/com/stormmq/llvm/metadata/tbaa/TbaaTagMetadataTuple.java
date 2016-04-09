@@ -28,9 +28,9 @@ import com.stormmq.llvm.metadata.metadataTuples.AnonymousMetadataTuple;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import static com.stormmq.functions.ListHelper.newArrayList;
 import static com.stormmq.llvm.domain.typedValues.constantTypedValues.simpleConstantExpressions.IntegerConstantTypedValue.i64;
 
 public final class TbaaTagMetadataTuple extends AnonymousMetadataTuple
@@ -46,20 +46,23 @@ public final class TbaaTagMetadataTuple extends AnonymousMetadataTuple
 	@NotNull
 	private static List<? extends Metadata> convert(@NotNull final Metadata identifier, @Nullable final Metadata parent, final boolean isConstant)
 	{
-		final List<Metadata> tuple = new ArrayList<>(3);
-		tuple.add(identifier);
-		if (parent != null)
+		return newArrayList(3, tuple ->
 		{
-			tuple.add(parent);
-			if (isConstant)
+			tuple.add(identifier);
+
+			if (parent != null)
 			{
-				tuple.add(IsConstant);
+				tuple.add(parent);
+
+				if (isConstant)
+				{
+					tuple.add(IsConstant);
+				}
 			}
-		}
-		else if (isConstant)
-		{
-			throw new IllegalArgumentException("isConstant can not be true if the parent is null");
-		}
-		return tuple;
+			else if (isConstant)
+			{
+				throw new IllegalArgumentException("isConstant can not be true if the parent is null");
+			}
+		});
 	}
 }

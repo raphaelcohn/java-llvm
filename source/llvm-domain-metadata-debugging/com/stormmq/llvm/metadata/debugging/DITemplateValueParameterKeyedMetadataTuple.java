@@ -23,14 +23,14 @@
 package com.stormmq.llvm.metadata.debugging;
 
 import com.stormmq.llvm.domain.ReferenceTracker;
-import com.stormmq.llvm.domain.typedValues.constantTypedValues.ConstantTypedValue;
+import com.stormmq.llvm.domain.typedValues.TypedValue;
 import com.stormmq.llvm.metadata.Metadata;
 import com.stormmq.llvm.metadata.metadataTuples.KeyedMetadataTuple;
 import org.jetbrains.annotations.NotNull;
 
 public final class DITemplateValueParameterKeyedMetadataTuple extends KeyedMetadataTuple implements TemplateParameterMetadata
 {
-	public DITemplateValueParameterKeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final String name, @NotNull final Metadata type, @NotNull final ConstantTypedValue<?> value)
+	public DITemplateValueParameterKeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final String name, @NotNull final Metadata type, @NotNull final TypedValue<?> value)
 	{
 		super(referenceTracker, false, "DITemplateValueParameter", Key.name.with(name), Key.type.with(type), Key.value.with(value));
 	}

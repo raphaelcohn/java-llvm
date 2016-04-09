@@ -29,6 +29,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
+import static com.stormmq.functions.CollectionHelper.add;
+
 public interface MayHaveComdatDefinition extends GloballyIdentified
 {
 	@Nullable
@@ -45,9 +47,7 @@ public interface MayHaveComdatDefinition extends GloballyIdentified
 			return null;
 		}
 
-		comdatDefinitions.add(adjustedComdatDefinition);
-
-		return adjustedComdatDefinition;
+		return add(comdatDefinitions, adjustedComdatDefinition);
 	}
 
 	void adjustComdatDefinition(@NotNull Set<ComdatDefinition> comdatDefinitions, @NotNull final TargetTriple targetTriple);

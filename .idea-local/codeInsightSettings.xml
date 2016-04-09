@@ -4,9 +4,15 @@
     <excluded-names>
       <name>apple.laf</name>
       <name>com.apple.laf</name>
+      <name>com.oracle</name>
+      <name>com.sun</name>
+      <name>com.sun.istack.internal</name>
+      <name>com.sun.tools.javac.util.List</name>
+      <name>java.awt</name>
       <name>java.beans</name>
       <name>java.rmi</name>
       <name>javafx.animation</name>
+      <name>javafx.application</name>
       <name>javafx.beans</name>
       <name>javafx.collections</name>
       <name>javafx.fxml</name>
@@ -27,9 +33,26 @@
       <name>javax.rmi</name>
       <name>javax.sound</name>
       <name>javax.swing</name>
+      <name>javax.xml.bind</name>
       <name>javax.xml.ws</name>
+      <name>jdk</name>
+      <name>jdk.internal</name>
+      <name>jdk.nashorn</name>
+      <name>netscape.security</name>
       <name>org.intellij.lang.annotations.JdkConstants</name>
       <name>org.omg</name>
+      <name>sun.applet</name>
+      <name>sun.awt</name>
+      <name>sun.font</name>
+      <name>sun.jvm</name>
+      <name>sun.misc</name>
+      <name>sun.net</name>
+      <name>sun.plugin</name>
+      <name>sun.reflect</name>
+      <name>sun.rmi</name>
+      <name>sun.security</name>
+      <name>sun.tools</name>
+      <name>sun.util</name>
     </excluded-names>
   </component>
 </project>

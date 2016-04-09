@@ -3,6 +3,7 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/.idea" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/examples/llvm.tmbundle" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/library/annotations" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/library/java-classfile" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/library/jopt-simple" vcs="Git" />

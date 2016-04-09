@@ -22,9 +22,11 @@
 
 package com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.structureTypes;
 
+import com.stormmq.llvm.domain.AddressSpace;
 import com.stormmq.llvm.domain.identifiers.LocallyIdentified;
 import com.stormmq.llvm.domain.types.AddressableIdentifierType;
 import com.stormmq.llvm.domain.types.firstClassTypes.PointerValueType;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 public interface LocallyIdentifiedStructureType extends LocallyIdentified, StructureType
@@ -32,9 +34,13 @@ public interface LocallyIdentifiedStructureType extends LocallyIdentified, Struc
 	@SuppressWarnings("unchecked")
 	@NotNull
 	@Override
-	default PointerValueType<AddressableIdentifierType> pointerTo(final int addressSpace)
+	default PointerValueType<AddressableIdentifierType> pointerTo(@NotNull final AddressSpace addressSpace)
 	{
 		final AddressableIdentifierType addressableIdentifierType = new AddressableIdentifierType(localIdentifier());
 		return new PointerValueType<>(addressableIdentifierType, addressSpace);
 	}
+
+	@NotNull
+	@NonNls
+	String name();
 }

@@ -23,14 +23,32 @@
 package com.stormmq.llvm.metadata.debugging;
 
 import com.stormmq.llvm.domain.ReferenceTracker;
+import com.stormmq.llvm.metadata.debugging.dwarfTags.BaseDwarfTag;
 import com.stormmq.llvm.metadata.metadataTuples.KeyedMetadataTuple;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 public final class DIBasicTypeKeyedMetadataTuple extends KeyedMetadataTuple implements TypeMetadata
 {
-	public DIBasicTypeKeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final DwarfTag tag, @NotNull @NonNls final String typeName, final int sizeInBits, final int alignmentInBits, @NotNull final DwarfTypeEncoding encoding)
+	private final int sizeInBits;
+	private final int alignmentInBits;
+
+	public DIBasicTypeKeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final BaseDwarfTag tag, @NotNull @NonNls final String typeName, final int sizeInBits, final int alignmentInBits, @NotNull final DwarfTypeEncoding encoding)
 	{
 		super(referenceTracker, false, "DIBasicType", Key.tag.with(tag), Key.name.with(typeName), Key.size.with(sizeInBits), Key.align.with(alignmentInBits), Key.encoding.with(encoding));
+		this.sizeInBits = sizeInBits;
+		this.alignmentInBits = alignmentInBits;
+	}
+
+	@Override
+	public int sizeInBits()
+	{
+		return sizeInBits;
+	}
+
+	@Override
+	public int alignmentInBits()
+	{
+		return alignmentInBits;
 	}
 }

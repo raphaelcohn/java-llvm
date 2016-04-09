@@ -76,7 +76,7 @@ public final class IntegerValueType implements PrimitiveSingleValueType
 	private static final int MaximumNumberOfBits = 2 << 23 - 1;
 	@NotNull private final String stringValue;
 	@SuppressWarnings("FieldNotUsedInToString") @NotNull private final byte[] llvmAssemblyEncoding;
-	@SuppressWarnings("FieldNotUsedInToString") public final int alignment;
+	@SuppressWarnings("FieldNotUsedInToString") private final int alignment;
 
 	private IntegerValueType(final int numberOfBits, final int alignment)
 	{

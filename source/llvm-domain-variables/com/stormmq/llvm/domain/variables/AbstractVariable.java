@@ -33,11 +33,11 @@ public abstract class AbstractVariable extends AbstractGloballyIdentified
 {
 	@NotNull private final Linkage linkage;
 	@NotNull private final Visibility visibility;
-	@Nullable private final DllStorageClass dllStorageClass;
-	@Nullable private final ThreadLocalStorageModel threadLocalStorageModel;
+	@NotNull private final DllStorageClass dllStorageClass;
+	@NotNull private final ThreadLocalStorageModel threadLocalStorageModel;
 	private final boolean hasUnnamedAddress;
 
-	protected AbstractVariable(@NotNull final GlobalIdentifier globalIdentifier, @NotNull final Linkage linkage, @NotNull final Visibility visibility, @Nullable final DllStorageClass dllStorageClass, @Nullable final ThreadLocalStorageModel threadLocalStorageModel, final boolean hasUnnamedAddress)
+	protected AbstractVariable(@NotNull final GlobalIdentifier globalIdentifier, @NotNull final Linkage linkage, @NotNull final Visibility visibility, @NotNull final DllStorageClass dllStorageClass, @NotNull final ThreadLocalStorageModel threadLocalStorageModel, final boolean hasUnnamedAddress)
 	{
 		super(globalIdentifier);
 		this.linkage = linkage;
@@ -59,13 +59,13 @@ public abstract class AbstractVariable extends AbstractGloballyIdentified
 		byteWriter.writeSpace();
 		byteWriter.writeBytes(visibility.llAssemblyValue);
 
-		if (dllStorageClass != null)
+		if (dllStorageClass.shouldBeEncoded)
 		{
 			byteWriter.writeSpace();
 			byteWriter.writeBytes(dllStorageClass.llAssemblyValue);
 		}
 
-		if (threadLocalStorageModel != null)
+		if (threadLocalStorageModel.shouldBeEncoded)
 		{
 			byteWriter.writeSpace();
 			byteWriter.writeBytes(threadLocalStorageModel.llvmAssemblyEncoding);

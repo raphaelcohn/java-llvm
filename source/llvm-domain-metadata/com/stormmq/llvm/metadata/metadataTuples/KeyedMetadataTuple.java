@@ -28,10 +28,12 @@ import com.stormmq.llvm.metadata.KeyWithMetadataField;
 import com.stormmq.llvm.metadata.Metadata;
 import org.jetbrains.annotations.*;
 
+import java.util.Collections;
 import java.util.List;
 
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
 import static java.util.Arrays.asList;
+import static java.util.Collections.addAll;
 
 public class KeyedMetadataTuple implements Metadata
 {
@@ -54,6 +56,21 @@ public class KeyedMetadataTuple implements Metadata
 		this.isDistinct = isDistinct;
 		this.name = name;
 		this.fields = fields;
+	}
+
+	@SuppressWarnings("OverloadedVarargsMethod")
+	protected final void populate(@NotNull final KeyWithMetadataField... fields)
+	{
+		if (!this.fields.isEmpty())
+		{
+			throw new IllegalStateException("Already populated (varargs)");
+		}
+		addAll(this.fields, fields);
+	}
+
+	protected final void populateHackForCircularReferencesInMetadataModel(@NotNull @NonNls final KeyWithMetadataField field)
+	{
+		fields.add(field);
 	}
 
 	@Override

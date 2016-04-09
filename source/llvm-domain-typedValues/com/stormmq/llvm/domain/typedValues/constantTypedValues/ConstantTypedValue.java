@@ -23,8 +23,9 @@
 package com.stormmq.llvm.domain.typedValues.constantTypedValues;
 
 import com.stormmq.llvm.domain.typedValues.TypedValue;
+import com.stormmq.llvm.domain.types.CanBePointedToType;
 import com.stormmq.llvm.domain.types.Type;
 
-public interface ConstantTypedValue<T extends Type> extends TypedValue<T>
+public interface ConstantTypedValue<T extends CanBePointedToType> extends TypedValue<T>
 {
 }

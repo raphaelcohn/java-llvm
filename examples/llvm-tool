@@ -37,16 +37,26 @@ _llvm_architecture_help_attributes()
 	_llvm_architecture_help "$1" 'attr'
 }
 
+_llvm_tool_clang_c11()
+{
+	_llvm_tool clang -std=c11 -c -S -emit-llvm -O0 -isystem "$systemHeadersPath" "$@"
+}
+
+_llvm_tool_clang_cxx()
+{
+	_llvm_tool clang -c -S -emit-llvm -O0 -isystem "$systemHeadersPath" "$@"
+}
+
 compileToAssemblyLanguage()
 {
 	local outputFilePath="$outFolderPath"/"$baseFilePath".ll
-	_llvm_tool clang -c -S -emit-llvm -O0 -isystem "$systemHeadersPath" "$filePath" -o"$outputFilePath"
+	$compiler "$filePath" -o"$outputFilePath"
 }
 
 compileWithDebuggingToAssemblyLanguage()
 {
 	local outputFilePath="$outFolderPath"/"$baseFilePath".debug.ll
-	_llvm_tool clang -c -S -emit-llvm -O0 -isystem "$systemHeadersPath" -g "$filePath" -o"$outputFilePath"
+	$compiler -g "$filePath" -o"$outputFilePath"
 }
 
 compileWithCoverageToAssemblyLanguage()
@@ -60,7 +70,7 @@ compileWithCoverageToAssemblyLanguage()
 	rm -rf "$gcdaFilePath"
 	
 	local outputFilePath="$outputBaseFilePath".ll
-	_llvm_tool clang -c -S -emit-llvm -O0 -isystem "$systemHeadersPath" -coverage "$filePath" -o"$outputFilePath"
+	$compiler -coverage "$filePath" -o"$outputFilePath"
 }
 
 assembleToBitCode()
@@ -163,6 +173,7 @@ _loop()
 	for filePath in "$@"
 	do
 		local baseFilePath="${filePath%.*}"
+		local fileExtension="${filePath##*.}"
 		
 		$actions
 	done
@@ -187,6 +198,23 @@ compile()
 	
 	_compile_actions()
 	{
+		case "$fileExtension" in
+			
+			c)
+				local compiler='_llvm_tool_clang_c11'
+			;;
+			
+			cpp)
+				local compiler='_llvm_tool_clang_cxx'
+			;;
+			
+			*)
+				printf '%s\n' "Please supply either a .c or .cpp file to compile, not a .${fileExtension} file"
+				exit 1
+			;;
+			
+		esac
+		
 		compileToAssemblyLanguage
 		compileWithDebuggingToAssemblyLanguage
 		compileWithCoverageToAssemblyLanguage
