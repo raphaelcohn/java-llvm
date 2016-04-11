@@ -29,7 +29,7 @@ import com.stormmq.llvm.domain.attributes.AttributeGroup;
 import com.stormmq.llvm.domain.function.attributes.parameterAttributes.ParameterAttribute;
 import com.stormmq.llvm.domain.identifiers.LocalIdentifier;
 import com.stormmq.llvm.domain.types.TypeExcludingVoid;
-import com.stormmq.llvm.metadata.debugging.*;
+import com.stormmq.llvm.domain.metadata.debugging.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

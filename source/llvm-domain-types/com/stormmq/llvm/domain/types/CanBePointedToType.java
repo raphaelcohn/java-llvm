@@ -26,12 +26,23 @@ import com.stormmq.llvm.domain.AddressSpace;
 import com.stormmq.llvm.domain.types.firstClassTypes.PointerValueType;
 import org.jetbrains.annotations.NotNull;
 
+import static com.stormmq.llvm.domain.types.firstClassTypes.PointerValueType.pointedToInGlobalAddressSpace;
+
 public interface CanBePointedToType extends Type
 {
+	@NotNull CanBePointedToType[] EmptyCanBePointedToTypes = new CanBePointedToType[0];
+
 	@SuppressWarnings({"ClassReferencesSubclass", "unchecked"})
 	@NotNull
 	default <T extends CanBePointedToType> PointerValueType<T> pointerTo(@NotNull final AddressSpace addressSpace)
 	{
 		return (PointerValueType<T>) new PointerValueType<>(this, addressSpace);
+	}
+
+	@SuppressWarnings({"ClassReferencesSubclass", "unchecked"})
+	@NotNull
+	default <T extends CanBePointedToType> PointerValueType<T> pointerTo()
+	{
+		return (PointerValueType<T>) pointedToInGlobalAddressSpace(this);
 	}
 }

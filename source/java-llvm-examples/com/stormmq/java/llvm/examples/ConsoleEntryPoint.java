@@ -30,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.nio.file.Path;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.function.Supplier;
 
 import static com.stormmq.jopt.applications.Application.run;
@@ -48,7 +49,7 @@ public final class ConsoleEntryPoint
 
 		final CommandLineArgumentsParser commandLineArgumentsParser = commandLineArgumentsParser(commandLineArguments);
 		final Supplier<Verbosity> verbosity = commandLineArgumentsParser.verboseOption();
-		final Supplier<Iterable<Path>> source = commandLineArgumentsParser.extantWritableFolderPathsOption(true, "source", "source root path", "/path/to/source", CurrentFolder);
+		final Supplier<List<Path>> source = commandLineArgumentsParser.extantWritableFolderPathsOption(true, "source", "source root path", "/path/to/source", CurrentFolder);
 		final Supplier<Path> outputPath = commandLineArgumentsParser.creatableFolderPathOption(true, "output", "output folder path, created if doesn't exist", "/path/to/output", "./out/llvm");
 
 		final Verbosity chosenVerbosity = verbosity.get();

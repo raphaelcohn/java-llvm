@@ -31,7 +31,7 @@ import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyVal
 public final class AddressSpace implements Writable
 {
 	@SuppressWarnings("SpellCheckingInspection") @NotNull private static final byte[] SpaceAddressSpaceStart = encodeUtf8BytesWithCertaintyValueIsValid(" addrspace(");
-	@NotNull public static final AddressSpace DefaultAddressSpace = new AddressSpace(0);
+	@NotNull public static final AddressSpace GlobalAddressSpace = new AddressSpace(0);
 	private static final int MaximumAddressSpace = 8388608; // 2^23
 
 	public final int value;
@@ -76,5 +76,37 @@ public final class AddressSpace implements Writable
 			return "p:" + sizeInBits + ':';
 		}
 		return "p" + value + ':' + sizeInBits + ':';
+	}
+
+	@Override
+	public boolean equals(@Nullable final Object o)
+	{
+		if (this == o)
+		{
+			return true;
+		}
+		if (o == null || getClass() != o.getClass())
+		{
+			return false;
+		}
+
+		final AddressSpace that = (AddressSpace) o;
+
+		return value == that.value;
+
+	}
+
+	@Override
+	public int hashCode()
+	{
+		return value;
+	}
+
+	@Override
+	@NotNull
+	@NonNls
+	public String toString()
+	{
+		return Integer.toString(value);
 	}
 }

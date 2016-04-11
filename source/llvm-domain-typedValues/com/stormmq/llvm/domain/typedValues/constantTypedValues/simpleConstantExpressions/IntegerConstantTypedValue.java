@@ -28,8 +28,8 @@ import com.stormmq.llvm.domain.typedValues.constantTypedValues.ConstantTypedValu
 import com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType;
 import org.jetbrains.annotations.NotNull;
 
-import static com.stormmq.java.parsing.utilities.ReservedIdentifiers._false;
-import static com.stormmq.java.parsing.utilities.ReservedIdentifiers._true;
+import static com.stormmq.string.StringConstants._false;
+import static com.stormmq.string.StringConstants._true;
 import static com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType.*;
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
 

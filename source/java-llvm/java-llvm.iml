@@ -22,5 +22,6 @@
     <orderEntry type="module" module-name="java-llvm-api" />
     <orderEntry type="module" module-name="llvm-domain-instructions" />
     <orderEntry type="module" module-name="functions" />
+    <orderEntry type="module" module-name="llvm-domain-metadata-creation" />
   </component>
 </module>

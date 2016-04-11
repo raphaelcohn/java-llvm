@@ -44,4 +44,11 @@ public abstract class AbstractTypedValue<T extends Type> implements TypedValue<T
 	}
 
 	protected abstract <X extends Exception> void writeValue(@NotNull final ByteWriter<X> byteWriter) throws X;
+
+	@NotNull
+	@Override
+	public final T to()
+	{
+		return type;
+	}
 }

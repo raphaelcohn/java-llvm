@@ -31,16 +31,22 @@ import org.jetbrains.annotations.*;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import static com.stormmq.llvm.domain.AddressSpace.DefaultAddressSpace;
+import static com.stormmq.llvm.domain.AddressSpace.GlobalAddressSpace;
 import static com.stormmq.llvm.domain.target.dataLayout.Endianness.BigEndian;
 import static com.stormmq.llvm.domain.target.dataLayout.Endianness.LittleEndian;
-import static com.stormmq.llvm.domain.target.dataLayout.Mangling.MachO;
+import static com.stormmq.llvm.domain.target.dataLayout.SymbolMangling.MachO;
 import static com.stormmq.llvm.domain.target.triple.Architecture.x86_64;
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
 import static java.util.Collections.emptyMap;
 
 public final class DataLayoutSpecification implements Writable
 {
+	public static final int SixteenBits = 16;
+	public static final int ThirtyTwoBits = 32;
+	public static final int SixtyFourBits = 64;
+	public static final int EightyBits = 80;
+	public static final int OneHundredAndTwentyEightBits = 128;
+
 	@SuppressWarnings("SpellCheckingInspection") @NotNull private static final byte[] TargetDataLayoutStart = encodeUtf8BytesWithCertaintyValueIsValid("target datalayout = \"");
 	@SuppressWarnings("HardcodedLineSeparator") @NotNull private static final byte[] End = encodeUtf8BytesWithCertaintyValueIsValid("\"\n");
 
@@ -60,13 +66,13 @@ public final class DataLayoutSpecification implements Writable
 	@NotNull private static final Alignment DefaultVector64Alignment = new Alignment(64);
 	@NotNull private static final Alignment DefaultVector128Alignment = new Alignment(128);
 	@NotNull private static final Alignment DefaultAggregateAlignment = new Alignment(0, 64);
-	@Nullable public static final Mangling DefaultMangling = null; // Mac OS X is MachO
+	@Nullable public static final SymbolMangling DefaultSymbolMangling = null; // Mac OS X is MachO
 
-	@NotNull public static final DataLayoutSpecification DarwinOnX86_64 = new DataLayoutSpecification(LittleEndian, 16, DefaultPointerSizing, DefaultAlternativeAddressSpacePointerSizings, DefaultBooleanAlignment, DefaultByteAlignment, DefaultShortAlignment, DefaultIntAlignment, new Alignment(64, 64), DefaultHalfAlignment, DefaultFloatAlignment, DefaultDoubleAlignment, new Alignment(128), DefaultQuadAlignment, DefaultVector64Alignment, DefaultVector128Alignment, DefaultAggregateAlignment, MachO, x86_64);
+	@NotNull public static final DataLayoutSpecification DarwinOnX86_64 = new DataLayoutSpecification(LittleEndian, 16, DefaultPointerSizing, DefaultAlternativeAddressSpacePointerSizings, DefaultBooleanAlignment, DefaultByteAlignment, DefaultShortAlignment, DefaultIntAlignment, new Alignment(64, 64), DefaultHalfAlignment, DefaultFloatAlignment, DefaultDoubleAlignment, new Alignment(128), DefaultQuadAlignment, DefaultVector64Alignment, DefaultVector128Alignment, DefaultAggregateAlignment, MachO, x86_64, false);
 
 	@NotNull private final Endianness endianness;
 	@NotNull private final String stackAlignmentSizeInBits;
-	@NotNull private final PointerSizing addressSpaceZeroPointerSizing;
+	@NotNull private final PointerSizing globalAddressSpacePointerSizing;
 	@NotNull private final Map<AddressSpace, PointerSizing> alternativeAddressSpacePointerSizings;
 	@NotNull private final Alignment booleanAlignment;
 	@NotNull private final Alignment byteAlignment;
@@ -81,10 +87,11 @@ public final class DataLayoutSpecification implements Writable
 	@NotNull private final Alignment vector64Alignment;
 	@NotNull private final Alignment vector128Alignment;
 	@NotNull private final Alignment aggregateTypeAlignment;
-	@NotNull private final Mangling mangling;
+	@NotNull private final SymbolMangling symbolMangling;
 	@NotNull private final Architecture architecture;
+	private final boolean wideCharIsWindows;
 
-	private DataLayoutSpecification(@NotNull final Endianness endianness, final int stackAlignmentSizeInBytes, @NotNull final PointerSizing addressSpaceZeroPointerSizing, @NotNull final Map<AddressSpace, PointerSizing> alternativeAddressSpacePointerSizings, @NotNull final Alignment booleanAlignment, @NotNull final Alignment byteAlignment, @NotNull final Alignment shortAlignment, @NotNull final Alignment intAlignment, @NotNull final Alignment longAlignment, @NotNull final Alignment halfAlignment, @NotNull final Alignment floatAlignment, @NotNull final Alignment doubleAlignment, @NotNull final Alignment longDoubleAlignment, @NotNull final Alignment quadAlignment, @NotNull final Alignment vector64Alignment, @NotNull final Alignment vector128Alignment, @NotNull final Alignment aggregateTypeAlignment, @NotNull final Mangling mangling, @NotNull final Architecture architecture)
+	private DataLayoutSpecification(@NotNull final Endianness endianness, final int stackAlignmentSizeInBytes, @NotNull final PointerSizing globalAddressSpacePointerSizing, @NotNull final Map<AddressSpace, PointerSizing> alternativeAddressSpacePointerSizings, @NotNull final Alignment booleanAlignment, @NotNull final Alignment byteAlignment, @NotNull final Alignment shortAlignment, @NotNull final Alignment intAlignment, @NotNull final Alignment longAlignment, @NotNull final Alignment halfAlignment, @NotNull final Alignment floatAlignment, @NotNull final Alignment doubleAlignment, @NotNull final Alignment longDoubleAlignment, @NotNull final Alignment quadAlignment, @NotNull final Alignment vector64Alignment, @NotNull final Alignment vector128Alignment, @NotNull final Alignment aggregateTypeAlignment, @NotNull final SymbolMangling symbolMangling, @NotNull final Architecture architecture, final boolean wideCharIsWindows)
 	{
 		if (stackAlignmentSizeInBytes < 0)
 		{
@@ -101,7 +108,7 @@ public final class DataLayoutSpecification implements Writable
 
 		this.endianness = endianness;
 		stackAlignmentSizeInBits = Integer.toString(stackAlignmentSizeInBytes << 3);
-		this.addressSpaceZeroPointerSizing = addressSpaceZeroPointerSizing;
+		this.globalAddressSpacePointerSizing = globalAddressSpacePointerSizing;
 		this.alternativeAddressSpacePointerSizings = alternativeAddressSpacePointerSizings;
 		this.booleanAlignment = booleanAlignment;
 		this.byteAlignment = byteAlignment;
@@ -116,8 +123,9 @@ public final class DataLayoutSpecification implements Writable
 		this.vector64Alignment = vector64Alignment;
 		this.vector128Alignment = vector128Alignment;
 		this.aggregateTypeAlignment = aggregateTypeAlignment;
-		this.mangling = mangling;
+		this.symbolMangling = symbolMangling;
 		this.architecture = architecture;
+		this.wideCharIsWindows = wideCharIsWindows;
 	}
 
 	@Override
@@ -128,7 +136,7 @@ public final class DataLayoutSpecification implements Writable
 		byteWriter.writeUtf8EncodedStringWithCertainty(endianness.dataLayoutEncoding);
 		writeField(byteWriter, "S", stackAlignmentSizeInBits);
 		writeField(byteWriter, "n", architecture.nativeIntegerWidths);
-		writePointerSizingField(byteWriter, DefaultAddressSpace, addressSpaceZeroPointerSizing);
+		writePointerSizingField(byteWriter, GlobalAddressSpace, globalAddressSpacePointerSizing);
 		for (final Entry<AddressSpace, PointerSizing> entry : alternativeAddressSpacePointerSizings.entrySet())
 		{
 			writePointerSizingField(byteWriter, entry.getKey(), entry.getValue());
@@ -138,6 +146,7 @@ public final class DataLayoutSpecification implements Writable
 		writeField(byteWriter, "i16", shortAlignment.dataLayoutEncoding);
 		writeField(byteWriter, "i32", intAlignment.dataLayoutEncoding);
 		writeField(byteWriter, "i64", longAlignment.dataLayoutEncoding);
+		// i128 ?
 		writeField(byteWriter, "f16", halfAlignment.dataLayoutEncoding);
 		writeField(byteWriter, "f32", floatAlignment.dataLayoutEncoding);
 		writeField(byteWriter, "f64", doubleAlignment.dataLayoutEncoding);
@@ -146,7 +155,7 @@ public final class DataLayoutSpecification implements Writable
 		writeField(byteWriter, "v64", vector64Alignment.dataLayoutEncoding);
 		writeField(byteWriter, "v128", vector128Alignment.dataLayoutEncoding);
 		writeField(byteWriter, "a", aggregateTypeAlignment.dataLayoutEncoding);
-		writeField(byteWriter, "m:", mangling.dataLayoutEncoding);
+		writeField(byteWriter, "m:", symbolMangling.dataLayoutEncoding);
 
 		byteWriter.writeBytes(End);
 	}
@@ -163,19 +172,39 @@ public final class DataLayoutSpecification implements Writable
 		byteWriter.writeUtf8EncodedStringWithCertainty(dataLayoutEncodingB);
 	}
 
+	public int booleanSizeInBitsRoundedUpToNearestEightBits()
+	{
+		return 8;
+	}
+
 	public int booleanAlignmentInBits()
 	{
 		return booleanAlignment.abiAlignmentInBits;
 	}
-	
+
+	public int byteSizeInBits()
+	{
+		return 8;
+	}
+
 	public int byteAlignmentInBits()
 	{
 		return byteAlignment.abiAlignmentInBits;
+	}
+
+	public int shortSizeInBits()
+	{
+		return SixteenBits;
 	}
 	
 	public int shortAlignmentInBits()
 	{
 		return shortAlignment.abiAlignmentInBits;
+	}
+
+	public int intSizeInBits()
+	{
+		return ThirtyTwoBits;
 	}
 	
 	public int intAlignmentInBits()
@@ -187,20 +216,51 @@ public final class DataLayoutSpecification implements Writable
 	{
 		return longAlignment.abiAlignmentInBits;
 	}
+
+	public int int128SizeInBits()
+	{
+		return OneHundredAndTwentyEightBits;
+	}
+
+	public int int128AlignmentInBits()
+	{
+		return OneHundredAndTwentyEightBits;
+	}
+
+	public int halfSizeInBits()
+	{
+		return SixteenBits;
+	}
 	
 	public int halfAlignmentInBits()
 	{
 		return halfAlignment.abiAlignmentInBits;
+	}
+
+	public int floatSizeInBits()
+	{
+		return ThirtyTwoBits;
 	}
 	
 	public int floatAlignmentInBits()
 	{
 		return floatAlignment.abiAlignmentInBits;
 	}
+
+	public int doubleSizeInBits()
+	{
+		return SixtyFourBits;
+	}
 	
 	public int doubleAlignmentInBits()
 	{
 		return doubleAlignment.abiAlignmentInBits;
+	}
+
+	// In clang, long double is debugged as 128 bits NOT 80 bits, even on x86; see also https://stackoverflow.com/questions/13525774/clang-and-float128-bug-error/17056045
+	public int longDoubleSizeInBits()
+	{
+		return OneHundredAndTwentyEightBits;
 	}
 	
 	public int longDoubleAlignmentInBits()
@@ -211,5 +271,21 @@ public final class DataLayoutSpecification implements Writable
 	public int quadAlignmentInBits()
 	{
 		return quadAlignment.abiAlignmentInBits;
+	}
+
+	@NotNull
+	public PointerSizing globalAddressSpacePointerSizing()
+	{
+		return globalAddressSpacePointerSizing;
+	}
+
+	public int wideCharSizeInBits()
+	{
+		return wideCharIsWindows ? SixteenBits : ThirtyTwoBits;
+	}
+
+	public int wideCharAlignmentInBits()
+	{
+		return wideCharIsWindows ? SixteenBits : ThirtyTwoBits;
 	}
 }

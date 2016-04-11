@@ -25,8 +25,8 @@ package com.stormmq.llvm.domain.function.attributes.functionAttributes;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import static com.stormmq.java.parsing.utilities.ReservedIdentifiers._false;
-import static com.stormmq.java.parsing.utilities.ReservedIdentifiers._true;
+import static com.stormmq.string.StringConstants._false;
+import static com.stormmq.string.StringConstants._true;
 
 public final class BooleanKeyValueFunctionAttribute extends AbstractKeyValueFunctionAttribute
 {

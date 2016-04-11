@@ -23,23 +23,28 @@
 package com.stormmq.java.llvm.xxx;
 
 import com.stormmq.java.classfile.processing.typeInformationUsers.TypeInformationTriplet;
-import com.stormmq.java.llvm.xxx.debugging.MetadataCreator;
+import com.stormmq.java.parsing.utilities.names.PackageName;
+import com.stormmq.llvm.domain.metadata.creation.MetadataCreator;
 import com.stormmq.llvm.domain.asm.ModuleLevelInlineAsm;
 import com.stormmq.llvm.domain.function.FunctionDeclaration;
 import com.stormmq.llvm.domain.function.FunctionDefinition;
+import com.stormmq.llvm.domain.metadata.creation.NamespaceSplitter;
 import com.stormmq.llvm.domain.module.*;
 import com.stormmq.llvm.domain.target.triple.Architecture;
+import com.stormmq.llvm.domain.types.CanBePointedToType;
 import com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.structureTypes.LocallyIdentifiedStructureType;
 import com.stormmq.llvm.domain.variables.Alias;
 import com.stormmq.llvm.domain.variables.GlobalVariable;
-import com.stormmq.llvm.metadata.debugging.*;
-import com.stormmq.llvm.metadata.metadataTuples.TypedMetadataTuple;
-import com.stormmq.llvm.metadata.module.LlvmIdentNamedMetadataTuple;
-import com.stormmq.llvm.metadata.module.LlvmModuleFlagsNamedMetadataTuple;
+import com.stormmq.llvm.domain.metadata.debugging.*;
+import com.stormmq.llvm.domain.metadata.metadataTuples.TypedMetadataTuple;
+import com.stormmq.llvm.domain.metadata.module.LlvmIdentNamedMetadataTuple;
+import com.stormmq.llvm.domain.metadata.module.LlvmModuleFlagsNamedMetadataTuple;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
 import java.util.*;
+
+import static com.stormmq.java.parsing.utilities.names.PackageName.NamespaceSplitter;
 
 public final class ModuleCreatorAndWriter
 {
@@ -63,5 +68,11 @@ public final class ModuleCreatorAndWriter
 		final Module module = targetModuleCreator.newModule(moduleLevelInlineAssembly, identity, moduleFlags, compileUnits, locallyIdentifiedStructureTypes, globalVariablesAndConstants, functionDeclarations, functionsDefinitions, aliases);
 
 		moduleWriter.writeModule(relativeFilePath, relativeRootFolderPath, module);
+	}
+
+	@NotNull
+	public NamespaceSplitter<PackageName> namespaceSplitter()
+	{
+		return new NamespaceSplitter<>(NamespaceSplitter, targetModuleCreator.cxxNameMangling());
 	}
 }

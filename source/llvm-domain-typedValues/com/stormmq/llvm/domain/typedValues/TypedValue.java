@@ -23,8 +23,12 @@
 package com.stormmq.llvm.domain.typedValues;
 
 import com.stormmq.llvm.domain.Writable;
+import com.stormmq.llvm.domain.types.CanBePointedToType;
 import com.stormmq.llvm.domain.types.Type;
+import org.jetbrains.annotations.NotNull;
 
 public interface TypedValue<T extends Type> extends Writable
 {
+	@NotNull
+	T to();
 }

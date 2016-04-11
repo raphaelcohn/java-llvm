@@ -24,6 +24,7 @@ package com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.structureTy
 
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.identifiers.LocalIdentifier;
+import com.stormmq.llvm.domain.types.CanBePointedToType;
 import com.stormmq.llvm.domain.types.Type;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,9 +37,9 @@ public final class IdentifiedLocallyIdentifiedStructureType extends AbstractLoca
 	@NotNull private static final byte[] typeSpace = encodeUtf8BytesWithCertaintyValueIsValid("type ");
 
 	private final boolean isPacked;
-	@NotNull private final Type[] types;
+	@NotNull private final CanBePointedToType[] types;
 
-	public IdentifiedLocallyIdentifiedStructureType(@NotNull final LocalIdentifier localIdentifier, final boolean isPacked, @NotNull final Type... types)
+	public IdentifiedLocallyIdentifiedStructureType(@NotNull final LocalIdentifier localIdentifier, final boolean isPacked, @NotNull final CanBePointedToType... types)
 	{
 		super(localIdentifier);
 		this.isPacked = isPacked;

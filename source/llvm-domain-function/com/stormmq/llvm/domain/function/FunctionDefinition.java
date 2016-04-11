@@ -33,7 +33,7 @@ import com.stormmq.llvm.domain.identifiers.AbstractGloballyIdentified;
 import com.stormmq.llvm.domain.identifiers.GlobalIdentifier;
 import com.stormmq.llvm.domain.names.SectionName;
 import com.stormmq.llvm.domain.target.triple.TargetTriple;
-import com.stormmq.llvm.metadata.debugging.DISubprogramKeyedMetadataTuple;
+import com.stormmq.llvm.domain.metadata.debugging.DISubprogramKeyedMetadataTuple;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

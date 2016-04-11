@@ -2,6 +2,9 @@ typedef struct OtherClass OtherClass;
 
 const int GlobalVariable = 10;
 
+enum MyEnum { AA, BB, CC };
+enum MyEnum MyEnumField = AA;
+
 struct SuperClass
 {
 	int a;
@@ -60,8 +63,10 @@ struct MyClassExample
 {
 	struct SuperClass SuperClass;
 	
+	MyClassExample* pointerToSelf;
+	
 	// Given using preferred names...
-	char a;
+	const char a;
 	signed char b;
 	unsigned char c;
 	short d;
@@ -83,6 +88,12 @@ struct MyClassExample
 
 	//_Quad zz;
 	//__float128 p;
+	__fp16 p;
+	
+	// https://gcc.gnu.org/onlinedocs/gcc/Decimal-Float.html#Decimal-Float
+	//_Decimal32 d32;
+	//_Decimal64 d64;
+	//_Decimal128 d128;
 	
 	__int128 q;
 	unsigned __int128 r;
@@ -90,6 +101,9 @@ struct MyClassExample
 	bool boolean;
 	MyClassExample* y;
 	OtherClass* z;
+	enum MyEnum zz;
+	
+	int zzz[0][5][10];
 };
 
 const MyClassExample * x;

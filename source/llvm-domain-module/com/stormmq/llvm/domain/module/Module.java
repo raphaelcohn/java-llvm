@@ -36,10 +36,9 @@ import com.stormmq.llvm.domain.target.triple.TargetTriple;
 import com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.structureTypes.LocallyIdentifiedStructureType;
 import com.stormmq.llvm.domain.variables.Alias;
 import com.stormmq.llvm.domain.variables.GlobalVariable;
-import com.stormmq.llvm.metadata.debugging.LlvmDbgCuNamedMetadataTuple;
-import com.stormmq.llvm.metadata.module.LlvmIdentNamedMetadataTuple;
-import com.stormmq.llvm.metadata.module.LlvmModuleFlagsNamedMetadataTuple;
-import org.jetbrains.annotations.NonNls;
+import com.stormmq.llvm.domain.metadata.debugging.LlvmDbgCuNamedMetadataTuple;
+import com.stormmq.llvm.domain.metadata.module.LlvmIdentNamedMetadataTuple;
+import com.stormmq.llvm.domain.metadata.module.LlvmModuleFlagsNamedMetadataTuple;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -86,13 +85,13 @@ public final class Module implements Writable
 	private static void guardDuplicateIdentifiers(@NotNull final Collection<GlobalVariable<?>> globalVariablesAndConstants, @NotNull final Collection<FunctionDeclaration> functionDeclarations, @NotNull final Collection<FunctionDefinition> functionDefinitions, @NotNull final Collection<Alias> aliases)
 	{
 		final Collection<GlobalIdentifier> globalIdentifiers = new HashSet<>(globalVariablesAndConstants.size() + functionDeclarations.size() + functionDefinitions.size() + aliases.size());
-		guardDuplicateGlobalIdentifier(globalIdentifiers, globalVariablesAndConstants, "globalVariableOrConstant");
-		guardDuplicateGlobalIdentifier(globalIdentifiers, functionDeclarations, "functionDeclaration");
-		guardDuplicateGlobalIdentifier(globalIdentifiers, functionDefinitions, "functionDefinition");
-		guardDuplicateGlobalIdentifier(globalIdentifiers, aliases, "alias");
+		guardDuplicateGlobalIdentifier(globalIdentifiers, globalVariablesAndConstants);
+		guardDuplicateGlobalIdentifier(globalIdentifiers, functionDeclarations);
+		guardDuplicateGlobalIdentifier(globalIdentifiers, functionDefinitions);
+		guardDuplicateGlobalIdentifier(globalIdentifiers, aliases);
 	}
 
-	private static void guardDuplicateGlobalIdentifier(@NotNull final Collection<GlobalIdentifier> globalIdentifiers, @NotNull final Iterable<? extends GloballyIdentified> globalVariablesAndConstants, @NonNls @NotNull final String description)
+	private static void guardDuplicateGlobalIdentifier(@NotNull final Collection<GlobalIdentifier> globalIdentifiers, @NotNull final Iterable<? extends GloballyIdentified> globalVariablesAndConstants)
 	{
 		for (final GloballyIdentified globallyIdentifier : globalVariablesAndConstants)
 		{

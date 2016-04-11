@@ -23,7 +23,6 @@
 package com.stormmq.llvm.domain.instructions;
 
 import com.stormmq.byteWriters.ByteWriter;
-import com.stormmq.llvm.domain.AddressSpace;
 import com.stormmq.llvm.domain.identifiers.LocalIdentifier;
 import com.stormmq.llvm.domain.typedValues.TypedValue;
 import com.stormmq.llvm.domain.typedValues.constantTypedValues.ConstantTypedValue;
@@ -35,7 +34,7 @@ import com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.structureTyp
 import com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.structureTypes.StructureType;
 import org.jetbrains.annotations.NotNull;
 
-import static com.stormmq.llvm.domain.AddressSpace.DefaultAddressSpace;
+import static com.stormmq.llvm.domain.AddressSpace.GlobalAddressSpace;
 import static com.stormmq.llvm.domain.Writable.CommaSpace;
 import static com.stormmq.llvm.domain.typedValues.constantTypedValues.simpleConstantExpressions.IntegerConstantTypedValue.Int64One;
 import static com.stormmq.llvm.domain.typedValues.constantTypedValues.simpleConstantExpressions.IntegerConstantTypedValue.Int64Zero;
@@ -59,7 +58,7 @@ public final class GetElementPointerInstruction<T extends CanBePointedToType, U 
 	@NotNull
 	public static <S extends StructureType> GetElementPointerInstruction<S, S> arrayIndexLength(@NotNull final S structureType)
 	{
-		final PointerValueType<S> pointerToStructure = structureType.pointerTo(DefaultAddressSpace);
+		final PointerValueType<S> pointerToStructure = structureType.pointerTo();
 		final ConstantTypedValue<PointerValueType<S>> expression = new NullPointerConstantTypedValue<>(pointerToStructure);
 		return new GetElementPointerInstruction<>(false, pointerToStructure, structureType, expression, Int64One);
 	}
@@ -67,8 +66,8 @@ public final class GetElementPointerInstruction<T extends CanBePointedToType, U 
 	@NotNull
 	public static <S extends StructureType, T extends CanBePointedToType> GetElementPointerInstruction<S, T> offsetOf(@NotNull final S structureType, @NotNull final T to, final int zeroBasedFieldIndex)
 	{
-		final ConstantTypedValue<PointerValueType<S>> expression = new NullPointerConstantTypedValue<>(structureType.pointerTo(DefaultAddressSpace));
-		final PointerValueType<T> pointerToStructureFieldType = to.pointerTo(DefaultAddressSpace);
+		final ConstantTypedValue<PointerValueType<S>> expression = new NullPointerConstantTypedValue<>(structureType.pointerTo());
+		final PointerValueType<T> pointerToStructureFieldType = to.pointerTo();
 		return new GetElementPointerInstruction<>(false, pointerToStructureFieldType, structureType, expression, Int64Zero, new IntegerConstantTypedValue(i32, zeroBasedFieldIndex));
 	}
 

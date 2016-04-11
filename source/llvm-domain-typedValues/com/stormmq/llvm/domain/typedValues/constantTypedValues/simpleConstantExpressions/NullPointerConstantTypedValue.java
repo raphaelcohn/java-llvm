@@ -23,18 +23,18 @@
 package com.stormmq.llvm.domain.typedValues.constantTypedValues.simpleConstantExpressions;
 
 import com.stormmq.byteWriters.ByteWriter;
-import com.stormmq.java.parsing.utilities.ReservedIdentifiers;
 import com.stormmq.llvm.domain.typedValues.AbstractTypedValue;
 import com.stormmq.llvm.domain.typedValues.constantTypedValues.ConstantTypedValue;
 import com.stormmq.llvm.domain.types.CanBePointedToType;
 import com.stormmq.llvm.domain.types.firstClassTypes.PointerValueType;
+import com.stormmq.string.StringConstants;
 import org.jetbrains.annotations.NotNull;
 
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
 
 public final class NullPointerConstantTypedValue<T extends CanBePointedToType> extends AbstractTypedValue<PointerValueType<T>> implements ConstantTypedValue<PointerValueType<T>>
 {
-	@NotNull private static final byte[] llAssemblyValue = encodeUtf8BytesWithCertaintyValueIsValid(ReservedIdentifiers._null);
+	@NotNull private static final byte[] llAssemblyValue = encodeUtf8BytesWithCertaintyValueIsValid(StringConstants._null);
 
 	public NullPointerConstantTypedValue(@NotNull final PointerValueType<T> type)
 	{

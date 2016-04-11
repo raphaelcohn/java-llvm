@@ -33,7 +33,7 @@ import com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.structureTyp
 import com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.structureTypes.StructureType;
 import org.jetbrains.annotations.NotNull;
 
-import static com.stormmq.llvm.domain.AddressSpace.DefaultAddressSpace;
+import static com.stormmq.llvm.domain.AddressSpace.GlobalAddressSpace;
 import static com.stormmq.llvm.domain.instructions.GetElementPointerInstruction.arrayIndexLength;
 import static com.stormmq.llvm.domain.instructions.GetElementPointerInstruction.offsetOf;
 import static com.stormmq.llvm.domain.Writable.SpaceToSpace;
@@ -50,7 +50,7 @@ public final class PointerToIntegerInstruction<T extends CanBePointedToType> ext
 	@NotNull
 	public static PointerToIntegerInstruction<AddressableIdentifierType> pointerToIntegerExpressionForStructureType(@NotNull final LocallyIdentifiedStructureType locallyIdentifiedStructureType, @NotNull final IntegerValueType size)
 	{
-		final PointerValueType<AddressableIdentifierType> addressableIdentifierTypePointerValueType = locallyIdentifiedStructureType.pointerTo(DefaultAddressSpace);
+		final PointerValueType<AddressableIdentifierType> addressableIdentifierTypePointerValueType = locallyIdentifiedStructureType.pointerTo();
 		return new PointerToIntegerInstruction<>(new AddressableIdentifierTypedValue<>(addressableIdentifierTypePointerValueType, locallyIdentifiedStructureType.localIdentifier()), size);
 	}
 
@@ -61,6 +61,12 @@ public final class PointerToIntegerInstruction<T extends CanBePointedToType> ext
 		final Instruction<PointerValueType<S>> constantInstruction = arrayIndexLength(structureType);
 		final TypedValue<PointerValueType<S>> pointerValue = new ConstantExpression<>(constantInstruction);
 		return new PointerToIntegerInstruction<>(pointerValue, i64);
+	}
+
+	@NotNull
+	public static <S extends StructureType, T extends CanBePointedToType> ConstantTypedValue<IntegerValueType> sizeOfStructureTypeConstantTypedValue(@NotNull final S structureType)
+	{
+		return new ConstantExpression<>(sizeOfStructureType(structureType));
 	}
 
 	// @.offsetof.3.com.stormmq.MyClassExample = constant i32 ptrtoint (double * getelementptr (%class.com.stormmq.MyClassExample, %class.com.stormmq.MyClassExample * null, i64 0, i32 3) to i32)

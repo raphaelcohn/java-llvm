@@ -25,11 +25,10 @@ package com.stormmq.llvm.domain.typedValues.constantTypedValues.complexConstantE
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.typedValues.AbstractTypedValue;
 import com.stormmq.llvm.domain.typedValues.constantTypedValues.ConstantTypedValue;
-import com.stormmq.llvm.domain.types.Type;
-import com.stormmq.llvm.domain.types.TypeWithSize;
+import com.stormmq.llvm.domain.types.*;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractComplexConstantTypedValue<T extends Type, V extends TypeWithSize> extends AbstractTypedValue<T> implements ConstantTypedValue<T>
+public abstract class AbstractComplexConstantTypedValue<T extends CanBePointedToType, V extends CanBePointedToType> extends AbstractTypedValue<T> implements ConstantTypedValue<T>
 {
 	@NotNull private final ConstantTypedValue<V>[] values;
 

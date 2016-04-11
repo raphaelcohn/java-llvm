@@ -24,10 +24,11 @@ package com.stormmq.llvm.domain.instructions;
 
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.typedValues.constantTypedValues.ConstantTypedValue;
+import com.stormmq.llvm.domain.types.CanBePointedToType;
 import com.stormmq.llvm.domain.types.Type;
 import org.jetbrains.annotations.*;
 
-public final class ConstantExpression<T extends Type> implements ConstantTypedValue<T>
+public final class ConstantExpression<T extends CanBePointedToType> implements ConstantTypedValue<T>
 {
 	@NotNull private final Instruction<T> constantInstruction;
 
@@ -42,5 +43,12 @@ public final class ConstantExpression<T extends Type> implements ConstantTypedVa
 		constantInstruction.to().write(byteWriter);
 		byteWriter.writeSpace();
 		constantInstruction.writeAsConstantExpression(byteWriter);
+	}
+
+	@NotNull
+	@Override
+	public T to()
+	{
+		return constantInstruction.to();
 	}
 }

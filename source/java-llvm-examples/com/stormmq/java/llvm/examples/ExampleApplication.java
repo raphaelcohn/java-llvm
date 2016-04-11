@@ -25,10 +25,13 @@ package com.stormmq.java.llvm.examples;
 import com.stormmq.java.classfile.processing.*;
 import com.stormmq.java.classfile.processing.processLogs.ProcessLog;
 import com.stormmq.java.llvm.xxx.*;
+import com.stormmq.java.parsing.utilities.names.PackageName;
 import com.stormmq.jopt.Verbosity;
 import com.stormmq.jopt.applications.AbstractMultithreadedApplication;
 import com.stormmq.jopt.applications.uncaughtExceptionHandlers.MustExitBecauseOfFailureException;
+import com.stormmq.llvm.domain.metadata.creation.NamespaceSplitter;
 import com.stormmq.llvm.domain.module.ModuleWriter;
+import com.stormmq.llvm.domain.module.TargetModuleCreator;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.Thread.UncaughtExceptionHandler;
@@ -53,7 +56,10 @@ public final class ExampleApplication extends AbstractMultithreadedApplication
 
 		final ProcessLog processLog = new ExitCodeSettingProcessLog(standardErrorParseFailureLog(verbosity.isAtLeastVerbose()), exitCode);
 		processor = new Processor(permitConstantsInInstanceFields, processLog, exitCodeSettingUncaughtExceptionHandler);
-		typeInformationTripletUser = new JavaConvertingTypeInformationTripletUser(new ModuleCreatorAndWriter(MacOsXMavericksX86_64, new ModuleWriter(outputPath)));
+		final TargetModuleCreator targetModuleCreator = MacOsXMavericksX86_64;
+		final ModuleCreatorAndWriter moduleCreatorAndWriter = new ModuleCreatorAndWriter(targetModuleCreator, new ModuleWriter(outputPath));
+		final NamespaceSplitter<PackageName> namespaceSplitter = moduleCreatorAndWriter.namespaceSplitter();
+		typeInformationTripletUser = new JavaConvertingTypeInformationTripletUser(moduleCreatorAndWriter, namespaceSplitter, targetModuleCreator.dataLayoutSpecification());
 	}
 
 	@Override

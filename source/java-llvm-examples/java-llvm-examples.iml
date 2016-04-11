@@ -20,6 +20,7 @@
     <orderEntry type="module" module-name="java-parsing-utilities" />
     <orderEntry type="module" module-name="java-llvm" />
     <orderEntry type="module" module-name="java-classfile-processing" />
+    <orderEntry type="module" module-name="llvm-domain-metadata-creation" />
   </component>
   <component name="org.twodividedbyzero.idea.findbugs">
     <option name="_basePreferences">

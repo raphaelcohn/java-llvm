@@ -23,8 +23,8 @@
 package com.stormmq.llvm.domain.types;
 
 import com.stormmq.byteWriters.ByteWriter;
-import com.stormmq.java.parsing.utilities.ReservedIdentifiers;
 import com.stormmq.string.Api;
+import com.stormmq.string.StringConstants;
 import org.jetbrains.annotations.*;
 
 import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
@@ -39,7 +39,7 @@ public final class VoidType implements VoidOrFirstClassTypeExcludingLabelAndMeta
 	{
 	}
 
-	@NotNull private static final byte[] _void = encodeUtf8BytesWithCertaintyValueIsValid(ReservedIdentifiers._void);
+	@NotNull private static final byte[] _void = encodeUtf8BytesWithCertaintyValueIsValid(StringConstants._void);
 
 	@Override
 	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
