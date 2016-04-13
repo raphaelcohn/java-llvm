@@ -23,15 +23,16 @@
 package com.stormmq.llvm.domain.metadata;
 
 import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import com.stormmq.string.Formatting;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import static com.stormmq.string.Utf8ByteUser.encodeToUtf8ByteArrayWithCertaintyValueIsValid;
 
 public final class StringConstantMetadata implements Metadata
 {
-	@NotNull private static final byte[] ExclamationMarkDoubleQuote = encodeUtf8BytesWithCertaintyValueIsValid("!\"");
+	@NotNull private static final byte[] ExclamationMarkDoubleQuote = encodeToUtf8ByteArrayWithCertaintyValueIsValid("!\"");
 
 	@NotNull private final String value;
 	@SuppressWarnings("FieldNotUsedInToString") @NotNull private final byte[] llAssembleEncoding;
@@ -40,7 +41,7 @@ public final class StringConstantMetadata implements Metadata
 	{
 		this.value = value;
 
-		llAssembleEncoding = encodeUtf8BytesWithCertaintyValueIsValid(value);
+		llAssembleEncoding = encodeToUtf8ByteArrayWithCertaintyValueIsValid(value);
 	}
 
 	@Override
@@ -62,7 +63,7 @@ public final class StringConstantMetadata implements Metadata
 	}
 
 	@Override
-	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
 		byteWriter.writeBytes(ExclamationMarkDoubleQuote);
 		byteWriter.writeBytes(llAssembleEncoding);

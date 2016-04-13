@@ -25,8 +25,6 @@ package com.stormmq.functions;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.function.Consumer;
-import java.util.function.IntFunction;
 
 public final class CollectionHelper
 {

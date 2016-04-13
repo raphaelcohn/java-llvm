@@ -23,14 +23,15 @@
 package com.stormmq.llvm.domain;
 
 import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import com.stormmq.string.Formatting;
 import org.jetbrains.annotations.*;
 
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import static com.stormmq.string.Utf8ByteUser.encodeToUtf8ByteArrayWithCertaintyValueIsValid;
 
-public final class AddressSpace implements Writable
+public final class AddressSpace implements LlvmWritable
 {
-	@SuppressWarnings("SpellCheckingInspection") @NotNull private static final byte[] SpaceAddressSpaceStart = encodeUtf8BytesWithCertaintyValueIsValid(" addrspace(");
+	@SuppressWarnings("SpellCheckingInspection") @NotNull private static final byte[] SpaceAddressSpaceStart = encodeToUtf8ByteArrayWithCertaintyValueIsValid(" addrspace(");
 	@NotNull public static final AddressSpace GlobalAddressSpace = new AddressSpace(0);
 	private static final int MaximumAddressSpace = 8388608; // 2^23
 
@@ -60,7 +61,7 @@ public final class AddressSpace implements Writable
 	}
 
 	@Override
-	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
 		byteWriter.writeBytes(SpaceAddressSpaceStart);
 		byteWriter.writeUtf8EncodedStringWithCertainty(Integer.toString(value));

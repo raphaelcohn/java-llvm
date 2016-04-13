@@ -22,9 +22,9 @@
 
 package com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes;
 
-import com.stormmq.llvm.domain.types.*;
+import com.stormmq.llvm.domain.types.CanBePointedToType;
 import com.stormmq.llvm.domain.types.firstClassTypes.FirstClassType;
 
-public interface AggregateType extends TypeWithSize, CanBePointedToType, FirstClassType
+public interface AggregateType extends FirstClassType, CanBePointedToType
 {
 }

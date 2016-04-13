@@ -32,24 +32,24 @@ import com.stormmq.llvm.domain.function.attributes.parameterAttributes.Parameter
 import com.stormmq.llvm.domain.identifiers.AbstractGloballyIdentified;
 import com.stormmq.llvm.domain.identifiers.GlobalIdentifier;
 import com.stormmq.llvm.domain.names.SectionName;
-import com.stormmq.llvm.domain.target.triple.TargetTriple;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import com.stormmq.llvm.domain.metadata.debugging.DISubprogramKeyedMetadataTuple;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Set;
+import java.util.function.Consumer;
 
 import static com.stormmq.llvm.domain.function.attributes.FunctionAttributeGroup.writeFunctionAttributes;
 import static com.stormmq.string.Formatting.format;
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import static com.stormmq.string.Utf8ByteUser.encodeToUtf8ByteArrayWithCertaintyValueIsValid;
 
 public final class FunctionDefinition extends AbstractGloballyIdentified implements MayHaveComdatDefinition
 {
-	@NotNull private static final byte[] defineSpace = encodeUtf8BytesWithCertaintyValueIsValid("define ");
-	@NotNull private static final byte[] SpaceSection = encodeUtf8BytesWithCertaintyValueIsValid(" section \"");
-	@NotNull private static final byte[] SpaceComdatSpaceOpenBracket = encodeUtf8BytesWithCertaintyValueIsValid(" comdat (");
-	@NotNull private static final byte[] SpaceExclamationMarkDbgSpace = encodeUtf8BytesWithCertaintyValueIsValid(" !dbg ");
-	@SuppressWarnings("HardcodedLineSeparator") @NotNull private static final byte[] NewLineOpenBrace = encodeUtf8BytesWithCertaintyValueIsValid("\n{");
+	@NotNull private static final byte[] defineSpace = encodeToUtf8ByteArrayWithCertaintyValueIsValid("define ");
+	@NotNull private static final byte[] SpaceSection = encodeToUtf8ByteArrayWithCertaintyValueIsValid(" section \"");
+	@NotNull private static final byte[] SpaceComdatSpaceOpenBracket = encodeToUtf8ByteArrayWithCertaintyValueIsValid(" comdat (");
+	@NotNull private static final byte[] SpaceExclamationMarkDbgSpace = encodeToUtf8ByteArrayWithCertaintyValueIsValid(" !dbg ");
+	@SuppressWarnings("HardcodedLineSeparator") @NotNull private static final byte[] NewLineOpenBrace = encodeToUtf8ByteArrayWithCertaintyValueIsValid("\n{");
 
 	@NotNull private final Linkage linkage;
 	@NotNull private final Visibility visibility;
@@ -96,9 +96,9 @@ public final class FunctionDefinition extends AbstractGloballyIdentified impleme
 	}
 
 	@Override
-	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
-		final int referenceIndex = functionAttributes.writeFunctionAttributesGroup(byteWriter);
+		final int referenceIndex = functionAttributes.writeFunctionAttributesGroup(byteWriter, dataLayoutSpecification);
 
 		byteWriter.writeBytes(defineSpace);
 		byteWriter.writeBytes(linkage.llAssemblyValue);
@@ -116,18 +116,18 @@ public final class FunctionDefinition extends AbstractGloballyIdentified impleme
 		byteWriter.writeBytes(callingConvention.llAssemblyValue);
 
 		byteWriter.writeSpace();
-		returnAttributes.write(byteWriter);
+		returnAttributes.write(byteWriter, dataLayoutSpecification);
 
 		byteWriter.writeSpace();
-		resultType.write(byteWriter);
+		resultType.write(byteWriter, dataLayoutSpecification);
 
 		byteWriter.writeSpace();
-		globalIdentifier().write(byteWriter);
+		globalIdentifier().write(byteWriter, dataLayoutSpecification);
 
 		byteWriter.writeOpenBracket();
 		for (final FormalParameter parameter : parameters)
 		{
-			parameter.write(byteWriter);
+			parameter.write(byteWriter, dataLayoutSpecification);
 		}
 		byteWriter.writeCloseBracket();
 
@@ -141,15 +141,19 @@ public final class FunctionDefinition extends AbstractGloballyIdentified impleme
 		if (sectionName != null)
 		{
 			byteWriter.writeBytes(SpaceSection);
-			sectionName.write(byteWriter);
+			sectionName.write(byteWriter, dataLayoutSpecification);
 			byteWriter.writeDoubleQuote();
 		}
 
 		if (comdatDefinition != null)
 		{
-			byteWriter.writeBytes(SpaceComdatSpaceOpenBracket);
-			comdatDefinition.writeComdatIdentifier(byteWriter);
-			byteWriter.writeCloseBracket();
+			@Nullable final ComdatDefinition actualComdatDefinition = comdatDefinition.adjustComdatDefinition(dataLayoutSpecification.objectFileFormat());
+			if (actualComdatDefinition != null)
+			{
+				byteWriter.writeBytes(SpaceComdatSpaceOpenBracket);
+				actualComdatDefinition.writeComdatIdentifier(byteWriter, dataLayoutSpecification);
+				byteWriter.writeCloseBracket();
+			}
 		}
 
 		if (alignment != AutomaticAlignment)
@@ -165,18 +169,18 @@ public final class FunctionDefinition extends AbstractGloballyIdentified impleme
 		}
 
 		byteWriter.writeBytes(SpaceExclamationMarkDbgSpace);
-		debuggingInformation.write(byteWriter);
+		debuggingInformation.write(byteWriter, dataLayoutSpecification);
 
 		byteWriter.writeBytes(NewLineOpenBrace);
 
 		// write code
 
-		byteWriter.writeBytes(Writable.CloseBraceLineFeed);
+		byteWriter.writeBytes(LlvmWritable.CloseBraceLineFeed);
 	}
 
 	@Override
-	public void adjustComdatDefinition(@NotNull final Set<ComdatDefinition> comdatDefinitions, @NotNull final TargetTriple targetTriple)
+	public void useComdatDefinition(@NotNull final Consumer<ComdatDefinition> consumer)
 	{
-		comdatDefinition = MayHaveComdatDefinition.adjustComdatDefinition(comdatDefinitions, comdatDefinition, targetTriple);
+		consumer.accept(comdatDefinition);
 	}
 }

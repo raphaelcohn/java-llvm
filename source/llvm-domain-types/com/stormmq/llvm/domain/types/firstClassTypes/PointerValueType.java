@@ -24,12 +24,11 @@ package com.stormmq.llvm.domain.types.firstClassTypes;
 
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.AddressSpace;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import com.stormmq.llvm.domain.types.CanBePointedToType;
 import org.jetbrains.annotations.NotNull;
 
 import static com.stormmq.llvm.domain.AddressSpace.GlobalAddressSpace;
-import static com.stormmq.llvm.domain.types.firstClassTypes.FloatingPointValueType.*;
-import static com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType.*;
 
 public final class PointerValueType<T extends CanBePointedToType> implements PrimitiveSingleValueType
 {
@@ -38,18 +37,6 @@ public final class PointerValueType<T extends CanBePointedToType> implements Pri
 	{
 		return new PointerValueType<>(pointsTo, GlobalAddressSpace);
 	}
-	
-	@SuppressWarnings("unused") @NotNull public static final PointerValueType<IntegerValueType> i8Pointer = i8.pointerTo();
-	@SuppressWarnings("unused") @NotNull public static final PointerValueType<IntegerValueType> i16Pointer = i16.pointerTo();
-	@SuppressWarnings("unused") @NotNull public static final PointerValueType<IntegerValueType> i32Pointer = i32.pointerTo();
-	@SuppressWarnings("unused") @NotNull public static final PointerValueType<IntegerValueType> i64Pointer = i64.pointerTo();
-	@SuppressWarnings("unused") @NotNull public static final PointerValueType<IntegerValueType> i128Pointer = i128.pointerTo();
-	@SuppressWarnings("unused") @NotNull public static final PointerValueType<FloatingPointValueType> halfPointer = half.pointerTo();
-	@SuppressWarnings("unused") @NotNull public static final PointerValueType<FloatingPointValueType> floatPointer = _float.pointerTo();
-	@SuppressWarnings("unused") @NotNull public static final PointerValueType<FloatingPointValueType> doublePointer = _double.pointerTo();
-	@SuppressWarnings("unused") @NotNull public static final PointerValueType<FloatingPointValueType> fp128Pointer = fp128.pointerTo();
-	@SuppressWarnings("unused") @NotNull public static final PointerValueType<FloatingPointValueType> x86_fp80Pointer = x86_fp80.pointerTo();
-	@SuppressWarnings("unused") @NotNull public static final PointerValueType<FloatingPointValueType> ppc_fp128Pointer = ppc_fp128.pointerTo();
 
 	@NotNull private final T pointsTo;
 	private final AddressSpace addressSpace;
@@ -61,9 +48,9 @@ public final class PointerValueType<T extends CanBePointedToType> implements Pri
 	}
 
 	@Override
-	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
-		pointsTo.write(byteWriter);
+		pointsTo.writeForPointedTo(byteWriter, dataLayoutSpecification);
 
 		if (addressSpace.isZero())
 		{
@@ -71,9 +58,21 @@ public final class PointerValueType<T extends CanBePointedToType> implements Pri
 		}
 		else
 		{
-			addressSpace.write(byteWriter);
+			addressSpace.write(byteWriter, dataLayoutSpecification);
 		}
+
 		byteWriter.writeAsterisk();
 	}
 
+	@Override
+	public int storageSizeInBits(@NotNull final DataLayoutSpecification dataLayoutSpecification)
+	{
+		return dataLayoutSpecification.pointerStorageSizeInBits();
+	}
+
+	@Override
+	public int abiAlignmentInBits(@NotNull final DataLayoutSpecification dataLayoutSpecification)
+	{
+		return dataLayoutSpecification.pointerAbiAlignmentInBits();
+	}
 }

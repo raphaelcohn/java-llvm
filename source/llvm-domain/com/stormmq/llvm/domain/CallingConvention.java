@@ -25,7 +25,7 @@ package com.stormmq.llvm.domain;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import static com.stormmq.string.Utf8ByteUser.encodeToUtf8ByteArrayWithCertaintyValueIsValid;
 
 public enum CallingConvention
 {
@@ -46,6 +46,6 @@ public enum CallingConvention
 
 	CallingConvention(@NonNls @NotNull final String name)
 	{
-		llAssemblyValue = encodeUtf8BytesWithCertaintyValueIsValid(name);
+		llAssemblyValue = encodeToUtf8ByteArrayWithCertaintyValueIsValid(name);
 	}
 }

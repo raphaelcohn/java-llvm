@@ -24,20 +24,28 @@ package com.stormmq.llvm.domain.types;
 
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.identifiers.AddressableIdentifier;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import org.jetbrains.annotations.NotNull;
 
-public final class AddressableIdentifierType implements CanBePointedToType
+public final class AddressableIdentifierType<I extends AddressableIdentifier> implements AddressableIdentifiedMixin<I>
 {
-	@NotNull private final AddressableIdentifier addressableIdentifier;
+	@NotNull private final I addressableIdentifier;
 
-	public AddressableIdentifierType(@NotNull final AddressableIdentifier addressableIdentifier)
+	public AddressableIdentifierType(@NotNull final I addressableIdentifier)
 	{
 		this.addressableIdentifier = addressableIdentifier;
 	}
 
 	@Override
-	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
-		addressableIdentifier.write(byteWriter);
+		writeIdentifier(byteWriter, dataLayoutSpecification);
+	}
+
+	@NotNull
+	@Override
+	public I identifier()
+	{
+		return addressableIdentifier;
 	}
 }

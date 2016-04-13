@@ -23,62 +23,31 @@
 package com.stormmq.llvm.domain.types.firstClassTypes;
 
 import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.ToIntFunction;
+
 import static com.stormmq.string.Formatting.format;
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import static com.stormmq.string.Utf8ByteUser.encodeToUtf8ByteArrayWithCertaintyValueIsValid;
 
 public final class IntegerValueType implements PrimitiveSingleValueType
 {
-	@NotNull public static final IntegerValueType i1 = new IntegerValueType(1, 1);
-	@NotNull public static final IntegerValueType i8 = new IntegerValueType(8, 1);
-	@NotNull public static final IntegerValueType i16 = new IntegerValueType(16, 2);
-	@NotNull public static final IntegerValueType i32 = new IntegerValueType(32, 4);
-	@NotNull public static final IntegerValueType i64 = new IntegerValueType(64, 8);
-	@NotNull public static final IntegerValueType i128 = new IntegerValueType(128, 16);
-
-	@SuppressWarnings("MagicNumber")
-	@NotNull
-	public static IntegerValueType integerValueTypeFromSizeInBits(final int sizeInBits)
-	{
-		if (sizeInBits < 1)
-		{
-			throw new IllegalArgumentException(format("integer sizeInBits can not be '%1$s'", sizeInBits));
-		}
-		switch (sizeInBits)
-		{
-			case 1:
-				return i1;
-
-			case 8:
-				return i8;
-
-			case 16:
-				return i16;
-
-			case 32:
-				return i32;
-
-			case 64:
-				return i64;
-
-			case 128:
-				return i128;
-
-			default:
-				final int divided = sizeInBits >> 3;
-				final int remainder = sizeInBits % 8;
-				final int toScale = remainder == 0 ? 0 : 1;
-				return new IntegerValueType(sizeInBits, divided + toScale);
-		}
-	}
-
 	private static final int MaximumNumberOfBits = 2 << 23 - 1;
+
+	@NotNull public static final IntegerValueType i1 = new IntegerValueType(1, DataLayoutSpecification::int1AbiAlignmentInBits);
+	@NotNull public static final IntegerValueType i8 = new IntegerValueType(8, DataLayoutSpecification::int8AbiAlignmentInBits);
+	@NotNull public static final IntegerValueType i16 = new IntegerValueType(16, DataLayoutSpecification::int16AbiAlignmentInBits);
+	@NotNull public static final IntegerValueType i32 = new IntegerValueType(32, DataLayoutSpecification::int32AbiAlignmentInBits);
+	@NotNull public static final IntegerValueType i64 = new IntegerValueType(64, DataLayoutSpecification::int64AbiAlignmentInBits);
+	@NotNull public static final IntegerValueType i128 = new IntegerValueType(128, DataLayoutSpecification::int128AbiAlignmentInBits);
+
+	@SuppressWarnings("FieldNotUsedInToString") @NotNull private final ToIntFunction<DataLayoutSpecification> abiAlignmentInBits;
+	@SuppressWarnings("FieldNotUsedInToString") private final int storageSizeInBits;
 	@NotNull private final String stringValue;
 	@SuppressWarnings("FieldNotUsedInToString") @NotNull private final byte[] llvmAssemblyEncoding;
-	@SuppressWarnings("FieldNotUsedInToString") private final int alignment;
 
-	private IntegerValueType(final int numberOfBits, final int alignment)
+	private IntegerValueType(final int numberOfBits, @NotNull final ToIntFunction<DataLayoutSpecification> abiAlignmentInBits)
 	{
 		if (numberOfBits < 1)
 		{
@@ -90,14 +59,16 @@ public final class IntegerValueType implements PrimitiveSingleValueType
 			throw new IllegalArgumentException(format("Number of bits must not exceed 2^23 - 1, not '%1$s'", numberOfBits));
 		}
 
-		stringValue = 'i' + Integer.toString(numberOfBits);
-		llvmAssemblyEncoding = encodeUtf8BytesWithCertaintyValueIsValid(stringValue);
+		this.abiAlignmentInBits = abiAlignmentInBits;
 
-		this.alignment = alignment;
+		storageSizeInBits = numberOfBitsRoundedUpToNearestPowerOfTwo(numberOfBits);
+
+		stringValue = 'i' + Integer.toString(numberOfBits);
+		llvmAssemblyEncoding = encodeToUtf8ByteArrayWithCertaintyValueIsValid(stringValue);
 	}
 
 	@Override
-	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
 		byteWriter.writeBytes(llvmAssemblyEncoding);
 	}
@@ -107,5 +78,27 @@ public final class IntegerValueType implements PrimitiveSingleValueType
 	public String toString()
 	{
 		return stringValue;
+	}
+
+	private static int numberOfBitsRoundedUpToNearestPowerOfTwo(final int numberOfBits)
+	{
+		if (numberOfBits % 8 != 0)
+		{
+			//noinspection MultiplyOrDivideByPowerOfTwo
+			return ((numberOfBits / 8) + 1) * 8;
+		}
+		return numberOfBits;
+	}
+
+	@Override
+	public int storageSizeInBits(@NotNull final DataLayoutSpecification dataLayoutSpecification)
+	{
+		return storageSizeInBits;
+	}
+
+	@Override
+	public int abiAlignmentInBits(@NotNull final DataLayoutSpecification dataLayoutSpecification)
+	{
+		return abiAlignmentInBits.applyAsInt(dataLayoutSpecification);
 	}
 }

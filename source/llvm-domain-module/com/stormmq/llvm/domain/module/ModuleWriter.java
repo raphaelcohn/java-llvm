@@ -24,7 +24,6 @@ package com.stormmq.llvm.domain.module;
 
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.byteWriters.OutputStreamByteWriter;
-import com.stormmq.llvm.domain.module.Module;
 import org.jetbrains.annotations.*;
 
 import java.io.IOException;
@@ -53,8 +52,7 @@ public final class ModuleWriter
 		final Path llvmFilePath = llvmFilePath(relativeFilePath, relativeRootFolderPath);
 		try (final OutputStream outputStream = newOutputStream(llvmFilePath, WRITE, CREATE, TRUNCATE_EXISTING))
 		{
-			final ByteWriter<IOException> byteWriter = new OutputStreamByteWriter(outputStream);
-			module.write(byteWriter);
+			module.write(new OutputStreamByteWriter(outputStream));
 		}
 		catch (final IOException e)
 		{

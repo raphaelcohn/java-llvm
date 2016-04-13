@@ -24,18 +24,19 @@ package com.stormmq.llvm.domain.metadata.metadataTuples;
 
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.ReferenceTracker;
-import com.stormmq.llvm.domain.Writable;
+import com.stormmq.llvm.domain.LlvmWritable;
 import com.stormmq.llvm.domain.metadata.Metadata;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import com.stormmq.string.Formatting;
 import org.jetbrains.annotations.*;
 
 import java.util.List;
 
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import static com.stormmq.string.Utf8ByteUser.encodeToUtf8ByteArrayWithCertaintyValueIsValid;
 
-public class NamedMetadataTuple implements Writable
+public class NamedMetadataTuple implements LlvmWritable
 {
-	@NotNull private static final byte[] SpaceEqualsSpaceExclamationMarkOpenBrace = encodeUtf8BytesWithCertaintyValueIsValid(" = !{");
+	@NotNull private static final byte[] SpaceEqualsSpaceExclamationMarkOpenBrace = encodeToUtf8ByteArrayWithCertaintyValueIsValid(" = !{");
 
 	@SuppressWarnings("FieldNotUsedInToString") @NotNull private final ReferenceTracker referenceTracker;
 	@NotNull private final String name;
@@ -48,7 +49,7 @@ public class NamedMetadataTuple implements Writable
 		this.name = name;
 		this.tuple = tuple;
 
-		llAssemblyEncoding = encodeUtf8BytesWithCertaintyValueIsValid(name);
+		llAssemblyEncoding = encodeToUtf8ByteArrayWithCertaintyValueIsValid(name);
 	}
 
 	private boolean hasBeenWritten()
@@ -57,7 +58,7 @@ public class NamedMetadataTuple implements Writable
 	}
 
 	@Override
-	public final <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	public final <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
 		if (hasBeenWritten())
 		{
@@ -66,10 +67,10 @@ public class NamedMetadataTuple implements Writable
 			return;
 		}
 
-		writeTuple(byteWriter, tuple, llAssemblyEncoding);
+		writeTuple(byteWriter, tuple, dataLayoutSpecification, llAssemblyEncoding);
 	}
 
-	public static <X extends Exception> void writeTuple(@NotNull final ByteWriter<X> byteWriter, @NotNull final List<? extends Metadata> tuple, @NotNull final byte... llAssemblyEncoding) throws X
+	public static <X extends Exception> void writeTuple(@NotNull final ByteWriter<X> byteWriter, @NotNull final List<? extends Metadata> tuple, @NotNull final DataLayoutSpecification dataLayoutSpecification, @NotNull final byte... llAssemblyEncoding) throws X
 	{
 		final int size = tuple.size();
 		final int[] referenceIndices = new int[size];
@@ -86,7 +87,7 @@ public class NamedMetadataTuple implements Writable
 				}
 				else
 				{
-					item.write(byteWriter);
+					item.write(byteWriter, dataLayoutSpecification);
 					referenceIndex = item.referenceIndex();
 				}
 				referenceIndices[index] = referenceIndex;
@@ -107,7 +108,7 @@ public class NamedMetadataTuple implements Writable
 			final Metadata item = tuple.get(index);
 			if (item.isConstant())
 			{
-				item.write(byteWriter);
+				item.write(byteWriter, dataLayoutSpecification);
 			}
 			else
 			{

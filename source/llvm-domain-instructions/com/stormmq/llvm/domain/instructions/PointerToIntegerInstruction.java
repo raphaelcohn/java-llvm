@@ -23,65 +23,65 @@
 package com.stormmq.llvm.domain.instructions;
 
 import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.llvm.domain.identifiers.LocalIdentifier;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import com.stormmq.llvm.domain.typedValues.AddressableIdentifierTypedValue;
 import com.stormmq.llvm.domain.typedValues.TypedValue;
-import com.stormmq.llvm.domain.typedValues.constantTypedValues.ConstantTypedValue;
 import com.stormmq.llvm.domain.types.*;
 import com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType;
 import com.stormmq.llvm.domain.types.firstClassTypes.PointerValueType;
+import com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.AggregateType;
 import com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.structureTypes.LocallyIdentifiedStructureType;
-import com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.structureTypes.StructureType;
 import org.jetbrains.annotations.NotNull;
 
-import static com.stormmq.llvm.domain.AddressSpace.GlobalAddressSpace;
 import static com.stormmq.llvm.domain.instructions.GetElementPointerInstruction.arrayIndexLength;
 import static com.stormmq.llvm.domain.instructions.GetElementPointerInstruction.offsetOf;
-import static com.stormmq.llvm.domain.Writable.SpaceToSpace;
+import static com.stormmq.llvm.domain.LlvmWritable.SpaceToSpace;
 import static com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType.i64;
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import static com.stormmq.string.Utf8ByteUser.encodeToUtf8ByteArrayWithCertaintyValueIsValid;
 
 /*
 %.sizeof.com.stormmq.MyClassExample = ptrtoint %class.com.stormmq.MyClassExample * %.arrayindex.length.com.stormmq.MyClassExample to i64
 */
 public final class PointerToIntegerInstruction<T extends CanBePointedToType> extends AbstractInstruction<IntegerValueType>
 {
-	@NotNull private static final byte[] ptrtointSpace = encodeUtf8BytesWithCertaintyValueIsValid("ptrtoint ");
-
-	@NotNull
-	public static PointerToIntegerInstruction<AddressableIdentifierType> pointerToIntegerExpressionForStructureType(@NotNull final LocallyIdentifiedStructureType locallyIdentifiedStructureType, @NotNull final IntegerValueType size)
-	{
-		final PointerValueType<AddressableIdentifierType> addressableIdentifierTypePointerValueType = locallyIdentifiedStructureType.pointerTo();
-		return new PointerToIntegerInstruction<>(new AddressableIdentifierTypedValue<>(addressableIdentifierTypePointerValueType, locallyIdentifiedStructureType.localIdentifier()), size);
-	}
+	@NotNull private static final byte[] ptrtointSpace = encodeToUtf8ByteArrayWithCertaintyValueIsValid("ptrtoint ");
 
 	// @.sizeof.com.stormmq.MyClassExample = constant i64 ptrtoint (%class.com.stormmq.MyClassExample * getelementptr inbounds (%class.com.stormmq.MyClassExample, %class.com.stormmq.MyClassExample * null, i64 1) to i32)
 	@NotNull
-	public static <S extends StructureType> PointerToIntegerInstruction<S> sizeOfStructureType(@NotNull final S structureType)
+	public static <A extends AggregateType, T extends CanBePointedToType> ConstantExpression<IntegerValueType> sizeOfStructureTypeConstantTypedValue(@NotNull final A aggregateType)
 	{
-		final Instruction<PointerValueType<S>> constantInstruction = arrayIndexLength(structureType);
-		final TypedValue<PointerValueType<S>> pointerValue = new ConstantExpression<>(constantInstruction);
-		return new PointerToIntegerInstruction<>(pointerValue, i64);
-	}
-
-	@NotNull
-	public static <S extends StructureType, T extends CanBePointedToType> ConstantTypedValue<IntegerValueType> sizeOfStructureTypeConstantTypedValue(@NotNull final S structureType)
-	{
-		return new ConstantExpression<>(sizeOfStructureType(structureType));
+		return new ConstantExpression<>(sizeOfStructureType(aggregateType));
 	}
 
 	// @.offsetof.3.com.stormmq.MyClassExample = constant i32 ptrtoint (double * getelementptr (%class.com.stormmq.MyClassExample, %class.com.stormmq.MyClassExample * null, i64 0, i32 3) to i32)
 	@NotNull
-	public static <S extends StructureType, T extends CanBePointedToType> PointerToIntegerInstruction<T> offsetOfFieldInStructureType(@NotNull final S structureType, @NotNull final T to, final int zeroBasedFieldIndex)
+	public static <A extends AggregateType, T extends CanBePointedToType> ConstantExpression<IntegerValueType> offsetOfFieldInStructureTypeConstantTypedValue(@NotNull final A aggregateType, @NotNull final T to, final int zeroBasedFieldIndex)
 	{
-		final Instruction<PointerValueType<T>> constantInstruction = offsetOf(structureType, to, zeroBasedFieldIndex);
-		final TypedValue<PointerValueType<T>> pointerValue = new ConstantExpression<>(constantInstruction);
+		return new ConstantExpression<>(offsetOfFieldInStructureType(aggregateType, to, zeroBasedFieldIndex));
+	}
+
+	@NotNull
+	public static PointerToIntegerInstruction<AddressableIdentifierType<LocalIdentifier>> pointerToIntegerExpressionForStructureType(@NotNull final LocallyIdentifiedStructureType locallyIdentifiedStructureType, @NotNull final IntegerValueType size)
+	{
+		final PointerValueType<AddressableIdentifierType<LocalIdentifier>> addressableIdentifierTypePointerValueType = locallyIdentifiedStructureType.pointerTo();
+		return new PointerToIntegerInstruction<>(new AddressableIdentifierTypedValue<>(addressableIdentifierTypePointerValueType, locallyIdentifiedStructureType.identifier()), size);
+	}
+
+	@NotNull
+	private static <A extends AggregateType> PointerToIntegerInstruction<A> sizeOfStructureType(@NotNull final A aggregateType)
+	{
+		final Instruction<PointerValueType<A>> constantInstruction = arrayIndexLength(aggregateType);
+		final TypedValue<PointerValueType<A>> pointerValue = new ConstantExpression<>(constantInstruction);
 		return new PointerToIntegerInstruction<>(pointerValue, i64);
 	}
 
 	@NotNull
-	public static <S extends StructureType, T extends CanBePointedToType> ConstantTypedValue<IntegerValueType> offsetOfFieldInStructureTypeConstantTypedValue(@NotNull final S structureType, @NotNull final T to, final int zeroBasedFieldIndex)
+	private static <A extends AggregateType, T extends CanBePointedToType> PointerToIntegerInstruction<T> offsetOfFieldInStructureType(@NotNull final A aggregateType, @NotNull final T to, final int zeroBasedFieldIndex)
 	{
-		return new ConstantExpression<>(offsetOfFieldInStructureType(structureType, to, zeroBasedFieldIndex));
+		final Instruction<PointerValueType<T>> constantInstruction = offsetOf(aggregateType, to, zeroBasedFieldIndex);
+		final TypedValue<PointerValueType<T>> pointerValue = new ConstantExpression<>(constantInstruction);
+		return new PointerToIntegerInstruction<>(pointerValue, i64);
 	}
 
 	@NotNull private final TypedValue<PointerValueType<T>> pointerValue;
@@ -108,11 +108,11 @@ public final class PointerToIntegerInstruction<T extends CanBePointedToType> ext
 	}
 
 	@Override
-	protected <X extends Exception> void writeBody(@NotNull final ByteWriter<X> byteWriter) throws X
+	protected <X extends Exception> void writeBody(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
-		pointerValue.write(byteWriter);
+		pointerValue.write(byteWriter, dataLayoutSpecification);
 		byteWriter.writeBytes(SpaceToSpace);
-		to.write(byteWriter);
+		to.write(byteWriter, dataLayoutSpecification);
 	}
 
 }

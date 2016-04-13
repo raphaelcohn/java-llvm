@@ -23,11 +23,12 @@
 package com.stormmq.llvm.domain.types;
 
 import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import com.stormmq.string.Api;
 import com.stormmq.string.StringConstants;
 import org.jetbrains.annotations.*;
 
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import static com.stormmq.string.Utf8ByteUser.encodeToUtf8ByteArrayWithCertaintyValueIsValid;
 
 @Api
 public final class VoidType implements VoidOrFirstClassTypeExcludingLabelAndMetadata
@@ -39,10 +40,10 @@ public final class VoidType implements VoidOrFirstClassTypeExcludingLabelAndMeta
 	{
 	}
 
-	@NotNull private static final byte[] _void = encodeUtf8BytesWithCertaintyValueIsValid(StringConstants._void);
+	@NotNull private static final byte[] _void = encodeToUtf8ByteArrayWithCertaintyValueIsValid(StringConstants._void);
 
 	@Override
-	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
 		byteWriter.writeBytes(_void);
 	}

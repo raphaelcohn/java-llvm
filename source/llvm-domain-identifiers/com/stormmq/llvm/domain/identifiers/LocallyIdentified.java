@@ -22,11 +22,6 @@
 
 package com.stormmq.llvm.domain.identifiers;
 
-import com.stormmq.llvm.domain.Writable;
-import org.jetbrains.annotations.NotNull;
-
-public interface LocallyIdentified extends Writable
+public interface LocallyIdentified extends AddressableIdentified<LocalIdentifier>
 {
-	@NotNull
-	LocalIdentifier localIdentifier();
 }

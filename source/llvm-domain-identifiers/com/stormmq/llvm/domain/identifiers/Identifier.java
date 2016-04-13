@@ -22,12 +22,12 @@
 
 package com.stormmq.llvm.domain.identifiers;
 
-import com.stormmq.llvm.domain.Writable;
+import com.stormmq.llvm.domain.LlvmWritable;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("InterfaceMayBeAnnotatedFunctional")
-public interface Identifier extends Writable
+public interface Identifier extends LlvmWritable
 {
 	@NotNull
 	@NonNls

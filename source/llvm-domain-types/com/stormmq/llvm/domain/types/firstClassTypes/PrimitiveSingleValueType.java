@@ -22,6 +22,8 @@
 
 package com.stormmq.llvm.domain.types.firstClassTypes;
 
-public interface PrimitiveSingleValueType extends SingleValueType
+import com.stormmq.llvm.domain.types.SizedType;
+
+public interface PrimitiveSingleValueType extends SingleValueType, SizedType
 {
 }

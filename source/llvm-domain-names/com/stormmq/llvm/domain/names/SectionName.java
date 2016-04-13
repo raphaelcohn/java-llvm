@@ -25,12 +25,12 @@ package com.stormmq.llvm.domain.names;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import static com.stormmq.string.Utf8ByteUser.encodeToUtf8ByteArrayWithCertaintyValueIsValid;
 
 public final class SectionName extends AbstractName
 {
-	@NotNull private static final byte[] Start = encodeUtf8BytesWithCertaintyValueIsValid(" section \"");
-	@NotNull private static final byte[] End = encodeUtf8BytesWithCertaintyValueIsValid("\"");
+	@NotNull private static final byte[] Start = encodeToUtf8ByteArrayWithCertaintyValueIsValid(" section \"");
+	@NotNull private static final byte[] End = encodeToUtf8ByteArrayWithCertaintyValueIsValid("\"");
 
 	public SectionName(@NotNull @NonNls final String name)
 	{

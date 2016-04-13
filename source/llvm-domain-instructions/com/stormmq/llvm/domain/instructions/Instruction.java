@@ -23,14 +23,15 @@
 package com.stormmq.llvm.domain.instructions;
 
 import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import com.stormmq.llvm.domain.types.Type;
 import org.jetbrains.annotations.NotNull;
 
 public interface Instruction<T extends Type>
 {
-	<X extends Exception> void writeAsFunctionExpression(@NotNull final ByteWriter<X> byteWriter) throws X;
+	<X extends Exception> void writeAsFunctionExpression(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X;
 
-	<X extends Exception> void writeAsConstantExpression(@NotNull final ByteWriter<X> byteWriter) throws X;
+	<X extends Exception> void writeAsConstantExpression(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X;
 
 	@NotNull
 	T to();

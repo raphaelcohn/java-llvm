@@ -27,10 +27,8 @@ import com.stormmq.java.classfile.domain.fieldConstants.FieldConstant;
 import com.stormmq.java.classfile.domain.fieldConstants.FieldConstantUser;
 import com.stormmq.java.classfile.domain.information.FieldInformation;
 import com.stormmq.llvm.domain.typedValues.constantTypedValues.ConstantTypedValue;
-import com.stormmq.llvm.domain.typedValues.constantTypedValues.simpleConstantExpressions.FloatingPointConstantTypedValue;
 import com.stormmq.llvm.domain.typedValues.constantTypedValues.simpleConstantExpressions.IntegerConstantTypedValue;
 import com.stormmq.llvm.domain.types.CanBePointedToType;
-import com.stormmq.llvm.domain.types.Type;
 import com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -69,7 +67,7 @@ public final class ToLlvmConstantFieldConstantUser<T extends CanBePointedToType>
 	@Override
 	public ConstantTypedValue<T> useString(@NotNull final String value)
 	{
-		return (ConstantTypedValue<T>) cStringValueTypeConstant(value, true);
+		return (ConstantTypedValue<T>) cStringValueTypeConstant(value, false);
 	}
 
 	@SuppressWarnings("unchecked")

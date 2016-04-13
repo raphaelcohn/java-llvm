@@ -22,7 +22,7 @@
 
 package com.stormmq.llvm.domain;
 
-public interface Reference extends Writable
+public interface Reference extends LlvmWritable
 {
 	boolean hasBeenWritten();
 

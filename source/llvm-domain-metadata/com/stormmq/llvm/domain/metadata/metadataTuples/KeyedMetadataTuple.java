@@ -26,22 +26,24 @@ import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.ReferenceTracker;
 import com.stormmq.llvm.domain.metadata.KeyWithMetadataField;
 import com.stormmq.llvm.domain.metadata.Metadata;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import org.jetbrains.annotations.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import static com.stormmq.string.Utf8ByteUser.encodeToUtf8ByteArrayWithCertaintyValueIsValid;
 import static java.util.Arrays.asList;
 import static java.util.Collections.addAll;
 
 public class KeyedMetadataTuple implements Metadata
 {
-	@NotNull private static final byte[] distinctSpace = encodeUtf8BytesWithCertaintyValueIsValid("distinct ");
+	@NotNull private static final byte[] distinctSpace = encodeToUtf8ByteArrayWithCertaintyValueIsValid("distinct ");
 
 	@NotNull protected final ReferenceTracker referenceTracker;
 	private final boolean isDistinct;
 	@NotNull private final String name;
-	@NotNull private final List<KeyWithMetadataField> fields;
+	@NotNull private List<KeyWithMetadataField> fields;
 
 	@SuppressWarnings("OverloadedVarargsMethod")
 	protected KeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, final boolean isDistinct, @NotNull @NonNls final String name, @NotNull final KeyWithMetadataField... fields)
@@ -64,12 +66,15 @@ public class KeyedMetadataTuple implements Metadata
 		{
 			throw new IllegalStateException("Already populated (varargs)");
 		}
+		final int length = fields.length;
+		if (length == 0)
+		{
+			return;
+		}
+		List<KeyWithMetadataField> original = this.fields;
+		this.fields = new ArrayList<>(original.size() + length);
+		this.fields.addAll(original);
 		addAll(this.fields, fields);
-	}
-
-	protected final void populateHackForCircularReferencesInMetadataModel(@NotNull @NonNls final KeyWithMetadataField field)
-	{
-		fields.add(field);
 	}
 
 	@Override
@@ -91,7 +96,7 @@ public class KeyedMetadataTuple implements Metadata
 	}
 
 	@Override
-	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
 		if (hasBeenWritten())
 		{
@@ -102,7 +107,7 @@ public class KeyedMetadataTuple implements Metadata
 
 		for (final KeyWithMetadataField field : fields)
 		{
-			field.writeIfNotAConstant(byteWriter);
+			field.writeIfNotAConstant(byteWriter, dataLayoutSpecification);
 		}
 
 		byteWriter.writeExclamationMark();
@@ -130,7 +135,7 @@ public class KeyedMetadataTuple implements Metadata
 				isAfterFirst = true;
 			}
 
-			field.writeKeyValue(byteWriter);
+			field.writeKeyValue(byteWriter, dataLayoutSpecification);
 		}
 		byteWriter.writeBytes(CloseBracketLineFeed);
 		byteWriter.writeLineFeed();

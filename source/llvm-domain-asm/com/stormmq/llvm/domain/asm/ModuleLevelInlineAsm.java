@@ -23,16 +23,17 @@
 package com.stormmq.llvm.domain.asm;
 
 import com.stormmq.byteWriters.ByteWriter;
-import com.stormmq.llvm.domain.Writable;
+import com.stormmq.llvm.domain.LlvmWritable;
 import com.stormmq.llvm.domain.identifiers.LlvmString;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import static com.stormmq.string.Utf8ByteUser.encodeToUtf8ByteArrayWithCertaintyValueIsValid;
 
-public final class ModuleLevelInlineAsm implements Writable
+public final class ModuleLevelInlineAsm implements LlvmWritable
 {
-	@SuppressWarnings("SpellCheckingInspection") @NotNull private static final byte[] moduleSpaceasmSpace = encodeUtf8BytesWithCertaintyValueIsValid("module asm ");
+	@SuppressWarnings("SpellCheckingInspection") @NotNull private static final byte[] moduleSpaceasmSpace = encodeToUtf8ByteArrayWithCertaintyValueIsValid("module asm ");
 
 	@NotNull private final LlvmString asm;
 
@@ -42,11 +43,11 @@ public final class ModuleLevelInlineAsm implements Writable
 	}
 
 	@Override
-	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
 		byteWriter.writeBytes(moduleSpaceasmSpace);
 
-		asm.write(byteWriter);
+		asm.write(byteWriter, dataLayoutSpecification);
 
 		byteWriter.writeLineFeed();
 	}

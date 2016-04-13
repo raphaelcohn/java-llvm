@@ -51,6 +51,7 @@
       <name>sun.reflect</name>
       <name>sun.rmi</name>
       <name>sun.security</name>
+      <name>sun.text</name>
       <name>sun.tools</name>
       <name>sun.util</name>
     </excluded-names>

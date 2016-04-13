@@ -27,10 +27,9 @@ import com.stormmq.java.classfile.domain.InvalidInternalTypeNameException;
 import com.stormmq.java.classfile.domain.uniqueness.FieldUniqueness;
 import com.stormmq.java.classfile.processing.typeInformationUsers.TypeInformationTriplet;
 import com.stormmq.java.parsing.utilities.names.typeNames.referenceTypeNames.KnownReferenceTypeName;
-import com.stormmq.llvm.domain.identifiers.GlobalIdentifier;
-import com.stormmq.llvm.domain.identifiers.LocalIdentifier;
+import com.stormmq.llvm.domain.identifiers.*;
 import com.stormmq.llvm.domain.types.*;
-import com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.structureTypes.IdentifiedLocallyIdentifiedStructureType;
+import com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.structureTypes.*;
 import org.jetbrains.annotations.*;
 
 import java.util.*;
@@ -88,9 +87,9 @@ public final class ReferencedClasses
 	}
 
 	@NotNull
-	public IdentifiedLocallyIdentifiedStructureType newIdentifiedStructureType(final boolean isPacked, @NotNull final CanBePointedToType... fieldTypes)
+	public SizedLocallyIdentifiedStructureType newIdentifiedStructureType(final boolean isPacked, @NotNull final SizedType... fieldTypes)
 	{
-		return new IdentifiedLocallyIdentifiedStructureType(thisIdentifier, isPacked, fieldTypes);
+		return new SizedLocallyIdentifiedStructureType(thisIdentifier, isPacked, fieldTypes);
 	}
 
 	@NotNull
@@ -98,4 +97,5 @@ public final class ReferencedClasses
 	{
 		return createStaticFieldGlobalIdentifier(thisClass, fieldUniqueness);
 	}
+
 }

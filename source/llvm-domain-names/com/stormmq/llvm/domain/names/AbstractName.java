@@ -23,13 +23,12 @@
 package com.stormmq.llvm.domain.names;
 
 import com.stormmq.byteWriters.ByteWriter;
-import com.stormmq.llvm.domain.Writable;
+import com.stormmq.llvm.domain.LlvmWritable;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import com.stormmq.string.*;
 import org.jetbrains.annotations.*;
 
-import static com.stormmq.string.StringUtilities.iterateOverStringCodePoints;
-
-public abstract class AbstractName implements Writable
+public abstract class AbstractName implements LlvmWritable
 {
 	@NotNull private final String name;
 
@@ -41,15 +40,16 @@ public abstract class AbstractName implements Writable
 	@NotNull
 	private static String validateName(@NotNull @NonNls final String name)
 	{
+		final CodePointUser<RuntimeException> codePointUser = (index, codePoint) ->
+		{
+			if (codePoint == 0)
+			{
+				throw new IllegalArgumentException("Names can not contain ASCII NUL");
+			}
+		};
 		try
 		{
-			iterateOverStringCodePoints(name, (index, codePoint) ->
-			{
-				if (codePoint == 0)
-				{
-					throw new IllegalArgumentException("Names can not contain ASCII NUL");
-				}
-			});
+			codePointUser.iterateOverStringCodePoints(name);
 		}
 		catch (final InvalidUtf16StringException e)
 		{
@@ -59,7 +59,7 @@ public abstract class AbstractName implements Writable
 	}
 
 	@Override
-	public final <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	public final <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
 		byteWriter.writeBytes(start());
 		byteWriter.writeUtf8EncodedStringWithCertainty(name);

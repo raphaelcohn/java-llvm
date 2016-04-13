@@ -23,6 +23,7 @@
 package com.stormmq.llvm.domain.identifiers;
 
 import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import org.jetbrains.annotations.*;
 
 public abstract class AbstractIdentifier implements Identifier
@@ -37,10 +38,10 @@ public abstract class AbstractIdentifier implements Identifier
 	}
 
 	@Override
-	public final <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	public final <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
 		byteWriter.writeByte(prefix);
-		identifier.write(byteWriter);
+		identifier.write(byteWriter, dataLayoutSpecification);
 	}
 
 	@NotNull

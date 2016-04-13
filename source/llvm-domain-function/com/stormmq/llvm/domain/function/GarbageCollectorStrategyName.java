@@ -24,7 +24,7 @@ package com.stormmq.llvm.domain.function;
 
 import org.jetbrains.annotations.*;
 
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import static com.stormmq.string.Utf8ByteUser.encodeToUtf8ByteArrayWithCertaintyValueIsValid;
 
 public enum GarbageCollectorStrategyName
 {
@@ -49,7 +49,7 @@ public enum GarbageCollectorStrategyName
 		}
 		else
 		{
-			llvmAssemblyEncoding = encodeUtf8BytesWithCertaintyValueIsValid("gc \"" + name + '"');
+			llvmAssemblyEncoding = encodeToUtf8ByteArrayWithCertaintyValueIsValid("gc \"" + name + '"');
 			shouldBeEncoded = true;
 		}
 	}

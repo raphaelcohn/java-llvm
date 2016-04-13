@@ -24,16 +24,17 @@ package com.stormmq.llvm.domain.function.attributes.functionAttributes;
 
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.attributes.AttributeKind;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import static com.stormmq.llvm.domain.attributes.AttributeKind.Defined;
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import static com.stormmq.string.Utf8ByteUser.encodeToUtf8ByteArrayWithCertaintyValueIsValid;
 
 public final class AlignStackFunctionAttribute implements FunctionAttribute
 {
 	//noinspection SpellCheckingInspection
-	@NotNull private static final byte[] alignstackOpenBracket = encodeUtf8BytesWithCertaintyValueIsValid("alignstack(");
+	@NotNull private static final byte[] alignstackOpenBracket = encodeToUtf8ByteArrayWithCertaintyValueIsValid("alignstack(");
 
 	private final int stackAlignmentAsPowerOfTwo;
 
@@ -58,7 +59,7 @@ public final class AlignStackFunctionAttribute implements FunctionAttribute
 	}
 
 	@Override
-	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
 		byteWriter.writeBytes(alignstackOpenBracket);
 		byteWriter.writeUtf8EncodedStringWithCertainty(Integer.toString(stackAlignmentAsPowerOfTwo));

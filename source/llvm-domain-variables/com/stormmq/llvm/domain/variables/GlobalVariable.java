@@ -26,28 +26,30 @@ import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.*;
 import com.stormmq.llvm.domain.comdat.ComdatDefinition;
 import com.stormmq.llvm.domain.comdat.MayHaveComdatDefinition;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import com.stormmq.llvm.domain.typedValues.AddressableIdentifierTypedValue;
 import com.stormmq.llvm.domain.typedValues.constantTypedValues.ConstantTypedValue;
 import com.stormmq.llvm.domain.identifiers.GlobalIdentifier;
 import com.stormmq.llvm.domain.names.SectionName;
-import com.stormmq.llvm.domain.target.triple.TargetTriple;
-import com.stormmq.llvm.domain.types.CanBePointedToType;
+import com.stormmq.llvm.domain.types.SizedType;
 import com.stormmq.llvm.domain.types.firstClassTypes.PointerValueType;
 import com.stormmq.string.Formatting;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
+import java.util.function.Consumer;
 
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import static com.stormmq.functions.IntHelper.*;
+import static com.stormmq.string.Utf8ByteUser.encodeToUtf8ByteArrayWithCertaintyValueIsValid;
 
-public final class GlobalVariable<T extends CanBePointedToType> extends AbstractVariable implements MayHaveComdatDefinition
+public final class GlobalVariable<T extends SizedType> extends AbstractVariable implements MayHaveComdatDefinition
 {
-	private static final int MaximumPowerOfTwo = 29;
-	@NotNull private static final byte[] SpaceExternallyInitialized = encodeUtf8BytesWithCertaintyValueIsValid(" externally_initialized");
-	@NotNull private static final byte[] SpaceGlobal = encodeUtf8BytesWithCertaintyValueIsValid(" global");
-	@NotNull private static final byte[] SpaceConstant = encodeUtf8BytesWithCertaintyValueIsValid(" constant");
-	@NotNull private static final byte[] CommaSpaceAlignSpace = encodeUtf8BytesWithCertaintyValueIsValid(", align ");
+	private static final int MaximumAlignmentPowerOfTwo = 29;
+	@NotNull private static final byte[] SpaceExternallyInitialized = encodeToUtf8ByteArrayWithCertaintyValueIsValid(" externally_initialized");
+	@NotNull private static final byte[] SpaceGlobal = encodeToUtf8ByteArrayWithCertaintyValueIsValid(" global");
+	@NotNull private static final byte[] SpaceConstant = encodeToUtf8ByteArrayWithCertaintyValueIsValid(" constant");
+	@NotNull private static final byte[] CommaSpaceAlignSpace = encodeToUtf8ByteArrayWithCertaintyValueIsValid(", align ");
 
 	@NotNull private final AddressSpace addressSpace;
 	private final boolean isExternallyInitialized;
@@ -56,20 +58,28 @@ public final class GlobalVariable<T extends CanBePointedToType> extends Abstract
 	@Nullable private final ConstantTypedValue<T> initializerConstantTypedValue;
 	@Nullable private final SectionName sectionName;
 	@Nullable private ComdatDefinition comdatDefinition;
-	private final int alignmentAsPowerOfTwo;
+	private final int alignmentInBytesMustBeAPowerOfTwo;
 
-	public GlobalVariable(@NotNull final GlobalIdentifier globalIdentifier, @NotNull final Linkage linkage, @NotNull final Visibility visibility, @NotNull final DllStorageClass dllStorageClass, @NotNull final ThreadLocalStorageModel threadLocalStorageModel, final boolean hasUnnamedAddress, @NotNull final AddressSpace addressSpace, final boolean isExternallyInitialized, @NotNull final T type, @Nullable final ConstantTypedValue<T> initializerConstantTypedValue, @Nullable final SectionName sectionName, @Nullable final ComdatDefinition comdatDefinition, final int alignmentAsPowerOfTwo)
+	public GlobalVariable(@NotNull final GlobalIdentifier globalIdentifier, @NotNull final Linkage linkage, @NotNull final Visibility visibility, @NotNull final DllStorageClass dllStorageClass, @NotNull final ThreadLocalStorageModel threadLocalStorageModel, final boolean hasUnnamedAddress, @NotNull final AddressSpace addressSpace, final boolean isExternallyInitialized, @NotNull final T type, @Nullable final ConstantTypedValue<T> initializerConstantTypedValue, @Nullable final SectionName sectionName, @Nullable final ComdatDefinition comdatDefinition, final int alignmentInBytesMustBeAPowerOfTwo)
 	{
 		super(globalIdentifier, linkage, visibility, dllStorageClass, threadLocalStorageModel, hasUnnamedAddress);
 
-		if (alignmentAsPowerOfTwo < AutomaticAlignment)
+		if (alignmentInBytesMustBeAPowerOfTwo < AutomaticAlignment)
 		{
-			throw new IllegalArgumentException(Formatting.format("alignmentAsPowerOfTwo ('%1$s') can not be negative", alignmentAsPowerOfTwo));
+			throw new IllegalArgumentException(Formatting.format("alignmentInBytesMustBeAPowerOfTwo ('%1$s') can not be negative", alignmentInBytesMustBeAPowerOfTwo));
 		}
 
-		if (alignmentAsPowerOfTwo > MaximumPowerOfTwo)
+		if (alignmentInBytesMustBeAPowerOfTwo > 0)
 		{
-			throw new IllegalArgumentException(Formatting.format("alignmentAsPowerOfTwo ('%1$s') can not be more than %2$s", alignmentAsPowerOfTwo, MaximumPowerOfTwo));
+			if (alignmentInBytesMustBeAPowerOfTwo > MaximumAlignmentPowerOfTwo)
+			{
+				throw new IllegalArgumentException(Formatting.format("alignmentInBytesMustBeAPowerOfTwo ('%1$s') can not be more than %2$s", alignmentInBytesMustBeAPowerOfTwo, MaximumAlignmentPowerOfTwo));
+			}
+
+			if (isNotAPowerOfTwoIfGreaterThanZero(alignmentInBytesMustBeAPowerOfTwo))
+			{
+				throw new IllegalArgumentException(Formatting.format("alignmentInBytesMustBeAPowerOfTwo ('%1$s') is not a power of 2", alignmentInBytesMustBeAPowerOfTwo));
+			}
 		}
 
 		this.addressSpace = addressSpace;
@@ -79,7 +89,7 @@ public final class GlobalVariable<T extends CanBePointedToType> extends Abstract
 		this.initializerConstantTypedValue = initializerConstantTypedValue;
 		this.sectionName = sectionName;
 		this.comdatDefinition = comdatDefinition;
-		this.alignmentAsPowerOfTwo = alignmentAsPowerOfTwo;
+		this.alignmentInBytesMustBeAPowerOfTwo = alignmentInBytesMustBeAPowerOfTwo;
 	}
 
 	@NotNull
@@ -98,11 +108,11 @@ public final class GlobalVariable<T extends CanBePointedToType> extends Abstract
 	@SuppressWarnings("SpellCheckingInspection")
 	// [@<GlobalVarName> =] [Linkage] [Visibility] [DLLStorageClass] [ThreadLocal] [unnamed_addr] [AddrSpace] [ExternallyInitialized] <global | constant> <Type> [<InitializerConstant>] [, section "name"] [, comdat [($name)]] [, align <Alignment>]
 	@Override
-	protected <X extends Exception> void writeVariable(@NotNull final ByteWriter<X> byteWriter) throws X
+	protected <X extends Exception> void writeVariable(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
 		if (addressSpace.isNotZero())
 		{
-			addressSpace.write(byteWriter);
+			addressSpace.write(byteWriter, dataLayoutSpecification);
 		}
 
 		if (isExternallyInitialized)
@@ -114,38 +124,42 @@ public final class GlobalVariable<T extends CanBePointedToType> extends Abstract
 		byteWriter.writeBytes(globalOrConstant);
 
 		byteWriter.writeSpace();
-		type.write(byteWriter);
+		type.write(byteWriter, dataLayoutSpecification);
 
 		if (initializerConstantTypedValue != null)
 		{
 			byteWriter.writeSpace();
-			initializerConstantTypedValue.write(byteWriter);
+			initializerConstantTypedValue.write(byteWriter, dataLayoutSpecification);
 		}
 
 		if (sectionName != null)
 		{
 			writeCommaSpace(byteWriter);
-			sectionName.write(byteWriter);
+			sectionName.write(byteWriter, dataLayoutSpecification);
 		}
 
 		if (comdatDefinition != null)
 		{
-			writeCommaSpace(byteWriter);
-			comdatDefinition.writeComdatIdentifier(byteWriter);
+			@Nullable final ComdatDefinition actualComdatDefinition = comdatDefinition.adjustComdatDefinition(dataLayoutSpecification.objectFileFormat());
+			if (actualComdatDefinition != null)
+			{
+				writeCommaSpace(byteWriter);
+				comdatDefinition.writeComdatIdentifier(byteWriter, dataLayoutSpecification);
+			}
 		}
 
-		if (alignmentAsPowerOfTwo != AutomaticAlignment)
+		if (alignmentInBytesMustBeAPowerOfTwo != AutomaticAlignment)
 		{
-			final int alignmentInBytes = 1 << alignmentAsPowerOfTwo;
+			final int alignmentInBytes = 1 << alignmentInBytesMustBeAPowerOfTwo;
 			byteWriter.writeBytes(CommaSpaceAlignSpace);
 			byteWriter.writeUtf8EncodedStringWithCertainty(Integer.toString(alignmentInBytes));
 		}
 	}
 
 	@Override
-	public void adjustComdatDefinition(@NotNull final Set<ComdatDefinition> comdatDefinitions, @NotNull final TargetTriple targetTriple)
+	public void useComdatDefinition(@NotNull final Consumer<ComdatDefinition> consumer)
 	{
-		comdatDefinition = MayHaveComdatDefinition.adjustComdatDefinition(comdatDefinitions, comdatDefinition, targetTriple);
+		consumer.accept(comdatDefinition);
 	}
 
 	public boolean isConstant()

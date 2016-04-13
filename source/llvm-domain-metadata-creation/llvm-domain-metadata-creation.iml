@@ -14,7 +14,6 @@
     <orderEntry type="module" module-name="llvm-domain-metadata-debugging" />
     <orderEntry type="module" module-name="llvm-domain-metadata-module" />
     <orderEntry type="module" module-name="llvm-domain-metadata-tbaa" />
-    <orderEntry type="module" module-name="llvm-domain-target" />
     <orderEntry type="module" module-name="llvm-domain-variables" />
   </component>
 </module>

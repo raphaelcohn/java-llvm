@@ -24,10 +24,11 @@ package com.stormmq.llvm.domain.function.attributes.parameterAttributes;
 
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.attributes.AttributeKind;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import static com.stormmq.string.Utf8ByteUser.encodeToUtf8ByteArrayWithCertaintyValueIsValid;
 
 public final class IntegerParameterAttribute implements ParameterAttribute
 {
@@ -59,7 +60,7 @@ public final class IntegerParameterAttribute implements ParameterAttribute
 	{
 		this.name = name;
 		this.value = value;
-		llvmAssemblyEncoding = encodeUtf8BytesWithCertaintyValueIsValid(name + '(' + Integer.toString(value) + ')');
+		llvmAssemblyEncoding = encodeToUtf8ByteArrayWithCertaintyValueIsValid(name + '(' + Integer.toString(value) + ')');
 	}
 
 	@NotNull
@@ -77,7 +78,7 @@ public final class IntegerParameterAttribute implements ParameterAttribute
 	}
 
 	@Override
-	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
 		byteWriter.writeBytes(llvmAssemblyEncoding);
 	}

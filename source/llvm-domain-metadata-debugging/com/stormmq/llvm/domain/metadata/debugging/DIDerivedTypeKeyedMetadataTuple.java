@@ -23,7 +23,6 @@
 package com.stormmq.llvm.domain.metadata.debugging;
 
 import com.stormmq.llvm.domain.ReferenceTracker;
-import com.stormmq.llvm.domain.target.dataLayout.PointerSizing;
 import com.stormmq.llvm.domain.metadata.KeyWithMetadataField;
 import com.stormmq.llvm.domain.metadata.debugging.dwarfTags.DerivedDwarfTag;
 import com.stormmq.llvm.domain.metadata.metadataTuples.KeyedMetadataTuple;
@@ -39,9 +38,9 @@ import static java.util.Collections.emptyList;
 public final class DIDerivedTypeKeyedMetadataTuple extends KeyedMetadataTuple implements TypeMetadata
 {
 	@NotNull
-	public static DIDerivedTypeKeyedMetadataTuple structMember(@NotNull final ReferenceTracker referenceTracker, @NotNull final DICompositeTypeKeyedMetadataTuple parent, @NotNull final DIFileKeyedMetadataTuple file, final int lineNumber, @NotNull final TypeMetadata underlyingType, @NotNull final PointerSizing pointerSizing, @NotNull final String memberName, final int offsetInBits)
+	public static DIDerivedTypeKeyedMetadataTuple structMember(@NotNull final ReferenceTracker referenceTracker, @NotNull final DICompositeTypeKeyedMetadataTuple parent, @NotNull final DIFileKeyedMetadataTuple file, final int lineNumber, @NotNull final TypeMetadata underlyingType, final int storageSizeInBits, final int abiAlignmentInBits, @NotNull final String memberName, final int offsetInBits)
 	{
-		return new DIDerivedTypeKeyedMetadataTuple(referenceTracker, DW_TAG_member, file, lineNumber, underlyingType, pointerSizing, newArrayList(2, keyWithMetadataFields ->
+		return new DIDerivedTypeKeyedMetadataTuple(referenceTracker, DW_TAG_member, file, lineNumber, underlyingType, storageSizeInBits, abiAlignmentInBits, newArrayList(2, keyWithMetadataFields ->
 		{
 			keyWithMetadataFields.add(Key.scope.with(parent));
 
@@ -59,17 +58,24 @@ public final class DIDerivedTypeKeyedMetadataTuple extends KeyedMetadataTuple im
 	}
 
 	@NotNull
-	public static DIDerivedTypeKeyedMetadataTuple constant(@NotNull final ReferenceTracker referenceTracker, @NotNull final DIFileKeyedMetadataTuple file, final int lineNumber, @NotNull final TypeMetadata underlyingType, @NotNull final PointerSizing pointerSizing)
+	public static DIDerivedTypeKeyedMetadataTuple constant(@NotNull final ReferenceTracker referenceTracker, @NotNull final DIFileKeyedMetadataTuple file, final int lineNumber, @NotNull final TypeMetadata underlyingType, final int storageSizeInBits, final int abiAlignmentInBits)
 	{
-		return new DIDerivedTypeKeyedMetadataTuple(referenceTracker, DW_TAG_const_type, file, lineNumber, underlyingType, pointerSizing, emptyList());
+		return new DIDerivedTypeKeyedMetadataTuple(referenceTracker, DW_TAG_const_type, file, lineNumber, underlyingType, storageSizeInBits, abiAlignmentInBits, emptyList());
+	}
+
+	@NotNull
+	public static DIDerivedTypeKeyedMetadataTuple pointer(@NotNull final ReferenceTracker referenceTracker, @NotNull final DIFileKeyedMetadataTuple file, final int lineNumber, @NotNull final TypeMetadata underlyingType, final int storageSizeInBits, final int abiAlignmentInBits)
+	{
+		return new DIDerivedTypeKeyedMetadataTuple(referenceTracker, DW_TAG_pointer_type, file, lineNumber, underlyingType, storageSizeInBits, abiAlignmentInBits, emptyList());
 	}
 
 	@NotNull private final DerivedDwarfTag tag;
 	@NotNull private final TypeMetadata underlyingType;
-	@NotNull private final PointerSizing pointerSizing;
+	private final int storageSizeInBits;
+	private final int abiAlignmentInBits;
 
 	@SuppressWarnings("OverloadedVarargsMethod")
-	private DIDerivedTypeKeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final DerivedDwarfTag tag, @NotNull final DIFileKeyedMetadataTuple file, final int lineNumber, @NotNull final TypeMetadata underlyingType, @NotNull final PointerSizing pointerSizing, @NotNull final List<KeyWithMetadataField> fields)
+	private DIDerivedTypeKeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, @NotNull final DerivedDwarfTag tag, @NotNull final DIFileKeyedMetadataTuple file, final int lineNumber, @NotNull final TypeMetadata underlyingType, final int storageSizeInBits, final int abiAlignmentInBits, @NotNull final List<KeyWithMetadataField> fields)
 	{
 		super(referenceTracker, false, "DIDerivedType", newArrayList(4 + fields.size(), fieldsX ->
 		{
@@ -77,13 +83,17 @@ public final class DIDerivedTypeKeyedMetadataTuple extends KeyedMetadataTuple im
 			fieldsX.add(Key.file.with(file));
 			fieldsX.add(Key.line.with(lineNumber));
 			fieldsX.add(Key.baseType.with(underlyingType));
-			fieldsX.add(Key.size.with(ourSizeInBits(tag, underlyingType, pointerSizing)));
-			fieldsX.add(Key.align.with(ourAlignmentInBits(tag, underlyingType, pointerSizing)));
+			if (storageSizeInBits != 0)
+			{
+				fieldsX.add(Key.size.with(storageSizeInBits));
+			}
+			fieldsX.add(Key.align.with(abiAlignmentInBits));
 			fieldsX.addAll(fields);
 		}));
 		this.tag = tag;
 		this.underlyingType = underlyingType;
-		this.pointerSizing = pointerSizing;
+		this.storageSizeInBits = storageSizeInBits;
+		this.abiAlignmentInBits = abiAlignmentInBits;
 	}
 
 	public boolean isConstType()
@@ -92,32 +102,19 @@ public final class DIDerivedTypeKeyedMetadataTuple extends KeyedMetadataTuple im
 	}
 
 	@Override
-	public int sizeInBits()
+	public int storageSizeInBits()
 	{
-		return ourSizeInBits(tag, underlyingType, pointerSizing);
+		return storageSizeInBits;
 	}
 
 	@Override
-	public int alignmentInBits()
+	public int abiAlignmentInBits()
 	{
-		return ourAlignmentInBits(tag, underlyingType, pointerSizing);
+		return abiAlignmentInBits;
 	}
 
-	private static int ourSizeInBits(@NotNull final DerivedDwarfTag tag, @NotNull final TypeMetadata underlyingType, @NotNull final PointerSizing pointerSizing)
+	public boolean isPointerType()
 	{
-		if (tag.isEffectivelyAPointer())
-		{
-			return pointerSizing.sizeInBits;
-		}
-		return underlyingType.sizeInBits();
-	}
-
-	private static int ourAlignmentInBits(@NotNull final DerivedDwarfTag tag, @NotNull final TypeMetadata underlyingType, @NotNull final PointerSizing pointerSizing)
-	{
-		if (tag.isEffectivelyAPointer())
-		{
-			return pointerSizing.alignment.abiAlignmentInBits;
-		}
-		return underlyingType.sizeInBits();
+		return tag == DW_TAG_pointer_type;
 	}
 }

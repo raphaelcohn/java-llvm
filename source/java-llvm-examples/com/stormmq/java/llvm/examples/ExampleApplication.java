@@ -29,15 +29,18 @@ import com.stormmq.java.parsing.utilities.names.PackageName;
 import com.stormmq.jopt.Verbosity;
 import com.stormmq.jopt.applications.AbstractMultithreadedApplication;
 import com.stormmq.jopt.applications.uncaughtExceptionHandlers.MustExitBecauseOfFailureException;
+import com.stormmq.llvm.domain.metadata.creation.CTypeMappings;
 import com.stormmq.llvm.domain.metadata.creation.NamespaceSplitter;
 import com.stormmq.llvm.domain.module.ModuleWriter;
 import com.stormmq.llvm.domain.module.TargetModuleCreator;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.nio.file.Path;
 
 import static com.stormmq.java.classfile.processing.processLogs.PrintStreamProcessLog.standardErrorParseFailureLog;
+import static com.stormmq.java.parsing.utilities.names.PackageName.NamespaceSplitter;
 import static com.stormmq.llvm.domain.module.TargetModuleCreator.MacOsXMavericksX86_64;
 
 public final class ExampleApplication extends AbstractMultithreadedApplication
@@ -53,13 +56,15 @@ public final class ExampleApplication extends AbstractMultithreadedApplication
 
 		this.sourcePaths = sourcePaths;
 		this.outputPath = outputPath;
+		final TargetModuleCreator targetModuleCreator = MacOsXMavericksX86_64;
 
 		final ProcessLog processLog = new ExitCodeSettingProcessLog(standardErrorParseFailureLog(verbosity.isAtLeastVerbose()), exitCode);
 		processor = new Processor(permitConstantsInInstanceFields, processLog, exitCodeSettingUncaughtExceptionHandler);
-		final TargetModuleCreator targetModuleCreator = MacOsXMavericksX86_64;
 		final ModuleCreatorAndWriter moduleCreatorAndWriter = new ModuleCreatorAndWriter(targetModuleCreator, new ModuleWriter(outputPath));
-		final NamespaceSplitter<PackageName> namespaceSplitter = moduleCreatorAndWriter.namespaceSplitter();
-		typeInformationTripletUser = new JavaConvertingTypeInformationTripletUser(moduleCreatorAndWriter, namespaceSplitter, targetModuleCreator.dataLayoutSpecification());
+		final NamespaceSplitter<PackageName> namespaceSplitter = new NamespaceSplitter<>(NamespaceSplitter, targetModuleCreator.cxxNameMangling());
+		final DataLayoutSpecification dataLayoutSpecification = targetModuleCreator.dataLayoutSpecification();
+		final CTypeMappings cTypeMappings = new CTypeMappings(dataLayoutSpecification);
+		typeInformationTripletUser = new JavaConvertingTypeInformationTripletUser(moduleCreatorAndWriter, namespaceSplitter, dataLayoutSpecification, cTypeMappings);
 	}
 
 	@Override

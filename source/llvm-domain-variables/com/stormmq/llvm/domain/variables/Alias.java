@@ -25,15 +25,16 @@ package com.stormmq.llvm.domain.variables;
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.*;
 import com.stormmq.llvm.domain.identifiers.GlobalIdentifier;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import com.stormmq.llvm.domain.types.Type;
 import com.stormmq.string.Formatting;
 import org.jetbrains.annotations.*;
 
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import static com.stormmq.string.Utf8ByteUser.encodeToUtf8ByteArrayWithCertaintyValueIsValid;
 
 public final class Alias extends AbstractVariable
 {
-	@NotNull private static final byte[] SpaceAlias = encodeUtf8BytesWithCertaintyValueIsValid(" alias");
+	@NotNull private static final byte[] SpaceAlias = encodeToUtf8ByteArrayWithCertaintyValueIsValid(" alias");
 	@NotNull private final Type[] aliasedTypes;
 	@NotNull private final GlobalIdentifier originalGlobalVariableOrFunctionName;
 
@@ -62,7 +63,7 @@ public final class Alias extends AbstractVariable
 	@SuppressWarnings("SpellCheckingInspection")
 	// @<Name> = [Linkage] [Visibility] [DLLStorageClass] [ThreadLocal] [unnamed_addr] alias <AliaseeTy>, <AliaseeTy>* @<Aliasee>
 	@Override
-	protected <X extends Exception> void writeVariable(@NotNull final ByteWriter<X> byteWriter) throws X
+	protected <X extends Exception> void writeVariable(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
 		byteWriter.writeBytes(SpaceAlias);
 
@@ -77,10 +78,10 @@ public final class Alias extends AbstractVariable
 			{
 				writeCommaSpace(byteWriter);
 			}
-			aliasedTypes[index].write(byteWriter);
+			aliasedTypes[index].write(byteWriter, dataLayoutSpecification);
 		}
 
 		byteWriter.writeSpace();
-		originalGlobalVariableOrFunctionName.write(byteWriter);
+		originalGlobalVariableOrFunctionName.write(byteWriter, dataLayoutSpecification);
 	}
 }

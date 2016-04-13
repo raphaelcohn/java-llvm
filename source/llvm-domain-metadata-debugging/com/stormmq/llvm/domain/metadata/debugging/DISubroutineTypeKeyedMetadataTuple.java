@@ -49,13 +49,13 @@ public final class DISubroutineTypeKeyedMetadataTuple extends KeyedMetadataTuple
 	}
 
 	@Override
-	public int sizeInBits()
+	public int storageSizeInBits()
 	{
 		throw new UnsupportedOperationException("A function does not have a size in this context");
 	}
 
 	@Override
-	public int alignmentInBits()
+	public int abiAlignmentInBits()
 	{
 		throw new UnsupportedOperationException("A function does not have an alignment in this context");
 	}

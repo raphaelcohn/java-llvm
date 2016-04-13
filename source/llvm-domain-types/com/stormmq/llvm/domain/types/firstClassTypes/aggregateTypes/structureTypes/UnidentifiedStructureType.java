@@ -23,26 +23,21 @@
 package com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.structureTypes;
 
 import com.stormmq.byteWriters.ByteWriter;
-import com.stormmq.llvm.domain.types.Type;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
+import com.stormmq.llvm.domain.types.SizedType;
 import org.jetbrains.annotations.NotNull;
 
-import static com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.structureTypes.StructureType.writeBracedContent;
-
-public final class UnidentifiedStructureType implements StructureType
+public final class UnidentifiedStructureType extends AbstractSizedStructureType
 {
-	private final boolean isPacked;
-	@NotNull private final Type[] types;
-
-	public UnidentifiedStructureType(final boolean isPacked, @NotNull final Type... types)
+	public UnidentifiedStructureType(final boolean isPacked, @NotNull final SizedType... typesWithSize)
 	{
-		this.isPacked = isPacked;
-		this.types = types;
+		super(isPacked, typesWithSize);
 	}
 
 	// when defining, needs to have 'type '
 	@Override
-	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
-		writeBracedContent(byteWriter, isPacked, types);
+		writeBody(byteWriter, dataLayoutSpecification);
 	}
 }

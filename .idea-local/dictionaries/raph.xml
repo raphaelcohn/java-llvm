@@ -1,12 +1,15 @@
 <component name="ProjectDictionaryState">
   <dictionary name="raph">
     <words>
+      <w>arduino</w>
       <w>builtins</w>
+      <w>capitan</w>
       <w>clinit</w>
       <w>codepoint</w>
       <w>cohn</w>
       <w>comdat</w>
       <w>declarator</w>
+      <w>eabi</w>
       <w>endian</w>
       <w>endianness</w>
       <w>fieldref</w>
@@ -32,6 +35,8 @@
       <w>reassociate</w>
       <w>sendmail</w>
       <w>sizings</w>
+      <w>solaris</w>
+      <w>sparc</w>
       <w>subprocess</w>
       <w>subrange</w>
       <w>superinterface</w>
@@ -39,11 +44,13 @@
       <w>tuples</w>
       <w>unboxed</w>
       <w>unconfigured</w>
+      <w>unicos</w>
       <w>unkeyed</w>
       <w>variadic</w>
       <w>virtuality</w>
       <w>waitpid</w>
       <w>writables</w>
+      <w>yoesmite</w>
     </words>
   </dictionary>
 </component>

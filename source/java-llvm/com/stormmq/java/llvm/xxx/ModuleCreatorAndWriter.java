@@ -30,8 +30,7 @@ import com.stormmq.llvm.domain.function.FunctionDeclaration;
 import com.stormmq.llvm.domain.function.FunctionDefinition;
 import com.stormmq.llvm.domain.metadata.creation.NamespaceSplitter;
 import com.stormmq.llvm.domain.module.*;
-import com.stormmq.llvm.domain.target.triple.Architecture;
-import com.stormmq.llvm.domain.types.CanBePointedToType;
+import com.stormmq.llvm.domain.target.Architecture;
 import com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.structureTypes.LocallyIdentifiedStructureType;
 import com.stormmq.llvm.domain.variables.Alias;
 import com.stormmq.llvm.domain.variables.GlobalVariable;
@@ -70,9 +69,4 @@ public final class ModuleCreatorAndWriter
 		moduleWriter.writeModule(relativeFilePath, relativeRootFolderPath, module);
 	}
 
-	@NotNull
-	public NamespaceSplitter<PackageName> namespaceSplitter()
-	{
-		return new NamespaceSplitter<>(NamespaceSplitter, targetModuleCreator.cxxNameMangling());
-	}
 }

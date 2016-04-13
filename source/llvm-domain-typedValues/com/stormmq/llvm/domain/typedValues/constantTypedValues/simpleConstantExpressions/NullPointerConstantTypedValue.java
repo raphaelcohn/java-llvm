@@ -23,6 +23,7 @@
 package com.stormmq.llvm.domain.typedValues.constantTypedValues.simpleConstantExpressions;
 
 import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import com.stormmq.llvm.domain.typedValues.AbstractTypedValue;
 import com.stormmq.llvm.domain.typedValues.constantTypedValues.ConstantTypedValue;
 import com.stormmq.llvm.domain.types.CanBePointedToType;
@@ -30,11 +31,11 @@ import com.stormmq.llvm.domain.types.firstClassTypes.PointerValueType;
 import com.stormmq.string.StringConstants;
 import org.jetbrains.annotations.NotNull;
 
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import static com.stormmq.string.Utf8ByteUser.encodeToUtf8ByteArrayWithCertaintyValueIsValid;
 
 public final class NullPointerConstantTypedValue<T extends CanBePointedToType> extends AbstractTypedValue<PointerValueType<T>> implements ConstantTypedValue<PointerValueType<T>>
 {
-	@NotNull private static final byte[] llAssemblyValue = encodeUtf8BytesWithCertaintyValueIsValid(StringConstants._null);
+	@NotNull private static final byte[] llAssemblyValue = encodeToUtf8ByteArrayWithCertaintyValueIsValid(StringConstants._null);
 
 	public NullPointerConstantTypedValue(@NotNull final PointerValueType<T> type)
 	{
@@ -42,7 +43,7 @@ public final class NullPointerConstantTypedValue<T extends CanBePointedToType> e
 	}
 
 	@Override
-	protected <X extends Exception> void writeValue(@NotNull final ByteWriter<X> byteWriter) throws X
+	protected <X extends Exception> void writeValue(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
 		byteWriter.writeBytes(llAssemblyValue);
 	}

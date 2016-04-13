@@ -38,6 +38,31 @@ public final class NamespacedTypeName<N>
 		this.simpleName = simpleName;
 	}
 
+	@Override
+	public boolean equals(@Nullable final Object o)
+	{
+		if (this == o)
+		{
+			return true;
+		}
+		if (o == null || getClass() != o.getClass())
+		{
+			return false;
+		}
+
+		final NamespacedTypeName<?> that = (NamespacedTypeName<?>) o;
+
+		return namespace.equals(that.namespace) && simpleName.equals(that.simpleName);
+	}
+
+	@Override
+	public int hashCode()
+	{
+		int result = namespace.hashCode();
+		result = 31 * result + simpleName.hashCode();
+		return result;
+	}
+
 	@NotNull
 	@NonNls
 	public String mangleIdentifier(@NotNull final NamespaceSplitter<N> namespaceSplitter)

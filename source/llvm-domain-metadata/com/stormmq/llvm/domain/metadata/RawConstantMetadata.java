@@ -24,6 +24,7 @@ package com.stormmq.llvm.domain.metadata;
 
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.identifiers.Identifier;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import org.jetbrains.annotations.*;
 
 import java.util.Arrays;
@@ -31,7 +32,7 @@ import java.util.Set;
 
 import static com.stormmq.string.StringConstants._false;
 import static com.stormmq.string.StringConstants._true;
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import static com.stormmq.string.Utf8ByteUser.encodeToUtf8ByteArrayWithCertaintyValueIsValid;
 
 public class RawConstantMetadata implements Metadata
 {
@@ -80,7 +81,7 @@ public class RawConstantMetadata implements Metadata
 
 	public RawConstantMetadata(@NonNls @NotNull final String value)
 	{
-		this(encodeUtf8BytesWithCertaintyValueIsValid(value));
+		this(encodeToUtf8ByteArrayWithCertaintyValueIsValid(value));
 	}
 
 	@SuppressWarnings("OverloadedVarargsMethod")
@@ -108,7 +109,7 @@ public class RawConstantMetadata implements Metadata
 	}
 
 	@Override
-	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
 		byteWriter.writeBytes(llAssemblyEncoding);
 	}

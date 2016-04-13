@@ -23,9 +23,10 @@
 package com.stormmq.llvm.domain.types;
 
 import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import org.jetbrains.annotations.*;
 
-public final class FunctionType implements TypeExcludingVoid, CanBePointedToType
+public final class FunctionType implements CanBePointedToType
 {
 	@NotNull private static final byte[] SpaceOpenBracket = {' ', '('};
 
@@ -39,9 +40,9 @@ public final class FunctionType implements TypeExcludingVoid, CanBePointedToType
 	}
 
 	@Override
-	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
-		returnType.write(byteWriter);
+		returnType.write(byteWriter, dataLayoutSpecification);
 		byteWriter.writeBytes(SpaceOpenBracket);
 
 		final int length = formalParameterTypes.length;
@@ -52,7 +53,7 @@ public final class FunctionType implements TypeExcludingVoid, CanBePointedToType
 				byteWriter.writeBytes(CommaSpace);
 			}
 
-			formalParameterTypes[index].write(byteWriter);
+			formalParameterTypes[index].write(byteWriter, dataLayoutSpecification);
 		}
 
 		byteWriter.writeCloseBracket();

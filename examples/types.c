@@ -1,5 +1,7 @@
 typedef struct OtherClass OtherClass;
 
+int IntArrayField[4];
+
 const int GlobalVariable = 10;
 
 enum MyEnum { AA, BB, CC };
@@ -33,14 +35,21 @@ struct unnamedExample
 
 struct unnamedExample SomeField;
 
-struct AlignmentExperiment
+struct PackedStruct
 {
 	char a;
 	char b;
-	__int128 c;
 	char d;
 } __attribute__((packed));
-struct AlignmentExperiment AAA;
+struct PackedStruct AAA;
+
+struct MixedData
+{
+    char Data1;
+    short Data2;
+    int Data3;
+    char Data4;
+} BBB;
 
 struct SizeIs12Bytes
 {
@@ -56,14 +65,15 @@ struct SizeIs8Bytes
   char c2;
 } YYY;
 
-#include <stdint.h>
-#include <stdbool.h>
+struct Empty
+{
+} Empty;
+
 typedef struct MyClassExample MyClassExample;
 struct MyClassExample
 {
-	struct SuperClass SuperClass;
-	
 	MyClassExample* pointerToSelf;
+	struct SuperClass SuperClass;
 	
 	// Given using preferred names...
 	const char a;
@@ -80,25 +90,22 @@ struct MyClassExample
 	
 	long long int l;
 	long long unsigned int m;
-	
-	// Creates a typedef that references long long unsigned int
-	uint64_t n;
-	
+		
 	long double o; // Frankly, this is a complete mess
 
 	//_Quad zz;
 	//__float128 p;
 	__fp16 p;
+	short pp;
 	
 	// https://gcc.gnu.org/onlinedocs/gcc/Decimal-Float.html#Decimal-Float
 	//_Decimal32 d32;
 	//_Decimal64 d64;
 	//_Decimal128 d128;
 	
-	__int128 q;
-	unsigned __int128 r;
+	//unsigned __int128 r;
 	
-	bool boolean;
+	_Bool boolean;
 	MyClassExample* y;
 	OtherClass* z;
 	enum MyEnum zz;

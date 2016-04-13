@@ -22,11 +22,11 @@
 
 package com.stormmq.llvm.domain.attributes;
 
-import com.stormmq.llvm.domain.Writable;
+import com.stormmq.llvm.domain.LlvmWritable;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-public interface Attribute extends Writable
+public interface Attribute extends LlvmWritable
 {
 	@NotNull
 	AttributeKind attributeKind();

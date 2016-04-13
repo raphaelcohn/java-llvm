@@ -24,10 +24,11 @@ package com.stormmq.llvm.domain.function;
 
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.ReferenceTracker;
-import com.stormmq.llvm.domain.Writable;
+import com.stormmq.llvm.domain.LlvmWritable;
 import com.stormmq.llvm.domain.attributes.AttributeGroup;
 import com.stormmq.llvm.domain.function.attributes.parameterAttributes.ParameterAttribute;
 import com.stormmq.llvm.domain.identifiers.LocalIdentifier;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import com.stormmq.llvm.domain.types.TypeExcludingVoid;
 import com.stormmq.llvm.domain.metadata.debugging.*;
 import org.jetbrains.annotations.NotNull;
@@ -37,7 +38,7 @@ import java.util.Set;
 
 import static java.util.Collections.emptySet;
 
-public final class FormalParameter implements Writable
+public final class FormalParameter implements LlvmWritable
 {
 	@NotNull private static final Set<DIFlag> NoFlags = emptySet();
 	@NotNull private final TypeExcludingVoid typeExcludingVoid;
@@ -66,15 +67,15 @@ public final class FormalParameter implements Writable
 	}
 
 	@Override
-	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
-		typeExcludingVoid.write(byteWriter);
+		typeExcludingVoid.write(byteWriter, dataLayoutSpecification);
 
-		parameterAttributes.write(byteWriter);
+		parameterAttributes.write(byteWriter, dataLayoutSpecification);
 
 		if (name != null)
 		{
-			name.write(byteWriter);
+			name.write(byteWriter, dataLayoutSpecification);
 		}
 	}
 }

@@ -22,10 +22,10 @@
 
 package com.stormmq.llvm.domain.identifiers;
 
-import com.stormmq.llvm.domain.Writable;
+import com.stormmq.llvm.domain.LlvmWritable;
 import org.jetbrains.annotations.NotNull;
 
-public interface GloballyIdentified extends Writable
+public interface GloballyIdentified extends LlvmWritable
 {
 	@NotNull
 	GlobalIdentifier globalIdentifier();

@@ -23,6 +23,7 @@
 package com.stormmq.llvm.domain.typedValues.constantTypedValues.simpleConstantExpressions;
 
 import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import com.stormmq.llvm.domain.typedValues.AbstractTypedValue;
 import com.stormmq.llvm.domain.typedValues.constantTypedValues.ConstantTypedValue;
 import com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType;
@@ -31,7 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import static com.stormmq.string.StringConstants._false;
 import static com.stormmq.string.StringConstants._true;
 import static com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType.*;
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import static com.stormmq.string.Utf8ByteUser.encodeToUtf8ByteArrayWithCertaintyValueIsValid;
 
 public final class IntegerConstantTypedValue extends AbstractTypedValue<IntegerValueType> implements ConstantTypedValue<IntegerValueType>
 {
@@ -68,8 +69,8 @@ public final class IntegerConstantTypedValue extends AbstractTypedValue<IntegerV
 		return new IntegerConstantTypedValue(i64, value);
 	}
 
-	@NotNull private static final byte[] llAssemblyEncodingTrue = encodeUtf8BytesWithCertaintyValueIsValid(_true);
-	@NotNull private static final byte[] llAssemblyEncodingFalse = encodeUtf8BytesWithCertaintyValueIsValid(_false);
+	@NotNull private static final byte[] llAssemblyEncodingTrue = encodeToUtf8ByteArrayWithCertaintyValueIsValid(_true);
+	@NotNull private static final byte[] llAssemblyEncodingFalse = encodeToUtf8ByteArrayWithCertaintyValueIsValid(_false);
 
 	private final long value;
 
@@ -80,7 +81,7 @@ public final class IntegerConstantTypedValue extends AbstractTypedValue<IntegerV
 	}
 
 	@Override
-	protected <X extends Exception> void writeValue(@NotNull final ByteWriter<X> byteWriter) throws X
+	protected <X extends Exception> void writeValue(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
 		if (type.equals(i1))
 		{

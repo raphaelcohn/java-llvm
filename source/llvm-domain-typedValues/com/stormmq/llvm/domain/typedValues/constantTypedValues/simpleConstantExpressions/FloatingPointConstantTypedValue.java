@@ -23,13 +23,16 @@
 package com.stormmq.llvm.domain.typedValues.constantTypedValues.simpleConstantExpressions;
 
 import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import com.stormmq.llvm.domain.typedValues.AbstractTypedValue;
 import com.stormmq.llvm.domain.typedValues.constantTypedValues.ConstantTypedValue;
 import com.stormmq.llvm.domain.types.firstClassTypes.FloatingPointValueType;
 import org.jetbrains.annotations.NotNull;
 
-import static com.stormmq.llvm.domain.types.firstClassTypes.FloatingPointValueType.half;
-import static com.stormmq.string.Formatting.zeroPaddedUpperCaseHexString;
+import static com.stormmq.llvm.domain.typedValues.constantTypedValues.simpleConstantExpressions.FloatingPointBitsWriter.Double;
+import static com.stormmq.llvm.domain.typedValues.constantTypedValues.simpleConstantExpressions.FloatingPointBitsWriter.PowerPcDoubleDouble;
+import static com.stormmq.llvm.domain.typedValues.constantTypedValues.simpleConstantExpressions.FloatingPointBitsWriter.X86LongDouble;
+import static com.stormmq.llvm.domain.types.firstClassTypes.FloatingPointValueType.*;
 
 public final class FloatingPointConstantTypedValue extends AbstractTypedValue<FloatingPointValueType> implements ConstantTypedValue<FloatingPointValueType>
 {
@@ -42,31 +45,31 @@ public final class FloatingPointConstantTypedValue extends AbstractTypedValue<Fl
 	@NotNull
 	public static FloatingPointConstantTypedValue _float(final float value)
 	{
-		return new FloatingPointConstantTypedValue(FloatingPointValueType._float, 0L, Float.floatToIntBits(value), FloatingPointBitsWriter.Float);
+		return new FloatingPointConstantTypedValue(_float, 0L, Float.floatToIntBits(value), FloatingPointBitsWriter.Float);
 	}
 
 	@NotNull
 	public static FloatingPointConstantTypedValue _double(final long doubleValueAsRawLongBitsAsJavaLosesNaNInformationOnConversion)
 	{
-		return new FloatingPointConstantTypedValue(FloatingPointValueType._double, 0L, doubleValueAsRawLongBitsAsJavaLosesNaNInformationOnConversion, FloatingPointBitsWriter.Double);
+		return new FloatingPointConstantTypedValue(_double, 0L, doubleValueAsRawLongBitsAsJavaLosesNaNInformationOnConversion, Double);
 	}
 
 	@NotNull
 	public static FloatingPointConstantTypedValue quad(final long left, final long right)
 	{
-		return new FloatingPointConstantTypedValue(FloatingPointValueType.fp128, left, right, FloatingPointBitsWriter.Quad);
+		return new FloatingPointConstantTypedValue(fp128, left, right, FloatingPointBitsWriter.Quad);
 	}
 
 	@NotNull
 	public static FloatingPointConstantTypedValue powerPcDoubleDouble(final long left, final long right)
 	{
-		return new FloatingPointConstantTypedValue(FloatingPointValueType.ppc_fp128, left, right, FloatingPointBitsWriter.PowerPcDoubleDouble);
+		return new FloatingPointConstantTypedValue(ppc_fp128, left, right, PowerPcDoubleDouble);
 	}
 
 	@NotNull
 	public static FloatingPointConstantTypedValue x86LongDouble(final char left, final long right)
 	{
-		return new FloatingPointConstantTypedValue(FloatingPointValueType.x86_fp80, left, right, FloatingPointBitsWriter.X86LongDouble);
+		return new FloatingPointConstantTypedValue(x86_fp80, left, right, X86LongDouble);
 	}
 
 	private final long left;
@@ -82,7 +85,7 @@ public final class FloatingPointConstantTypedValue extends AbstractTypedValue<Fl
 	}
 
 	@Override
-	protected <X extends Exception> void writeValue(@NotNull final ByteWriter<X> byteWriter) throws X
+	protected <X extends Exception> void writeValue(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
 		floatingPointBitsWriter.write(byteWriter, left, right);
 	}

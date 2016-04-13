@@ -22,8 +22,8 @@
 
 package com.stormmq.llvm.domain.types;
 
-import com.stormmq.llvm.domain.Writable;
+import com.stormmq.llvm.domain.LlvmWritable;
 
-public interface Type extends Writable
+public interface Type extends LlvmWritable
 {
 }

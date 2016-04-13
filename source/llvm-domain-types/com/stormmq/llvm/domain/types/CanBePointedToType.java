@@ -22,16 +22,16 @@
 
 package com.stormmq.llvm.domain.types;
 
+import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.AddressSpace;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import com.stormmq.llvm.domain.types.firstClassTypes.PointerValueType;
 import org.jetbrains.annotations.NotNull;
 
 import static com.stormmq.llvm.domain.types.firstClassTypes.PointerValueType.pointedToInGlobalAddressSpace;
 
-public interface CanBePointedToType extends Type
+public interface CanBePointedToType extends TypeExcludingVoid
 {
-	@NotNull CanBePointedToType[] EmptyCanBePointedToTypes = new CanBePointedToType[0];
-
 	@SuppressWarnings({"ClassReferencesSubclass", "unchecked"})
 	@NotNull
 	default <T extends CanBePointedToType> PointerValueType<T> pointerTo(@NotNull final AddressSpace addressSpace)
@@ -44,5 +44,10 @@ public interface CanBePointedToType extends Type
 	default <T extends CanBePointedToType> PointerValueType<T> pointerTo()
 	{
 		return (PointerValueType<T>) pointedToInGlobalAddressSpace(this);
+	}
+
+	default <X extends Exception> void writeForPointedTo(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
+	{
+		write(byteWriter, dataLayoutSpecification);
 	}
 }

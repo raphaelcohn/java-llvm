@@ -24,7 +24,7 @@ package com.stormmq.llvm.domain;
 
 import org.jetbrains.annotations.NotNull;
 
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import static com.stormmq.string.Utf8ByteUser.encodeToUtf8ByteArrayWithCertaintyValueIsValid;
 
 public enum Visibility
 {
@@ -38,6 +38,6 @@ public enum Visibility
 	Visibility()
 	{
 		final String name = name();
-		llAssemblyValue = encodeUtf8BytesWithCertaintyValueIsValid(name.charAt(0) == '_' ? name.substring(1) : name);
+		llAssemblyValue = encodeToUtf8ByteArrayWithCertaintyValueIsValid(name.charAt(0) == '_' ? name.substring(1) : name);
 	}
 }

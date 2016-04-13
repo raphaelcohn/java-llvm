@@ -16,6 +16,6 @@
     <orderEntry type="module" module-name="llvm-domain-typedValues" exported="" />
     <orderEntry type="module" module-name="llvm-domain-identifiers" exported="" />
     <orderEntry type="module" module-name="llvm-domain-names" exported="" />
-    <orderEntry type="module" module-name="llvm-domain-target" />
+    <orderEntry type="module" module-name="functions" />
   </component>
 </module>

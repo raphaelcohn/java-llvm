@@ -23,9 +23,9 @@
 package com.stormmq.llvm.domain.instructions;
 
 import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import com.stormmq.llvm.domain.typedValues.constantTypedValues.ConstantTypedValue;
 import com.stormmq.llvm.domain.types.CanBePointedToType;
-import com.stormmq.llvm.domain.types.Type;
 import org.jetbrains.annotations.*;
 
 public final class ConstantExpression<T extends CanBePointedToType> implements ConstantTypedValue<T>
@@ -38,11 +38,11 @@ public final class ConstantExpression<T extends CanBePointedToType> implements C
 	}
 
 	@Override
-	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
-		constantInstruction.to().write(byteWriter);
+		constantInstruction.to().write(byteWriter, dataLayoutSpecification);
 		byteWriter.writeSpace();
-		constantInstruction.writeAsConstantExpression(byteWriter);
+		constantInstruction.writeAsConstantExpression(byteWriter, dataLayoutSpecification);
 	}
 
 	@NotNull

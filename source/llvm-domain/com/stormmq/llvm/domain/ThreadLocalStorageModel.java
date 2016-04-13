@@ -22,12 +22,11 @@
 
 package com.stormmq.llvm.domain;
 
-import com.stormmq.string.Formatting;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import static com.stormmq.string.Formatting.format;
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import static com.stormmq.string.Utf8ByteUser.encodeToUtf8ByteArrayWithCertaintyValueIsValid;
 
 public enum ThreadLocalStorageModel
 {
@@ -47,7 +46,7 @@ public enum ThreadLocalStorageModel
 		if (shouldBeEncoded)
 		{
 			@NonNls final String llAssemblyValueString = isDefault ? "thread_local" : format("thread_local(%1$s)", name());
-			llvmAssemblyEncoding = encodeUtf8BytesWithCertaintyValueIsValid(llAssemblyValueString);
+			llvmAssemblyEncoding = encodeToUtf8ByteArrayWithCertaintyValueIsValid(llAssemblyValueString);
 			this.shouldBeEncoded = true;
 		}
 		else

@@ -23,14 +23,15 @@
 package com.stormmq.llvm.domain.attributes;
 
 import com.stormmq.byteWriters.ByteWriter;
-import com.stormmq.llvm.domain.Writable;
+import com.stormmq.llvm.domain.LlvmWritable;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
 import static java.util.Arrays.asList;
 
-public class AttributeGroup<A extends Attribute> implements Writable
+public class AttributeGroup<A extends Attribute> implements LlvmWritable
 {
 	@NotNull protected final SortedSet<A> attributes;
 
@@ -69,7 +70,7 @@ public class AttributeGroup<A extends Attribute> implements Writable
 	}
 
 	@Override
-	public final <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	public final <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
 		boolean afterFirst = false;
 		for (final A attribute : attributes)
@@ -82,7 +83,7 @@ public class AttributeGroup<A extends Attribute> implements Writable
 			{
 				afterFirst = true;
 			}
-			attribute.write(byteWriter);
+			attribute.write(byteWriter, dataLayoutSpecification);
 		}
 	}
 

@@ -23,32 +23,12 @@
 package com.stormmq.llvm.domain.comdat;
 
 import com.stormmq.llvm.domain.identifiers.GloballyIdentified;
-import com.stormmq.llvm.domain.target.triple.TargetTriple;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
-
-import static com.stormmq.functions.CollectionHelper.add;
+import java.util.function.Consumer;
 
 public interface MayHaveComdatDefinition extends GloballyIdentified
 {
-	@Nullable
-	static ComdatDefinition adjustComdatDefinition(@NotNull final Set<ComdatDefinition> comdatDefinitions, @Nullable final ComdatDefinition existingComdatDefinition, @NotNull final TargetTriple targetTriple)
-	{
-		if (existingComdatDefinition == null)
-		{
-			return null;
-		}
-
-		@Nullable final ComdatDefinition adjustedComdatDefinition = existingComdatDefinition.adjustComdatDefinition(targetTriple);
-		if (adjustedComdatDefinition == null)
-		{
-			return null;
-		}
-
-		return add(comdatDefinitions, adjustedComdatDefinition);
-	}
-
-	void adjustComdatDefinition(@NotNull Set<ComdatDefinition> comdatDefinitions, @NotNull final TargetTriple targetTriple);
+	void useComdatDefinition(@NotNull Consumer<ComdatDefinition> consumer);
 }

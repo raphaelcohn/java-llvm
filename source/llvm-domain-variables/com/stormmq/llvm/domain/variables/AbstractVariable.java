@@ -26,8 +26,8 @@ import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.*;
 import com.stormmq.llvm.domain.identifiers.AbstractGloballyIdentified;
 import com.stormmq.llvm.domain.identifiers.GlobalIdentifier;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public abstract class AbstractVariable extends AbstractGloballyIdentified
 {
@@ -48,9 +48,9 @@ public abstract class AbstractVariable extends AbstractGloballyIdentified
 	}
 
 	@Override
-	public final <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	public final <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
-		globalIdentifier().write(byteWriter);
+		globalIdentifier().write(byteWriter, dataLayoutSpecification);
 
 		byteWriter.writeBytes(SpaceEqualsSpace);
 
@@ -76,12 +76,12 @@ public abstract class AbstractVariable extends AbstractGloballyIdentified
 			byteWriter.writeBytes(SpaceUnnamedAddress);
 		}
 
-		writeVariable(byteWriter);
+		writeVariable(byteWriter, dataLayoutSpecification);
 
 		byteWriter.writeLineFeed();
 	}
 
-	protected abstract <X extends Exception> void writeVariable(@NotNull final ByteWriter<X> byteWriter) throws X;
+	protected abstract <X extends Exception> void writeVariable(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X;
 
 	protected static <X extends Exception> void writeCommaSpace(@NotNull final ByteWriter<X> byteWriter) throws X
 	{

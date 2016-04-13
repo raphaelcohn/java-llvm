@@ -24,25 +24,24 @@ package com.stormmq.llvm.domain.instructions;
 
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.identifiers.LocalIdentifier;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import com.stormmq.llvm.domain.typedValues.TypedValue;
 import com.stormmq.llvm.domain.typedValues.constantTypedValues.ConstantTypedValue;
 import com.stormmq.llvm.domain.typedValues.constantTypedValues.simpleConstantExpressions.IntegerConstantTypedValue;
 import com.stormmq.llvm.domain.typedValues.constantTypedValues.simpleConstantExpressions.NullPointerConstantTypedValue;
 import com.stormmq.llvm.domain.types.CanBePointedToType;
 import com.stormmq.llvm.domain.types.firstClassTypes.PointerValueType;
+import com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.AggregateType;
 import com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.structureTypes.LocallyIdentifiedStructureType;
-import com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.structureTypes.StructureType;
 import org.jetbrains.annotations.NotNull;
 
-import static com.stormmq.llvm.domain.AddressSpace.GlobalAddressSpace;
-import static com.stormmq.llvm.domain.Writable.CommaSpace;
+import static com.stormmq.llvm.domain.LlvmWritable.CommaSpace;
 import static com.stormmq.llvm.domain.typedValues.constantTypedValues.simpleConstantExpressions.IntegerConstantTypedValue.Int64One;
 import static com.stormmq.llvm.domain.typedValues.constantTypedValues.simpleConstantExpressions.IntegerConstantTypedValue.Int64Zero;
 import static com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType.i32;
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import static com.stormmq.string.Utf8ByteUser.encodeToUtf8ByteArrayWithCertaintyValueIsValid;
 
 /*
-
 	; sizeof
 	%.arrayindex.length.com.stormmq.MyClassExample = getelementptr %class.com.stormmq.MyClassExample, %class.com.stormmq.MyClassExample * null, i64 1
 	%.sizeof.com.stormmq.MyClassExample = ptrtoint %class.com.stormmq.MyClassExample * %.arrayindex.length.com.stormmq.MyClassExample to i64
@@ -52,35 +51,35 @@ import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyVal
 	%.arrayindex.3.com.stormmq.MyClassExample = getelementptr %class.com.stormmq.MyClassExample, %class.com.stormmq.MyClassExample * null, i64 0, i32 3
 	%.offsetof.3.com.stormmq.MyClassExample = ptrtoint double* %.arrayindex.3.com.stormmq.MyClassExample to i32
 */
-// Aka Instruction
-public final class GetElementPointerInstruction<T extends CanBePointedToType, U extends CanBePointedToType> extends AbstractInstruction<PointerValueType<U>>
+public final class GetElementPointerInstruction<A extends AggregateType, T extends CanBePointedToType> extends AbstractInstruction<PointerValueType<T>>
 {
 	@NotNull
-	public static <S extends StructureType> GetElementPointerInstruction<S, S> arrayIndexLength(@NotNull final S structureType)
+	public static <A extends AggregateType> GetElementPointerInstruction<A, A> arrayIndexLength(@NotNull final A aggregateType)
 	{
-		final PointerValueType<S> pointerToStructure = structureType.pointerTo();
-		final ConstantTypedValue<PointerValueType<S>> expression = new NullPointerConstantTypedValue<>(pointerToStructure);
-		return new GetElementPointerInstruction<>(false, pointerToStructure, structureType, expression, Int64One);
+		final PointerValueType<A> pointerToAggregateType = aggregateType.pointerTo();
+		final ConstantTypedValue<PointerValueType<A>> expression = new NullPointerConstantTypedValue<>(pointerToAggregateType);
+		return new GetElementPointerInstruction<>(false, pointerToAggregateType, aggregateType, expression, Int64One);
 	}
 
 	@NotNull
-	public static <S extends StructureType, T extends CanBePointedToType> GetElementPointerInstruction<S, T> offsetOf(@NotNull final S structureType, @NotNull final T to, final int zeroBasedFieldIndex)
+	public static <A extends AggregateType, T extends CanBePointedToType> GetElementPointerInstruction<A, T> offsetOf(@NotNull final A aggregateType, @NotNull final T to, final int zeroBasedFieldIndex)
 	{
-		final ConstantTypedValue<PointerValueType<S>> expression = new NullPointerConstantTypedValue<>(structureType.pointerTo());
-		final PointerValueType<T> pointerToStructureFieldType = to.pointerTo();
-		return new GetElementPointerInstruction<>(false, pointerToStructureFieldType, structureType, expression, Int64Zero, new IntegerConstantTypedValue(i32, zeroBasedFieldIndex));
+		final PointerValueType<A> pointerToAggregateType = aggregateType.pointerTo();
+		final ConstantTypedValue<PointerValueType<A>> expression = new NullPointerConstantTypedValue<>(pointerToAggregateType);
+		final PointerValueType<T> pointerToElementType = to.pointerTo();
+		return new GetElementPointerInstruction<>(false, pointerToElementType, aggregateType, expression, Int64Zero, new IntegerConstantTypedValue(i32, zeroBasedFieldIndex));
 	}
 
-	@NotNull private static final byte[] getelementptrSpace = encodeUtf8BytesWithCertaintyValueIsValid("getelementptr ");
-	@NotNull private static final byte[] getelementptrSpaceinboundSpace = encodeUtf8BytesWithCertaintyValueIsValid("getelementptr inbounds ");
+	@NotNull private static final byte[] getelementptrSpace = encodeToUtf8ByteArrayWithCertaintyValueIsValid("getelementptr ");
+	@NotNull private static final byte[] getelementptrSpaceinboundSpace = encodeToUtf8ByteArrayWithCertaintyValueIsValid("getelementptr inbounds ");
 
 	private final boolean isInbounds;
-	@NotNull private final PointerValueType<U> to;
-	@NotNull private final T type;
-	@NotNull private final TypedValue<PointerValueType<T>> pointer;
+	@NotNull private final PointerValueType<T> to;
+	@NotNull private final A type;
+	@NotNull private final TypedValue<PointerValueType<A>> pointer;
 	@NotNull private final IntegerConstantTypedValue[] indices;
 
-	private GetElementPointerInstruction(final boolean isInbounds, @NotNull final PointerValueType<U> to, @NotNull final T type, @NotNull final TypedValue<PointerValueType<T>> pointer, @NotNull final IntegerConstantTypedValue... indices)
+	private GetElementPointerInstruction(final boolean isInbounds, @NotNull final PointerValueType<T> to, @NotNull final A type, @NotNull final TypedValue<PointerValueType<A>> pointer, @NotNull final IntegerConstantTypedValue... indices)
 	{
 		this.isInbounds = isInbounds;
 		this.to = to;
@@ -91,7 +90,7 @@ public final class GetElementPointerInstruction<T extends CanBePointedToType, U 
 
 	@NotNull
 	@Override
-	public PointerValueType<U> to()
+	public PointerValueType<T> to()
 	{
 		return to;
 	}
@@ -104,25 +103,25 @@ public final class GetElementPointerInstruction<T extends CanBePointedToType, U 
 	}
 
 	@Override
-	protected <X extends Exception> void writeBody(@NotNull final ByteWriter<X> byteWriter) throws X
+	protected <X extends Exception> void writeBody(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
 		if (type instanceof LocallyIdentifiedStructureType)
 		{
-			final LocalIdentifier identifier = ((LocallyIdentifiedStructureType) type).localIdentifier();
-			identifier.write(byteWriter);
+			final LocalIdentifier identifier = ((LocallyIdentifiedStructureType) type).identifier();
+			identifier.write(byteWriter, dataLayoutSpecification);
 		}
 		else
 		{
-			type.write(byteWriter);
+			type.write(byteWriter, dataLayoutSpecification);
 		}
 
 		byteWriter.writeBytes(CommaSpace);
-		pointer.write(byteWriter);
+		pointer.write(byteWriter, dataLayoutSpecification);
 
 		for (final IntegerConstantTypedValue integerConstantExpression : indices)
 		{
 			byteWriter.writeBytes(CommaSpace);
-			integerConstantExpression.write(byteWriter);
+			integerConstantExpression.write(byteWriter, dataLayoutSpecification);
 		}
 	}
 

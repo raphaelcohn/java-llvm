@@ -23,68 +23,163 @@
 package com.stormmq.llvm.domain.types.firstClassTypes;
 
 import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
+import com.stormmq.string.StringConstants;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import static com.stormmq.string.Formatting.format;
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import java.io.*;
+
+import static com.stormmq.string.StringUtilities.enumSerializationIsNotSupportedForConstantsInASecureContext;
+import static com.stormmq.string.Utf8ByteUser.encodeToUtf8ByteArrayWithCertaintyValueIsValid;
 
 public enum FloatingPointValueType implements PrimitiveSingleValueType
 {
-	half(16),
-	_float(32),
-	_double(64),
-	fp128(128), // AKA quad
-	x86_fp80(80), // AKA long double
-	ppc_fp128(128), // AKA double-double
+	// Support is poor except for ARM; clang convert's C's __fp16 to i16...
+	half(16, "half")
+	{
+		@Override
+		public int abiAlignmentInBits(@NotNull final DataLayoutSpecification dataLayoutSpecification)
+		{
+			return dataLayoutSpecification.halfAbiAlignmentInBits();
+		}
+
+		private void writeObject(@NotNull final ObjectOutputStream out) throws IOException
+		{
+			throw enumSerializationIsNotSupportedForConstantsInASecureContext();
+		}
+
+		private void readObject(@NotNull final ObjectInputStream in) throws IOException
+		{
+			throw enumSerializationIsNotSupportedForConstantsInASecureContext();
+		}
+	},
+
+	_float(32, StringConstants._float)
+	{
+		@Override
+		public int abiAlignmentInBits(@NotNull final DataLayoutSpecification dataLayoutSpecification)
+		{
+			return dataLayoutSpecification.floatAbiAlignmentInBits();
+		}
+
+		private void writeObject(@NotNull final ObjectOutputStream out) throws IOException
+		{
+			throw enumSerializationIsNotSupportedForConstantsInASecureContext();
+		}
+
+		private void readObject(@NotNull final ObjectInputStream in) throws IOException
+		{
+			throw enumSerializationIsNotSupportedForConstantsInASecureContext();
+		}
+	},
+
+	_double(64, StringConstants._double)
+	{
+		@Override
+		public int abiAlignmentInBits(@NotNull final DataLayoutSpecification dataLayoutSpecification)
+		{
+			return dataLayoutSpecification.doubleAbiAlignmentInBits();
+		}
+
+		private void writeObject(@NotNull final ObjectOutputStream out) throws IOException
+		{
+			throw enumSerializationIsNotSupportedForConstantsInASecureContext();
+		}
+
+		private void readObject(@NotNull final ObjectInputStream in) throws IOException
+		{
+			throw enumSerializationIsNotSupportedForConstantsInASecureContext();
+		}
+	},
+
+	// AKA Quad. Used in SPARC v9, AArch64 (IIRC), possibly MIPS 64
+	fp128(128, "fp128")
+	{
+		@Override
+		public int abiAlignmentInBits(@NotNull final DataLayoutSpecification dataLayoutSpecification)
+		{
+			return dataLayoutSpecification.quadAbiAlignmentInBits();
+		}
+
+		private void writeObject(@NotNull final ObjectOutputStream out) throws IOException
+		{
+			throw enumSerializationIsNotSupportedForConstantsInASecureContext();
+		}
+
+		private void readObject(@NotNull final ObjectInputStream in) throws IOException
+		{
+			throw enumSerializationIsNotSupportedForConstantsInASecureContext();
+		}
+	},
+
+	// X86 only, and only then for Linux, Mac OS X and NetBSD
+	@SuppressWarnings("DuplicateStringLiteralInspection")x86_fp80(-1, "x86_fp80")
+	{
+		@SuppressWarnings("RefusedBequest")
+		@Override
+		public int storageSizeInBits(@NotNull final DataLayoutSpecification dataLayoutSpecification)
+		{
+			return dataLayoutSpecification.longDoubleStorageSizeInBits();
+		}
+
+		@Override
+		public int abiAlignmentInBits(@NotNull final DataLayoutSpecification dataLayoutSpecification)
+		{
+			return dataLayoutSpecification.longDoubleAbiAlignmentInBits();
+		}
+
+		private void writeObject(@NotNull final ObjectOutputStream out) throws IOException
+		{
+			throw enumSerializationIsNotSupportedForConstantsInASecureContext();
+		}
+
+		private void readObject(@NotNull final ObjectInputStream in) throws IOException
+		{
+			throw enumSerializationIsNotSupportedForConstantsInASecureContext();
+		}
+	},
+
+	// PowerPC double-double only.
+	ppc_fp128(128, "ppc_fp128")
+	{
+		@Override
+		public int abiAlignmentInBits(@NotNull final DataLayoutSpecification dataLayoutSpecification)
+		{
+			return dataLayoutSpecification.longDoubleStorageSizeInBits();
+		}
+
+		private void writeObject(@NotNull final ObjectOutputStream out) throws IOException
+		{
+			throw enumSerializationIsNotSupportedForConstantsInASecureContext();
+		}
+
+		private void readObject(@NotNull final ObjectInputStream in) throws IOException
+		{
+			throw enumSerializationIsNotSupportedForConstantsInASecureContext();
+		}
+	},
+
 	;
 
-	@SuppressWarnings("MagicNumber")
-	@NotNull
-	public static FloatingPointValueType floatingPointValueTypeFromSizeInBits(final int sizeInBits)
-	{
-		switch (sizeInBits)
-		{
-			case 16:
-				return half;
-
-			case 32:
-				return _float;
-
-			case 64:
-				return _double;
-
-			case 80:
-				return x86_fp80;
-
-			case 128:
-				return fp128;
-
-			default:
-				throw new IllegalArgumentException(format("floating point sizeInBits can not be '%1$s'", sizeInBits));
-		}
-	}
-
 	@NotNull private final byte[] llvmAssemblyEncoding;
-	private final int numberOfBits;
+	private final int storageSizeInBits;
 
-	FloatingPointValueType(final int numberOfBits)
+	FloatingPointValueType(final int storageSizeInBits, @NotNull @NonNls final String llvmName)
 	{
-		this.numberOfBits = numberOfBits;
-		final String name = name();
-		@NotNull @NonNls final String stringValue = name.charAt(0) == '_' ? name.substring(1) : name;
-		llvmAssemblyEncoding = encodeUtf8BytesWithCertaintyValueIsValid(stringValue);
+		this.storageSizeInBits = storageSizeInBits;
+		llvmAssemblyEncoding = encodeToUtf8ByteArrayWithCertaintyValueIsValid(llvmName);
 	}
 
 	@Override
-	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
 		byteWriter.writeBytes(llvmAssemblyEncoding);
 	}
 
-	@SuppressWarnings("MagicNumber")
-	public boolean isWiderThan64Bits()
+	@Override
+	public int storageSizeInBits(@NotNull final DataLayoutSpecification dataLayoutSpecification)
 	{
-		return numberOfBits > 64;
+		return storageSizeInBits;
 	}
 }

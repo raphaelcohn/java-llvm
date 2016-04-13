@@ -26,15 +26,16 @@ import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.*;
 import com.stormmq.llvm.domain.attributes.AttributeGroup;
 import com.stormmq.llvm.domain.function.attributes.functionAttributes.FunctionAttribute;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import org.jetbrains.annotations.NotNull;
 
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import static com.stormmq.string.Utf8ByteUser.encodeToUtf8ByteArrayWithCertaintyValueIsValid;
 
 public final class FunctionAttributeGroup extends AttributeGroup<FunctionAttribute> implements Reference
 {
-	@NotNull private static final byte[] attributesSpaceHash = encodeUtf8BytesWithCertaintyValueIsValid("attributes #");
-	@NotNull private static final byte[] SpaceEqualsSpaceOpenBraceSpace = encodeUtf8BytesWithCertaintyValueIsValid(" = { ");
-	@SuppressWarnings("HardcodedLineSeparator") @NotNull private static final byte[] SpaceCloseBraceLineFeedLineFeed = encodeUtf8BytesWithCertaintyValueIsValid(" }\n\n");
+	@NotNull private static final byte[] attributesSpaceHash = encodeToUtf8ByteArrayWithCertaintyValueIsValid("attributes #");
+	@NotNull private static final byte[] SpaceEqualsSpaceOpenBraceSpace = encodeToUtf8ByteArrayWithCertaintyValueIsValid(" = { ");
+	@SuppressWarnings("HardcodedLineSeparator") @NotNull private static final byte[] SpaceCloseBraceLineFeedLineFeed = encodeToUtf8ByteArrayWithCertaintyValueIsValid(" }\n\n");
 
 	public static <X extends Exception> void writeFunctionAttributes(@NotNull final ByteWriter<X> byteWriter, final int referenceIndex) throws X
 	{
@@ -51,7 +52,7 @@ public final class FunctionAttributeGroup extends AttributeGroup<FunctionAttribu
 		this.referenceTracker = referenceTracker;
 	}
 
-	public <X extends Exception> int writeFunctionAttributesGroup(@NotNull final ByteWriter<X> byteWriter) throws X
+	public <X extends Exception> int writeFunctionAttributesGroup(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
 		if (hasBeenWritten())
 		{
@@ -64,7 +65,7 @@ public final class FunctionAttributeGroup extends AttributeGroup<FunctionAttribu
 		byteWriter.writeUtf8EncodedStringWithCertainty(Integer.toString(referenceIndex));
 		byteWriter.writeBytes(SpaceEqualsSpaceOpenBraceSpace);
 
-		write(byteWriter);
+		write(byteWriter, dataLayoutSpecification);
 
 		byteWriter.writeBytes(SpaceCloseBraceLineFeedLineFeed);
 

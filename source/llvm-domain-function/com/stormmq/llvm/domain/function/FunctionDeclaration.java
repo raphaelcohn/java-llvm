@@ -28,15 +28,15 @@ import com.stormmq.llvm.domain.attributes.AttributeGroup;
 import com.stormmq.llvm.domain.function.attributes.FunctionAttributeGroup;
 import com.stormmq.llvm.domain.function.attributes.parameterAttributes.ParameterAttribute;
 import com.stormmq.llvm.domain.identifiers.*;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import static com.stormmq.llvm.domain.function.attributes.FunctionAttributeGroup.writeFunctionAttributes;
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import static com.stormmq.string.Utf8ByteUser.encodeToUtf8ByteArrayWithCertaintyValueIsValid;
 
 public final class FunctionDeclaration extends AbstractGloballyIdentified
 {
-	@NotNull private static final byte[] declareSpace = encodeUtf8BytesWithCertaintyValueIsValid("declare ");
+	@NotNull private static final byte[] declareSpace = encodeToUtf8ByteArrayWithCertaintyValueIsValid("declare ");
 
 	@NotNull private final Linkage linkage;
 	@NotNull private final Visibility visibility;
@@ -68,9 +68,9 @@ public final class FunctionDeclaration extends AbstractGloballyIdentified
 	}
 
 	@Override
-	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
-		final int referenceIndex = functionAttributes.writeFunctionAttributesGroup(byteWriter);
+		final int referenceIndex = functionAttributes.writeFunctionAttributesGroup(byteWriter, dataLayoutSpecification);
 
 		byteWriter.writeBytes(declareSpace);
 		byteWriter.writeBytes(linkage.llAssemblyValue);
@@ -88,18 +88,18 @@ public final class FunctionDeclaration extends AbstractGloballyIdentified
 		byteWriter.writeBytes(callingConvention.llAssemblyValue);
 
 		byteWriter.writeSpace();
-		returnAttributes.write(byteWriter);
+		returnAttributes.write(byteWriter, dataLayoutSpecification);
 
 		byteWriter.writeSpace();
-		resultType.write(byteWriter);
+		resultType.write(byteWriter, dataLayoutSpecification);
 
 		byteWriter.writeSpace();
-		globalIdentifier().write(byteWriter);
+		globalIdentifier().write(byteWriter, dataLayoutSpecification);
 
 		byteWriter.writeOpenBracket();
 		for (final FormalParameter parameter : parameters)
 		{
-			parameter.write(byteWriter);
+			parameter.write(byteWriter, dataLayoutSpecification);
 		}
 		byteWriter.writeCloseBracket();
 

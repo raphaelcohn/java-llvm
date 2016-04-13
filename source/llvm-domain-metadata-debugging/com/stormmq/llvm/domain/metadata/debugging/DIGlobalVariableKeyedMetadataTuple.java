@@ -40,14 +40,14 @@ public final class DIGlobalVariableKeyedMetadataTuple extends KeyedMetadataTuple
 	}
 
 	@Override
-	public int sizeInBits()
+	public int storageSizeInBits()
 	{
-		return type.sizeInBits();
+		return type.storageSizeInBits();
 	}
 
 	@Override
-	public int alignmentInBits()
+	public int abiAlignmentInBits()
 	{
-		return type.alignmentInBits();
+		return type.abiAlignmentInBits();
 	}
 }

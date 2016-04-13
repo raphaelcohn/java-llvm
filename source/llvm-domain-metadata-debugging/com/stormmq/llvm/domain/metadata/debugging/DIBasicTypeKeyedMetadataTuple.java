@@ -48,13 +48,13 @@ public final class DIBasicTypeKeyedMetadataTuple extends KeyedMetadataTuple impl
 	}
 
 	@Override
-	public int sizeInBits()
+	public int storageSizeInBits()
 	{
 		return sizeInBits;
 	}
 
 	@Override
-	public int alignmentInBits()
+	public int abiAlignmentInBits()
 	{
 		return alignmentInBits;
 	}

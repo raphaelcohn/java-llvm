@@ -23,10 +23,11 @@
 package com.stormmq.llvm.domain.metadata;
 
 import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import static com.stormmq.llvm.domain.Writable.ColonSpace;
+import static com.stormmq.llvm.domain.LlvmWritable.ColonSpace;
 
 public final class KeyWithMetadataField
 {
@@ -49,7 +50,7 @@ public final class KeyWithMetadataField
 		return underlying.hasBeenWritten();
 	}
 
-	public <X extends Exception> void writeIfNotAConstant(@NotNull final ByteWriter<X> byteWriter) throws X
+	public <X extends Exception> void writeIfNotAConstant(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
 		if (isConstant())
 		{
@@ -61,17 +62,17 @@ public final class KeyWithMetadataField
 			return;
 		}
 
-		underlying.write(byteWriter);
+		underlying.write(byteWriter, dataLayoutSpecification);
 	}
 
-	public <X extends Exception> void writeKeyValue(@NotNull final ByteWriter<X> byteWriter) throws X
+	public <X extends Exception> void writeKeyValue(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
 		byteWriter.writeUtf8EncodedStringWithCertainty(key);
 		byteWriter.writeBytes(ColonSpace);
 
 		if (isConstant())
 		{
-			underlying.write(byteWriter);
+			underlying.write(byteWriter, dataLayoutSpecification);
 		}
 		else
 		{

@@ -23,18 +23,19 @@
 package com.stormmq.llvm.domain.instructions;
 
 import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import com.stormmq.llvm.domain.typedValues.TypedValue;
 import com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType;
 import org.jetbrains.annotations.NotNull;
 
-import static com.stormmq.llvm.domain.Writable.SpaceToSpace;
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import static com.stormmq.llvm.domain.LlvmWritable.SpaceToSpace;
+import static com.stormmq.string.Utf8ByteUser.encodeToUtf8ByteArrayWithCertaintyValueIsValid;
 
 public final class TruncateIntegerInstruction extends AbstractInstruction<IntegerValueType>
 {
 	// <result> = trunc <ty> <value> to <ty2>             ; yields ty2
 
-	@NotNull private static final byte[] truncSpace = encodeUtf8BytesWithCertaintyValueIsValid("trunc ");
+	@NotNull private static final byte[] truncSpace = encodeToUtf8ByteArrayWithCertaintyValueIsValid("trunc ");
 
 	@NotNull private final TypedValue<IntegerValueType> integerValue;
 	@NotNull private final IntegerValueType to;
@@ -60,10 +61,10 @@ public final class TruncateIntegerInstruction extends AbstractInstruction<Intege
 	}
 
 	@Override
-	protected <X extends Exception> void writeBody(@NotNull final ByteWriter<X> byteWriter) throws X
+	protected <X extends Exception> void writeBody(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
-		integerValue.write(byteWriter);
+		integerValue.write(byteWriter, dataLayoutSpecification);
 		byteWriter.writeBytes(SpaceToSpace);
-		to.write(byteWriter);
+		to.write(byteWriter, dataLayoutSpecification);
 	}
 }

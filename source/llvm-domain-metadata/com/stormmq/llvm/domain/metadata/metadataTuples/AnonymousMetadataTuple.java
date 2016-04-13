@@ -25,13 +25,14 @@ package com.stormmq.llvm.domain.metadata.metadataTuples;
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.ReferenceTracker;
 import com.stormmq.llvm.domain.metadata.Metadata;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 import static com.stormmq.llvm.domain.metadata.metadataTuples.NamedMetadataTuple.writeTuple;
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import static com.stormmq.string.Utf8ByteUser.encodeToUtf8ByteArrayWithCertaintyValueIsValid;
 import static java.util.Collections.emptyList;
 
 public class AnonymousMetadataTuple implements Metadata
@@ -72,7 +73,7 @@ public class AnonymousMetadataTuple implements Metadata
 	}
 
 	@Override
-	public final <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	public final <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
 		if (hasBeenWritten())
 		{
@@ -81,8 +82,8 @@ public class AnonymousMetadataTuple implements Metadata
 			return;
 		}
 
-		final byte[] llAssemblyEncoding = encodeUtf8BytesWithCertaintyValueIsValid(Integer.toString(referenceIndex()));
-		writeTuple(byteWriter, tuple, llAssemblyEncoding);
+		final byte[] llAssemblyEncoding = encodeToUtf8ByteArrayWithCertaintyValueIsValid(Integer.toString(referenceIndex()));
+		writeTuple(byteWriter, tuple, dataLayoutSpecification, llAssemblyEncoding);
 	}
 
 	@Override

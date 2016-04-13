@@ -23,14 +23,12 @@
 package com.stormmq.llvm.domain.identifiers;
 
 import com.stormmq.byteWriters.ByteWriter;
-import com.stormmq.llvm.domain.Writable;
+import com.stormmq.llvm.domain.LlvmWritable;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import com.stormmq.string.*;
 import org.jetbrains.annotations.*;
 
-import static com.stormmq.string.StringUtilities.encodeUtf8Bytes;
-import static com.stormmq.string.StringUtilities.iterateOverStringCodePoints;
-
-public final class LlvmString implements Writable
+public final class LlvmString implements LlvmWritable
 {
 	@NotNull private final String value;
 	@SuppressWarnings("FieldNotUsedInToString") private final boolean valueNeedsEscaping;
@@ -47,7 +45,7 @@ public final class LlvmString implements Writable
 		final ValidatingCodePointUser codePointUser = new ValidatingCodePointUser();
 		try
 		{
-			iterateOverStringCodePoints(identifier, codePointUser);
+			codePointUser.iterateOverStringCodePoints(identifier);
 		}
 		catch (final InvalidUtf16StringException e)
 		{
@@ -57,14 +55,15 @@ public final class LlvmString implements Writable
 	}
 
 	@Override
-	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
 		if (valueNeedsEscaping)
 		{
 			byteWriter.writeDoubleQuote();
+			final Utf8ByteUser<X> utf8ByteUser = new WritingUtf8ByteUser<>(byteWriter);
 			try
 			{
-				encodeUtf8Bytes(value, new WritingUtf8ByteUser<>(byteWriter));
+				utf8ByteUser.encodeUtf8Bytes(value);
 			}
 			catch (final InvalidUtf16StringException e)
 			{

@@ -24,39 +24,21 @@ package com.stormmq.tuples;
 
 import org.jetbrains.annotations.*;
 
+import java.util.*;
 import java.util.Map.Entry;
 
-public final class Pair<A, B> implements Entry<A, B>
+import static com.stormmq.string.Formatting.format;
+
+public class Pair<A, B> extends AbstractList<Object> implements Entry<A, B>
 {
 	@NotNull public final A a;
-	@SuppressWarnings("StandardVariableNames") @NotNull public final B b;
+	@SuppressWarnings({"StandardVariableNames", "WeakerAccess"}) @NotNull public final B b;
 
 	@SuppressWarnings("StandardVariableNames")
 	public Pair(@NotNull final A a, @NotNull final B b)
 	{
 		this.a = a;
 		this.b = b;
-	}
-
-	@Override
-	@NotNull
-	public A getKey()
-	{
-		return a;
-	}
-
-	@Override
-	@NotNull
-	public B getValue()
-	{
-		return b;
-	}
-
-	@Override
-	@NotNull
-	public B setValue(@NotNull final B value)
-	{
-		throw new UnsupportedOperationException("Can not mutate a pair");
 	}
 
 	@Override
@@ -82,5 +64,69 @@ public final class Pair<A, B> implements Entry<A, B>
 		int result = a.hashCode();
 		result = 31 * result + b.hashCode();
 		return result;
+	}
+
+	@SuppressWarnings("CollectionDeclaredAsConcreteClass")
+	@NotNull
+	public ArrayList<? super Object> toArrayList()
+	{
+		final ArrayList<? super Object> list = new ArrayList<>(size());
+		list.add(a);
+		list.add(b);
+		return list;
+	}
+
+	@Override
+	public int size()
+	{
+		return 2;
+	}
+
+	@Override
+	public final Object get(final int index)
+	{
+		if (index < 0)
+		{
+			throw new IllegalArgumentException(format("index '%1$s' can not be negative", index));
+		}
+
+		return getInternal(index);
+	}
+
+	@NotNull
+	protected Object getInternal(final int index)
+	{
+		switch(index)
+		{
+			case 0:
+				return a;
+
+			case 1:
+				return b;
+
+			default:
+				throw new IllegalArgumentException(format("index '%1$s' can not be greater than or equal to 2", index));
+		}
+	}
+
+	@Override
+	@NotNull
+	public final A getKey()
+	{
+		return a;
+	}
+
+	@Override
+	@NotNull
+	public final B getValue()
+	{
+		return b;
+	}
+
+	@Override
+	@NotNull
+	public final B setValue(@NotNull final B value)
+	{
+		throw new UnsupportedOperationException("Can not mutate a pair");
 	}
 }

@@ -23,12 +23,13 @@
 package com.stormmq.llvm.domain.asm;
 
 import com.stormmq.byteWriters.ByteWriter;
-import com.stormmq.llvm.domain.Writable;
+import com.stormmq.llvm.domain.LlvmWritable;
 import com.stormmq.llvm.domain.identifiers.Identifier;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import com.stormmq.llvm.domain.types.TypeExcludingVoid;
 import org.jetbrains.annotations.NotNull;
 
-public final class TypeAndIdentifier<I extends Identifier> implements Writable
+public final class TypeAndIdentifier<I extends Identifier> implements LlvmWritable
 {
 	@NotNull private final TypeExcludingVoid typeExcludingVoid;
 	@NotNull private final I identifier;
@@ -40,10 +41,10 @@ public final class TypeAndIdentifier<I extends Identifier> implements Writable
 	}
 
 	@Override
-	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
-		typeExcludingVoid.write(byteWriter);
+		typeExcludingVoid.write(byteWriter, dataLayoutSpecification);
 		byteWriter.writeSpace();
-		identifier.write(byteWriter);
+		identifier.write(byteWriter, dataLayoutSpecification);
 	}
 }

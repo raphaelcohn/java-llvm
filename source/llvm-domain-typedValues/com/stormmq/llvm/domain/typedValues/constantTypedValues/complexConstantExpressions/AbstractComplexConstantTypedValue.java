@@ -23,6 +23,7 @@
 package com.stormmq.llvm.domain.typedValues.constantTypedValues.complexConstantExpressions;
 
 import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import com.stormmq.llvm.domain.typedValues.AbstractTypedValue;
 import com.stormmq.llvm.domain.typedValues.constantTypedValues.ConstantTypedValue;
 import com.stormmq.llvm.domain.types.*;
@@ -48,7 +49,7 @@ public abstract class AbstractComplexConstantTypedValue<T extends CanBePointedTo
 	protected abstract byte[] close();
 
 	@Override
-	protected final <X extends Exception> void writeValue(@NotNull final ByteWriter<X> byteWriter) throws X
+	protected final <X extends Exception> void writeValue(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
 		byteWriter.writeBytes(open());
 
@@ -59,7 +60,7 @@ public abstract class AbstractComplexConstantTypedValue<T extends CanBePointedTo
 			{
 				byteWriter.writeBytes(CommaSpace);
 			}
-			values[index].write(byteWriter);
+			values[index].write(byteWriter, dataLayoutSpecification);
 		}
 
 		byteWriter.writeBytes(close());

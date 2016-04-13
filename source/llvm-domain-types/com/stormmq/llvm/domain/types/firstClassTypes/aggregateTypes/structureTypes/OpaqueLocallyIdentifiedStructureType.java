@@ -24,28 +24,32 @@ package com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.structureTy
 
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.identifiers.LocalIdentifier;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import org.jetbrains.annotations.NotNull;
 
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import static com.stormmq.string.Utf8ByteUser.encodeToUtf8ByteArrayWithCertaintyValueIsValid;
 
-public final class OpaqueLocallyIdentifiedStructureType extends AbstractLocallyIdentifiedStructureType
+public final class OpaqueLocallyIdentifiedStructureType implements LocallyIdentifiedStructureType
 {
-	@NotNull private static final byte[] llAssemblyEncoding = encodeUtf8BytesWithCertaintyValueIsValid("type opaque");
+	@NotNull private static final byte[] typeSpaceOpaque = encodeToUtf8ByteArrayWithCertaintyValueIsValid("type opaque");
+
+	@NotNull private final LocalIdentifier localIdentifier;
 
 	public OpaqueLocallyIdentifiedStructureType(@NotNull final LocalIdentifier localIdentifier)
 	{
-		super(localIdentifier);
+		this.localIdentifier = localIdentifier;
+	}
+
+	@Override
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
+	{
+		byteWriter.writeBytes(typeSpaceOpaque);
 	}
 
 	@NotNull
 	@Override
-	protected byte[] typePrefix()
+	public LocalIdentifier identifier()
 	{
-		return llAssemblyEncoding;
-	}
-
-	@Override
-	protected <X extends Exception> void writeBody(@NotNull final ByteWriter<X> byteWriter) throws X
-	{
+		return localIdentifier;
 	}
 }

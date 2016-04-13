@@ -24,6 +24,6 @@ package com.stormmq.llvm.domain.types.firstClassTypes;
 
 import com.stormmq.llvm.domain.types.*;
 
-public interface SingleValueType extends FirstClassType, VoidOrFirstClassTypeExcludingLabelAndMetadata, TypeWithSize, CanBePointedToType
+public interface SingleValueType extends FirstClassType, VoidOrFirstClassTypeExcludingLabelAndMetadata
 {
 }

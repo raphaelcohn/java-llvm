@@ -28,7 +28,7 @@ import org.jetbrains.annotations.*;
 import java.io.*;
 
 import static com.stormmq.string.Formatting.zeroPaddedUpperCaseHexString;
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import static com.stormmq.string.Utf8ByteUser.encodeToUtf8ByteArrayWithCertaintyValueIsValid;
 import static com.stormmq.string.StringUtilities.enumSerializationIsNotSupportedForConstantsInASecureContext;
 
 public enum FloatingPointBitsWriter
@@ -159,7 +159,7 @@ public enum FloatingPointBitsWriter
 
 	FloatingPointBitsWriter(@NonNls @NotNull final String prefix)
 	{
-		this.prefix = encodeUtf8BytesWithCertaintyValueIsValid(prefix);
+		this.prefix = encodeToUtf8ByteArrayWithCertaintyValueIsValid(prefix);
 	}
 
 	public final <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter, final long left, final long right) throws X

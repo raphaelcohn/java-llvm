@@ -24,18 +24,21 @@ package com.stormmq.llvm.domain.comdat;
 
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.ObjectFileFormat;
-import com.stormmq.llvm.domain.Writable;
-import com.stormmq.llvm.domain.target.triple.TargetTriple;
+import com.stormmq.llvm.domain.LlvmWritable;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import com.stormmq.string.Formatting;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.stormmq.llvm.domain.comdat.ComdatSelectionKind.any;
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import java.util.Set;
 
-public final class ComdatDefinition implements Writable
+import static com.stormmq.functions.CollectionHelper.add;
+import static com.stormmq.llvm.domain.comdat.ComdatSelectionKind.any;
+import static com.stormmq.string.Utf8ByteUser.encodeToUtf8ByteArrayWithCertaintyValueIsValid;
+
+public final class ComdatDefinition implements LlvmWritable
 {
-	@NotNull private static final byte[] Middle = encodeUtf8BytesWithCertaintyValueIsValid(" = comdat ");
+	@NotNull private static final byte[] Middle = encodeToUtf8ByteArrayWithCertaintyValueIsValid(" = comdat ");
 
 	@NotNull private final ComdatIdentifier comdatIdentifier;
 	@NotNull private final ComdatSelectionKind comdatSelectionKind;
@@ -47,10 +50,10 @@ public final class ComdatDefinition implements Writable
 	}
 
 	@Override
-	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
 		// $foo = comdat largest
-		writeComdatIdentifier(byteWriter);
+		writeComdatIdentifier(byteWriter, dataLayoutSpecification);
 		byteWriter.writeBytes(Middle);
 		byteWriter.writeBytes(comdatSelectionKind.llAssemblyValueWithLineFeed);
 	}
@@ -85,22 +88,14 @@ public final class ComdatDefinition implements Writable
 		return comdatIdentifier.hashCode();
 	}
 
-	public <X extends Exception> void writeComdatIdentifier(@NotNull final ByteWriter<X> byteWriter) throws X
+	public <X extends Exception> void writeComdatIdentifier(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
-		comdatIdentifier.write(byteWriter);
-	}
-
-	@NotNull
-	public ComdatIdentifier comdatIdentifier()
-	{
-		return comdatIdentifier;
+		comdatIdentifier.write(byteWriter, dataLayoutSpecification);
 	}
 
 	@Nullable
-	public ComdatDefinition adjustComdatDefinition(@NotNull final TargetTriple targetTriple)
+	public ComdatDefinition adjustComdatDefinition(@NotNull final ObjectFileFormat objectFileFormat)
 	{
-		final ObjectFileFormat objectFileFormat = targetTriple.objectFileFormat();
-
 		if (comdatSelectionKind.isSupportedByObjectFileFormat(objectFileFormat))
 		{
 			return this;

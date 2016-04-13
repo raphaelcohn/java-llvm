@@ -31,6 +31,14 @@ public enum DwarfTypeEncoding
 	@SuppressWarnings("unused")DW_ATE_signed_char(6),
 	@SuppressWarnings("unused")DW_ATE_unsigned(7),
 	@SuppressWarnings("unused")DW_ATE_unsigned_char(8),
+	DW_ATE_imaginary_float(9),
+	DW_ATE_packed_decimal(10),
+	DW_ATE_numeric_string(11),
+	DW_ATE_edited(12),
+	DW_ATE_signed_fixed(13),
+	DW_ATE_unsigned_fixed(14),
+	DW_ATE_decimal_float(15),
+	DW_ATE_UTF(16),
 	;
 
 	private final int value;

@@ -23,6 +23,7 @@
 package com.stormmq.llvm.domain.instructions;
 
 import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import com.stormmq.llvm.domain.types.Type;
 import org.jetbrains.annotations.*;
 
@@ -33,18 +34,18 @@ public abstract class AbstractInstruction<T extends Type> implements Instruction
 	}
 
 	@Override
-	public final <X extends Exception> void writeAsFunctionExpression(@NotNull final ByteWriter<X> byteWriter) throws X
+	public final <X extends Exception> void writeAsFunctionExpression(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
 		writeNameAndSpace(byteWriter);
-		writeBody(byteWriter);
+		writeBody(byteWriter, dataLayoutSpecification);
 	}
 
 	@Override
-	public final <X extends Exception> void writeAsConstantExpression(@NotNull final ByteWriter<X> byteWriter) throws X
+	public final <X extends Exception> void writeAsConstantExpression(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
 		writeNameAndSpace(byteWriter);
 		byteWriter.writeOpenBracket();
-		writeBody(byteWriter);
+		writeBody(byteWriter, dataLayoutSpecification);
 		byteWriter.writeCloseBracket();
 	}
 
@@ -56,5 +57,5 @@ public abstract class AbstractInstruction<T extends Type> implements Instruction
 	@NotNull
 	protected abstract byte[] nameWithSpaceAsLlAssemblyValue();
 
-	protected abstract <X extends Exception> void writeBody(@NotNull final ByteWriter<X> byteWriter) throws X;
+	protected abstract <X extends Exception> void writeBody(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X;
 }

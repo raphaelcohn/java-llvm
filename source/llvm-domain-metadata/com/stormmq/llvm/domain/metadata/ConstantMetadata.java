@@ -23,6 +23,7 @@
 package com.stormmq.llvm.domain.metadata;
 
 import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import com.stormmq.llvm.domain.typedValues.TypedValue;
 import com.stormmq.string.Formatting;
 import org.jetbrains.annotations.NotNull;
@@ -55,9 +56,9 @@ public final class ConstantMetadata implements Metadata
 	}
 
 	@Override
-	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
-		value.write(byteWriter);
+		value.write(byteWriter, dataLayoutSpecification);
 	}
 
 	@Override

@@ -24,6 +24,7 @@ package com.stormmq.llvm.domain.typedValues;
 
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.identifiers.AddressableIdentifier;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import com.stormmq.llvm.domain.types.Type;
 import org.jetbrains.annotations.NotNull;
 
@@ -38,8 +39,8 @@ public final class AddressableIdentifierTypedValue<T extends Type, I extends Add
 	}
 
 	@Override
-	protected <X extends Exception> void writeValue(@NotNull final ByteWriter<X> byteWriter) throws X
+	protected <X extends Exception> void writeValue(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
-		addressableIdentifier.write(byteWriter);
+		addressableIdentifier.write(byteWriter, dataLayoutSpecification);
 	}
 }

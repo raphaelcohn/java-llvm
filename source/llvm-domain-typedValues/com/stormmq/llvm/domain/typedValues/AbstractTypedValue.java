@@ -23,6 +23,7 @@
 package com.stormmq.llvm.domain.typedValues;
 
 import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import com.stormmq.llvm.domain.types.Type;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,14 +37,14 @@ public abstract class AbstractTypedValue<T extends Type> implements TypedValue<T
 	}
 
 	@Override
-	public final <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	public final <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
-		type.write(byteWriter);
+		type.write(byteWriter, dataLayoutSpecification);
 		byteWriter.writeSpace();
-		writeValue(byteWriter);
+		writeValue(byteWriter, dataLayoutSpecification);
 	}
 
-	protected abstract <X extends Exception> void writeValue(@NotNull final ByteWriter<X> byteWriter) throws X;
+	protected abstract <X extends Exception> void writeValue(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X;
 
 	@NotNull
 	@Override

@@ -23,10 +23,11 @@
 package com.stormmq.llvm.domain.types;
 
 import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import com.stormmq.string.Api;
 import org.jetbrains.annotations.*;
 
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import static com.stormmq.string.Utf8ByteUser.encodeToUtf8ByteArrayWithCertaintyValueIsValid;
 
 @Api
 public final class VariadicFunctionFormalParameterType implements TypeExcludingVoid
@@ -37,10 +38,10 @@ public final class VariadicFunctionFormalParameterType implements TypeExcludingV
 	{
 	}
 
-	@NotNull private static final byte[] ellipsis = encodeUtf8BytesWithCertaintyValueIsValid("...");
+	@NotNull private static final byte[] ellipsis = encodeToUtf8ByteArrayWithCertaintyValueIsValid("...");
 
 	@Override
-	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
 		byteWriter.writeBytes(ellipsis);
 	}

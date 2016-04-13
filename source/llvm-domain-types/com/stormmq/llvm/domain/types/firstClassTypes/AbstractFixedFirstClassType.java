@@ -23,9 +23,10 @@
 package com.stormmq.llvm.domain.types.firstClassTypes;
 
 import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import org.jetbrains.annotations.*;
 
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import static com.stormmq.string.Utf8ByteUser.encodeToUtf8ByteArrayWithCertaintyValueIsValid;
 
 public abstract class AbstractFixedFirstClassType implements FirstClassType
 {
@@ -33,11 +34,11 @@ public abstract class AbstractFixedFirstClassType implements FirstClassType
 
 	protected AbstractFixedFirstClassType(@NotNull @NonNls final String value)
 	{
-		this.value = encodeUtf8BytesWithCertaintyValueIsValid(value);
+		this.value = encodeToUtf8ByteArrayWithCertaintyValueIsValid(value);
 	}
 
 	@Override
-	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
 		byteWriter.writeBytes(value);
 	}

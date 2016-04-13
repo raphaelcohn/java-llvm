@@ -23,22 +23,23 @@
 package com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes;
 
 import com.stormmq.byteWriters.ByteWriter;
-import com.stormmq.llvm.domain.types.TypeWithSize;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
+import com.stormmq.llvm.domain.types.SizedType;
 import com.stormmq.string.Formatting;
 import org.jetbrains.annotations.*;
 
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import static com.stormmq.string.Utf8ByteUser.encodeToUtf8ByteArrayWithCertaintyValueIsValid;
 
-public final class ArrayType<T extends TypeWithSize> implements AggregateType
+public final class ArrayType<T extends SizedType> implements AggregateType, SizedType
 {
-	@NotNull private static final byte[] SpaceXSpace = encodeUtf8BytesWithCertaintyValueIsValid(" x ");
+	@NotNull private static final byte[] SpaceXSpace = encodeToUtf8ByteArrayWithCertaintyValueIsValid(" x ");
 
 	@NotNull private final T elementType;
-	private final int[] lengthsOfDimensions;
+	private final int[] eachDimensionsLength;
 
-	public ArrayType(@NotNull final T elementType, final int... lengthsOfDimensions)
+	public ArrayType(@NotNull final T elementType, final int... eachDimensionsLength)
 	{
-		final int length = lengthsOfDimensions.length;
+		final int length = eachDimensionsLength.length;
 		if (length == 0)
 		{
 			throw new IllegalArgumentException("dimensionLengths can not be empty");
@@ -46,7 +47,7 @@ public final class ArrayType<T extends TypeWithSize> implements AggregateType
 
 		for (int index = 0; index < length; index++)
 		{
-			final int dimensionLength = lengthsOfDimensions[index];
+			final int dimensionLength = eachDimensionsLength[index];
 			if (dimensionLength < 0)
 			{
 				throw new IllegalArgumentException(Formatting.format("Dimension '%1$s' (zero-based) can not be negative ('%2$s)", index, dimensionLength));
@@ -54,12 +55,12 @@ public final class ArrayType<T extends TypeWithSize> implements AggregateType
 		}
 
 		this.elementType = elementType;
-		this.lengthsOfDimensions = lengthsOfDimensions;
+		this.eachDimensionsLength = eachDimensionsLength;
 	}
 
 	public boolean isMultidimensional()
 	{
-		return lengthsOfDimensions.length > 1;
+		return eachDimensionsLength.length > 1;
 	}
 
 	public int lengthOfZerothDimension()
@@ -69,14 +70,14 @@ public final class ArrayType<T extends TypeWithSize> implements AggregateType
 
 	private int lengthOfDimension(final int zeroBasedDimensionIndex)
 	{
-		return lengthsOfDimensions[zeroBasedDimensionIndex];
+		return eachDimensionsLength[zeroBasedDimensionIndex];
 	}
 
 	@SuppressWarnings("ForLoopReplaceableByForEach")
 	@Override
-	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
-		final int length = lengthsOfDimensions.length;
+		final int length = eachDimensionsLength.length;
 
 		for (int zeroBasedDimensionIndex = 0; zeroBasedDimensionIndex < length; zeroBasedDimensionIndex++)
 		{
@@ -85,11 +86,28 @@ public final class ArrayType<T extends TypeWithSize> implements AggregateType
 			byteWriter.writeBytes(SpaceXSpace);
 		}
 
-		elementType.write(byteWriter);
+		elementType.write(byteWriter, dataLayoutSpecification);
 
 		for (int index = 0; index < length; index++)
 		{
 			byteWriter.writeCloseSquareBracket();
 		}
+	}
+
+	@Override
+	public int storageSizeInBits(@NotNull final DataLayoutSpecification dataLayoutSpecification)
+	{
+		int size = elementType.storageSizeInBits(dataLayoutSpecification);
+		for (final int lengthOfDimension : eachDimensionsLength)
+		{
+			size *= lengthOfDimension;
+		}
+		return size;
+	}
+
+	@Override
+	public int abiAlignmentInBits(@NotNull final DataLayoutSpecification dataLayoutSpecification)
+	{
+		return elementType.abiAlignmentInBits(dataLayoutSpecification);
 	}
 }

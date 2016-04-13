@@ -23,10 +23,9 @@
 package com.stormmq.byteWriters;
 
 import com.stormmq.string.InvalidUtf16StringException;
+import com.stormmq.string.Utf8ByteUser;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-
-import static com.stormmq.string.StringUtilities.encodeUtf8Bytes;
 
 public abstract class AbstractByteWriter<X extends Exception> implements ByteWriter<X>
 {
@@ -37,7 +36,7 @@ public abstract class AbstractByteWriter<X extends Exception> implements ByteWri
 	@Override
 	public final void writeUtf8EncodedString(@NotNull @NonNls final String value) throws InvalidUtf16StringException, X
 	{
-		encodeUtf8Bytes(value, this::writeByte);
+		((Utf8ByteUser<X>) this::writeByte).encodeUtf8Bytes(value);
 	}
 
 	@Override

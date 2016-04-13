@@ -24,10 +24,11 @@ package com.stormmq.llvm.domain.function.attributes.parameterAttributes;
 
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.attributes.AttributeKind;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import org.jetbrains.annotations.NotNull;
 
 import static com.stormmq.llvm.domain.attributes.AttributeKind.Defined;
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import static com.stormmq.string.Utf8ByteUser.encodeToUtf8ByteArrayWithCertaintyValueIsValid;
 
 public enum FixedParameterAttribute implements ParameterAttribute
 {
@@ -48,7 +49,7 @@ public enum FixedParameterAttribute implements ParameterAttribute
 
 	FixedParameterAttribute()
 	{
-		llvmAssemblyEncoding = encodeUtf8BytesWithCertaintyValueIsValid(name());
+		llvmAssemblyEncoding = encodeToUtf8ByteArrayWithCertaintyValueIsValid(name());
 	}
 
 	@NotNull
@@ -59,7 +60,7 @@ public enum FixedParameterAttribute implements ParameterAttribute
 	}
 
 	@Override
-	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
 		byteWriter.writeBytes(llvmAssemblyEncoding);
 	}

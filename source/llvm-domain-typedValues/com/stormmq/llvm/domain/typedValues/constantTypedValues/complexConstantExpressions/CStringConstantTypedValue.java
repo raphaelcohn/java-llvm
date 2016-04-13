@@ -23,16 +23,15 @@
 package com.stormmq.llvm.domain.typedValues.constantTypedValues.complexConstantExpressions;
 
 import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import com.stormmq.llvm.domain.typedValues.AbstractTypedValue;
 import com.stormmq.llvm.domain.typedValues.constantTypedValues.ConstantTypedValue;
 import com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType;
 import com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.ArrayType;
-import com.stormmq.string.InvalidUtf16StringException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import static com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType.i8;
-import static com.stormmq.string.StringUtilities.encodeUtf8Bytes;
 import static java.lang.Integer.toHexString;
 
 public final class CStringConstantTypedValue extends AbstractTypedValue<ArrayType<IntegerValueType>> implements ConstantTypedValue<ArrayType<IntegerValueType>>
@@ -43,20 +42,33 @@ public final class CStringConstantTypedValue extends AbstractTypedValue<ArrayTyp
 
 	@NotNull private final byte[] valueIncludingTerminalAsciiNullIfAppropriate;
 
+	private static final int CharMask = 0x00_FF;
+	@SuppressWarnings("NumericCastThatLosesPrecision")
 	@NotNull
 	public static CStringConstantTypedValue cStringValueTypeConstant(@NotNull @NonNls final String value, final boolean addTerminalAsciiNull)
 	{
-		final String valueToEncode = addTerminalAsciiNull ? value + '\u0000' : value;
+		// Sadly, some of the strings in Java's charsets.jar are invalid UTF-16 strings. We have to permit them.
 
-		final byte[] valueIncludingTerminalAsciiNullIfAppropriate;
-		try
+		final int length = value.length();
+		final int i = (length << 1) + (addTerminalAsciiNull ? 1 : 0);
+		if (i < 0)
 		{
-			valueIncludingTerminalAsciiNullIfAppropriate = encodeUtf8Bytes(valueToEncode);
+			throw new IllegalArgumentException("String is too big to convert");
 		}
-		catch (final InvalidUtf16StringException e)
+		final byte[] valueIncludingTerminalAsciiNullIfAppropriate = new byte[i];
+		for(int index = 0; index < length; index++)
 		{
-			throw new IllegalArgumentException("Invalid C Constant String", e);
+			final int character = value.charAt(index);
+			valueIncludingTerminalAsciiNullIfAppropriate[(index << 1)] = (byte)((character >> 8));
+			//noinspection MagicNumber
+			valueIncludingTerminalAsciiNullIfAppropriate[(index << 1) + 1] = (byte)((character & 0xFF));
 		}
+
+		if (addTerminalAsciiNull)
+		{
+			valueIncludingTerminalAsciiNullIfAppropriate[i - 1] = 0;
+		}
+
 		return new CStringConstantTypedValue(valueIncludingTerminalAsciiNullIfAppropriate);
 	}
 
@@ -67,7 +79,7 @@ public final class CStringConstantTypedValue extends AbstractTypedValue<ArrayTyp
 	}
 
 	@Override
-	protected <X extends Exception> void writeValue(@NotNull final ByteWriter<X> byteWriter) throws X
+	protected <X extends Exception> void writeValue(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
 		// eg  c"hello world\0A\00"
 

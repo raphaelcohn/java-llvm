@@ -24,10 +24,8 @@ package com.stormmq.llvm.domain.metadata.debugging;
 
 import com.stormmq.functions.*;
 import com.stormmq.llvm.domain.ReferenceTracker;
-import com.stormmq.llvm.domain.metadata.debugging.structAlignmentAndSizeCounters.StructAlignmentAndSizeCounter;
 import com.stormmq.llvm.domain.metadata.metadataTuples.*;
-import com.stormmq.llvm.domain.target.dataLayout.PointerSizing;
-import com.stormmq.llvm.domain.target.dataLayout.enumSizing.EnumSizing;
+import com.stormmq.llvm.domain.target.enumSizing.EnumSizeRule;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,67 +33,43 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.*;
 
-import static com.stormmq.functions.CollectionHelper.add;
-import static com.stormmq.functions.ListHelper.newArrayList;
 import static com.stormmq.functions.ListHelper.newArrayListExceptionally;
-import static com.stormmq.llvm.domain.metadata.debugging.DIDerivedTypeKeyedMetadataTuple.structMember;
 import static com.stormmq.llvm.domain.metadata.debugging.DISubrangeKeyedMetadataTuple.zeroBasedArrayDimension;
 import static com.stormmq.llvm.domain.metadata.debugging.dwarfTags.CompositeDwarfTag.DW_TAG_array_type;
 import static com.stormmq.llvm.domain.metadata.debugging.dwarfTags.CompositeDwarfTag.DW_TAG_enumeration_type;
 import static com.stormmq.llvm.domain.metadata.debugging.dwarfTags.CompositeDwarfTag.DW_TAG_structure_type;
-import static com.stormmq.llvm.domain.metadata.debugging.structAlignmentAndSizeCounters.StructAlignmentAndSizeCounter.newStructAlignmentAndSizeCounter;
 
 public final class DICompositeTypeKeyedMetadataTuple extends KeyedMetadataTuple implements TypeMetadata, ScopeMetadata
 {
-	private int sizeInBits;
-	private int alignmentInBits;
+	private final int storageSizeInBits;
+	private final int abiAlignmentInBits;
 
-	public DICompositeTypeKeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker)
+	public DICompositeTypeKeyedMetadataTuple(@NotNull final ReferenceTracker referenceTracker, final int storageSizeInBits, final int abiAlignmentInBits)
 	{
 		super(referenceTracker, false, "DICompositeType");
-		sizeInBits = -1;
-		alignmentInBits = -1;
+		this.storageSizeInBits = storageSizeInBits;
+		this.abiAlignmentInBits = abiAlignmentInBits;
 	}
 
 	@NotNull
-	public DICompositeTypeKeyedMetadataTuple populateStructure(@NonNls @NotNull final String name, @NotNull final ScopeMetadata scope, @NotNull final DIFileKeyedMetadataTuple file, final int lineNumber, @NotNull @NonNls final String identifier, @NotNull final PointerSizing pointerSizing, final boolean isPacked, @NotNull final SizedIterator<Entry<String, TypeMetadata>> fields)
+	public DICompositeTypeKeyedMetadataTuple populateStructure(@NonNls @NotNull final String name, @NotNull final ScopeMetadata scope, @NotNull final DIFileKeyedMetadataTuple file, final int lineNumber, @NotNull @NonNls final String identifier, final boolean isPacked, @NotNull final List<DIDerivedTypeKeyedMetadataTuple> elements)
 	{
 		// We do not yet support vtableHolder: !"_ZTSN3com7stormmq11inheritance13HasAnnotationE"
 
-		final DICompositeTypeKeyedMetadataTuple parentScope = this;
-
-		final StructAlignmentAndSizeCounter structAlignmentAndSizeCounter = newStructAlignmentAndSizeCounter(isPacked);
-		final List<DIDerivedTypeKeyedMetadataTuple> elements = newArrayList(fields.size(), list ->
-		{
-			fields.forEachRemaining(entry ->
-			{
-				final String fieldName = entry.getKey();
-				final TypeMetadata fieldTypeMetadata = entry.getValue();
-
-				final DIDerivedTypeKeyedMetadataTuple element = structMember(referenceTracker, parentScope, file, UnknownLineNumber, fieldTypeMetadata, pointerSizing, fieldName, structAlignmentAndSizeCounter.currentOffsetInBits());
-				structAlignmentAndSizeCounter.accept(add(list, element));
-			});
-		});
-
-		sizeInBits = structAlignmentAndSizeCounter.sizeInBits();
-		alignmentInBits = structAlignmentAndSizeCounter.alignmentInBits();
-		populate(Key.tag.with(DW_TAG_structure_type), Key.name.with(name), Key.scope.with(scope), Key.file.with(file), Key.lineNumber.with(lineNumber), Key.size.with(sizeInBits), Key.align.with(alignmentInBits), Key.identifier.with(identifier), Key.elements.with(new AnonymousMetadataTuple(referenceTracker, elements)));
+		populate(Key.tag.with(DW_TAG_structure_type), Key.name.with(name), Key.scope.with(scope), Key.file.with(file), Key.lineNumber.with(lineNumber), Key.size.with(storageSizeInBits), Key.align.with(abiAlignmentInBits), Key.identifier.with(identifier), Key.elements.with(new AnonymousMetadataTuple(referenceTracker, elements)));
 		return this;
 	}
 
 	@NotNull
-	public DICompositeTypeKeyedMetadataTuple populateEnum(@NotNull final EnumSizing enumSizing, @NonNls @NotNull final String name, @NotNull final DIFileKeyedMetadataTuple file, final int lineNumber, @NotNull final SizedIterator<Entry<String, Integer>> enumeratedValues)
+	public DICompositeTypeKeyedMetadataTuple populateEnum(@NotNull final EnumSizeRule enumSizing, @NonNls @NotNull final String name, @NotNull final DIFileKeyedMetadataTuple file, final int lineNumber, @NotNull final SizedIterator<Entry<String, Integer>> enumeratedValues)
 	{
-		final long[] maximumLong = new long[1];
-
 		final List<DIEnumeratorKeyedMetadataTuple> elements = newArrayListExceptionally(enumeratedValues.size(), list ->
 		{
+			final long[] maximumLong = new long[1];
 			enumeratedValues.forEachRemaining(new MaximumEnumConsumer(referenceTracker, list, maximumLong));
 		});
 
-		sizeInBits = enumSizing.sizeAndAlignmentInBits(maximumLong[0]);
-		alignmentInBits = sizeInBits;
-		populate(Key.tag.with(DW_TAG_enumeration_type), Key.name.with(name), Key.file.with(file), Key.lineNumber.with(lineNumber), Key.size.with(sizeInBits), Key.align.with(alignmentInBits), Key.elements.with(new AnonymousMetadataTuple(referenceTracker, elements)));
+		populate(Key.tag.with(DW_TAG_enumeration_type), Key.name.with(name), Key.file.with(file), Key.lineNumber.with(lineNumber), Key.size.with(storageSizeInBits), Key.align.with(abiAlignmentInBits), Key.elements.with(new AnonymousMetadataTuple(referenceTracker, elements)));
 		return this;
 	}
 
@@ -111,37 +85,35 @@ public final class DICompositeTypeKeyedMetadataTuple extends KeyedMetadataTuple 
 		}
 
 		final List<DISubrangeKeyedMetadataTuple> elements = new ArrayList<>(length);
-		int size = underlyingType.sizeInBits();
+		int size = underlyingType.storageSizeInBits();
 		for (int index = 0; index < length; index++)
 		{
 			final int dimensionSize = dimensionSizes[index];
 			elements.add(zeroBasedArrayDimension(referenceTracker, dimensionSize));
 			size *= dimensionSize;
 		}
-		sizeInBits = size;
-		alignmentInBits = underlyingType.alignmentInBits();
-		populate(Key.tag.with(DW_TAG_array_type), Key.baseType.with(underlyingType), Key.size.with(sizeInBits), Key.align.with(alignmentInBits), Key.elements.with(new AnonymousMetadataTuple(referenceTracker, elements)));
+		populate(Key.tag.with(DW_TAG_array_type), Key.baseType.with(underlyingType), Key.size.with(storageSizeInBits), Key.align.with(abiAlignmentInBits), Key.elements.with(new AnonymousMetadataTuple(referenceTracker, elements)));
 		return this;
 	}
 
 	@Override
-	public int alignmentInBits()
+	public int abiAlignmentInBits()
 	{
-		if (alignmentInBits < 0)
+		if (abiAlignmentInBits < 0)
 		{
-			throw new IllegalStateException("Can not ask for alignmentInBits before a structure has been populated");
+			throw new IllegalStateException("Can not ask for abiAlignmentInBits before a structure has been populated");
 		}
-		return alignmentInBits;
+		return abiAlignmentInBits;
 	}
 
 	@Override
-	public int sizeInBits()
+	public int storageSizeInBits()
 	{
-		if (sizeInBits < 0)
+		if (storageSizeInBits < 0)
 		{
-			throw new IllegalStateException("Can not ask for sizeInBits before a structure has been populated");
+			throw new IllegalStateException("Can not ask for storageSizeInBits before a structure has been populated");
 		}
-		return sizeInBits;
+		return storageSizeInBits;
 	}
 
 	private static final class MaximumEnumConsumer implements Consumer<Entry<String, Integer>>

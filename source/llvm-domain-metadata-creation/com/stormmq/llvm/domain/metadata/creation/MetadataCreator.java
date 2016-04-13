@@ -23,8 +23,8 @@
 package com.stormmq.llvm.domain.metadata.creation;
 
 import com.stormmq.llvm.domain.ReferenceTracker;
-import com.stormmq.llvm.domain.target.dataLayout.DataLayoutSpecification;
-import com.stormmq.llvm.domain.types.CanBePointedToType;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
+import com.stormmq.llvm.domain.types.SizedType;
 import com.stormmq.llvm.domain.variables.GlobalVariable;
 import com.stormmq.llvm.domain.metadata.Metadata;
 import com.stormmq.llvm.domain.metadata.debugging.*;
@@ -51,13 +51,13 @@ public final class MetadataCreator<N>
 	@NotNull private final DebuggingTypeDefinitions<N> debuggingTypeDefinitions;
 	@NotNull private final LlvmDebugLanguage llvmDebugLanguage;
 
-	public MetadataCreator(@NotNull final LlvmDebugLanguage llvmDebugLanguage, @NotNull final String relativeFilePath, @NotNull final Path relativeRootFolderPath, @NotNull final DataLayoutSpecification dataLayoutSpecification, @NotNull final NamespaceSplitter<N> namespaceSplitter)
+	public MetadataCreator(@NotNull final LlvmDebugLanguage llvmDebugLanguage, @NotNull final String relativeFilePath, @NotNull final Path relativeRootFolderPath, @NotNull final DataLayoutSpecification dataLayoutSpecification, @NotNull final NamespaceSplitter<N> namespaceSplitter, @NotNull final CTypeMappings cTypeMappings)
 	{
 		this.llvmDebugLanguage = llvmDebugLanguage;
 		referenceTracker = new ReferenceTracker();
 		file = file(relativeFilePath, relativeRootFolderPath.toString());
 		diCompileUnit = new DICompileUnitKeyedMetadataTuple(referenceTracker);
-		debuggingTypeDefinitions = new DebuggingTypeDefinitions<>(dataLayoutSpecification, referenceTracker, file, namespaceSplitter);
+		debuggingTypeDefinitions = new DebuggingTypeDefinitions<>(dataLayoutSpecification, referenceTracker, file, namespaceSplitter, cTypeMappings);
 	}
 
 	@NotNull
@@ -97,12 +97,6 @@ public final class MetadataCreator<N>
 	}
 
 	@NotNull
-	public DICompileUnitKeyedMetadataTuple possiblyUnpopulatedCompileUnit()
-	{
-		return diCompileUnit;
-	}
-
-	@NotNull
 	public LlvmDbgCuNamedMetadataTuple newSimpleCompileUnits(@NotNull final TypedMetadataTuple<DISubprogramKeyedMetadataTuple> subprograms, @NotNull final TypedMetadataTuple<DIGlobalVariableKeyedMetadataTuple> globals)
 	{
 		final DICompileUnitKeyedMetadataTuple diCompileUnitKeyedMetadataTuple = newSimpleCompileUnit(subprograms, globals);
@@ -121,7 +115,7 @@ public final class MetadataCreator<N>
 	}
 
 	@NotNull
-	public <T extends CanBePointedToType> DIGlobalVariableKeyedMetadataTuple newGlobalVariable(@NonNls @NotNull final String unmangledName, @NotNull final TypeMetadata type, final boolean isLocal, @NotNull final GlobalVariable<T> globalVariable)
+	public <T extends SizedType> DIGlobalVariableKeyedMetadataTuple newGlobalVariable(@NonNls @NotNull final String unmangledName, @NotNull final TypeMetadata type, final boolean isLocal, @NotNull final GlobalVariable<T> globalVariable)
 	{
 		// type ==> !60 = !DIDerivedType(tag: DW_TAG_const_type, baseType: !12)  => for a constant
 		// !59 = !DIGlobalVariable(name: "XXXXXX", scope: !0, file: !1, line: 6, type: !60, isLocal: false, isDefinition: true, variable: i32* @XXXXXX)

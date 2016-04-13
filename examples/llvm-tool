@@ -4,14 +4,11 @@
 set -u
 set -e
 
-# brew install llvm38 --with-all-targets --with-asan --with-lld --with-lldb --without-assertions
-toolsPath='/usr/local/opt/llvm38/lib/llvm-3.8/bin'
-systemHeadersPath='/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/usr/include'
-outFolderPath='../out/examples'
-
 _llvm_tool()
 {
-	PATH="$toolsPath":"$PATH" "$@"
+	local tool="$1"
+	shift 1
+	"$tool"-"$llvmVersion" "$@"
 }
 
 _llvm_tool_config()
@@ -39,12 +36,12 @@ _llvm_architecture_help_attributes()
 
 _llvm_tool_clang_c11()
 {
-	_llvm_tool clang -std=c11 -c -S -emit-llvm -O0 -isystem "$systemHeadersPath" "$@"
+	_llvm_tool clang --target="$clangTarget" -std=c11 -c -S -emit-llvm -O0 -isystem "$systemHeadersPath" "$@"
 }
 
 _llvm_tool_clang_cxx()
 {
-	_llvm_tool clang -c -S -emit-llvm -O0 -isystem "$systemHeadersPath" "$@"
+	_llvm_tool clang --target="$clangTarget" -c -S -emit-llvm -O0 -isystem "$systemHeadersPath" "$@"
 }
 
 compileToAssemblyLanguage()
@@ -233,6 +230,7 @@ assemble()
 	_assemble_actions()
 	{
 		rm -rf "$outFolderPath"/"$baseFilePath".ll
+		pwd
 		cp "$baseFilePath".ll "$outFolderPath"/"$baseFilePath".ll
 		_common_actions
 	}
@@ -418,8 +416,42 @@ bcanalyzer()
 	_llvm_tool llvm-bcanalyzer -dump "$1"
 }
 
+targets()
+{
+	_llvm_tool llc --version
+}
+
+_set_paths()
+{
+	
+	# brew install llvm38 --with-all-targets --with-asan --with-lld --with-lldb --without-assertions
+	mkdir -m 0755 -p "$outFolderPath"
+	cd "$outFolderPath" 1>/dev/null 2>/dev/null
+		outFolderPath="$(pwd -P)"
+	cd - 1>/dev/null 2>/dev/null
+}
+
 main()
 {
+	local llvmVersion=3.8
+	#local clangTarget='x86_64-apple-darwin14.5.0'
+	#local clangTarget='x86_64-pc-linux'
+	#local clangTarget='i686-pc-linux'
+	#local clangTarget='aarch64-pc-linux'
+	#local clangTarget='aarch64_be-pc-linux'
+	local clangTarget='mips64-pc-linux'
+	#local clangTarget='mips64el-pc-linux'
+	#local clangTarget='ppc64-pc-linux'
+	#local clangTarget='ppc64le-pc-linux'
+	#local clangTarget='sparcv9-pc-linux'
+	#local clangTarget='armv7-pc-linux-eabi'
+	
+	#local toolsPath='/usr/local/opt/llvm38/lib/llvm-3.8/bin'
+	local systemHeadersPath='/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/usr/include'
+	local outFolderPath="$_program_path/../out/examples"
+	
+	_set_paths
+	
 	local operation
 	if [ $# -eq 0 ]; then
 		printf '%s\n' "Please supply an 'operation'"
@@ -427,8 +459,6 @@ main()
 	fi
 	local operation="$1"
 	shift 1
-	
-	mkdir -m 0755 -p "$outFolderPath"
 	
 	case "$operation" in
 		
@@ -500,6 +530,10 @@ bcanalyzer /path/to/one/or/more/files/ending.bc
 			bcanalyzer "$@"
 		;;
 		
+		targets)
+			targets "$@"
+		;;
+		
 		*.ll)
 			assemble "$operation" "$@"
 		;;
@@ -519,5 +553,80 @@ bcanalyzer /path/to/one/or/more/files/ending.bc
 		
 	esac
 }
+
+_program_path_find()
+{
+    if [ "${_program_fattening_program_path+set}" = 'set' ]; then
+        printf '%s\n' "$_program_fattening_program_path"
+
+    elif [ "${0%/*}" = "$0" ]; then
+
+        # We've been invoked by the interpreter as, say, bash program
+        if [ -r "$0" ]; then
+            pwd -P
+        # Clutching at straws; probably run via a download, anonymous script, etc, weird execve, etc
+        else
+            printf '\n'
+        fi
+
+    else
+
+        # We've been invoked with a relative or absolute path (also when invoked via PATH in a shell)
+
+        _program_path_find_parentPath()
+        {
+            parentPath="${scriptPath%/*}"
+            if [ -z "$parentPath" ]; then
+                parentPath='/'
+            fi
+            cd "$parentPath" 1>/dev/null
+        }
+
+        # pdksh / mksh have problems with unsetting a variable that was never set...
+        if [ "${CDPATH+set}" = 'set' ]; then
+            unset CDPATH
+        fi
+
+        if command -v realpath 1>/dev/null 2>/dev/null; then
+            (
+                scriptPath="$(realpath "$0")"
+
+                _program_path_find_parentPath
+                pwd -P
+            )
+        elif command -v readlink 1>/dev/null 2>/dev/null; then
+            (
+                scriptPath="$0"
+
+                while [ -L "$scriptPath" ]
+                do
+                    _program_path_find_parentPath
+                    scriptPath="$(readlink "$scriptPath")"
+                done
+
+                _program_path_find_parentPath
+                pwd -P
+            )
+        else
+            # This approach will fail in corner cases where the script itself is a symlink in a path not parallel with the concrete script
+            (
+                scriptPath="$0"
+
+                _program_path_find_parentPath
+                pwd -P
+            )
+        fi
+
+    fi
+}
+
+_program_name='overdrive'
+_program_version='unversioned'
+_program_package_or_build=''
+_program_path="$(_program_path_find)"
+_program_libPath="${_program_path}/lib"
+_program_etcPath="${_program_path}/etc"
+_program_varPath="${_program_path}/var"
+_program_entrypoint='overdrive'
 
 main "$@"

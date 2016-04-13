@@ -23,38 +23,40 @@
 package com.stormmq.llvm.domain.types.firstClassTypes;
 
 import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
+import com.stormmq.llvm.domain.types.SizedType;
 import com.stormmq.string.Api;
-import com.stormmq.string.Formatting;
 import org.jetbrains.annotations.NotNull;
 
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import static com.stormmq.string.Formatting.format;
+import static com.stormmq.string.Utf8ByteUser.encodeToUtf8ByteArrayWithCertaintyValueIsValid;
 
 @Api
-public final class VectorType<T extends PrimitiveSingleValueType> implements SingleValueType
+public final class VectorType<T extends PrimitiveSingleValueType> implements SingleValueType, SizedType
 {
-	@NotNull private static final byte[] SpaceXSpace = encodeUtf8BytesWithCertaintyValueIsValid(" x ");
+	@NotNull private static final byte[] SpaceXSpace = encodeToUtf8ByteArrayWithCertaintyValueIsValid(" x ");
 
-	@NotNull private final T primitiveSingleValueType;
+	@NotNull private final T elementType;
 	private final int numberOfElements;
 
-	public VectorType(@NotNull final T primitiveSingleValueType, final int numberOfElements)
+	public VectorType(@NotNull final T elementType, final int numberOfElements)
 	{
 		if (numberOfElements < 1)
 		{
-			throw new IllegalArgumentException(Formatting.format("Number of element can not be '%1$s' - it must be greater than zero", numberOfElements));
+			throw new IllegalArgumentException(format("Number of element can not be '%1$s' - it must be greater than zero", numberOfElements));
 		}
-		this.primitiveSingleValueType = primitiveSingleValueType;
+		this.elementType = elementType;
 		this.numberOfElements = numberOfElements;
 	}
 
 	@Override
-	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
 		byteWriter.writeOpenAngleBracket();
 
 		byteWriter.writeUtf8EncodedStringWithCertainty(Integer.toString(numberOfElements));
 		byteWriter.writeBytes(SpaceXSpace);
-		primitiveSingleValueType.write(byteWriter);
+		elementType.write(byteWriter, dataLayoutSpecification);
 
 		byteWriter.writeCloseAngleBracket();
 	}
@@ -62,5 +64,17 @@ public final class VectorType<T extends PrimitiveSingleValueType> implements Sin
 	public boolean hasNumberOfElements(final int numberOfElements)
 	{
 		return this.numberOfElements == numberOfElements;
+	}
+
+	@Override
+	public int storageSizeInBits(@NotNull final DataLayoutSpecification dataLayoutSpecification)
+	{
+		return elementType.storageSizeInBits(dataLayoutSpecification) * numberOfElements;
+	}
+
+	@Override
+	public int abiAlignmentInBits(@NotNull final DataLayoutSpecification dataLayoutSpecification)
+	{
+		return elementType.abiAlignmentInBits(dataLayoutSpecification);
 	}
 }

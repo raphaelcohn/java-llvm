@@ -23,21 +23,22 @@
 package com.stormmq.llvm.domain.asm;
 
 import com.stormmq.byteWriters.ByteWriter;
-import com.stormmq.llvm.domain.Writable;
+import com.stormmq.llvm.domain.LlvmWritable;
 import com.stormmq.llvm.domain.identifiers.LlvmString;
 import com.stormmq.llvm.domain.identifiers.LocalIdentifier;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import static com.stormmq.llvm.domain.asm.Dialect.Intel;
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import static com.stormmq.string.Utf8ByteUser.encodeToUtf8ByteArrayWithCertaintyValueIsValid;
 
-public final class InlineAsm implements Writable
+public final class InlineAsm implements LlvmWritable
 {
-	@NotNull private static final byte[] asmSpace = encodeUtf8BytesWithCertaintyValueIsValid("asm ");
-	@SuppressWarnings("SpellCheckingInspection") @NotNull private static final byte[] sideeffectSpace = encodeUtf8BytesWithCertaintyValueIsValid("sideeffect ");
-	@SuppressWarnings("SpellCheckingInspection") @NotNull private static final byte[] alignstackSpace = encodeUtf8BytesWithCertaintyValueIsValid("alignstack ");
-	@SuppressWarnings("SpellCheckingInspection") @NotNull private static final byte[] inteldialectSpace = encodeUtf8BytesWithCertaintyValueIsValid("inteldialect ");
+	@NotNull private static final byte[] asmSpace = encodeToUtf8ByteArrayWithCertaintyValueIsValid("asm ");
+	@SuppressWarnings("SpellCheckingInspection") @NotNull private static final byte[] sideeffectSpace = encodeToUtf8ByteArrayWithCertaintyValueIsValid("sideeffect ");
+	@SuppressWarnings("SpellCheckingInspection") @NotNull private static final byte[] alignstackSpace = encodeToUtf8ByteArrayWithCertaintyValueIsValid("alignstack ");
+	@SuppressWarnings("SpellCheckingInspection") @NotNull private static final byte[] inteldialectSpace = encodeToUtf8ByteArrayWithCertaintyValueIsValid("inteldialect ");
 
 	@NotNull private final LlvmString templateWithEscapedDollarSigns;
 	@NotNull private final LlvmString constraintLetters;
@@ -58,7 +59,7 @@ public final class InlineAsm implements Writable
 	}
 
 	@Override
-	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
 		byteWriter.writeBytes(asmSpace);
 
@@ -77,10 +78,10 @@ public final class InlineAsm implements Writable
 			byteWriter.writeBytes(inteldialectSpace);
 		}
 
-		templateWithEscapedDollarSigns.write(byteWriter);
+		templateWithEscapedDollarSigns.write(byteWriter, dataLayoutSpecification);
 		byteWriter.writeBytes(CommaSpace);
 
-		constraintLetters.write(byteWriter);
+		constraintLetters.write(byteWriter, dataLayoutSpecification);
 
 		byteWriter.writeOpenBracket();
 		final int length = parameters.length;
@@ -90,8 +91,8 @@ public final class InlineAsm implements Writable
 			{
 				byteWriter.writeBytes(CommaSpace);
 			}
-			parameters[index].write(byteWriter);
+			parameters[index].write(byteWriter, dataLayoutSpecification);
 		}
-		byteWriter.writeBytes(Writable.CloseBracketLineFeed);
+		byteWriter.writeBytes(LlvmWritable.CloseBracketLineFeed);
 	}
 }

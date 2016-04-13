@@ -24,9 +24,10 @@ package com.stormmq.llvm.domain.function.attributes.functionAttributes;
 
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.attributes.AttributeKind;
+import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import org.jetbrains.annotations.NotNull;
 
-import static com.stormmq.string.StringUtilities.encodeUtf8BytesWithCertaintyValueIsValid;
+import static com.stormmq.string.Utf8ByteUser.encodeToUtf8ByteArrayWithCertaintyValueIsValid;
 
 public enum FixedFunctionAttribute implements FunctionAttribute
 {
@@ -70,7 +71,7 @@ public enum FixedFunctionAttribute implements FunctionAttribute
 
 	FixedFunctionAttribute()
 	{
-		llvmAssemblyEncoding = encodeUtf8BytesWithCertaintyValueIsValid(name());
+		llvmAssemblyEncoding = encodeToUtf8ByteArrayWithCertaintyValueIsValid(name());
 	}
 
 	@NotNull
@@ -81,7 +82,7 @@ public enum FixedFunctionAttribute implements FunctionAttribute
 	}
 
 	@Override
-	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
 		byteWriter.writeBytes(llvmAssemblyEncoding);
 	}
