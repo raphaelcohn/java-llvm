@@ -20,11 +20,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.java.llvm.xxx;
+package com.stormmq.java.llvm.xxx.happy;
 
 import com.stormmq.java.classfile.processing.Records;
 import com.stormmq.java.classfile.processing.TypeInformationTripletUser;
 import com.stormmq.java.classfile.processing.typeInformationUsers.TypeInformationTriplet;
+import com.stormmq.java.llvm.xxx.Process;
 import com.stormmq.java.parsing.utilities.names.PackageName;
 import com.stormmq.llvm.domain.metadata.creation.*;
 import com.stormmq.llvm.domain.target.DataLayoutSpecification;
@@ -32,7 +33,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.stormmq.llvm.domain.metadata.debugging.LlvmDebugLanguage.DW_LANG_Java;
 
-public final class JavaConvertingTypeInformationTripletUser implements TypeInformationTripletUser
+public final class JavaConvertingTypeInformationTripletUser implements TypeInformationTripletUser<ClassToStructureMap>
 {
 	@NotNull private final ModuleCreatorAndWriter moduleCreatorAndWriter;
 	@NotNull private final NamespaceSplitter<PackageName> namespaceSplitter;
@@ -48,10 +49,10 @@ public final class JavaConvertingTypeInformationTripletUser implements TypeInfor
 	}
 
 	@Override
-	public void use(@NotNull final Records records, @NotNull final TypeInformationTriplet typeInformationTriplet)
+	public void use(@SuppressWarnings("ParameterNameDiffersFromOverriddenParameter") @NotNull final ClassToStructureMap classToStructureMap, @NotNull final TypeInformationTriplet typeInformationTriplet)
 	{
 		final MetadataCreator<PackageName> metadataCreator = new MetadataCreator<>(DW_LANG_Java, typeInformationTriplet.relativeFilePath, typeInformationTriplet.relativeRootFolderPath, dataLayoutSpecification, namespaceSplitter, cTypeMappings);
-		final Process process = new Process(records, typeInformationTriplet, dataLayoutSpecification, metadataCreator);
+		final Process process = new Process(dataLayoutSpecification, classToStructureMap, metadataCreator, metadataCreator.debuggingTypeDefinitions(), typeInformationTriplet);
 		process.process(moduleCreatorAndWriter);
 	}
 }

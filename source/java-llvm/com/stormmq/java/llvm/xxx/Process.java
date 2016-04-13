@@ -22,79 +22,76 @@
 
 package com.stormmq.java.llvm.xxx;
 
-import com.stormmq.java.classfile.domain.InternalTypeName;
 import com.stormmq.java.classfile.domain.information.FieldInformation;
 import com.stormmq.java.classfile.domain.uniqueness.FieldUniqueness;
-import com.stormmq.java.classfile.processing.Records;
 import com.stormmq.java.classfile.processing.typeInformationUsers.TypeInformationTriplet;
+import com.stormmq.java.llvm.xxx.happy.*;
+import com.stormmq.java.llvm.xxx.typeConverters.*;
+import com.stormmq.java.llvm.xxx.typeConverters.typeNameVisitors.*;
 import com.stormmq.java.parsing.utilities.names.PackageName;
+import com.stormmq.java.parsing.utilities.names.typeNames.referenceTypeNames.KnownReferenceTypeName;
 import com.stormmq.llvm.domain.asm.ModuleLevelInlineAsm;
 import com.stormmq.llvm.domain.function.FunctionDeclaration;
 import com.stormmq.llvm.domain.function.FunctionDefinition;
 import com.stormmq.llvm.domain.identifiers.GlobalIdentifier;
-import com.stormmq.llvm.domain.metadata.creation.DebuggingTypeDefinitions;
-import com.stormmq.llvm.domain.metadata.creation.MetadataCreator;
+import com.stormmq.llvm.domain.metadata.creation.*;
 import com.stormmq.llvm.domain.metadata.debugging.*;
 import com.stormmq.llvm.domain.metadata.metadataTuples.TypedMetadataTuple;
 import com.stormmq.llvm.domain.target.Architecture;
 import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import com.stormmq.llvm.domain.typedValues.constantTypedValues.ConstantTypedValue;
 import com.stormmq.llvm.domain.types.SizedType;
-import com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType;
 import com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.structureTypes.*;
 import com.stormmq.llvm.domain.variables.Alias;
 import com.stormmq.llvm.domain.variables.GlobalVariable;
+import com.stormmq.tuples.Triplet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
 import static com.stormmq.functions.CollectionHelper.add;
-import static com.stormmq.functions.CollectionHelper.addOnce;
-import static com.stormmq.java.llvm.xxx.ToLlvmConstantFieldConstantUser.toLlvmConstant;
+import static com.stormmq.java.llvm.xxx.happy.Identifiers.createStaticFieldGlobalIdentifier;
+import static com.stormmq.java.llvm.xxx.happy.ToConstantTypedValueFieldConstantUser.toLlvmConstant;
 import static com.stormmq.llvm.domain.AddressSpace.GlobalAddressSpace;
 import static com.stormmq.llvm.domain.DllStorageClass.NoDllStorageClass;
 import static com.stormmq.llvm.domain.Linkage.external;
-import static com.stormmq.llvm.domain.Linkage.linkonce_odr;
 import static com.stormmq.llvm.domain.ThreadLocalStorageModel.NoThreadLocalStorageModel;
 import static com.stormmq.llvm.domain.Visibility._default;
-import static com.stormmq.llvm.domain.instructions.PointerToIntegerInstruction.offsetOfFieldInStructureTypeConstantTypedValue;
-import static com.stormmq.llvm.domain.instructions.PointerToIntegerInstruction.sizeOfStructureTypeConstantTypedValue;
 import static java.util.Collections.*;
 
 public final class Process
 {
-	private static final int BestGuessOfNumberOfParentFields = 64;
 	@NotNull private static final Map<Architecture, List<ModuleLevelInlineAsm>> NoModuleLevelInlineAssembly = emptyMap();
 	@NotNull private static final Set<Alias> NoAliases = emptySet();
 
-	@NotNull private final Records records;
 	@NotNull private final TypeInformationTriplet self;
 	@NotNull private final DataLayoutSpecification dataLayoutSpecification;
 	@NotNull private final MetadataCreator<PackageName> metadataCreator;
-	@NotNull private final ReferencedClasses referencedClasses;
-	@NotNull private final UsefulRecords usefulRecords;
+	@NotNull private final ClassToStructureMap classToStructureMap;
+	private final TypeConverter<TypeMetadata> typeMetadataTypeConverter;
+	private final TypeConverter<SizedType> sizedTypeTypeConverter;
 
-	public Process(@NotNull final Records records, @NotNull final TypeInformationTriplet self, @NotNull final DataLayoutSpecification dataLayoutSpecification, @NotNull final MetadataCreator<PackageName> metadataCreator)
+	public Process(@NotNull final DataLayoutSpecification dataLayoutSpecification, @NotNull final ClassToStructureMap classToStructureMap, @NotNull final MetadataCreator<PackageName> metadataCreator, @NotNull final DebuggingTypeDefinitions<PackageName> debuggingTypeDefinitions, @NotNull final TypeInformationTriplet self)
 	{
-		this.records = records;
 		this.self = self;
 		this.dataLayoutSpecification = dataLayoutSpecification;
 		this.metadataCreator = metadataCreator;
 
-		referencedClasses = new ReferencedClasses(self);
-		usefulRecords = new UsefulRecords(records);
+		this.classToStructureMap = classToStructureMap;
+		typeMetadataTypeConverter = new ToTypeMetadataTypeConverter(new SimpleTypeConverter<>(new ToTypeMetadataTypeNameVisitor(this.classToStructureMap, debuggingTypeDefinitions)), debuggingTypeDefinitions);
+		sizedTypeTypeConverter = new SimpleTypeConverter<>(new ToSizedTypeTypeNameVisitor(this.classToStructureMap));
 	}
 
 	public void process(@NotNull final ModuleCreatorAndWriter moduleCreatorAndWriter)
 	{
 		final Set<GlobalVariable<?>> globalVariablesAndConstants = new HashSet<>(self.numberOfStaticFields() + 1);
 		final List<DIGlobalVariableKeyedMetadataTuple> debugGlobals = new ArrayList<>(globalVariablesAndConstants.size());
-		final Set<LocallyIdentifiedStructureType> structureTypes = new HashSet<>(referencedClasses.size() + 1);
+		final Set<LocallyIdentifiedStructureType> structureTypes = new HashSet<>(1);
 		final Set<FunctionDefinition> functionsDefinitions = new HashSet<>(self.numberOfStaticMethods() + self.numberOfInstanceMethods());
 
 		processStaticFields(globalVariablesAndConstants, debugGlobals);
-		processInstanceFields(structureTypes, globalVariablesAndConstants);
+		processInstanceFields(structureTypes);
 		processStaticFunctions(functionsDefinitions);
 		processInstanceFunctions(functionsDefinitions);
 
@@ -109,58 +106,39 @@ public final class Process
 	{
 		self.forEachStaticField((fieldInformation) ->
 		{
-			final FieldUniqueness fieldUniqueness = fieldInformation.fieldUniqueness;
-			final GlobalVariable<?> globalVariable = add(globals, staticFieldToGlobalVariable(fieldUniqueness, fieldInformation));
+			final GlobalVariable<?> globalVariable = add(globals, staticFieldToGlobalVariable(fieldInformation));
 
-			final InternalTypeName internalTypeName = fieldUniqueness.fieldDescriptor.internalTypeName;
-			final TypeMetadata resolved = typeConverter.convertInternalTypeNameToLlvmTypeMetadata(internalTypeName);
-
-			final TypeMetadata type = globalVariable.isConstant() ? metadataCreator.constantDerivedType(resolved) : resolved;
-			debugGlobals.add(metadataCreator.newGlobalVariable(fieldUniqueness.fieldName.name(), type, fieldInformation.isPrivate(), globalVariable));
+			debugGlobals.add(staticFieldToDebugGlobalVariable(fieldInformation, globalVariable));
 		});
 	}
 
 	@NotNull
-	private <T extends SizedType> GlobalVariable<T> staticFieldToGlobalVariable(@NotNull final FieldUniqueness fieldUniqueness, @NotNull final FieldInformation fieldInformation)
+	private GlobalVariable<SizedType> staticFieldToGlobalVariable(@NotNull final FieldInformation fieldInformation)
 	{
-		final GlobalIdentifier staticFieldName = referencedClasses.staticFieldGlobalIdentifier(fieldUniqueness);
-		@SuppressWarnings("unchecked") final T llvmType = (T) typeConverter.convertFieldToLlvmType(fieldUniqueness);
-		@Nullable final ConstantTypedValue<T> initializerConstantTypedValue = toLlvmConstant(fieldInformation, llvmType);
-		final int alignment = llvmType.abiAlignmentInBytesToNextNearestPowerOfTwo(dataLayoutSpecification);
-		return new GlobalVariable<>(staticFieldName, external, _default, NoDllStorageClass, NoThreadLocalStorageModel, false, GlobalAddressSpace, false, llvmType, initializerConstantTypedValue, null, null, alignment);
+		final FieldUniqueness fieldUniqueness = fieldInformation.fieldUniqueness;
+
+		final GlobalIdentifier staticFieldName = createStaticFieldGlobalIdentifier(ourKnownReferenceTypeName(), fieldUniqueness);
+
+		final SizedType sizedType = sizedTypeTypeConverter.convertField(fieldInformation);
+		@Nullable final ConstantTypedValue<SizedType> initializerConstantTypedValue = toLlvmConstant(fieldInformation, sizedType);
+		final int alignment = sizedType.abiAlignmentInBytesToNextNearestPowerOfTwo(dataLayoutSpecification);
+		return new GlobalVariable<>(staticFieldName, external, _default, NoDllStorageClass, NoThreadLocalStorageModel, false, GlobalAddressSpace, false, sizedType, initializerConstantTypedValue, null, null, alignment);
 	}
 
-	private void processInstanceFields(@NotNull final Set<LocallyIdentifiedStructureType> structureTypes, @NotNull final Set<GlobalVariable<?>> globals)
+	@NotNull
+	private DIGlobalVariableKeyedMetadataTuple staticFieldToDebugGlobalVariable(@NotNull final FieldInformation fieldInformation, @NotNull final GlobalVariable<?> globalVariable)
 	{
-		final SizedLocallyIdentifiedStructureType thisClassIdentifiedStructureType = referencedClasses.newIdentifiedStructureType(isPacked, fieldTypes);
-		final String name = self.thisClassTypeName().name();
+		final FieldUniqueness fieldUniqueness = fieldInformation.fieldUniqueness;
 
-		final int length = fieldTypes.length;
-		for (int index = 0; index < length; index++)
-		{
-			offsetOf(globals, thisClassIdentifiedStructureType, name, fieldTypes, index);
-		}
-		sizeOf(globals, thisClassIdentifiedStructureType, name);
-
-		referencedClasses.referencedClassesOtherThanThis(referencedClassOtherThanThis -> addOnce(structureTypes, new OpaqueLocallyIdentifiedStructureType(referencedClassOtherThanThis)));
-		addOnce(structureTypes, thisClassIdentifiedStructureType);
+		final TypeMetadata type = typeMetadataTypeConverter.convertField(fieldInformation);
+		return metadataCreator.newGlobalVariable(fieldUniqueness.fieldName.name(), type, fieldInformation.isPrivate(), globalVariable);
 	}
 
-	private void offsetOf(@NotNull final Set<GlobalVariable<?>> globals, @NotNull final SizedLocallyIdentifiedStructureType thisClassIdentifiedStructureType, @NotNull final String name, @NotNull final SizedType[] fieldTypes, final int index)
+	private void processInstanceFields(@NotNull final Set<LocallyIdentifiedStructureType> structureTypes)
 	{
-		final SizedType fieldType = fieldTypes[index];
-		final GlobalIdentifier globalIdentifier = new GlobalIdentifier("offsetof." + index + '.' + name);
-		final ConstantTypedValue<IntegerValueType> offsetExpression = offsetOfFieldInStructureTypeConstantTypedValue(thisClassIdentifiedStructureType, fieldType, index);
-		final IntegerValueType to = offsetExpression.to();
-		globals.add(new GlobalVariable<>(globalIdentifier, linkonce_odr, _default, NoDllStorageClass, NoThreadLocalStorageModel, true, GlobalAddressSpace, false, to, offsetExpression, null, null, to.abiAlignmentInBytesToNextNearestPowerOfTwo(dataLayoutSpecification)));
-	}
-
-	private void sizeOf(@NotNull final Set<GlobalVariable<?>> globals, @NotNull final SizedLocallyIdentifiedStructureType thisClassIdentifiedStructureType, @NotNull final String name)
-	{
-		final ConstantTypedValue<IntegerValueType> sizeOfExpression = sizeOfStructureTypeConstantTypedValue(thisClassIdentifiedStructureType);
-		final GlobalIdentifier globalIdentifier = new GlobalIdentifier("sizeof." + name);
-		final IntegerValueType to = sizeOfExpression.to();
-		globals.add(new GlobalVariable<>(globalIdentifier, linkonce_odr, _default, NoDllStorageClass, NoThreadLocalStorageModel, true, GlobalAddressSpace, false, to, sizeOfExpression, null, null, to.abiAlignmentInBytesToNextNearestPowerOfTwo(dataLayoutSpecification)));
+		final Triplet<SizedLocallyIdentifiedStructureType, NamespacedTypeName<PackageName>, DebuggingFieldDetail<PackageName>[]> details = classToStructureMap.lookUpClassDetails(ourKnownReferenceTypeName());
+		final SizedLocallyIdentifiedStructureType sizedLocallyIdentifiedStructureType = details.a;
+		structureTypes.add(sizedLocallyIdentifiedStructureType);
 	}
 
 	private void processStaticFunctions(@NotNull final Set<FunctionDefinition> functionsDefinitions)
@@ -169,5 +147,11 @@ public final class Process
 
 	private void processInstanceFunctions(@NotNull final Set<FunctionDefinition> functionsDefinitions)
 	{
+	}
+
+	@NotNull
+	private KnownReferenceTypeName ourKnownReferenceTypeName()
+	{
+		return self.thisClassTypeName();
 	}
 }

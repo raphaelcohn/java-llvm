@@ -20,45 +20,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.metadata.creation;
+package com.stormmq.java.llvm.xxx.typeConverters;
 
-import com.stormmq.llvm.domain.metadata.debugging.TypeMetadata;
-import com.stormmq.llvm.domain.types.SizedType;
+import com.stormmq.java.classfile.domain.InternalTypeName;
+import com.stormmq.java.classfile.domain.descriptors.FieldDescriptor;
+import com.stormmq.java.classfile.domain.information.FieldInformation;
 import org.jetbrains.annotations.*;
 
-import static com.stormmq.llvm.domain.types.SizedType.EmptySizedTypes;
-
-public interface DebuggingFieldDetail<N>
+public interface TypeConverter<T>
 {
-	@SuppressWarnings("MethodCanBeVariableArityMethod")
 	@NotNull
-	static SizedType[] toFieldTypes(@NotNull final DebuggingFieldDetail<?>[] debuggingFieldDetails)
+	default T convertField(@NotNull final FieldInformation fieldInformation)
 	{
-		final SizedType[] fieldTypes;
-		final int length = debuggingFieldDetails.length;
-		if (length == 0)
-		{
-			fieldTypes = EmptySizedTypes;
-		}
-		else
-		{
-			fieldTypes = new SizedType[length];
-			for (int index = 0; index < length; index++)
-			{
-				final DebuggingFieldDetail<?> debuggingFieldDetail = debuggingFieldDetails[index];
-				fieldTypes[index] = debuggingFieldDetail.fieldType();
-			}
-		}
-		return fieldTypes;
+		final FieldDescriptor fieldDescriptor = fieldInformation.fieldUniqueness.fieldDescriptor;
+		final InternalTypeName internalTypeName = fieldDescriptor.internalTypeName;
+		return convertInternalTypeName(internalTypeName);
 	}
 
-	@NotNull @NonNls String fieldName();
-
-	boolean isConstant();
-
+	@SuppressWarnings("unchecked")
 	@NotNull
-	SizedType fieldType();
+	T convertInternalTypeName(@NotNull final InternalTypeName internalTypeName);
 
-	@NotNull
-	TypeMetadata asTypeMetadata(@NotNull final DebuggingTypeDefinitions<N> debuggingTypeDefinitions);
 }

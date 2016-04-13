@@ -20,10 +20,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.java.llvm.xxx;
+package com.stormmq.java.llvm.xxx.happy;
 
 import com.stormmq.java.classfile.domain.information.FieldInformation;
 import com.stormmq.java.classfile.processing.typeInformationUsers.TypeInformationTriplet;
+import com.stormmq.java.llvm.xxx.typeConverters.SimpleTypeConverter;
+import com.stormmq.java.llvm.xxx.typeConverters.TypeConverter;
+import com.stormmq.java.llvm.xxx.typeConverters.typeNameVisitors.*;
 import com.stormmq.java.parsing.utilities.names.PackageName;
 import com.stormmq.java.parsing.utilities.names.typeNames.referenceTypeNames.KnownReferenceTypeName;
 import com.stormmq.llvm.domain.identifiers.LocalIdentifier;
@@ -66,7 +69,7 @@ public final class ClassToStructureMap
 
 		classNamesToLocalIdentifiersAndPointers = new ConcurrentHashMap<>(100_000);
 		localIdentifiersToStructureDetails = new ConcurrentHashMap<>(100_000);
-		sizedTypeTypeConverter = new TypeConverter<>(new ToSizedTypeTypeNameVisitor(this));
+		sizedTypeTypeConverter = new SimpleTypeConverter<>(new ToSizedTypeTypeNameVisitor(this));
 	}
 
 	@NotNull

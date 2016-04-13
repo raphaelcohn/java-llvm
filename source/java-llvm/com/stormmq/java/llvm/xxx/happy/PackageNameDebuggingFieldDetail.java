@@ -20,10 +20,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.java.llvm.xxx;
+package com.stormmq.java.llvm.xxx.happy;
 
 import com.stormmq.java.classfile.domain.information.FieldInformation;
-import com.stormmq.java.classfile.domain.uniqueness.FieldUniqueness;
+import com.stormmq.java.llvm.xxx.typeConverters.*;
+import com.stormmq.java.llvm.xxx.typeConverters.typeNameVisitors.*;
 import com.stormmq.java.parsing.utilities.names.PackageName;
 import com.stormmq.llvm.domain.metadata.creation.DebuggingFieldDetail;
 import com.stormmq.llvm.domain.metadata.creation.DebuggingTypeDefinitions;
@@ -36,21 +37,19 @@ public final class PackageNameDebuggingFieldDetail implements DebuggingFieldDeta
 	@NotNull private final ClassToStructureMap classToStructureMap;
 	@NotNull private final TypeConverter<SizedType> sizedTypeTypeConverter;
 	@NotNull private final FieldInformation fieldInformation;
-	@NotNull private final FieldUniqueness fieldUniqueness;
 
 	public PackageNameDebuggingFieldDetail(@NotNull final ClassToStructureMap classToStructureMap, @NotNull final TypeConverter<SizedType> sizedTypeTypeConverter, @NotNull final FieldInformation fieldInformation)
 	{
 		this.classToStructureMap = classToStructureMap;
 		this.sizedTypeTypeConverter = sizedTypeTypeConverter;
 		this.fieldInformation = fieldInformation;
-		fieldUniqueness = fieldInformation.fieldUniqueness;
 	}
 
 	@NotNull
 	@Override
 	public String fieldName()
 	{
-		return fieldUniqueness.uniqueName();
+		return fieldInformation.fieldUniqueness.uniqueName();
 	}
 
 	@Override
@@ -63,13 +62,13 @@ public final class PackageNameDebuggingFieldDetail implements DebuggingFieldDeta
 	@Override
 	public SizedType fieldType()
 	{
-		return sizedTypeTypeConverter.convertField(fieldUniqueness);
+		return sizedTypeTypeConverter.convertField(fieldInformation);
 	}
 
 	@NotNull
 	@Override
 	public TypeMetadata asTypeMetadata(@NotNull final DebuggingTypeDefinitions<PackageName> debuggingTypeDefinitions)
 	{
-		return new TypeConverter<>(new ToTypeMetadataTypeNameVisitor(classToStructureMap, debuggingTypeDefinitions)).convertField(fieldUniqueness);
+		return new ToTypeMetadataTypeConverter(new SimpleTypeConverter<>(new ToTypeMetadataTypeNameVisitor(classToStructureMap, debuggingTypeDefinitions)), debuggingTypeDefinitions).convertField(fieldInformation);
 	}
 }

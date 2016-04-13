@@ -121,10 +121,4 @@ public final class MetadataCreator<N>
 		// !59 = !DIGlobalVariable(name: "XXXXXX", scope: !0, file: !1, line: 6, type: !60, isLocal: false, isDefinition: true, variable: i32* @XXXXXX)
 		return new DIGlobalVariableKeyedMetadataTuple(referenceTracker, unmangledName, diCompileUnit, file, UnknownLineNumber, type, isLocal, true, globalVariable);
 	}
-
-	@NotNull
-	public TypeMetadata constantDerivedType(@NotNull final TypeMetadata typeMetadata)
-	{
-		return debuggingTypeDefinitions.fieldConstantDerivedType(typeMetadata);
-	}
 }

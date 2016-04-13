@@ -24,7 +24,7 @@ package com.stormmq.java.llvm.examples;
 
 import com.stormmq.java.classfile.processing.*;
 import com.stormmq.java.classfile.processing.processLogs.ProcessLog;
-import com.stormmq.java.llvm.xxx.*;
+import com.stormmq.java.llvm.xxx.happy.*;
 import com.stormmq.java.parsing.utilities.names.PackageName;
 import com.stormmq.jopt.Verbosity;
 import com.stormmq.jopt.applications.AbstractMultithreadedApplication;
@@ -41,22 +41,20 @@ import java.nio.file.Path;
 
 import static com.stormmq.java.classfile.processing.processLogs.PrintStreamProcessLog.standardErrorParseFailureLog;
 import static com.stormmq.java.parsing.utilities.names.PackageName.NamespaceSplitter;
-import static com.stormmq.llvm.domain.module.TargetModuleCreator.MacOsXMavericksX86_64;
 
 public final class ExampleApplication extends AbstractMultithreadedApplication
 {
 	@NotNull private final Iterable<Path> sourcePaths;
 	@NotNull private final Path outputPath;
 	@NotNull private final Processor processor;
-	@NotNull private final TypeInformationTripletUser typeInformationTripletUser;
+	@NotNull private final TypeInformationTripletUser<ClassToStructureMap> typeInformationTripletUser;
 
-	public ExampleApplication(@NotNull final UncaughtExceptionHandler delegate, @NotNull final Verbosity verbosity, @NotNull final Iterable<Path> sourcePaths, @NotNull final Path outputPath, final boolean permitConstantsInInstanceFields)
+	public ExampleApplication(@NotNull final UncaughtExceptionHandler delegate, @NotNull final Verbosity verbosity, @NotNull final Iterable<Path> sourcePaths, @NotNull final Path outputPath, final boolean permitConstantsInInstanceFields, final TargetModuleCreator targetModuleCreator)
 	{
 		super(delegate);
 
 		this.sourcePaths = sourcePaths;
 		this.outputPath = outputPath;
-		final TargetModuleCreator targetModuleCreator = MacOsXMavericksX86_64;
 
 		final ProcessLog processLog = new ExitCodeSettingProcessLog(standardErrorParseFailureLog(verbosity.isAtLeastVerbose()), exitCode);
 		processor = new Processor(permitConstantsInInstanceFields, processLog, exitCodeSettingUncaughtExceptionHandler);
@@ -79,6 +77,6 @@ public final class ExampleApplication extends AbstractMultithreadedApplication
 			return;
 		}
 
-		records.iterate(typeInformationTripletUser);
+		records.iterate(typeInformationTripletUser, records1 -> new ClassToStructureMap(new UsefulRecords(records1)));
 	}
 }

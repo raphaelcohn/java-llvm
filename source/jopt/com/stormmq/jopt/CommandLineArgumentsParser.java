@@ -142,6 +142,14 @@ public class CommandLineArgumentsParser
 	}
 
 	@NotNull
+	public final <E extends Enum<E>> Supplier<E> enumOption(final boolean optionMustBePresent, @NotNull @NonNls final String optionName, @NotNull @NonNls final String description, @NotNull @NonNls final E defaultsTo, @NotNull @NonNls final String... requireIfTheseOptionsArePresent)
+	{
+		final String name = defaultsTo.name();
+		optionWithRequiredValue(optionMustBePresent, optionName, description, name, requireIfTheseOptionsArePresent).ofType(String.class).defaultsTo(name);
+		return () -> newArgumentsOnce().enumOptionValue(optionName, defaultsTo.getDeclaringClass());
+	}
+
+	@NotNull
 	private ArgumentAcceptingOptionSpec<String> optionWithRequiredValue(final boolean optionMustBePresent, @NotNull @NonNls final String optionName, @NotNull @NonNls final String description, @NotNull @NonNls final String valueExample, @NotNull @NonNls final String... requireIfTheseOptionsArePresent)
 	{
 		return option(optionMustBePresent, optionName, description, requireIfTheseOptionsArePresent).withRequiredArg().describedAs(valueExample);

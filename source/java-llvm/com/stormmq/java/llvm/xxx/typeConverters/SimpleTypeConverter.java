@@ -20,45 +20,34 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.metadata.creation;
+package com.stormmq.java.llvm.xxx.typeConverters;
 
-import com.stormmq.llvm.domain.metadata.debugging.TypeMetadata;
-import com.stormmq.llvm.domain.types.SizedType;
+import com.stormmq.java.classfile.domain.InternalTypeName;
+import com.stormmq.java.parsing.utilities.names.typeNames.TypeName;
+import com.stormmq.java.parsing.utilities.names.typeNames.TypeNameVisitor;
 import org.jetbrains.annotations.*;
 
-import static com.stormmq.llvm.domain.types.SizedType.EmptySizedTypes;
-
-public interface DebuggingFieldDetail<N>
+public final class SimpleTypeConverter<T> implements TypeConverter<T>
 {
-	@SuppressWarnings("MethodCanBeVariableArityMethod")
-	@NotNull
-	static SizedType[] toFieldTypes(@NotNull final DebuggingFieldDetail<?>[] debuggingFieldDetails)
+	@NotNull private final TypeNameVisitor<T> typeNameVisitor;
+
+	public SimpleTypeConverter(@NotNull final TypeNameVisitor<T> typeNameVisitor)
 	{
-		final SizedType[] fieldTypes;
-		final int length = debuggingFieldDetails.length;
-		if (length == 0)
-		{
-			fieldTypes = EmptySizedTypes;
-		}
-		else
-		{
-			fieldTypes = new SizedType[length];
-			for (int index = 0; index < length; index++)
-			{
-				final DebuggingFieldDetail<?> debuggingFieldDetail = debuggingFieldDetails[index];
-				fieldTypes[index] = debuggingFieldDetail.fieldType();
-			}
-		}
-		return fieldTypes;
+		this.typeNameVisitor = typeNameVisitor;
 	}
 
-	@NotNull @NonNls String fieldName();
-
-	boolean isConstant();
-
+	@Override
+	@SuppressWarnings("unchecked")
 	@NotNull
-	SizedType fieldType();
+	public T convertInternalTypeName(@NotNull final InternalTypeName internalTypeName)
+	{
+		if (internalTypeName.isArray())
+		{
+			// TODO: Handle arrays
+			System.err.println("Arrays are not yet supported");
+		}
 
-	@NotNull
-	TypeMetadata asTypeMetadata(@NotNull final DebuggingTypeDefinitions<N> debuggingTypeDefinitions);
+		final TypeName typeName = internalTypeName.typeName();
+		return typeName.visit(typeNameVisitor);
+	}
 }

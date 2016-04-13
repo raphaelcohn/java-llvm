@@ -20,7 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.java.llvm.xxx;
+package com.stormmq.java.llvm.xxx.happy;
 
 import com.stormmq.java.classfile.domain.RawDouble;
 import com.stormmq.java.classfile.domain.fieldConstants.FieldConstant;
@@ -39,18 +39,18 @@ import static com.stormmq.llvm.domain.typedValues.constantTypedValues.simpleCons
 import static com.stormmq.llvm.domain.typedValues.constantTypedValues.simpleConstantExpressions.IntegerConstantTypedValue.i64;
 import static com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType.i32;
 
-public final class ToLlvmConstantFieldConstantUser<T extends CanBePointedToType> implements FieldConstantUser<ConstantTypedValue<T>>
+public final class ToConstantTypedValueFieldConstantUser<T extends CanBePointedToType> implements FieldConstantUser<ConstantTypedValue<T>>
 {
 	@Nullable
 	public static <T extends CanBePointedToType> ConstantTypedValue<T> toLlvmConstant(@NotNull final FieldInformation fieldInformation, @NotNull final T llvmType)
 	{
 		@Nullable final FieldConstant constantValue = fieldInformation.constantValue;
-		return new ToLlvmConstantFieldConstantUser<T>(llvmType instanceof IntegerValueType ? (IntegerValueType) llvmType : i32).initializerConstant(constantValue);
+		return new ToConstantTypedValueFieldConstantUser<T>(llvmType instanceof IntegerValueType ? (IntegerValueType) llvmType : i32).initializerConstant(constantValue);
 	}
 
 	@NotNull private final IntegerValueType integerValueType;
 
-	private ToLlvmConstantFieldConstantUser(@NotNull final IntegerValueType integerValueType)
+	private ToConstantTypedValueFieldConstantUser(@NotNull final IntegerValueType integerValueType)
 	{
 		this.integerValueType = integerValueType;
 	}

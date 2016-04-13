@@ -24,6 +24,7 @@ package com.stormmq.java.llvm.examples;
 
 import com.stormmq.jopt.*;
 import com.stormmq.jopt.applications.*;
+import com.stormmq.llvm.domain.module.TargetModuleCreator;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,6 +38,8 @@ import static com.stormmq.jopt.CommandLineArgumentsParser.commandLineArgumentsPa
 import static com.stormmq.jopt.Verbosity.Everything;
 import static com.stormmq.jopt.applications.TimedApplication.standardErrorReportingTimedApplication;
 import static com.stormmq.jopt.applications.uncaughtExceptionHandlers.PrintStreamUncaughtExceptionHandler.StandardErrorUncaughtExceptionHandler;
+import static com.stormmq.llvm.domain.module.TargetModuleCreator.MacOsXElCapitanX86_64;
+import static com.stormmq.llvm.domain.module.TargetModuleCreator.MacOsXMavericksX86_64;
 import static com.stormmq.path.Constants.CurrentFolder;
 
 public final class ConsoleEntryPoint
@@ -50,9 +53,10 @@ public final class ConsoleEntryPoint
 		final Supplier<Verbosity> verbosity = commandLineArgumentsParser.verboseOption();
 		final Supplier<List<Path>> source = commandLineArgumentsParser.extantWritableFolderPathsOption(true, "source", "source root path", "/path/to/source", CurrentFolder);
 		final Supplier<Path> outputPath = commandLineArgumentsParser.creatableFolderPathOption(true, "output", "output folder path, created if doesn't exist", "/path/to/output", "./out/llvm");
-
 		final Verbosity chosenVerbosity = verbosity.get();
-		final Application application = new ExampleApplication(uncaughtExceptionHandler, chosenVerbosity, source.get(), outputPath.get(), true);
+		final Supplier<TargetModuleCreator> targetModuleCreator = commandLineArgumentsParser.enumOption(false, "target", "target details", MacOsXMavericksX86_64);
+
+		final Application application = new ExampleApplication(uncaughtExceptionHandler, chosenVerbosity, source.get(), outputPath.get(), true, targetModuleCreator.get());
 
 		final Application applicationToExecute = chosenVerbosity == Everything ? standardErrorReportingTimedApplication(application) : application;
 		run(applicationToExecute, uncaughtExceptionHandler);

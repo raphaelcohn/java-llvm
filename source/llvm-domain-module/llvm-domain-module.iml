@@ -19,5 +19,6 @@
     <orderEntry type="module" module-name="llvm-domain-metadata-module" />
     <orderEntry type="module" module-name="llvm-domain-asm" />
     <orderEntry type="module" module-name="functions" />
+    <orderEntry type="module" module-name="llvm-domain-instructions" />
   </component>
 </module>

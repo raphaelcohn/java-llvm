@@ -20,44 +20,38 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.java.llvm.xxx;
+package com.stormmq.java.llvm.xxx.typeConverters;
 
 import com.stormmq.java.classfile.domain.InternalTypeName;
-import com.stormmq.java.classfile.domain.descriptors.FieldDescriptor;
-import com.stormmq.java.classfile.domain.uniqueness.FieldUniqueness;
-import com.stormmq.java.parsing.utilities.names.typeNames.TypeName;
-import com.stormmq.java.parsing.utilities.names.typeNames.TypeNameVisitor;
+import com.stormmq.java.classfile.domain.information.FieldInformation;
+import com.stormmq.llvm.domain.metadata.creation.DebuggingTypeDefinitions;
+import com.stormmq.llvm.domain.metadata.debugging.TypeMetadata;
 import org.jetbrains.annotations.*;
 
-public final class TypeConverter<T>
+public final class ToTypeMetadataTypeConverter implements TypeConverter<TypeMetadata>
 {
-	@NotNull private final TypeNameVisitor<T> typeNameVisitor;
+	@NotNull private final TypeConverter<TypeMetadata> delegateTypeConverter;
+	@NotNull private final DebuggingTypeDefinitions<?> debuggingTypeDefinitions;
 
-	public TypeConverter(@NotNull final TypeNameVisitor<T> typeNameVisitor)
+	public ToTypeMetadataTypeConverter(@NotNull final TypeConverter<TypeMetadata> delegateTypeConverter, @NotNull final DebuggingTypeDefinitions<?> debuggingTypeDefinitions)
 	{
-		this.typeNameVisitor = typeNameVisitor;
+		this.delegateTypeConverter = delegateTypeConverter;
+		this.debuggingTypeDefinitions = debuggingTypeDefinitions;
 	}
 
 	@NotNull
-	public T convertField(@NotNull final FieldUniqueness fieldUniqueness)
+	@Override
+	public TypeMetadata convertField(@NotNull final FieldInformation fieldInformation)
 	{
-		final FieldDescriptor fieldDescriptor = fieldUniqueness.fieldDescriptor;
-		final InternalTypeName internalTypeName = fieldDescriptor.internalTypeName;
-		return convertInternalTypeName(internalTypeName);
+		final boolean isFinal = fieldInformation.isFinal;
+		final TypeMetadata typeMetadata = delegateTypeConverter.convertField(fieldInformation);
+		return isFinal ? debuggingTypeDefinitions.fieldConstantDerivedType(typeMetadata) : typeMetadata;
 	}
 
-	@SuppressWarnings("unchecked")
 	@NotNull
-	public T convertInternalTypeName(@NotNull final InternalTypeName internalTypeName)
+	@Override
+	public TypeMetadata convertInternalTypeName(@NotNull final InternalTypeName internalTypeName)
 	{
-		if (internalTypeName.isArray())
-		{
-			// TODO: Handle arrays
-			System.err.println("Arrays are not yet supported");
-		}
-
-		final TypeName typeName = internalTypeName.typeName();
-		return typeName.visit(typeNameVisitor);
+		return delegateTypeConverter.convertInternalTypeName(internalTypeName);
 	}
-
 }

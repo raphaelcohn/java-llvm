@@ -20,8 +20,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.java.llvm.xxx;
+package com.stormmq.java.llvm.xxx.typeConverters.typeNameVisitors;
 
+import com.stormmq.java.llvm.xxx.happy.ClassToStructureMap;
 import com.stormmq.java.parsing.utilities.names.typeNames.TypeNameVisitor;
 import com.stormmq.java.parsing.utilities.names.typeNames.referenceTypeNames.KnownReferenceTypeName;
 import com.stormmq.llvm.domain.types.SizedType;
@@ -44,7 +45,7 @@ public final class ToSizedTypeTypeNameVisitor implements TypeNameVisitor<SizedTy
 	@Override
 	public SizedType useVoid()
 	{
-		throw new IllegalStateException("Should not be void");
+		throw new IllegalStateException("void is not permissible in SizedType");
 	}
 
 	@NotNull

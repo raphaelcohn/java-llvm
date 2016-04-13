@@ -20,7 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.java.llvm.xxx;
+package com.stormmq.java.llvm.xxx.happy;
 
 import com.stormmq.functions.ToBooleanFunction;
 import com.stormmq.java.classfile.processing.Records;
@@ -31,6 +31,7 @@ import com.stormmq.java.parsing.utilities.names.typeNames.referenceTypeNames.Kno
 import org.jetbrains.annotations.*;
 
 import java.lang.annotation.Annotation;
+import java.util.function.Function;
 
 public final class UsefulRecords implements Records
 {
@@ -47,9 +48,9 @@ public final class UsefulRecords implements Records
 	}
 
 	@Override
-	public void iterate(@NotNull final TypeInformationTripletUser typeInformationTripletUser)
+	public <R> void iterate(@NotNull final TypeInformationTripletUser<R> typeInformationTripletUser, @NotNull final Function<Records, R> usefulRecordsCreator)
 	{
-		records.iterate(typeInformationTripletUser);
+		records.iterate(typeInformationTripletUser, usefulRecordsCreator);
 	}
 
 	@NotNull

@@ -57,7 +57,7 @@ public final class GlobalVariable<T extends SizedType> extends AbstractVariable 
 	@NotNull private final T type;
 	@Nullable private final ConstantTypedValue<T> initializerConstantTypedValue;
 	@Nullable private final SectionName sectionName;
-	@Nullable private ComdatDefinition comdatDefinition;
+	@Nullable private final ComdatDefinition comdatDefinition;
 	private final int alignmentInBytesMustBeAPowerOfTwo;
 
 	public GlobalVariable(@NotNull final GlobalIdentifier globalIdentifier, @NotNull final Linkage linkage, @NotNull final Visibility visibility, @NotNull final DllStorageClass dllStorageClass, @NotNull final ThreadLocalStorageModel threadLocalStorageModel, final boolean hasUnnamedAddress, @NotNull final AddressSpace addressSpace, final boolean isExternallyInitialized, @NotNull final T type, @Nullable final ConstantTypedValue<T> initializerConstantTypedValue, @Nullable final SectionName sectionName, @Nullable final ComdatDefinition comdatDefinition, final int alignmentInBytesMustBeAPowerOfTwo)
