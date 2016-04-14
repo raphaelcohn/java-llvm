@@ -190,19 +190,11 @@ final class CommandLineArguments
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@NotNull
 	public <E extends Enum<E>> E enumOptionValue(@NotNull final String optionName, @NotNull final Class<E> declaringClass)
 	{
-		final String rawValue = (String) arguments.valueOf(optionName);
-		try
-		{
-			return Enum.valueOf(declaringClass, rawValue);
-		}
-		catch (final IllegalArgumentException ignored)
-		{
-			printErrorMessageShowHelpAndExitWithUsageError("Option --%1$s is an invalid value (%2$s)", optionName, rawValue);
-			throw newShouldHaveExited();
-		}
+		return (E) arguments.valueOf(optionName);
 	}
 
 	@NotNull

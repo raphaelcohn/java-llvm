@@ -20,36 +20,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain.target;
+package com.stormmq.jopt;
 
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.*;
 
-public enum Vendor
+public enum OptionMustBe
 {
-	apple(Architecture.x86_64),
-	pc(Architecture.x86_64, Architecture.aarch64, Architecture.aarch64_be, Architecture.armv7, Architecture.i686, Architecture.mips64, Architecture.mips64el, Architecture.ppc64, Architecture.ppc64le, Architecture.sparcv9),
-	;
-
-	@NotNull private final Architecture[] validArchitectures;
-
-	Vendor(@NotNull final Architecture... validArchitectures)
-	{
-		if (validArchitectures.length == 0)
-		{
-			throw new IllegalArgumentException("A vendor must support at least one architecture");
-		}
-		this.validArchitectures = validArchitectures;
-	}
-
-	public boolean doesNotSupport(@NotNull final Architecture architecture)
-	{
-		for (final Architecture validArchitecture : validArchitectures)
-		{
-			if (validArchitecture == architecture)
-			{
-				return false;
-			}
-		}
-		return true;
-	}
+	OptionMustBePresent,
+	OptionCanBeAbsent,
 }

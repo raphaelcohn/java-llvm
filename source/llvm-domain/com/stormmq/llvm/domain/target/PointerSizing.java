@@ -23,14 +23,18 @@
 package com.stormmq.llvm.domain.target;
 
 import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.string.AbstractToString;
+import com.stormmq.string.Formatting;
 import org.jetbrains.annotations.*;
+
+import java.util.Locale;
 
 import static com.stormmq.llvm.domain.target.Alignment.SixtyFourBitAlignment;
 import static com.stormmq.llvm.domain.target.Alignment.ThirtyTwoBitAlignment;
 import static com.stormmq.llvm.domain.target.Sizing.SixtyFour;
 import static com.stormmq.llvm.domain.target.Sizing.ThirtyTwo;
 
-public final class PointerSizing
+public final class PointerSizing extends AbstractToString
 {
 	@NotNull public static final PointerSizing ThirtyTwoBitPointerSizing = new PointerSizing(ThirtyTwo, ThirtyTwoBitAlignment);
 	@NotNull public static final PointerSizing SixtyFourBitPointerSizing = new PointerSizing(SixtyFour, SixtyFourBitAlignment);
@@ -42,6 +46,38 @@ public final class PointerSizing
 	{
 		this.sizing = sizing;
 		this.alignment = alignment;
+	}
+
+	@NotNull
+	@Override
+	protected Object[] fields()
+	{
+		return fields(sizing, alignment);
+	}
+
+	@Override
+	public boolean equals(@Nullable final Object o)
+	{
+		if (this == o)
+		{
+			return true;
+		}
+		if (o == null || getClass() != o.getClass())
+		{
+			return false;
+		}
+
+		final PointerSizing that = (PointerSizing) o;
+
+		return sizing == that.sizing && alignment.equals(that.alignment);
+	}
+
+	@Override
+	public int hashCode()
+	{
+		int result = sizing.hashCode();
+		result = 31 * result + alignment.hashCode();
+		return result;
 	}
 
 	public int storageSizeInBits()

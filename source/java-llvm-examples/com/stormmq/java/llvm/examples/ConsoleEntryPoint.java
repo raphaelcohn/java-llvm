@@ -38,7 +38,6 @@ import static com.stormmq.jopt.CommandLineArgumentsParser.commandLineArgumentsPa
 import static com.stormmq.jopt.Verbosity.Everything;
 import static com.stormmq.jopt.applications.TimedApplication.standardErrorReportingTimedApplication;
 import static com.stormmq.jopt.applications.uncaughtExceptionHandlers.PrintStreamUncaughtExceptionHandler.StandardErrorUncaughtExceptionHandler;
-import static com.stormmq.llvm.domain.module.TargetModuleCreator.MacOsXElCapitanX86_64;
 import static com.stormmq.llvm.domain.module.TargetModuleCreator.MacOsXMavericksX86_64;
 import static com.stormmq.path.Constants.CurrentFolder;
 
@@ -47,17 +46,19 @@ public final class ConsoleEntryPoint
 	@SuppressWarnings("HardcodedFileSeparator")
 	public static void main(@NotNull @NonNls final String... commandLineArguments)
 	{
-		final UncaughtExceptionHandler uncaughtExceptionHandler = StandardErrorUncaughtExceptionHandler;
-
 		final CommandLineArgumentsParser commandLineArgumentsParser = commandLineArgumentsParser(commandLineArguments);
-		final Supplier<Verbosity> verbosity = commandLineArgumentsParser.verboseOption();
-		final Supplier<List<Path>> source = commandLineArgumentsParser.extantWritableFolderPathsOption(true, "source", "source root path", "/path/to/source", CurrentFolder);
-		final Supplier<Path> outputPath = commandLineArgumentsParser.creatableFolderPathOption(true, "output", "output folder path, created if doesn't exist", "/path/to/output", "./out/llvm");
-		final Verbosity chosenVerbosity = verbosity.get();
-		final Supplier<TargetModuleCreator> targetModuleCreator = commandLineArgumentsParser.enumOption(false, "target", "target details", MacOsXMavericksX86_64);
+		final Supplier<Verbosity> verbosityOption = commandLineArgumentsParser.verboseOption();
+		final Supplier<List<Path>> sourceOption = commandLineArgumentsParser.extantWritableFolderPathsOption("source", "source root path", "/path/to/source", CurrentFolder);
+		final Supplier<Path> outputPathOption = commandLineArgumentsParser.creatableFolderPathOption("output", "output folder path, created if doesn't exist", "/path/to/output", "./out/llvm");
+		final Supplier<TargetModuleCreator> targetModuleCreatorOption = commandLineArgumentsParser.enumOption("target", "target details", MacOsXMavericksX86_64);
 
-		final Application application = new ExampleApplication(uncaughtExceptionHandler, chosenVerbosity, source.get(), outputPath.get(), true, targetModuleCreator.get());
+		final UncaughtExceptionHandler uncaughtExceptionHandler = StandardErrorUncaughtExceptionHandler;
+		final Verbosity chosenVerbosity = verbosityOption.get();
+		final List<Path> sourcePaths = sourceOption.get();
+		final Path outputPath = outputPathOption.get();
+		final TargetModuleCreator targetModuleCreator = targetModuleCreatorOption.get();
 
+		final Application application = new ExampleApplication(uncaughtExceptionHandler, chosenVerbosity, sourcePaths, outputPath,  true, targetModuleCreator);
 		final Application applicationToExecute = chosenVerbosity == Everything ? standardErrorReportingTimedApplication(application) : application;
 		run(applicationToExecute, uncaughtExceptionHandler);
 	}

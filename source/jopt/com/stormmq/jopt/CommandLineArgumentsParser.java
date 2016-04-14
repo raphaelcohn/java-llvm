@@ -32,6 +32,8 @@ import java.util.*;
 import java.util.function.Supplier;
 
 import static com.stormmq.functions.CollectionHelper.addOnce;
+import static com.stormmq.jopt.OptionMustBe.OptionCanBeAbsent;
+import static com.stormmq.jopt.OptionMustBe.OptionMustBePresent;
 import static com.stormmq.jopt.Verbosity.*;
 import static com.stormmq.string.Formatting.format;
 import static java.lang.System.err;
@@ -87,7 +89,7 @@ public class CommandLineArgumentsParser
 		optionParser.accepts(help, show_help).forHelp();
 		addOnce(allKnownOptions, help);
 
-		optionWithOptionalValue(false, verbose, format("verbosity level (%1$s - %2$s)", None.ordinal(), Everything.ordinal()), Integer.toString(Verbose.ordinal())).withValuesConvertedBy(new VerbosityValueConverter()).defaultsTo(Verbose);
+		optionWithOptionalValue(OptionCanBeAbsent, verbose, format("verbosity level (%1$s - %2$s)", None.ordinal(), Everything.ordinal()), Integer.toString(Verbose.ordinal())).withValuesConvertedBy(new VerbosityValueConverter()).defaultsTo(Verbose);
 	}
 
 	@NotNull
@@ -106,69 +108,71 @@ public class CommandLineArgumentsParser
 		return () -> newArgumentsOnce().verbosityOptionValue(verbose);
 	}
 
+	@SuppressWarnings("unused")
 	@NotNull
-	public final Supplier<Path> extantWritableFolderPathOption(final boolean optionMustBePresent, @NotNull @NonNls final String optionName, @NotNull @NonNls final String description, @NotNull @NonNls final String valueExample, @NotNull @NonNls final String defaultsTo, @NotNull @NonNls final String... requireIfTheseOptionsArePresent)
+	public final Supplier<Path> extantWritableFolderPathOption(@NotNull @NonNls final String optionName, @NotNull @NonNls final String description, @NotNull @NonNls final String valueExample, @NotNull @NonNls final String defaultsTo, @NotNull @NonNls final String... requireIfTheseOptionsArePresent)
 	{
-		optionWithRequiredValue(optionMustBePresent, optionName, description, valueExample, requireIfTheseOptionsArePresent).ofType(String.class).defaultsTo(defaultsTo);
+		optionWithRequiredValue(OptionCanBeAbsent, optionName, description, valueExample, requireIfTheseOptionsArePresent).ofType(String.class).defaultsTo(defaultsTo);
 		return () -> newArgumentsOnce().extantWritableFolderPathOptionValue(optionName);
 	}
 
 	@NotNull
-	public final Supplier<Path> creatableFolderPathOption(final boolean optionMustBePresent, @NotNull @NonNls final String optionName, @NotNull @NonNls final String description, @NotNull @NonNls final String valueExample, @NotNull @NonNls final String defaultsTo, @NotNull @NonNls final String... requireIfTheseOptionsArePresent)
+	public final Supplier<Path> creatableFolderPathOption(@NotNull @NonNls final String optionName, @NotNull @NonNls final String description, @NotNull @NonNls final String valueExample, @NotNull @NonNls final String defaultsTo, @NotNull @NonNls final String... requireIfTheseOptionsArePresent)
 	{
-		optionWithRequiredValue(optionMustBePresent, optionName, description, valueExample, requireIfTheseOptionsArePresent).ofType(String.class).defaultsTo(defaultsTo);
+		optionWithRequiredValue(OptionCanBeAbsent, optionName, description, valueExample, requireIfTheseOptionsArePresent).ofType(String.class).defaultsTo(defaultsTo);
 		return () -> newArgumentsOnce().creatableFolderPathOptionValue(optionName);
 	}
 
 	@NotNull
-	public final Supplier<List<Path>> extantWritableFolderPathsOption(final boolean optionMustBePresent, @NotNull @NonNls final String optionName, @NotNull @NonNls final String description, @NotNull @NonNls final String valueExample, @NotNull @NonNls final String defaultsTo, @NotNull @NonNls final String... requireIfTheseOptionsArePresent)
+	public final Supplier<List<Path>> extantWritableFolderPathsOption(@NotNull @NonNls final String optionName, @NotNull @NonNls final String description, @NotNull @NonNls final String valueExample, @NotNull @NonNls final String defaultsTo, @NotNull @NonNls final String... requireIfTheseOptionsArePresent)
 	{
-		optionWithRequiredValue(optionMustBePresent, optionName, description, valueExample, requireIfTheseOptionsArePresent).withValuesSeparatedBy(':').ofType(String.class).defaultsTo(defaultsTo);
+		optionWithRequiredValue(OptionCanBeAbsent, optionName, description, valueExample, requireIfTheseOptionsArePresent).withValuesSeparatedBy(':').ofType(String.class).defaultsTo(defaultsTo);
 		return () -> newArgumentsOnce().extantWritableFolderPathsOptionValue(optionName);
 	}
 
 	@NotNull
-	public final Supplier<Path> pathOption(final boolean optionMustBePresent, @NotNull @NonNls final String optionName, @NotNull @NonNls final String description, @NotNull @NonNls final String valueExample, @NotNull @NonNls final String defaultsTo, @NotNull @NonNls final String... requireIfTheseOptionsArePresent)
+	public final Supplier<Path> pathOption(@NotNull @NonNls final String optionName, @NotNull @NonNls final String description, @NotNull @NonNls final String valueExample, @NotNull @NonNls final String defaultsTo, @NotNull @NonNls final String... requireIfTheseOptionsArePresent)
 	{
-		optionWithRequiredValue(optionMustBePresent, optionName, description, valueExample, requireIfTheseOptionsArePresent).ofType(String.class).defaultsTo(defaultsTo);
+		optionWithRequiredValue(OptionCanBeAbsent, optionName, description, valueExample, requireIfTheseOptionsArePresent).ofType(String.class).defaultsTo(defaultsTo);
 		return () -> newArgumentsOnce().pathOptionValue(optionName);
 	}
 
 	@NotNull
-	public final Supplier<Charset> charsetOption(final boolean optionMustBePresent, @NotNull @NonNls final String optionName, @NotNull @NonNls final String description, @NotNull @NonNls final String... requireIfTheseOptionsArePresent)
+	public final Supplier<Charset> charsetOption(@NotNull final OptionMustBe optionMustBePresent, @NotNull @NonNls final String optionName, @NotNull @NonNls final String description, @NotNull @NonNls final String... requireIfTheseOptionsArePresent)
 	{
 		optionWithRequiredValue(optionMustBePresent, optionName, description, UTF_8, requireIfTheseOptionsArePresent).ofType(String.class).defaultsTo(UTF_8);
 		return () -> newArgumentsOnce().charsetOptionValue(optionName);
 	}
 
+	@SuppressWarnings("unchecked")
 	@NotNull
-	public final <E extends Enum<E>> Supplier<E> enumOption(final boolean optionMustBePresent, @NotNull @NonNls final String optionName, @NotNull @NonNls final String description, @NotNull @NonNls final E defaultsTo, @NotNull @NonNls final String... requireIfTheseOptionsArePresent)
+	public final <E extends Enum<E>> Supplier<E> enumOption(@NotNull @NonNls final String optionName, @NotNull @NonNls final String description, @NotNull @NonNls final E defaultsTo, @NotNull @NonNls final String... requireIfTheseOptionsArePresent)
 	{
 		final String name = defaultsTo.name();
-		optionWithRequiredValue(optionMustBePresent, optionName, description, name, requireIfTheseOptionsArePresent).ofType(String.class).defaultsTo(name);
+		optionWithRequiredValue(OptionCanBeAbsent, optionName, description, name, requireIfTheseOptionsArePresent).withValuesConvertedBy(new EnumValueConverter<>(optionName, defaultsTo)).defaultsTo(defaultsTo);
 		return () -> newArgumentsOnce().enumOptionValue(optionName, defaultsTo.getDeclaringClass());
 	}
 
 	@NotNull
-	private ArgumentAcceptingOptionSpec<String> optionWithRequiredValue(final boolean optionMustBePresent, @NotNull @NonNls final String optionName, @NotNull @NonNls final String description, @NotNull @NonNls final String valueExample, @NotNull @NonNls final String... requireIfTheseOptionsArePresent)
+	private ArgumentAcceptingOptionSpec<String> optionWithRequiredValue(@NotNull final OptionMustBe optionMustBePresent, @NotNull @NonNls final String optionName, @NotNull @NonNls final String description, @NotNull @NonNls final String valueExample, @NotNull @NonNls final String... requireIfTheseOptionsArePresent)
 	{
 		return option(optionMustBePresent, optionName, description, requireIfTheseOptionsArePresent).withRequiredArg().describedAs(valueExample);
 	}
 
 	@NotNull
-	private ArgumentAcceptingOptionSpec<String> optionWithOptionalValue(final boolean optionMustBePresent, @NotNull @NonNls final String optionName, @NotNull @NonNls final String description, @NotNull @NonNls final String valueExample, @NotNull @NonNls final String... requireIfTheseOptionsArePresent)
+	private ArgumentAcceptingOptionSpec<String> optionWithOptionalValue(@NotNull final OptionMustBe optionMustBePresent, @NotNull @NonNls final String optionName, @NotNull @NonNls final String description, @NotNull @NonNls final String valueExample, @NotNull @NonNls final String... requireIfTheseOptionsArePresent)
 	{
 		return option(optionMustBePresent, optionName, description, requireIfTheseOptionsArePresent).withOptionalArg().describedAs(valueExample);
 	}
 
 	@NotNull
-	protected final OptionSpecBuilder optionWithNoValue(final boolean optionMustBePresent, @NotNull @NonNls final String optionName, @NotNull @NonNls final String description, @NotNull @NonNls final String... requireIfTheseOptionsArePresent)
+	protected final OptionSpecBuilder optionWithNoValue(@NotNull final OptionMustBe optionMustBePresent, @NotNull @NonNls final String optionName, @NotNull @NonNls final String description, @NotNull @NonNls final String... requireIfTheseOptionsArePresent)
 	{
 		return option(optionMustBePresent, optionName, description, requireIfTheseOptionsArePresent);
 	}
 
 	@NotNull
-	private OptionSpecBuilder option(final boolean optionMustBePresent, @NonNls @NotNull final String optionName, @NonNls @NotNull final String description, @NonNls @NotNull final String[] requireIfTheseOptionsArePresent)
+	private OptionSpecBuilder option(@NotNull final OptionMustBe optionMustBePresent, @NonNls @NotNull final String optionName, @NonNls @NotNull final String description, @NonNls @NotNull final String[] requireIfTheseOptionsArePresent)
 	{
 		if (haveArgumentsAlreadyParsed())
 		{
@@ -177,7 +181,7 @@ public class CommandLineArgumentsParser
 
 		addOnce(allKnownOptions, optionName);
 
-		if (optionMustBePresent)
+		if (optionMustBePresent == OptionMustBePresent)
 		{
 			addOnce(optionsThatMustBePresent, optionName);
 		}
@@ -217,7 +221,7 @@ public class CommandLineArgumentsParser
 			{
 				try
 				{
-					return Verbosity.valueOf(value);
+					return valueOf(value);
 				}
 				catch (final IllegalArgumentException e)
 				{
@@ -229,7 +233,7 @@ public class CommandLineArgumentsParser
 				throw new ValueConversionException(format("Verbosity level '%1$s' is negative for option --%2$s", value, verbose));
 			}
 			Verbosity mostVerbosePossibilityIfValueTooHigh = None;
-			for (final Verbosity verbosity : Verbosity.values())
+			for (final Verbosity verbosity : values())
 			{
 				if (verbosity.ordinal() == integer)
 				{
@@ -245,6 +249,45 @@ public class CommandLineArgumentsParser
 		public Class<Verbosity> valueType()
 		{
 			return Verbosity.class;
+		}
+
+		@Override
+		@Nullable
+		public String valuePattern()
+		{
+			return null;
+		}
+	}
+
+	private static final class EnumValueConverter<E extends Enum<E>> implements ValueConverter<E>
+	{
+		@NotNull private final E defaultsTo;
+		@NotNull private final String optionName;
+
+		private EnumValueConverter(@NotNull final String optionName, @NonNls @NotNull final E defaultsTo)
+		{
+			this.defaultsTo = defaultsTo;
+			this.optionName = optionName;
+		}
+
+		@Override
+		public E convert(@NotNull @NonNls final String value)
+		{
+			try
+			{
+				return Enum.valueOf(valueType(), value);
+			}
+			catch (final IllegalArgumentException e)
+			{
+				throw new ValueConversionException(format("No value '%1$s' is known for option --%2$s", value, optionName), e);
+			}
+		}
+
+		@Override
+		@NotNull
+		public Class<E> valueType()
+		{
+			return defaultsTo.getDeclaringClass();
 		}
 
 		@Override

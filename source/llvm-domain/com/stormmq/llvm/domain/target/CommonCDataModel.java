@@ -35,17 +35,17 @@ import static com.stormmq.llvm.domain.target.Sizing.ThirtyTwo;
 public enum CommonCDataModel implements CDataModel
 {
 	LP32Windows(Sixteen, ThirtyTwo, ThirtyTwo, ThirtyTwoBitPointerSizing, Sixteen, SixtyFourBitLongDouble, SixtyFourBitAlignment), // Dead; partly guesswork
-	ILP32LinuxX86(ThirtyTwo, ThirtyTwo, ThirtyTwo, ThirtyTwoBitPointerSizing, ThirtyTwo, i686NinetySixBitLongDoubleClangAndGcc, ThirtyTwoBitAlignment),
-	ILP32LinuxPowerPc(ThirtyTwo, ThirtyTwo, ThirtyTwo, ThirtyTwoBitPointerSizing, ThirtyTwo, PowerPcDoubleDouble, ThirtyTwoBitAlignment),
-	ILP32LinuxOther(ThirtyTwo, ThirtyTwo, ThirtyTwo, ThirtyTwoBitPointerSizing, ThirtyTwo, QuadLongDouble, ThirtyTwoBitAlignment), // Not 100% sure of the long double settings
-	ILP32Windows(ThirtyTwo, ThirtyTwo, ThirtyTwo, ThirtyTwoBitPointerSizing, Sixteen, SixtyFourBitLongDouble, SixtyFourBitAlignment),
+	ILP32LinuxX86(Sixteen, ThirtyTwo, ThirtyTwo, ThirtyTwoBitPointerSizing, ThirtyTwo, i686NinetySixBitLongDoubleClangAndGcc, ThirtyTwoBitAlignment),
+	ILP32LinuxPowerPc(Sixteen, ThirtyTwo, ThirtyTwo, ThirtyTwoBitPointerSizing, ThirtyTwo, PowerPcDoubleDouble, ThirtyTwoBitAlignment),
+	ILP32LinuxOther(Sixteen, ThirtyTwo, ThirtyTwo, ThirtyTwoBitPointerSizing, ThirtyTwo, QuadLongDouble, ThirtyTwoBitAlignment), // Not 100% sure of the long double settings
+	ILP32Windows(Sixteen, ThirtyTwo, ThirtyTwo, ThirtyTwoBitPointerSizing, Sixteen, SixtyFourBitLongDouble, SixtyFourBitAlignment),
 
-	IL32P64Windows(ThirtyTwo, ThirtyTwo, SixtyFour, SixtyFourBitPointerSizing, Sixteen, SixtyFourBitLongDouble, SixtyFourBitAlignment),
-	LP64LinuxNetBsdMacOsX86_64(ThirtyTwo, SixtyFour, SixtyFour, SixtyFourBitPointerSizing, ThirtyTwo, X86_64LongDouble, SixtyFourBitAlignment), // aka I32LP64
-	LP64LinuxMips64(ThirtyTwo, SixtyFour, SixtyFour, SixtyFourBitPointerSizing, ThirtyTwo, Mips64LongDouble, SixtyFourBitAlignment), // aka I32LP64
-	LP64LinuxOther(ThirtyTwo, SixtyFour, SixtyFour, SixtyFourBitPointerSizing, ThirtyTwo, QuadLongDouble, SixtyFourBitAlignment), // aka I32LP64
-	LP64LinuxPowerPcLegacy(ThirtyTwo, SixtyFour, SixtyFour, SixtyFourBitPointerSizing, ThirtyTwo, PowerPcDoubleDouble, SixtyFourBitAlignment),
-	ILP64(SixtyFour, SixtyFour, SixtyFour, SixtyFourBitPointerSizing, ThirtyTwo, SixtyFourBitLongDouble, SixtyFourBitAlignment), // No known users, here for completeness.
+	IL32P64Windows(Sixteen, ThirtyTwo, SixtyFour, SixtyFourBitPointerSizing, Sixteen, SixtyFourBitLongDouble, SixtyFourBitAlignment),
+	LP64LinuxNetBsdMacOsX86_64(Sixteen, ThirtyTwo, SixtyFour, SixtyFourBitPointerSizing, ThirtyTwo, X86_64LongDouble, SixtyFourBitAlignment), // aka I32LP64
+	LP64LinuxMips64(Sixteen, ThirtyTwo, SixtyFour, SixtyFourBitPointerSizing, ThirtyTwo, Mips64LongDouble, SixtyFourBitAlignment), // aka I32LP64
+	LP64LinuxOther(Sixteen, ThirtyTwo, SixtyFour, SixtyFourBitPointerSizing, ThirtyTwo, QuadLongDouble, SixtyFourBitAlignment), // aka I32LP64
+	LP64LinuxPowerPcLegacy(Sixteen, ThirtyTwo, SixtyFour, SixtyFourBitPointerSizing, ThirtyTwo, PowerPcDoubleDouble, SixtyFourBitAlignment),
+	ILP64(Sixteen, SixtyFour, SixtyFour, SixtyFourBitPointerSizing, ThirtyTwo, SixtyFourBitLongDouble, SixtyFourBitAlignment), // No known users, here for completeness.
 	@SuppressWarnings("SpellCheckingInspection")SILP64(SixtyFour, SixtyFour, SixtyFour, SixtyFourBitPointerSizing, SixtyFour, SixtyFourBitLongDouble, SixtyFourBitAlignment), // wchar_t and long double are guesses. Old UNICOS model. Here for completeness.
 	;
 

@@ -25,6 +25,7 @@ package com.stormmq.llvm.domain.target;
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.byteWriters.Writable;
 import com.stormmq.llvm.domain.LlvmWritable;
+import com.stormmq.string.Formatting;
 import com.stormmq.string.Utf8ByteUser;
 import org.jetbrains.annotations.*;
 
@@ -58,7 +59,7 @@ public final class TargetTriple implements Writable
 		}
 		if (operatingSystem.doesNotSupport(architecture))
 		{
-			throw new IllegalArgumentException("operatingSystem does not support architecture");
+			throw new IllegalArgumentException(format("operatingSystem '%1$s' does not support architecture '%2$s'", operatingSystem, architecture));
 		}
 		this.architecture = architecture;
 		this.operatingSystem = operatingSystem;

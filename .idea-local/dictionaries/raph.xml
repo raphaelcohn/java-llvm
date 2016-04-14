@@ -13,6 +13,7 @@
       <w>endian</w>
       <w>endianness</w>
       <w>fieldref</w>
+      <w>formatters</w>
       <w>getuid</w>
       <w>glibc</w>
       <w>ident</w>
