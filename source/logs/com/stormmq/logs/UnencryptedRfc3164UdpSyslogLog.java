@@ -34,6 +34,7 @@ import static com.stormmq.string.Formatting.format;
 import static com.stormmq.string.Padding.padAsDecimal;
 import static java.lang.System.arraycopy;
 import static java.net.AnyLocalAddressHelper.AnyLocalAddress;
+import static java.net.InetAddress.getLoopbackAddress;
 import static java.nio.charset.StandardCharsets.US_ASCII;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.Clock.systemUTC;
@@ -43,6 +44,8 @@ public final class UnencryptedRfc3164UdpSyslogLog implements Log
 	private static final int SyslogCommonPortNumber = 514;
 	private static final int AnyOutboundPort = 0;
 	@NotNull private static final InetSocketAddress AnyBindAddress = new InetSocketAddress(AnyLocalAddress, AnyOutboundPort);
+	@NotNull private static final InetAddress LocalHost = getLoopbackAddress();
+
 
 	private static final int TimestampLength = 16;
 	private static final int MaximumMessageSize = 1024;
@@ -154,6 +157,12 @@ public final class UnencryptedRfc3164UdpSyslogLog implements Log
 	private final int hostNameLength;
 	private final byte[] applicationName;
 	private final int applicationNameLength;
+
+	// Localhost logging
+	public UnencryptedRfc3164UdpSyslogLog(@NotNull final String applicationName, @NotNull final Rfc3164Facility rfc3164Facility, @NotNull final Log failureLog)
+	{
+		this(applicationName, rfc3164Facility, new InetSocketAddress(LocalHost, SyslogCommonPortNumber), failureLog, AnyBindAddress);
+	}
 
 	public UnencryptedRfc3164UdpSyslogLog(@NotNull final String applicationName, @NotNull final Rfc3164Facility rfc3164Facility, @NotNull final InetAddress destinationAddress, @NotNull final Log failureLog)
 	{
