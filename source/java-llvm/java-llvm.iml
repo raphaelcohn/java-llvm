@@ -23,5 +23,6 @@
     <orderEntry type="module" module-name="llvm-domain-instructions" />
     <orderEntry type="module" module-name="functions" />
     <orderEntry type="module" module-name="llvm-domain-metadata-creation" />
+    <orderEntry type="module" module-name="tuples" />
   </component>
 </module>

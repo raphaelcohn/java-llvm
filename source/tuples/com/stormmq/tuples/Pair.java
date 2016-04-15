@@ -26,6 +26,8 @@ import org.jetbrains.annotations.*;
 
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.function.BiFunction;
+import java.util.function.Supplier;
 
 import static com.stormmq.string.Formatting.format;
 
@@ -39,6 +41,18 @@ public class Pair<A, B> extends AbstractList<Object> implements Entry<A, B>
 	{
 		this.a = a;
 		this.b = b;
+	}
+
+	@NotNull
+	public <R> R apply(@NotNull final BiFunction<A, B, R> biFunction)
+	{
+		return biFunction.apply(a, b);
+	}
+
+	@NotNull
+	public <R> Supplier<R> curry(@NotNull final BiFunction<A, B, R> biFunction)
+	{
+		return () -> biFunction.apply(a, b);
 	}
 
 	@Override
