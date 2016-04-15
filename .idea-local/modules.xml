@@ -3,8 +3,10 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/source/annotations/annotations.iml" filepath="$PROJECT_DIR$/source/annotations/annotations.iml" />
+      <module fileurl="file://$PROJECT_DIR$/source/applications/applications.iml" filepath="$PROJECT_DIR$/source/applications/applications.iml" group="library/applications" />
       <module fileurl="file://$PROJECT_DIR$/source/byteReaders/byteReaders.iml" filepath="$PROJECT_DIR$/source/byteReaders/byteReaders.iml" group="library/byteReaders" />
       <module fileurl="file://$PROJECT_DIR$/source/byteWriters/byteWriters.iml" filepath="$PROJECT_DIR$/source/byteWriters/byteWriters.iml" group="library/byteWriters" />
+      <module fileurl="file://$PROJECT_DIR$/source/commandLineArgumentsParsing/commandLineArgumentsParsing.iml" filepath="$PROJECT_DIR$/source/commandLineArgumentsParsing/commandLineArgumentsParsing.iml" group="library/commandLineArgumentsParsing" />
       <module fileurl="file://$PROJECT_DIR$/source/functions/functions.iml" filepath="$PROJECT_DIR$/source/functions/functions.iml" group="library/functions" />
       <module fileurl="file://$PROJECT_DIR$/source/java-classfile-domain/java-classfile-domain.iml" filepath="$PROJECT_DIR$/source/java-classfile-domain/java-classfile-domain.iml" group="library/java-classfile/classfile" />
       <module fileurl="file://$PROJECT_DIR$/source/java-classfile-parsing/java-classfile-parsing.iml" filepath="$PROJECT_DIR$/source/java-classfile-parsing/java-classfile-parsing.iml" group="library/java-classfile/classfile" />
@@ -13,7 +15,6 @@
       <module fileurl="file://$PROJECT_DIR$/source/java-llvm-api/java-llvm-api.iml" filepath="$PROJECT_DIR$/source/java-llvm-api/java-llvm-api.iml" group="java-llvm" />
       <module fileurl="file://$PROJECT_DIR$/source/java-llvm-examples/java-llvm-examples.iml" filepath="$PROJECT_DIR$/source/java-llvm-examples/java-llvm-examples.iml" group="java-llvm" />
       <module fileurl="file://$PROJECT_DIR$/source/java-parsing-utilities/java-parsing-utilities.iml" filepath="$PROJECT_DIR$/source/java-parsing-utilities/java-parsing-utilities.iml" group="library/java-classfile/parsing" />
-      <module fileurl="file://$PROJECT_DIR$/source/jopt/jopt.iml" filepath="$PROJECT_DIR$/source/jopt/jopt.iml" />
       <module fileurl="file://$PROJECT_DIR$/source/llvm-domain/llvm-domain.iml" filepath="$PROJECT_DIR$/source/llvm-domain/llvm-domain.iml" group="llvm/domain" />
       <module fileurl="file://$PROJECT_DIR$/source/llvm-domain-asm/llvm-domain-asm.iml" filepath="$PROJECT_DIR$/source/llvm-domain-asm/llvm-domain-asm.iml" group="llvm/domain" />
       <module fileurl="file://$PROJECT_DIR$/source/llvm-domain-attributes/llvm-domain-attributes.iml" filepath="$PROJECT_DIR$/source/llvm-domain-attributes/llvm-domain-attributes.iml" group="llvm/domain" />

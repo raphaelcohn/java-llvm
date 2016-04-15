@@ -12,5 +12,6 @@
     <orderEntry type="module" module-name="path" />
     <orderEntry type="module" module-name="string" />
     <orderEntry type="module" module-name="functions" />
+    <orderEntry type="module" module-name="applications" />
   </component>
 </module>

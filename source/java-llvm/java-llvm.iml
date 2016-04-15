@@ -10,7 +10,7 @@
     <orderEntry type="library" name="annotations" level="project" />
     <orderEntry type="module" module-name="java-classfile-parsing" />
     <orderEntry type="module" module-name="java-classfile-domain" />
-    <orderEntry type="module" module-name="jopt" />
+    <orderEntry type="module" module-name="commandLineArgumentsParsing" />
     <orderEntry type="module" module-name="path" />
     <orderEntry type="module" module-name="llvm-domain-module" />
     <orderEntry type="module" module-name="llvm-domain-metadata-module" />

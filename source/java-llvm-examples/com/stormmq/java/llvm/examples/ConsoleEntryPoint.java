@@ -25,7 +25,6 @@ package com.stormmq.java.llvm.examples;
 import com.stormmq.applications.Application;
 import com.stormmq.applications.Verbosity;
 import com.stormmq.commandLineArgumentsParsing.CommandLineArgumentsParser;
-import com.stormmq.jopt.JoptSimpleCommandLineArgumentsParser;
 import com.stormmq.llvm.domain.module.TargetModuleCreator;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -39,7 +38,7 @@ import static com.stormmq.applications.Application.run;
 import static com.stormmq.applications.TimedApplication.standardErrorReportingTimedApplication;
 import static com.stormmq.applications.Verbosity.Everything;
 import static com.stormmq.applications.uncaughtExceptionHandlers.PrintStreamUncaughtExceptionHandler.StandardErrorUncaughtExceptionHandler;
-import static com.stormmq.jopt.JoptSimpleCommandLineArgumentsParser.jopSimpleCommandLineArgumentsParser;
+import static com.stormmq.commandLineArgumentsParsing.jopt.JoptSimpleCommandLineArgumentsParser.jopSimpleCommandLineArgumentsParser;
 import static com.stormmq.llvm.domain.module.TargetModuleCreator.MacOsXMavericksX86_64;
 import static com.stormmq.path.Constants.CurrentFolder;
 

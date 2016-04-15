@@ -20,7 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.jopt;
+package com.stormmq.commandLineArgumentsParsing.jopt;
 
 import com.stormmq.applications.ExitCode;
 import com.stormmq.applications.Verbosity;
