@@ -40,9 +40,18 @@ import static java.time.Clock.systemUTC;
 
 public final class UnencryptedRfc3164UdpSyslogLog implements Log
 {
-	@NotNull private static final byte[][] PRIs = calculatePris();
+	private static final int SyslogCommonPortNumber = 514;
+	private static final int AnyOutboundPort = 0;
+	@NotNull private static final InetSocketAddress AnyBindAddress = new InetSocketAddress(AnyLocalAddress, AnyOutboundPort);
+
 	private static final int TimestampLength = 16;
 	private static final int MaximumMessageSize = 1024;
+	private static final int MaximumTagLengthInBytes = 32;
+	@NotNull private static final byte[] localhost_ = "localhost ".getBytes(US_ASCII);
+	@NotNull private static final byte[][] PRIs = calculatePris();
+	@NotNull private static final byte[][] Months = months();
+	@NotNull private static final byte[][] Days = days();
+	@NotNull private static final byte[][] Hours = hours();
 
 	@NotNull
 	private static byte[][] calculatePris()
@@ -61,8 +70,6 @@ public final class UnencryptedRfc3164UdpSyslogLog implements Log
 		}
 		return pris;
 	}
-
-	@NotNull private static final byte[][] Months = months();
 
 	@SuppressWarnings("MagicNumber")
 	@NotNull
@@ -83,8 +90,6 @@ public final class UnencryptedRfc3164UdpSyslogLog implements Log
 		months[11] = "Dec".getBytes(US_ASCII);
 		return months;
 	}
-
-	@NotNull private static final byte[][] Days = days();
 
 	@SuppressWarnings("MagicNumber")
 	@NotNull
@@ -110,8 +115,6 @@ public final class UnencryptedRfc3164UdpSyslogLog implements Log
 		}
 		return days;
 	}
-
-	@NotNull private static final byte[][] Hours = hours();
 
 	@SuppressWarnings("MagicNumber")
 	@NotNull
@@ -141,37 +144,39 @@ public final class UnencryptedRfc3164UdpSyslogLog implements Log
 		return hours;
 	}
 
-	private static final int AnyOutboundPort = 0;
-	private static final int MaximumTagLengthInBytes = 32;
-	private static final byte Space = ' ';
-	private static final byte Colon = ':';
-	private static final byte OpenSquareBracket = '[';
-	private static final byte Hyphen = '-';
-	@NotNull private static final byte[] localhost_ = "localhost ".getBytes(US_ASCII);
-
 	@NotNull private final DatagramSocket datagramSocket;
 	@NotNull private final InetAddress destinationAddress;
 	private final int destinationPort;
 	@NotNull private final Log failureLog;
 	private final int rfc3164FacilityCodeTimesEight;
 	@NotNull private final Clock clock = systemUTC();
-	@NotNull private final byte[] HOSTNAME_;
+	@NotNull private final byte[] hostname;
 	private final int hostNameLength;
 	private final byte[] applicationName;
 	private final int applicationNameLength;
 
-	public UnencryptedRfc3164UdpSyslogLog(@NotNull final String applicationName, @NotNull final Rfc3164Facility rfc3164Facility, @NotNull final InetAddress destinationAddress, final int destinationPort, @NotNull final Log failureLog)
+	public UnencryptedRfc3164UdpSyslogLog(@NotNull final String applicationName, @NotNull final Rfc3164Facility rfc3164Facility, @NotNull final InetAddress destinationAddress, @NotNull final Log failureLog)
 	{
-		this.destinationAddress = destinationAddress;
-		this.destinationPort = destinationPort;
+		this(applicationName, rfc3164Facility, new InetSocketAddress(destinationAddress, SyslogCommonPortNumber), failureLog, AnyBindAddress);
+	}
+
+	public UnencryptedRfc3164UdpSyslogLog(@NotNull final String applicationName, @NotNull final Rfc3164Facility rfc3164Facility, @NotNull final InetSocketAddress destinationAddress, @NotNull final Log failureLog)
+	{
+		this(applicationName, rfc3164Facility, destinationAddress, failureLog, AnyBindAddress);
+	}
+
+	@SuppressWarnings("WeakerAccess")
+	public UnencryptedRfc3164UdpSyslogLog(@NotNull final String applicationName, @NotNull final Rfc3164Facility rfc3164Facility, @NotNull final InetSocketAddress destinationAddress, @NotNull final Log failureLog, @NotNull final InetSocketAddress bindAddress)
+	{
+		this.destinationAddress = destinationAddress.getAddress();
+		destinationPort = destinationAddress.getPort();
 		this.failureLog = failureLog;
 		rfc3164FacilityCodeTimesEight = rfc3164Facility.rfc3164FacilityCode << 3;
-		final InetSocketAddress bindAddress = new InetSocketAddress(AnyLocalAddress, AnyOutboundPort);
 
 		this.applicationName = convertApplicationName(applicationName);
 		applicationNameLength = this.applicationName.length;
-		HOSTNAME_ = convertHostName(bindAddress);
-		hostNameLength = HOSTNAME_.length;
+		hostname = convertHostName(bindAddress);
+		hostNameLength = hostname.length;
 
 		try
 		{
@@ -182,7 +187,7 @@ public final class UnencryptedRfc3164UdpSyslogLog implements Log
 			throw new IllegalArgumentException(format("Could not bind to UDP socket because '%1$s'", e.getMessage()), e);
 		}
 		// Slight performance gain as security checks less invasive on each send()
-		datagramSocket.connect(destinationAddress, destinationPort);
+		datagramSocket.connect(this.destinationAddress, destinationPort);
 	}
 
 	@NotNull
@@ -286,7 +291,7 @@ public final class UnencryptedRfc3164UdpSyslogLog implements Log
 		final int headerAndTagLength = priLength + TimestampLength + hostNameLength + applicationNameLength;
 		arraycopy(PRI, 0, message, 0, priLength);
 		timestamp(priLength, message);
-		arraycopy(HOSTNAME_, 0, message, priLength + TimestampLength, hostNameLength);
+		arraycopy(hostname, 0, message, priLength + TimestampLength, hostNameLength);
 		arraycopy(applicationName, 0, message, priLength + TimestampLength + hostNameLength, applicationNameLength);
 		return headerAndTagLength;
 	}
