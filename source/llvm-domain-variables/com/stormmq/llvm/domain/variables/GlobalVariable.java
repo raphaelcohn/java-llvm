@@ -37,10 +37,9 @@ import com.stormmq.string.Formatting;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Set;
 import java.util.function.Consumer;
 
-import static com.stormmq.functions.IntHelper.*;
+import static com.stormmq.primitives.IntHelper.*;
 import static com.stormmq.string.Utf8ByteUser.encodeToUtf8ByteArrayWithCertaintyValueIsValid;
 
 public final class GlobalVariable<T extends SizedType> extends AbstractVariable implements MayHaveComdatDefinition

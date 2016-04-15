@@ -30,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-import static com.stormmq.functions.ListHelper.newArrayList;
+import static com.stormmq.functions.collections.ListHelper.newArrayList;
 import static com.stormmq.llvm.domain.typedValues.constantTypedValues.simpleConstantExpressions.IntegerConstantTypedValue.i64;
 
 public final class TbaaTagMetadataTuple extends AnonymousMetadataTuple

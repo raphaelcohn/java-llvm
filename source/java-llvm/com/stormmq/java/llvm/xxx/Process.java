@@ -50,7 +50,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-import static com.stormmq.functions.CollectionHelper.add;
+import static com.stormmq.functions.collections.CollectionHelper.add;
 import static com.stormmq.java.llvm.xxx.happy.Identifiers.createStaticFieldGlobalIdentifier;
 import static com.stormmq.java.llvm.xxx.happy.ToConstantTypedValueFieldConstantUser.toLlvmConstant;
 import static com.stormmq.llvm.domain.AddressSpace.GlobalAddressSpace;

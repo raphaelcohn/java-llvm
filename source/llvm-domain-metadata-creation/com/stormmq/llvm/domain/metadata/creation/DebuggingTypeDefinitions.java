@@ -31,8 +31,8 @@ import org.jetbrains.annotations.*;
 
 import java.util.*;
 
-import static com.stormmq.functions.CollectionHelper.add;
-import static com.stormmq.functions.ListHelper.newArrayList;
+import static com.stormmq.functions.collections.CollectionHelper.add;
+import static com.stormmq.functions.collections.ListHelper.newArrayList;
 import static com.stormmq.llvm.domain.metadata.debugging.DIDerivedTypeKeyedMetadataTuple.constant;
 import static com.stormmq.llvm.domain.metadata.debugging.DIDerivedTypeKeyedMetadataTuple.pointer;
 import static com.stormmq.llvm.domain.metadata.debugging.DIDerivedTypeKeyedMetadataTuple.structMember;

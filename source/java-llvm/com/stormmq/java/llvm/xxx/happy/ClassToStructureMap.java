@@ -45,8 +45,8 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 
-import static com.stormmq.functions.ListHelper.listToArray;
-import static com.stormmq.functions.ListHelper.newArrayList;
+import static com.stormmq.functions.collections.ListHelper.listToArray;
+import static com.stormmq.functions.collections.ListHelper.newArrayList;
 import static com.stormmq.llvm.domain.AddressSpace.GlobalAddressSpace;
 import static com.stormmq.llvm.domain.metadata.creation.DebuggingFieldDetail.toFieldTypes;
 import static java.util.Collections.reverse;

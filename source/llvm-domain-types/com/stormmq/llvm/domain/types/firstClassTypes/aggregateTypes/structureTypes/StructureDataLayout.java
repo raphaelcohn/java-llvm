@@ -31,8 +31,8 @@ import org.jetbrains.annotations.*;
 
 import java.io.*;
 
-import static com.stormmq.functions.ListHelper.listToArray;
-import static com.stormmq.functions.ListHelper.newArrayList;
+import static com.stormmq.functions.collections.ListHelper.listToArray;
+import static com.stormmq.functions.collections.ListHelper.newArrayList;
 import static com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType.i128;
 import static com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType.i8;
 import static com.stormmq.string.StringUtilities.enumSerializationIsNotSupportedForConstantsInASecureContext;

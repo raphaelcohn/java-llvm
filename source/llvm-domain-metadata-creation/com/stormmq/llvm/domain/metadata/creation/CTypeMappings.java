@@ -36,8 +36,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.stormmq.functions.MapHelper.getGuarded;
-import static com.stormmq.functions.MapHelper.putOnce;
+import static com.stormmq.functions.collections.MapHelper.getGuarded;
+import static com.stormmq.functions.collections.MapHelper.putOnce;
 import static com.stormmq.llvm.domain.metadata.debugging.DwarfTypeEncoding.*;
 import static com.stormmq.llvm.domain.types.firstClassTypes.FloatingPointValueType.*;
 import static com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType.*;

@@ -30,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static com.stormmq.functions.ListHelper.newArrayList;
+import static com.stormmq.functions.collections.ListHelper.newArrayList;
 import static com.stormmq.llvm.domain.metadata.debugging.dwarfTags.DerivedDwarfTag.*;
 import static com.stormmq.string.Formatting.format;
 import static java.util.Collections.emptyList;

@@ -31,7 +31,7 @@ import org.jetbrains.annotations.*;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import static com.stormmq.functions.IntHelper.isNotAPowerOfTwoIfGreaterThanZero;
+import static com.stormmq.primitives.IntHelper.isNotAPowerOfTwoIfGreaterThanZero;
 import static com.stormmq.llvm.domain.AddressSpace.GlobalAddressSpace;
 import static com.stormmq.llvm.domain.target.Alignment.*;
 import static com.stormmq.llvm.domain.target.Architecture.*;

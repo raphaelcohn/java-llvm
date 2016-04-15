@@ -27,7 +27,7 @@ import org.jetbrains.annotations.*;
 
 import java.util.Set;
 
-import static com.stormmq.functions.CollectionHelper.addOnce;
+import static com.stormmq.functions.collections.CollectionHelper.addOnce;
 import static com.stormmq.llvm.domain.ObjectFileFormat.ELF;
 import static com.stormmq.llvm.domain.ObjectFileFormat.PECOFF;
 import static com.stormmq.string.Utf8ByteUser.encodeToUtf8ByteArrayWithCertaintyValueIsValid;

@@ -22,7 +22,7 @@
 
 package com.stormmq.llvm.domain.metadata.debugging;
 
-import com.stormmq.functions.ListHelper;
+import com.stormmq.functions.collections.ListHelper;
 import com.stormmq.llvm.domain.ReferenceTracker;
 import com.stormmq.llvm.domain.metadata.metadataTuples.KeyedMetadataTuple;
 import com.stormmq.llvm.domain.metadata.KeyWithMetadataField;

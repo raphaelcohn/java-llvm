@@ -22,7 +22,7 @@
 
 package com.stormmq.llvm.domain.metadata.debugging;
 
-import com.stormmq.functions.*;
+import com.stormmq.functions.collections.SizedIterator;
 import com.stormmq.llvm.domain.ReferenceTracker;
 import com.stormmq.llvm.domain.metadata.metadataTuples.*;
 import com.stormmq.llvm.domain.target.enumSizing.EnumSizeRule;
@@ -33,7 +33,7 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.*;
 
-import static com.stormmq.functions.ListHelper.newArrayListExceptionally;
+import static com.stormmq.functions.collections.ListHelper.newArrayListExceptionally;
 import static com.stormmq.llvm.domain.metadata.debugging.DISubrangeKeyedMetadataTuple.zeroBasedArrayDimension;
 import static com.stormmq.llvm.domain.metadata.debugging.dwarfTags.CompositeDwarfTag.DW_TAG_array_type;
 import static com.stormmq.llvm.domain.metadata.debugging.dwarfTags.CompositeDwarfTag.DW_TAG_enumeration_type;

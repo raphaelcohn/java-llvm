@@ -32,7 +32,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-import static com.stormmq.functions.ListHelper.newArrayList;
+import static com.stormmq.functions.collections.ListHelper.newArrayList;
 import static java.util.Collections.addAll;
 
 public enum Key

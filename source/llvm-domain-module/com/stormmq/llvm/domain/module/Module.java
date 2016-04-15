@@ -28,7 +28,6 @@ import com.stormmq.llvm.domain.LlvmWritable;
 import com.stormmq.llvm.domain.ObjectFileFormat;
 import com.stormmq.llvm.domain.asm.ModuleLevelInlineAsm;
 import com.stormmq.llvm.domain.comdat.ComdatDefinition;
-import com.stormmq.llvm.domain.comdat.MayHaveComdatDefinition;
 import com.stormmq.llvm.domain.function.FunctionDeclaration;
 import com.stormmq.llvm.domain.function.FunctionDefinition;
 import com.stormmq.llvm.domain.identifiers.*;
@@ -45,7 +44,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 
-import static com.stormmq.functions.CollectionHelper.addOnce;
+import static com.stormmq.functions.collections.CollectionHelper.addOnce;
 import static com.stormmq.llvm.domain.LlvmWritable.SpaceEqualsSpace;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;

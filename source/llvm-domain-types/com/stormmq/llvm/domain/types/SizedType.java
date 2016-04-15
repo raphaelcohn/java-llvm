@@ -25,7 +25,7 @@ package com.stormmq.llvm.domain.types;
 import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import org.jetbrains.annotations.NotNull;
 
-import static com.stormmq.functions.IntHelper.roundUpToNearestPowerOfTwoIfGreaterThanZero;
+import static com.stormmq.primitives.IntHelper.roundUpToNearestPowerOfTwoIfGreaterThanZero;
 
 public interface SizedType extends CanBePointedToType
 {
