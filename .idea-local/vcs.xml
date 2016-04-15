@@ -11,6 +11,7 @@
     <mapping directory="$PROJECT_DIR$/source/applications" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/source/byteReaders" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/source/byteWriters" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/source/commandLineArgumentsParsing" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/source/functions" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/source/tuples" vcs="Git" />
   </component>

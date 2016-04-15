@@ -25,3 +25,6 @@
 [submodule "source/applications"]
 	path = source/applications
 	url = https://github.com/raphaelcohn/applications.git
+[submodule "source/commandLineArgumentsParsing"]
+	path = source/commandLineArgumentsParsing
+	url = https://github.com/raphaelcohn/commandLineArgumentsParsing.git
