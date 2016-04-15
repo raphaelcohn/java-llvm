@@ -24,10 +24,7 @@ package com.stormmq.llvm.domain.target;
 
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.string.AbstractToString;
-import com.stormmq.string.Formatting;
 import org.jetbrains.annotations.*;
-
-import java.util.Locale;
 
 import static com.stormmq.llvm.domain.target.Alignment.SixtyFourBitAlignment;
 import static com.stormmq.llvm.domain.target.Alignment.ThirtyTwoBitAlignment;
