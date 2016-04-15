@@ -22,47 +22,74 @@
 
 package com.stormmq.java.llvm.examples;
 
+import com.stormmq.applications.*;
 import com.stormmq.java.classfile.processing.*;
-import com.stormmq.java.classfile.processing.processLogs.ProcessLog;
+import com.stormmq.java.classfile.processing.processLogs.StandardProcessLog;
 import com.stormmq.java.llvm.xxx.happy.*;
 import com.stormmq.java.parsing.utilities.names.PackageName;
-import com.stormmq.applications.Verbosity;
-import com.stormmq.applications.AbstractMultithreadedApplication;
 import com.stormmq.applications.uncaughtExceptionHandlers.MustExitBecauseOfFailureException;
 import com.stormmq.llvm.domain.metadata.creation.CTypeMappings;
 import com.stormmq.llvm.domain.metadata.creation.NamespaceSplitter;
 import com.stormmq.llvm.domain.module.ModuleWriter;
 import com.stormmq.llvm.domain.module.TargetModuleCreator;
 import com.stormmq.llvm.domain.target.DataLayoutSpecification;
+import com.stormmq.logs.*;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.nio.file.Path;
 
-import static com.stormmq.java.classfile.processing.processLogs.PrintStreamProcessLog.standardErrorParseFailureLog;
+import static com.stormmq.applications.ExitCode.CanNotCreate;
+import static com.stormmq.java.classfile.processing.TypeInformationTripletUser.loggingTypeInformationTripletUser;
 import static com.stormmq.java.parsing.utilities.names.PackageName.NamespaceSplitter;
+import static com.stormmq.string.Formatting.format;
+import static java.nio.file.Files.createDirectories;
+import static java.nio.file.Files.deleteIfExists;
 
-public final class ExampleApplication extends AbstractMultithreadedApplication
+public final class JavaToLLvmIntermediateRepresentationApplication extends AbstractApplication
 {
 	@NotNull private final Iterable<Path> sourcePaths;
 	@NotNull private final Path outputPath;
 	@NotNull private final Processor processor;
 	@NotNull private final TypeInformationTripletUser<ClassToStructureMap> typeInformationTripletUser;
 
-	public ExampleApplication(@NotNull final UncaughtExceptionHandler delegate, @NotNull final Verbosity verbosity, @NotNull final Iterable<Path> sourcePaths, @NotNull final Path outputPath, final boolean permitConstantsInInstanceFields, final TargetModuleCreator targetModuleCreator)
+	public JavaToLLvmIntermediateRepresentationApplication(@NotNull final Log log, @NotNull final Verbosity verbosity, @NotNull final Iterable<Path> sourcePaths, @NotNull final Path outputPath, final boolean permitConstantsInInstanceFields, final TargetModuleCreator targetModuleCreator)
 	{
-		super(delegate);
+		super(log);
 
 		this.sourcePaths = sourcePaths;
 		this.outputPath = outputPath;
 
-		final ProcessLog processLog = new ExitCodeSettingProcessLog(standardErrorParseFailureLog(verbosity.isAtLeastVerbose()), exitCode);
-		processor = new Processor(permitConstantsInInstanceFields, processLog, exitCodeSettingUncaughtExceptionHandler);
+		processor = new Processor(permitConstantsInInstanceFields, new StandardProcessLog(log), exitCodeSettingUncaughtExceptionHandler);
 		final ModuleCreatorAndWriter moduleCreatorAndWriter = new ModuleCreatorAndWriter(targetModuleCreator, new ModuleWriter(outputPath));
 		final NamespaceSplitter<PackageName> namespaceSplitter = new NamespaceSplitter<>(NamespaceSplitter, targetModuleCreator.cxxNameMangling());
 		final DataLayoutSpecification dataLayoutSpecification = targetModuleCreator.dataLayoutSpecification();
 		final CTypeMappings cTypeMappings = new CTypeMappings(dataLayoutSpecification);
-		typeInformationTripletUser = new JavaConvertingTypeInformationTripletUser(moduleCreatorAndWriter, namespaceSplitter, dataLayoutSpecification, cTypeMappings);
+		final JavaConvertingTypeInformationTripletUser javaConvertingTypeInformationTripletUser = new JavaConvertingTypeInformationTripletUser(moduleCreatorAndWriter, namespaceSplitter, dataLayoutSpecification, cTypeMappings);
+		typeInformationTripletUser = verbosity.isAtLeastVerbose() ? loggingTypeInformationTripletUser(javaConvertingTypeInformationTripletUser, log) : javaConvertingTypeInformationTripletUser;
+	}
+
+	private void recreateOutputPath(@NotNull final Path outputPath) throws MustExitBecauseOfFailureException
+	{
+		try
+		{
+			deleteIfExists(outputPath);
+		}
+		catch (final IOException ignored)
+		{
+			// Lots of legitimate reasons; may be like $HOME for instance (can't delete)
+		}
+
+		try
+		{
+			createDirectories(outputPath);
+		}
+		catch (final IOException e)
+		{
+			exitCode.set(CanNotCreate);
+			throw new MustExitBecauseOfFailureException(format("Could not create output path '%1$s'", outputPath), e);
+		}
 	}
 
 	@Override
@@ -77,6 +104,13 @@ public final class ExampleApplication extends AbstractMultithreadedApplication
 			return;
 		}
 
+		// TODO: Final class and method analysis
+
+		work(records);
+	}
+
+	private void work(final Records records)
+	{
 		records.iterate(typeInformationTripletUser, records1 -> new ClassToStructureMap(new UsefulRecords(records1)));
 	}
 }

@@ -22,6 +22,7 @@
     <orderEntry type="module" module-name="llvm-domain-metadata-creation" />
     <orderEntry type="module" module-name="commandLineArgumentsParsing" />
     <orderEntry type="module" module-name="applications" />
+    <orderEntry type="module" module-name="logs" />
   </component>
   <component name="org.twodividedbyzero.idea.findbugs">
     <option name="_basePreferences">

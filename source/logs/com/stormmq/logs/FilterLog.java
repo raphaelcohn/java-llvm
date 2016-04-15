@@ -20,44 +20,33 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain;
+package com.stormmq.logs;
 
-import com.stormmq.string.AbstractToString;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.*;
 
-import java.util.HashMap;
-import java.util.Map;
-
-public final class ReferenceTracker extends AbstractToString
+public class FilterLog implements Log
 {
-	@NotNull private final Map<Object, Integer> references;
-	private int nextReferenceIndex;
+	private final LogLevel isThisLogLevelOrIsMoreSerious;
+	private final Log underlying;
 
-	public ReferenceTracker()
+	public FilterLog(final LogLevel isThisLogLevelOrIsMoreSerious, final Log underlying)
 	{
-		references = new HashMap<>(64);
-		nextReferenceIndex = 0;
+		this.isThisLogLevelOrIsMoreSerious = isThisLogLevelOrIsMoreSerious;
+		this.underlying = underlying;
 	}
 
-	@NotNull
 	@Override
-	protected Object[] fields()
+	public void log(@NotNull final LogLevel logLevel, @NotNull @NonNls final String utf8SafeMessageWithoutTrailingNewLine)
 	{
-		return fields(references, nextReferenceIndex);
-	}
-
-	public boolean hasBeenWritten(@NotNull final Object reference)
-	{
-		return references.containsKey(reference);
-	}
-
-	public int referenceIndex(@NotNull final Object reference)
-	{
-		return references.computeIfAbsent(reference, key ->
+		if (logLevel.compareTo(isThisLogLevelOrIsMoreSerious) >= 0)
 		{
-			final int referenceIndex = nextReferenceIndex;
-			nextReferenceIndex++;
-			return referenceIndex;
-		});
+			underlying.log(logLevel, utf8SafeMessageWithoutTrailingNewLine);
+		}
+	}
+
+	@Override
+	public void close()
+	{
+		underlying.close();
 	}
 }

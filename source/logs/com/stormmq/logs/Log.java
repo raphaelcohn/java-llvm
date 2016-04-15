@@ -20,44 +20,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain;
+package com.stormmq.logs;
 
-import com.stormmq.string.AbstractToString;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.function.Supplier;
 
-public final class ReferenceTracker extends AbstractToString
+public interface Log extends AutoCloseable
 {
-	@NotNull private final Map<Object, Integer> references;
-	private int nextReferenceIndex;
+	void log(@NotNull final LogLevel logLevel, @NotNull @NonNls final String utf8SafeMessageWithoutTrailingNewLine);
 
-	public ReferenceTracker()
-	{
-		references = new HashMap<>(64);
-		nextReferenceIndex = 0;
-	}
-
-	@NotNull
 	@Override
-	protected Object[] fields()
-	{
-		return fields(references, nextReferenceIndex);
-	}
-
-	public boolean hasBeenWritten(@NotNull final Object reference)
-	{
-		return references.containsKey(reference);
-	}
-
-	public int referenceIndex(@NotNull final Object reference)
-	{
-		return references.computeIfAbsent(reference, key ->
-		{
-			final int referenceIndex = nextReferenceIndex;
-			nextReferenceIndex++;
-			return referenceIndex;
-		});
-	}
+	void close();
 }

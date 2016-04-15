@@ -20,44 +20,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain;
+package com.stormmq.logs;
 
-import com.stormmq.string.AbstractToString;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.HashMap;
-import java.util.Map;
-
-public final class ReferenceTracker extends AbstractToString
+// Reflects the level used by man(5) syslog
+public enum LogLevel
 {
-	@NotNull private final Map<Object, Integer> references;
-	private int nextReferenceIndex;
+	Debug(7),
+	Info(6),
+	Notice(5),
+	Warning(4),
+	Error(3),
+	Critical(2),
+	Alert(1),
+	Emergency(0),
+	;
 
-	public ReferenceTracker()
-	{
-		references = new HashMap<>(64);
-		nextReferenceIndex = 0;
-	}
+	public final int rfc3164Code;
 
-	@NotNull
-	@Override
-	protected Object[] fields()
+	LogLevel(final int rfc3164Code)
 	{
-		return fields(references, nextReferenceIndex);
-	}
-
-	public boolean hasBeenWritten(@NotNull final Object reference)
-	{
-		return references.containsKey(reference);
-	}
-
-	public int referenceIndex(@NotNull final Object reference)
-	{
-		return references.computeIfAbsent(reference, key ->
-		{
-			final int referenceIndex = nextReferenceIndex;
-			nextReferenceIndex++;
-			return referenceIndex;
-		});
+		this.rfc3164Code = rfc3164Code;
 	}
 }

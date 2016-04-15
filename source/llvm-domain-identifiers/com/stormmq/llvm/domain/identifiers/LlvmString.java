@@ -296,7 +296,7 @@ public final class LlvmString implements LlvmWritable
 		}
 
 		@Override
-		public void useUnsignedByte(final int utf8Byte) throws X
+		public void useUnsignedByte(final int byteIndex, final int sequenceLength, final int utf8Byte) throws X
 		{
 			// [%@][-a-zA-Z$._][-a-zA-Z$._0-9]*
 			if (index == 0)
@@ -444,7 +444,7 @@ public final class LlvmString implements LlvmWritable
 				}
 			}
 
-			index++;
+			this.index++;
 		}
 
 		public void writeByte(final int utf8Byte) throws X

@@ -28,18 +28,26 @@ import com.stormmq.java.classfile.processing.TypeInformationTripletUser;
 import com.stormmq.java.classfile.processing.typeInformationUsers.TypeInformationTriplet;
 import com.stormmq.java.llvm.api.Packed;
 import com.stormmq.java.parsing.utilities.names.typeNames.referenceTypeNames.KnownReferenceTypeName;
+import com.stormmq.string.AbstractToString;
 import org.jetbrains.annotations.*;
 
 import java.lang.annotation.Annotation;
 import java.util.function.Function;
 
-public final class UsefulRecords implements Records
+public final class UsefulRecords extends AbstractToString implements Records
 {
 	@NotNull private final Records records;
 
 	public UsefulRecords(@NotNull final Records records)
 	{
 		this.records = records;
+	}
+
+	@NotNull
+	@Override
+	protected Object[] fields()
+	{
+		return fields(records);
 	}
 
 	public boolean isPacked(@NotNull final TypeInformationTriplet typeInformationTriplet)

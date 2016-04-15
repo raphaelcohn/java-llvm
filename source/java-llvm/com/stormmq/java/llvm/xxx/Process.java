@@ -44,6 +44,7 @@ import com.stormmq.llvm.domain.types.SizedType;
 import com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.structureTypes.*;
 import com.stormmq.llvm.domain.variables.Alias;
 import com.stormmq.llvm.domain.variables.GlobalVariable;
+import com.stormmq.string.AbstractToString;
 import com.stormmq.tuples.Triplet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -60,7 +61,7 @@ import static com.stormmq.llvm.domain.ThreadLocalStorageModel.NoThreadLocalStora
 import static com.stormmq.llvm.domain.Visibility._default;
 import static java.util.Collections.*;
 
-public final class Process
+public final class Process extends AbstractToString
 {
 	@NotNull private static final Map<Architecture, List<ModuleLevelInlineAsm>> NoModuleLevelInlineAssembly = emptyMap();
 	@NotNull private static final Set<Alias> NoAliases = emptySet();
@@ -81,6 +82,13 @@ public final class Process
 		this.classToStructureMap = classToStructureMap;
 		typeMetadataTypeConverter = new ToTypeMetadataTypeConverter(new SimpleTypeConverter<>(new ToTypeMetadataTypeNameVisitor(this.classToStructureMap, debuggingTypeDefinitions)), debuggingTypeDefinitions);
 		sizedTypeTypeConverter = new SimpleTypeConverter<>(new ToSizedTypeTypeNameVisitor(this.classToStructureMap));
+	}
+
+	@NotNull
+	@Override
+	protected Object[] fields()
+	{
+		return fields(self, dataLayoutSpecification, metadataCreator, classToStructureMap, typeMetadataTypeConverter, sizedTypeTypeConverter);
 	}
 
 	public void process(@NotNull final ModuleCreatorAndWriter moduleCreatorAndWriter)

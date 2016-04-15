@@ -25,6 +25,7 @@
       <w>methodref</w>
       <w>misconfigured</w>
       <w>modula</w>
+      <w>multithreaded</w>
       <w>namespaced</w>
       <w>noninfringement</w>
       <w>nullable</w>
@@ -41,6 +42,7 @@
       <w>subprocess</w>
       <w>subrange</w>
       <w>superinterface</w>
+      <w>syslog</w>
       <w>tbaa</w>
       <w>tuples</w>
       <w>unboxed</w>

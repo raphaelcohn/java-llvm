@@ -26,19 +26,27 @@ import com.stormmq.java.llvm.xxx.happy.ClassToStructureMap;
 import com.stormmq.java.parsing.utilities.names.typeNames.TypeNameVisitor;
 import com.stormmq.java.parsing.utilities.names.typeNames.referenceTypeNames.KnownReferenceTypeName;
 import com.stormmq.llvm.domain.types.SizedType;
+import com.stormmq.string.AbstractToString;
 import org.jetbrains.annotations.*;
 
 import static com.stormmq.llvm.domain.types.firstClassTypes.FloatingPointValueType._double;
 import static com.stormmq.llvm.domain.types.firstClassTypes.FloatingPointValueType._float;
 import static com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType.*;
 
-public final class ToSizedTypeTypeNameVisitor implements TypeNameVisitor<SizedType>
+public final class ToSizedTypeTypeNameVisitor extends AbstractToString implements TypeNameVisitor<SizedType>
 {
 	@NotNull private final ClassToStructureMap classToStructureMap;
 
 	public ToSizedTypeTypeNameVisitor(@NotNull final ClassToStructureMap classToStructureMap)
 	{
 		this.classToStructureMap = classToStructureMap;
+	}
+
+	@NotNull
+	@Override
+	protected Object[] fields()
+	{
+		return fields(classToStructureMap);
 	}
 
 	@NotNull

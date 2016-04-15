@@ -20,44 +20,51 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain;
+package com.stormmq.logs;
 
-import com.stormmq.string.AbstractToString;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.Map;
-
-public final class ReferenceTracker extends AbstractToString
+public enum Rfc3164Facility
 {
-	@NotNull private final Map<Object, Integer> references;
-	private int nextReferenceIndex;
+	// These are RFC 3164 definitions
+	kern(0),
+	user(1),
+	mail(2),
+	daemon(3),
+	@SuppressWarnings("SpellCheckingInspection")authpriv(10),
+	auth(4, authpriv),
+	syslog(5),
+	lpr(6),
+	news(7),
+	@SuppressWarnings("SpellCheckingInspection")uucp(8),
+	@SuppressWarnings("SpellCheckingInspection")clockdaemon(9, daemon),
+	ftp(11),
+	ntp(12, daemon),
+	logAudit(13, daemon),
+	logAlert(14, daemon),
+	cron(15),
+	local0(16),
+	local1(17),
+	local2(18),
+	local3(19),
+	local4(20),
+	local5(21),
+	local6(22),
+	local7(23),
+	;
 
-	public ReferenceTracker()
+	public final int rfc3164FacilityCode;
+	@NotNull public final Rfc3164Facility linuxPreferred;
+
+	Rfc3164Facility(final int rfc3164FacilityCode)
 	{
-		references = new HashMap<>(64);
-		nextReferenceIndex = 0;
+		this.rfc3164FacilityCode = rfc3164FacilityCode;
+		linuxPreferred = this;
 	}
 
-	@NotNull
-	@Override
-	protected Object[] fields()
+	Rfc3164Facility(final int rfc3164FacilityCode, @NotNull final Rfc3164Facility linuxPreferred)
 	{
-		return fields(references, nextReferenceIndex);
-	}
-
-	public boolean hasBeenWritten(@NotNull final Object reference)
-	{
-		return references.containsKey(reference);
-	}
-
-	public int referenceIndex(@NotNull final Object reference)
-	{
-		return references.computeIfAbsent(reference, key ->
-		{
-			final int referenceIndex = nextReferenceIndex;
-			nextReferenceIndex++;
-			return referenceIndex;
-		});
+		this.rfc3164FacilityCode = rfc3164FacilityCode;
+		this.linuxPreferred = linuxPreferred;
 	}
 }

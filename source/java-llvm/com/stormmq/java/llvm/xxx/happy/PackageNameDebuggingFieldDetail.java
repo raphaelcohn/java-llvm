@@ -30,9 +30,10 @@ import com.stormmq.llvm.domain.metadata.creation.DebuggingFieldDetail;
 import com.stormmq.llvm.domain.metadata.creation.DebuggingTypeDefinitions;
 import com.stormmq.llvm.domain.metadata.debugging.TypeMetadata;
 import com.stormmq.llvm.domain.types.SizedType;
+import com.stormmq.string.AbstractToString;
 import org.jetbrains.annotations.*;
 
-public final class PackageNameDebuggingFieldDetail implements DebuggingFieldDetail<PackageName>
+public final class PackageNameDebuggingFieldDetail extends AbstractToString implements DebuggingFieldDetail<PackageName>
 {
 	@NotNull private final ClassToStructureMap classToStructureMap;
 	@NotNull private final TypeConverter<SizedType> sizedTypeTypeConverter;
@@ -43,6 +44,13 @@ public final class PackageNameDebuggingFieldDetail implements DebuggingFieldDeta
 		this.classToStructureMap = classToStructureMap;
 		this.sizedTypeTypeConverter = sizedTypeTypeConverter;
 		this.fieldInformation = fieldInformation;
+	}
+
+	@NotNull
+	@Override
+	protected Object[] fields()
+	{
+		return fields(classToStructureMap, sizedTypeTypeConverter, fieldInformation);
 	}
 
 	@NotNull

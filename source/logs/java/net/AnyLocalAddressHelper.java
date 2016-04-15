@@ -20,44 +20,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.llvm.domain;
+package java.net;
 
-import com.stormmq.string.AbstractToString;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import static java.net.InetAddress.anyLocalAddress;
 
-public final class ReferenceTracker extends AbstractToString
+public final class AnyLocalAddressHelper
 {
-	@NotNull private final Map<Object, Integer> references;
-	private int nextReferenceIndex;
-
-	public ReferenceTracker()
+	private AnyLocalAddressHelper()
 	{
-		references = new HashMap<>(64);
-		nextReferenceIndex = 0;
 	}
 
-	@NotNull
-	@Override
-	protected Object[] fields()
-	{
-		return fields(references, nextReferenceIndex);
-	}
-
-	public boolean hasBeenWritten(@NotNull final Object reference)
-	{
-		return references.containsKey(reference);
-	}
-
-	public int referenceIndex(@NotNull final Object reference)
-	{
-		return references.computeIfAbsent(reference, key ->
-		{
-			final int referenceIndex = nextReferenceIndex;
-			nextReferenceIndex++;
-			return referenceIndex;
-		});
-	}
+	@NotNull public static final InetAddress AnyLocalAddress = anyLocalAddress();
 }

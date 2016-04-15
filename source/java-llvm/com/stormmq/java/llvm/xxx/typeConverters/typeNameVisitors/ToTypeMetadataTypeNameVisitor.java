@@ -30,10 +30,11 @@ import com.stormmq.llvm.domain.metadata.creation.*;
 import com.stormmq.llvm.domain.metadata.debugging.DICompositeTypeKeyedMetadataTuple;
 import com.stormmq.llvm.domain.metadata.debugging.TypeMetadata;
 import com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.structureTypes.SizedLocallyIdentifiedStructureType;
+import com.stormmq.string.AbstractToString;
 import com.stormmq.tuples.Triplet;
 import org.jetbrains.annotations.NotNull;
 
-public final class ToTypeMetadataTypeNameVisitor implements TypeNameVisitor<TypeMetadata>
+public final class ToTypeMetadataTypeNameVisitor extends AbstractToString implements TypeNameVisitor<TypeMetadata>
 {
 	@NotNull private final ClassToStructureMap classToStructureMap;
 	@NotNull private final DebuggingTypeDefinitions<PackageName> debuggingTypeDefinitions;
@@ -42,6 +43,13 @@ public final class ToTypeMetadataTypeNameVisitor implements TypeNameVisitor<Type
 	{
 		this.classToStructureMap = classToStructureMap;
 		this.debuggingTypeDefinitions = debuggingTypeDefinitions;
+	}
+
+	@NotNull
+	@Override
+	protected Object[] fields()
+	{
+		return fields(classToStructureMap, debuggingTypeDefinitions);
 	}
 
 	@NotNull

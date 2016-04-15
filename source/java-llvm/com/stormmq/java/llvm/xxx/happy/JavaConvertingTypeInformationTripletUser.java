@@ -22,7 +22,6 @@
 
 package com.stormmq.java.llvm.xxx.happy;
 
-import com.stormmq.java.classfile.processing.Records;
 import com.stormmq.java.classfile.processing.TypeInformationTripletUser;
 import com.stormmq.java.classfile.processing.typeInformationUsers.TypeInformationTriplet;
 import com.stormmq.java.llvm.xxx.Process;
@@ -50,7 +49,7 @@ public final class JavaConvertingTypeInformationTripletUser extends AbstractToSt
 	}
 
 	@Override
-	public void use(@SuppressWarnings("ParameterNameDiffersFromOverriddenParameter") @NotNull final ClassToStructureMap classToStructureMap, @NotNull final TypeInformationTriplet typeInformationTriplet)
+	public void use(@NotNull final TypeInformationTriplet typeInformationTriplet, @SuppressWarnings("ParameterNameDiffersFromOverriddenParameter") @NotNull final ClassToStructureMap classToStructureMap)
 	{
 		final MetadataCreator<PackageName> metadataCreator = new MetadataCreator<>(DW_LANG_Java, typeInformationTriplet.relativeFilePath, typeInformationTriplet.relativeRootFolderPath, dataLayoutSpecification, namespaceSplitter, cTypeMappings);
 		final Process process = new Process(dataLayoutSpecification, classToStructureMap, metadataCreator, metadataCreator.debuggingTypeDefinitions(), typeInformationTriplet);

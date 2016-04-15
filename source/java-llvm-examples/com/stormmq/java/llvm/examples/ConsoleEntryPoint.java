@@ -26,21 +26,23 @@ import com.stormmq.applications.Application;
 import com.stormmq.applications.Verbosity;
 import com.stormmq.commandLineArgumentsParsing.CommandLineArgumentsParser;
 import com.stormmq.llvm.domain.module.TargetModuleCreator;
+import com.stormmq.logs.*;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static com.stormmq.applications.Application.run;
-import static com.stormmq.applications.TimedApplication.standardErrorReportingTimedApplication;
-import static com.stormmq.applications.Verbosity.Everything;
-import static com.stormmq.applications.uncaughtExceptionHandlers.PrintStreamUncaughtExceptionHandler.StandardErrorUncaughtExceptionHandler;
+import static com.stormmq.applications.TimedApplication.loggingTimedApplication;
 import static com.stormmq.commandLineArgumentsParsing.jopt.JoptSimpleCommandLineArgumentsParser.jopSimpleCommandLineArgumentsParser;
 import static com.stormmq.llvm.domain.module.TargetModuleCreator.MacOsXMavericksX86_64;
+import static com.stormmq.logs.LogLevel.Info;
+import static com.stormmq.logs.PrintStreamLog.NoFacilityStandardErrorPrintStreamLog;
 import static com.stormmq.path.Constants.CurrentFolder;
+import static java.util.function.Function.identity;
 
 public final class ConsoleEntryPoint
 {
@@ -53,15 +55,15 @@ public final class ConsoleEntryPoint
 		final Supplier<Path> outputPathOption = commandLineArgumentsParser.creatableFolderPathOption("output", "output folder path, created if doesn't exist", "/path/to/output", "./out/llvm");
 		final Supplier<TargetModuleCreator> targetModuleCreatorOption = commandLineArgumentsParser.enumOption("target", "target details", MacOsXMavericksX86_64);
 
-		final UncaughtExceptionHandler uncaughtExceptionHandler = StandardErrorUncaughtExceptionHandler;
-		final Verbosity chosenVerbosity = verbosityOption.get();
+		final Verbosity verbosity = verbosityOption.get();
 		final List<Path> sourcePaths = sourceOption.get();
 		final Path outputPath = outputPathOption.get();
 		final TargetModuleCreator targetModuleCreator = targetModuleCreatorOption.get();
 
-		final Application application = new ExampleApplication(uncaughtExceptionHandler, chosenVerbosity, sourcePaths, outputPath,  true, targetModuleCreator);
-		final Application applicationToExecute = chosenVerbosity == Everything ? standardErrorReportingTimedApplication(application) : application;
-		run(applicationToExecute, uncaughtExceptionHandler);
+		@SuppressWarnings("resource") final Log log = verbosity.isAtLeastVerbose(NoFacilityStandardErrorPrintStreamLog, identity(), (Function<Log, Log>) log1 -> new FilterLog(Info, log1));
+		final Application application = new JavaToLLvmIntermediateRepresentationApplication(log, verbosity, sourcePaths, outputPath,  true, targetModuleCreator);
+		final Application applicationToExecute = verbosity.isAtLeastVerbose(application, application1 -> loggingTimedApplication(application1, log), identity());
+		applicationToExecute.run(log);
 	}
 
 	private ConsoleEntryPoint()

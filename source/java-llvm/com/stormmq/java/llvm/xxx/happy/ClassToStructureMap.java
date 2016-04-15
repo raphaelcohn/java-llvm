@@ -77,7 +77,7 @@ public final class ClassToStructureMap extends AbstractToString
 	@Override
 	protected Object[] fields()
 	{
-		return fields(usefulRecords, classNamesToLocalIdentifiersAndPointers, localIdentifiersToStructureDetails, sizedTypeTypeConverter);
+		return fields(usefulRecords, classNamesToLocalIdentifiersAndPointers, localIdentifiersToStructureDetails);
 	}
 
 	@NotNull

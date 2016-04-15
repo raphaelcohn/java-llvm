@@ -30,6 +30,7 @@ import com.stormmq.llvm.domain.typedValues.constantTypedValues.ConstantTypedValu
 import com.stormmq.llvm.domain.typedValues.constantTypedValues.simpleConstantExpressions.IntegerConstantTypedValue;
 import com.stormmq.llvm.domain.types.CanBePointedToType;
 import com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType;
+import com.stormmq.string.AbstractToString;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,7 +40,7 @@ import static com.stormmq.llvm.domain.typedValues.constantTypedValues.simpleCons
 import static com.stormmq.llvm.domain.typedValues.constantTypedValues.simpleConstantExpressions.IntegerConstantTypedValue.i64;
 import static com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType.i32;
 
-public final class ToConstantTypedValueFieldConstantUser<T extends CanBePointedToType> implements FieldConstantUser<ConstantTypedValue<T>>
+public final class ToConstantTypedValueFieldConstantUser<T extends CanBePointedToType> extends AbstractToString implements FieldConstantUser<ConstantTypedValue<T>>
 {
 	@Nullable
 	public static <T extends CanBePointedToType> ConstantTypedValue<T> toLlvmConstant(@NotNull final FieldInformation fieldInformation, @NotNull final T llvmType)
@@ -53,6 +54,13 @@ public final class ToConstantTypedValueFieldConstantUser<T extends CanBePointedT
 	private ToConstantTypedValueFieldConstantUser(@NotNull final IntegerValueType integerValueType)
 	{
 		this.integerValueType = integerValueType;
+	}
+
+	@NotNull
+	@Override
+	protected Object[] fields()
+	{
+		return fields(integerValueType);
 	}
 
 	@SuppressWarnings("unchecked")
