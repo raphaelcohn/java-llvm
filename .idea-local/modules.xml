@@ -4,7 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/source/annotations/annotations.iml" filepath="$PROJECT_DIR$/source/annotations/annotations.iml" group="library/annotations" />
       <module fileurl="file://$PROJECT_DIR$/source/byteReaders/byteReaders.iml" filepath="$PROJECT_DIR$/source/byteReaders/byteReaders.iml" group="library/byteReaders" />
-      <module fileurl="file://$PROJECT_DIR$/source/byteWriters/byteWriters.iml" filepath="$PROJECT_DIR$/source/byteWriters/byteWriters.iml" />
+      <module fileurl="file://$PROJECT_DIR$/source/byteWriters/byteWriters.iml" filepath="$PROJECT_DIR$/source/byteWriters/byteWriters.iml" group="library/byteWriters" />
       <module fileurl="file://$PROJECT_DIR$/source/functions/functions.iml" filepath="$PROJECT_DIR$/source/functions/functions.iml" group="library/functions" />
       <module fileurl="file://$PROJECT_DIR$/source/java-classfile-domain/java-classfile-domain.iml" filepath="$PROJECT_DIR$/source/java-classfile-domain/java-classfile-domain.iml" group="library/java-classfile/classfile" />
       <module fileurl="file://$PROJECT_DIR$/source/java-classfile-parsing/java-classfile-parsing.iml" filepath="$PROJECT_DIR$/source/java-classfile-parsing/java-classfile-parsing.iml" group="library/java-classfile/classfile" />

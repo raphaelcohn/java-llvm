@@ -19,3 +19,6 @@
 [submodule "source/byteReaders"]
 	path = source/byteReaders
 	url = https://github.com/raphaelcohn/byteReaders.git
+[submodule "source/byteWriters"]
+	path = source/byteWriters
+	url = https://github.com/raphaelcohn/byteWriters.git

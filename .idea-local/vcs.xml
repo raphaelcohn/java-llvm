@@ -9,6 +9,7 @@
     <mapping directory="$PROJECT_DIR$/library/jopt-simple" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/library/path" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/source/byteReaders" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/source/byteWriters" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/source/functions" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/source/tuples" vcs="Git" />
   </component>
