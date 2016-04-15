@@ -20,32 +20,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.jopt.applications.timedApplicationResultsUsers;
+package com.stormmq.applications.uncaughtExceptionHandlers;
 
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.PrintStream;
-
-import static com.stormmq.string.Formatting.formatPrintLineAndFlushWhilstSynchronized;
-import static java.lang.System.err;
-
-public final class PrintStreamTimedApplicationResultsUser implements TimedApplicationResultsUser
+public final class MustExitBecauseOfFailureException extends Exception
 {
-	@NonNls @NotNull private final PrintStream printStream;
-
-	@SuppressWarnings("UseOfSystemOutOrSystemErr")
-	@NotNull
-	public static final TimedApplicationResultsUser StandardErrorTimedApplicationResultUser = new PrintStreamTimedApplicationResultsUser(err);
-
-	private PrintStreamTimedApplicationResultsUser(@NotNull final PrintStream printStream)
+	public MustExitBecauseOfFailureException(@NotNull final String messageToLog)
 	{
-		this.printStream = printStream;
+		super(messageToLog);
 	}
 
-	@Override
-	public void use(final long duration)
+	public MustExitBecauseOfFailureException(@NotNull final String messageToLog, @NotNull final Exception cause)
 	{
-		formatPrintLineAndFlushWhilstSynchronized(printStream, "Executed in '%1$s' millisecond$%2$s%n", duration, duration == 1 ? "" : "s");
+		super(messageToLog, cause);
 	}
 }

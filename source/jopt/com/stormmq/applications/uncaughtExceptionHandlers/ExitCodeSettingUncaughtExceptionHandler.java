@@ -20,35 +20,34 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.byteWriters;
+package com.stormmq.applications.uncaughtExceptionHandlers;
 
-import com.stormmq.string.InvalidUtf16StringException;
-import com.stormmq.string.Utf8ByteUser;
-import org.jetbrains.annotations.NonNls;
+import com.stormmq.applications.ExitCode;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractByteWriter<X extends Exception> implements ByteWriter<X>
+import java.io.IOError;
+import java.io.IOException;
+import java.lang.Thread.UncaughtExceptionHandler;
+import java.util.concurrent.atomic.AtomicReference;
+
+import static com.stormmq.applications.ExitCode.IOError;
+import static com.stormmq.applications.ExitCode.Software;
+
+public final class ExitCodeSettingUncaughtExceptionHandler implements UncaughtExceptionHandler
 {
-	protected AbstractByteWriter()
+	@NotNull private final UncaughtExceptionHandler delegate;
+	@NotNull private final AtomicReference<ExitCode> exitCode;
+
+	public ExitCodeSettingUncaughtExceptionHandler(@NotNull final UncaughtExceptionHandler delegate, @NotNull final AtomicReference<ExitCode> exitCode)
 	{
+		this.delegate = delegate;
+		this.exitCode = exitCode;
 	}
 
 	@Override
-	public final void writeUtf8EncodedString(@NotNull @NonNls final String value) throws InvalidUtf16StringException, X
+	public void uncaughtException(final Thread thread, final Throwable uncaughtThrowable)
 	{
-		((Utf8ByteUser<X>) this::writeByte).encodeUtf8Bytes(value);
-	}
-
-	@Override
-	public final void writeUtf8EncodedStringWithCertainty(@NotNull @NonNls final String value) throws X
-	{
-		try
-		{
-			writeUtf8EncodedString(value);
-		}
-		catch (final InvalidUtf16StringException e)
-		{
-			throw new IllegalArgumentException("value should have been a valid UTF-16 string", e);
-		}
+		exitCode.set(uncaughtThrowable instanceof IOException || uncaughtThrowable instanceof IOError ? IOError : Software);
+		delegate.uncaughtException(thread, uncaughtThrowable);
 	}
 }

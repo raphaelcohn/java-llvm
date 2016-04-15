@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public final class OutputStreamByteWriter extends AbstractByteWriter<IOException>
+public final class OutputStreamByteWriter implements ByteWriter<IOException>
 {
 	@NotNull private final OutputStream outputStream;
 

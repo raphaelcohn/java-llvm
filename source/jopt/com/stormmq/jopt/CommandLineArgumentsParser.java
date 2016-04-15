@@ -22,6 +22,7 @@
 
 package com.stormmq.jopt;
 
+import com.stormmq.applications.Verbosity;
 import joptsimple.*;
 import org.jetbrains.annotations.*;
 
@@ -34,7 +35,7 @@ import java.util.function.Supplier;
 import static com.stormmq.functions.CollectionHelper.addOnce;
 import static com.stormmq.jopt.OptionMustBe.OptionCanBeAbsent;
 import static com.stormmq.jopt.OptionMustBe.OptionMustBePresent;
-import static com.stormmq.jopt.Verbosity.*;
+import static com.stormmq.applications.Verbosity.*;
 import static com.stormmq.string.Formatting.format;
 import static java.lang.System.err;
 import static java.lang.System.out;
@@ -150,7 +151,7 @@ public class CommandLineArgumentsParser
 	{
 		final String name = defaultsTo.name();
 		optionWithRequiredValue(OptionCanBeAbsent, optionName, description, name, requireIfTheseOptionsArePresent).withValuesConvertedBy(new EnumValueConverter<>(optionName, defaultsTo)).defaultsTo(defaultsTo);
-		return () -> newArgumentsOnce().enumOptionValue(optionName, defaultsTo.getDeclaringClass());
+		return () -> newArgumentsOnce().enumOptionValue(optionName);
 	}
 
 	@NotNull

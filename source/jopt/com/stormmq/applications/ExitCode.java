@@ -20,9 +20,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.jopt;
+package com.stormmq.applications;
 
-import static com.stormmq.jopt.CommandLineArguments.newShouldHaveExited;
+import org.jetbrains.annotations.NotNull;
+
+import static com.stormmq.applications.ExitCode.newShouldHaveExited;
 import static java.lang.Runtime.getRuntime;
 
 public enum ExitCode
@@ -69,6 +71,18 @@ public enum ExitCode
 	// ksh93 is different enough to most POSIX shells to make it incompatible for anything other than moderately involved shell scripts...
 	private static final int ksh93IncrementToExitCodeWithSignal = 256;
 	private static final int posixIncrementToExitCodeWithSignal = 128;
+
+	@NotNull
+	public static IllegalStateException newShouldHaveExited(@SuppressWarnings("UnusedParameters") @NotNull final Throwable cause)
+	{
+		return newShouldHaveExited();
+	}
+
+	@NotNull
+	public static IllegalStateException newShouldHaveExited()
+	{
+		return new IllegalStateException("Should have exited");
+	}
 
 	private final int value;
 

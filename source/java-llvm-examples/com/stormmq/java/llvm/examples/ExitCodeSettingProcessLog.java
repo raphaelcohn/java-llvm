@@ -26,7 +26,7 @@ import com.stormmq.java.classfile.parser.javaClassFileParsers.exceptions.Invalid
 import com.stormmq.java.classfile.parser.javaClassFileParsers.exceptions.JavaClassFileContainsDataTooLongToReadException;
 import com.stormmq.java.classfile.processing.processLogs.ProcessLog;
 import com.stormmq.java.classfile.processing.typeInformationUsers.TypeInformationTriplet;
-import com.stormmq.jopt.ExitCode;
+import com.stormmq.applications.ExitCode;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,7 +35,7 @@ import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.zip.*;
 
-import static com.stormmq.jopt.ExitCode.*;
+import static com.stormmq.applications.ExitCode.*;
 
 public final class ExitCodeSettingProcessLog implements ProcessLog
 {

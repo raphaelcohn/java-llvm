@@ -23,6 +23,7 @@
 package com.stormmq.byteWriters;
 
 import com.stormmq.string.InvalidUtf16StringException;
+import com.stormmq.string.Utf8ByteUser;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,9 +36,22 @@ public interface ByteWriter<X extends Exception> extends AutoCloseable
 
 	void writeBytes(@NotNull final byte... bytes) throws X;
 
-	void writeUtf8EncodedString(@NotNull @NonNls final String value) throws InvalidUtf16StringException, X;
+	default void writeUtf8EncodedString(@NotNull @NonNls final String value) throws InvalidUtf16StringException, X
+	{
+		((Utf8ByteUser<X>) this::writeByte).encodeUtf8Bytes(value);
+	}
 
-	void writeUtf8EncodedStringWithCertainty(@NotNull @NonNls final String value) throws X;
+	default void writeUtf8EncodedStringWithCertainty(@NotNull @NonNls final String value) throws X
+	{
+		try
+		{
+			writeUtf8EncodedString(value);
+		}
+		catch (final InvalidUtf16StringException e)
+		{
+			throw new IllegalArgumentException("value should have been a valid UTF-16 string", e);
+		}
+	}
 
 	default void writeSpace() throws X
 	{

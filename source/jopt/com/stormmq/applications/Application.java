@@ -20,42 +20,55 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.jopt.applications.uncaughtExceptionHandlers;
+package com.stormmq.applications;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.PrintStream;
+import java.io.IOError;
 import java.lang.Thread.UncaughtExceptionHandler;
 
-import static com.stormmq.string.Formatting.formatPrintLineAndFlushWhilstSynchronized;
-import static java.lang.System.err;
+import static com.stormmq.applications.ExitCode.*;
+import static com.stormmq.applications.uncaughtExceptionHandlers.PrintStreamUncaughtExceptionHandler.StandardErrorUncaughtExceptionHandler;
+import static java.lang.Thread.currentThread;
 
-public final class PrintStreamUncaughtExceptionHandler implements UncaughtExceptionHandler
+@FunctionalInterface
+public interface Application
 {
-	@SuppressWarnings("UseOfSystemOutOrSystemErr") @NotNull public static final UncaughtExceptionHandler StandardErrorUncaughtExceptionHandler = new PrintStreamUncaughtExceptionHandler(err);
+	@NotNull
+	ExitCode execute();
 
-	@NotNull private final PrintStream printStream;
-
-	private PrintStreamUncaughtExceptionHandler(@NotNull final PrintStream printStream)
+	static void run(@NotNull final Application application)
 	{
-		this.printStream = printStream;
+		run(application, StandardErrorUncaughtExceptionHandler);
 	}
 
-	@Override
-	public void uncaughtException(@NotNull final Thread thread, @NotNull final Throwable uncaughtThrowable)
+	@SuppressWarnings("ErrorNotRethrown")
+	static void run(@NotNull final Application application, @NotNull final UncaughtExceptionHandler uncaughtExceptionHandler)
 	{
-		if (uncaughtThrowable instanceof MustExitBecauseOfFailureException)
+		ExitCode exitCode;
+		try
 		{
-			formatPrintLineAndFlushWhilstSynchronized(printStream, uncaughtThrowable.getMessage());
+			exitCode = application.execute();
 		}
-		else
+		catch (final IOError e)
 		{
-			synchronized (printStream)
-			{
-				formatPrintLineAndFlushWhilstSynchronized(printStream, "Exception '%1$s' on thread '%2$s'", uncaughtThrowable.getMessage(), thread.getName());
-				uncaughtThrowable.printStackTrace(printStream);
-				printStream.flush();
-			}
+			exitCode = handle(uncaughtExceptionHandler, e, IOError);
 		}
+		catch (final Throwable e)
+		{
+			exitCode = handle(uncaughtExceptionHandler, e, Software);
+		}
+
+		if (exitCode != Success)
+		{
+			exitCode.exit();
+		}
+	}
+
+	@NotNull
+	static ExitCode handle(@NotNull final UncaughtExceptionHandler uncaughtExceptionHandler, @NotNull final Throwable throwable, @NotNull final ExitCode exitCode)
+	{
+		uncaughtExceptionHandler.uncaughtException(currentThread(), throwable);
+		return exitCode;
 	}
 }

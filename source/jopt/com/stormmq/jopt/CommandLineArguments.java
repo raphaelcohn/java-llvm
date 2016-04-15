@@ -22,6 +22,8 @@
 
 package com.stormmq.jopt;
 
+import com.stormmq.applications.ExitCode;
+import com.stormmq.applications.Verbosity;
 import joptsimple.*;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -34,8 +36,8 @@ import java.nio.file.Path;
 import java.util.*;
 
 import static com.stormmq.jopt.CommandLineArgumentsParser.help;
-import static com.stormmq.jopt.ExitCode.*;
-import static com.stormmq.jopt.Verbosity.None;
+import static com.stormmq.applications.ExitCode.*;
+import static com.stormmq.applications.Verbosity.None;
 import static com.stormmq.path.IsSubFolderFilter.IsSubFolder;
 import static com.stormmq.string.Formatting.formatPrintLineAndFlushWhilstSynchronized;
 import static java.nio.charset.Charset.forName;
@@ -44,18 +46,6 @@ import static java.nio.file.Paths.get;
 
 final class CommandLineArguments
 {
-	@NotNull
-	public static IllegalStateException newShouldHaveExited(@SuppressWarnings("UnusedParameters") @NotNull final Throwable cause)
-	{
-		return newShouldHaveExited();
-	}
-
-	@NotNull
-	static IllegalStateException newShouldHaveExited()
-	{
-		return new IllegalStateException("Should have exited");
-	}
-
 	@NotNull private final OptionParser optionParser;
 	@NotNull private final PrintStream out;
 	@NotNull private final PrintStream error;
@@ -192,7 +182,7 @@ final class CommandLineArguments
 
 	@SuppressWarnings("unchecked")
 	@NotNull
-	public <E extends Enum<E>> E enumOptionValue(@NotNull final String optionName, @NotNull final Class<E> declaringClass)
+	public <E extends Enum<E>> E enumOptionValue(@NotNull final String optionName)
 	{
 		return (E) arguments.valueOf(optionName);
 	}

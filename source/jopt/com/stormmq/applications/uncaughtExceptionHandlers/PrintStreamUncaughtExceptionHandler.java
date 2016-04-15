@@ -20,34 +20,42 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.jopt.applications.uncaughtExceptionHandlers;
+package com.stormmq.applications.uncaughtExceptionHandlers;
 
-import com.stormmq.jopt.ExitCode;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOError;
-import java.io.IOException;
+import java.io.PrintStream;
 import java.lang.Thread.UncaughtExceptionHandler;
-import java.util.concurrent.atomic.AtomicReference;
 
-import static com.stormmq.jopt.ExitCode.IOError;
-import static com.stormmq.jopt.ExitCode.Software;
+import static com.stormmq.string.Formatting.formatPrintLineAndFlushWhilstSynchronized;
+import static java.lang.System.err;
 
-public final class ExitCodeSettingUncaughtExceptionHandler implements UncaughtExceptionHandler
+public final class PrintStreamUncaughtExceptionHandler implements UncaughtExceptionHandler
 {
-	@NotNull private final UncaughtExceptionHandler delegate;
-	@NotNull private final AtomicReference<ExitCode> exitCode;
+	@SuppressWarnings("UseOfSystemOutOrSystemErr") @NotNull public static final UncaughtExceptionHandler StandardErrorUncaughtExceptionHandler = new PrintStreamUncaughtExceptionHandler(err);
 
-	public ExitCodeSettingUncaughtExceptionHandler(@NotNull final UncaughtExceptionHandler delegate, @NotNull final AtomicReference<ExitCode> exitCode)
+	@NotNull private final PrintStream printStream;
+
+	private PrintStreamUncaughtExceptionHandler(@NotNull final PrintStream printStream)
 	{
-		this.delegate = delegate;
-		this.exitCode = exitCode;
+		this.printStream = printStream;
 	}
 
 	@Override
-	public void uncaughtException(final Thread thread, final Throwable uncaughtThrowable)
+	public void uncaughtException(@NotNull final Thread thread, @NotNull final Throwable uncaughtThrowable)
 	{
-		exitCode.set(uncaughtThrowable instanceof IOException || uncaughtThrowable instanceof IOError ? IOError : Software);
-		delegate.uncaughtException(thread, uncaughtThrowable);
+		if (uncaughtThrowable instanceof MustExitBecauseOfFailureException)
+		{
+			formatPrintLineAndFlushWhilstSynchronized(printStream, uncaughtThrowable.getMessage());
+		}
+		else
+		{
+			synchronized (printStream)
+			{
+				formatPrintLineAndFlushWhilstSynchronized(printStream, "Exception '%1$s' on thread '%2$s'", uncaughtThrowable.getMessage(), thread.getName());
+				uncaughtThrowable.printStackTrace(printStream);
+				printStream.flush();
+			}
+		}
 	}
 }

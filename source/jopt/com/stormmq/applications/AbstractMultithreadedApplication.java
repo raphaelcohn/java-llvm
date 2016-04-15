@@ -20,11 +20,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.jopt.applications;
+package com.stormmq.applications;
 
-import com.stormmq.jopt.ExitCode;
-import com.stormmq.jopt.applications.uncaughtExceptionHandlers.ExitCodeSettingUncaughtExceptionHandler;
-import com.stormmq.jopt.applications.uncaughtExceptionHandlers.MustExitBecauseOfFailureException;
+import com.stormmq.applications.uncaughtExceptionHandlers.ExitCodeSettingUncaughtExceptionHandler;
+import com.stormmq.applications.uncaughtExceptionHandlers.MustExitBecauseOfFailureException;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -32,8 +31,8 @@ import java.lang.Thread.UncaughtExceptionHandler;
 import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static com.stormmq.jopt.ExitCode.CanNotCreate;
-import static com.stormmq.jopt.ExitCode.Success;
+import static com.stormmq.applications.ExitCode.CanNotCreate;
+import static com.stormmq.applications.ExitCode.Success;
 import static com.stormmq.string.Formatting.format;
 import static java.nio.file.Files.createDirectories;
 import static java.nio.file.Files.deleteIfExists;

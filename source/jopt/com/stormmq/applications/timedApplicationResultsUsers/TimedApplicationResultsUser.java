@@ -20,18 +20,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.jopt;
+package com.stormmq.applications.timedApplicationResultsUsers;
 
-public enum Verbosity
+@FunctionalInterface
+public interface TimedApplicationResultsUser
 {
-	None,
-	Verbose,
-	VeryVerbose,
-	Everything,
-	;
-
-	public boolean isAtLeastVerbose()
-	{
-		return compareTo(None) > 0;
-	}
+	void use(final long duration);
 }

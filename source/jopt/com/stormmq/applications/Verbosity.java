@@ -20,19 +20,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.jopt.applications.uncaughtExceptionHandlers;
+package com.stormmq.applications;
 
-import org.jetbrains.annotations.NotNull;
-
-public final class MustExitBecauseOfFailureException extends Exception
+public enum Verbosity
 {
-	public MustExitBecauseOfFailureException(@NotNull final String messageToLog)
-	{
-		super(messageToLog);
-	}
+	None,
+	Verbose,
+	VeryVerbose,
+	Everything,
+	;
 
-	public MustExitBecauseOfFailureException(@NotNull final String messageToLog, @NotNull final Exception cause)
+	public boolean isAtLeastVerbose()
 	{
-		super(messageToLog, cause);
+		return compareTo(None) > 0;
 	}
 }

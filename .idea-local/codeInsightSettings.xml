@@ -3,6 +3,7 @@
   <component name="JavaProjectCodeInsightSettings">
     <excluded-names>
       <name>apple.laf</name>
+      <name>com.apple</name>
       <name>com.apple.laf</name>
       <name>com.oracle</name>
       <name>com.sun</name>

@@ -20,13 +20,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package com.stormmq.jopt.applications;
+package com.stormmq.applications;
 
-import com.stormmq.jopt.ExitCode;
-import com.stormmq.jopt.applications.timedApplicationResultsUsers.TimedApplicationResultsUser;
+import com.stormmq.applications.timedApplicationResultsUsers.TimedApplicationResultsUser;
 import org.jetbrains.annotations.*;
 
-import static com.stormmq.jopt.applications.timedApplicationResultsUsers.PrintStreamTimedApplicationResultsUser.StandardErrorTimedApplicationResultUser;
+import static com.stormmq.applications.timedApplicationResultsUsers.PrintStreamTimedApplicationResultsUser.StandardErrorTimedApplicationResultUser;
 import static java.lang.System.currentTimeMillis;
 
 public final class TimedApplication implements Application
