@@ -16,3 +16,6 @@
 [submodule "source/functions"]
 	path = source/functions
 	url = https://github.com/raphaelcohn/functions.git
+[submodule "source/byteReaders"]
+	path = source/byteReaders
+	url = https://github.com/raphaelcohn/byteReaders.git
