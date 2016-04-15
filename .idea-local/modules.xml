@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/source/annotations/annotations.iml" filepath="$PROJECT_DIR$/source/annotations/annotations.iml" group="library/annotations" />
+      <module fileurl="file://$PROJECT_DIR$/source/annotations/annotations.iml" filepath="$PROJECT_DIR$/source/annotations/annotations.iml" />
       <module fileurl="file://$PROJECT_DIR$/source/byteReaders/byteReaders.iml" filepath="$PROJECT_DIR$/source/byteReaders/byteReaders.iml" group="library/byteReaders" />
       <module fileurl="file://$PROJECT_DIR$/source/byteWriters/byteWriters.iml" filepath="$PROJECT_DIR$/source/byteWriters/byteWriters.iml" group="library/byteWriters" />
       <module fileurl="file://$PROJECT_DIR$/source/functions/functions.iml" filepath="$PROJECT_DIR$/source/functions/functions.iml" group="library/functions" />
