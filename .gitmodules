@@ -22,3 +22,6 @@
 [submodule "source/byteWriters"]
 	path = source/byteWriters
 	url = https://github.com/raphaelcohn/byteWriters.git
+[submodule "source/applications"]
+	path = source/applications
+	url = https://github.com/raphaelcohn/applications.git
