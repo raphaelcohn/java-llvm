@@ -28,3 +28,6 @@
 [submodule "source/commandLineArgumentsParsing"]
 	path = source/commandLineArgumentsParsing
 	url = https://github.com/raphaelcohn/commandLineArgumentsParsing.git
+[submodule "library/serializers"]
+	path = library/serializers
+	url = https://github.com/raphaelcohn/serializers.git

@@ -36,6 +36,10 @@
       <module fileurl="file://$PROJECT_DIR$/source/path/path.iml" filepath="$PROJECT_DIR$/source/path/path.iml" group="library/path" />
       <module fileurl="file://$PROJECT_DIR$/source/string/string.iml" filepath="$PROJECT_DIR$/source/string/string.iml" group="library/string" />
       <module fileurl="file://$PROJECT_DIR$/source/tuples/tuples.iml" filepath="$PROJECT_DIR$/source/tuples/tuples.iml" group="library/tuples" />
+      <module fileurl="file://$PROJECT_DIR$/source/serializers/serializers.iml" filepath="$PROJECT_DIR$/source/serializers/serializers.iml" group="library/serializers" />
+      <module fileurl="file://$PROJECT_DIR$/source/serializers-json/serializers-json.iml" filepath="$PROJECT_DIR$/source/serializers-json/serializers-json.iml" group="library/serializers" />
+      <module fileurl="file://$PROJECT_DIR$/source/serializers-separatedValues/serializers-separatedValues.iml" filepath="$PROJECT_DIR$/source/serializers-separatedValues/serializers-separatedValues.iml" group="library/serializers" />
+      <module fileurl="file://$PROJECT_DIR$/source/serializers-xml/serializers-xml.iml" filepath="$PROJECT_DIR$/source/serializers-xml/serializers-xml.iml" group="library/serializers" />
     </modules>
   </component>
 </project>
