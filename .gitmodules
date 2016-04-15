@@ -13,3 +13,6 @@
 [submodule "source/tuples"]
 	path = source/tuples
 	url = https://github.com/raphaelcohn/tuples.git
+[submodule "source/functions"]
+	path = source/functions
+	url = https://github.com/raphaelcohn/functions.git
