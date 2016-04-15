@@ -24,7 +24,8 @@ package com.stormmq.java.llvm.examples;
 
 import com.stormmq.applications.Application;
 import com.stormmq.applications.Verbosity;
-import com.stormmq.jopt.*;
+import com.stormmq.commandLineArgumentsParsing.CommandLineArgumentsParser;
+import com.stormmq.jopt.JoptSimpleCommandLineArgumentsParser;
 import com.stormmq.llvm.domain.module.TargetModuleCreator;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -36,9 +37,9 @@ import java.util.function.Supplier;
 
 import static com.stormmq.applications.Application.run;
 import static com.stormmq.applications.TimedApplication.standardErrorReportingTimedApplication;
-import static com.stormmq.jopt.CommandLineArgumentsParser.commandLineArgumentsParser;
 import static com.stormmq.applications.Verbosity.Everything;
 import static com.stormmq.applications.uncaughtExceptionHandlers.PrintStreamUncaughtExceptionHandler.StandardErrorUncaughtExceptionHandler;
+import static com.stormmq.jopt.JoptSimpleCommandLineArgumentsParser.jopSimpleCommandLineArgumentsParser;
 import static com.stormmq.llvm.domain.module.TargetModuleCreator.MacOsXMavericksX86_64;
 import static com.stormmq.path.Constants.CurrentFolder;
 
@@ -47,7 +48,7 @@ public final class ConsoleEntryPoint
 	@SuppressWarnings("HardcodedFileSeparator")
 	public static void main(@NotNull @NonNls final String... commandLineArguments)
 	{
-		final CommandLineArgumentsParser commandLineArgumentsParser = commandLineArgumentsParser(commandLineArguments);
+		final CommandLineArgumentsParser commandLineArgumentsParser = jopSimpleCommandLineArgumentsParser(commandLineArguments);
 		final Supplier<Verbosity> verbosityOption = commandLineArgumentsParser.verboseOption();
 		final Supplier<List<Path>> sourceOption = commandLineArgumentsParser.extantWritableFolderPathsOption("source", "source root path", "/path/to/source", CurrentFolder);
 		final Supplier<Path> outputPathOption = commandLineArgumentsParser.creatableFolderPathOption("output", "output folder path, created if doesn't exist", "/path/to/output", "./out/llvm");

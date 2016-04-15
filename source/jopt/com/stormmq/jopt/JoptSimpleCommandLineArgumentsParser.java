@@ -23,6 +23,8 @@
 package com.stormmq.jopt;
 
 import com.stormmq.applications.Verbosity;
+import com.stormmq.commandLineArgumentsParsing.CommandLineArgumentsParser;
+import com.stormmq.commandLineArgumentsParsing.OptionMustBe;
 import joptsimple.*;
 import org.jetbrains.annotations.*;
 
@@ -33,26 +35,24 @@ import java.util.*;
 import java.util.function.Supplier;
 
 import static com.stormmq.functions.CollectionHelper.addOnce;
-import static com.stormmq.jopt.OptionMustBe.OptionCanBeAbsent;
-import static com.stormmq.jopt.OptionMustBe.OptionMustBePresent;
+import static com.stormmq.commandLineArgumentsParsing.OptionMustBe.OptionCanBeAbsent;
+import static com.stormmq.commandLineArgumentsParsing.OptionMustBe.OptionMustBePresent;
 import static com.stormmq.applications.Verbosity.*;
 import static com.stormmq.string.Formatting.format;
 import static java.lang.System.err;
 import static java.lang.System.out;
 import static java.util.Arrays.copyOfRange;
 
-public class CommandLineArgumentsParser
+public class JoptSimpleCommandLineArgumentsParser implements CommandLineArgumentsParser
 {
-	@NotNull @NonNls static final String help = "help";
 	@NotNull @NonNls private static final String show_help = "show help";
-	@NotNull @NonNls private static final String verbose = "verbose";
 	@NotNull @NonNls private static final String UTF_8 = "UTF-8";
 
 	@SuppressWarnings({"MethodCanBeVariableArityMethod", "StaticMethodOnlyUsedInOneClass"})
 	@NotNull
-	public static CommandLineArgumentsParser commandLineArgumentsParser(@NotNull final String[] commandLineArguments)
+	public static CommandLineArgumentsParser jopSimpleCommandLineArgumentsParser(@NotNull final String[] commandLineArguments)
 	{
-		return new CommandLineArgumentsParser(commandLineArguments);
+		return new JoptSimpleCommandLineArgumentsParser(commandLineArguments);
 	}
 
 	@NotNull private final String[] commandLineArguments;
@@ -61,16 +61,16 @@ public class CommandLineArgumentsParser
 	@NotNull private final Set<String> allKnownOptions;
 	@NotNull private final OptionParser optionParser;
 	@NotNull private final Set<String> optionsThatMustBePresent;
-	@Nullable private CommandLineArguments arguments;
+	@Nullable private JoptSimpleCommandLineArguments arguments;
 
 	@SuppressWarnings({"UseOfSystemOutOrSystemErr", "MethodCanBeVariableArityMethod", "WeakerAccess"})
-	public CommandLineArgumentsParser(@NotNull final String[] commandLineArguments)
+	public JoptSimpleCommandLineArgumentsParser(@NotNull final String[] commandLineArguments)
 	{
 		this(commandLineArguments, out, err);
 	}
 
 	@SuppressWarnings("WeakerAccess")
-	public CommandLineArgumentsParser(@NotNull final String[] commandLineArguments, @NotNull final PrintStream standardOut, @NotNull final PrintStream standardError)
+	public JoptSimpleCommandLineArgumentsParser(@NotNull final String[] commandLineArguments, @NotNull final PrintStream standardOut, @NotNull final PrintStream standardError)
 	{
 		this.commandLineArguments = commandLineArguments;
 		this.standardOut = standardOut;
@@ -87,28 +87,30 @@ public class CommandLineArgumentsParser
 	{
 		optionParser.posixlyCorrect(true);
 
-		optionParser.accepts(help, show_help).forHelp();
-		addOnce(allKnownOptions, help);
+		optionParser.accepts(helpOptionName, show_help).forHelp();
+		addOnce(allKnownOptions, helpOptionName);
 
-		optionWithOptionalValue(OptionCanBeAbsent, verbose, format("verbosity level (%1$s - %2$s)", None.ordinal(), Everything.ordinal()), Integer.toString(Verbose.ordinal())).withValuesConvertedBy(new VerbosityValueConverter()).defaultsTo(Verbose);
+		optionWithOptionalValue(OptionCanBeAbsent, verboseOptionName, format("verbosity level (%1$s - %2$s)", None.ordinal(), Everything.ordinal()), Integer.toString(Verbose.ordinal())).withValuesConvertedBy(new VerbosityValueConverter()).defaultsTo(Verbose);
 	}
 
 	@NotNull
-	private CommandLineArguments newArgumentsOnce()
+	private JoptSimpleCommandLineArguments newArgumentsOnce()
 	{
 		if (arguments == null)
 		{
-			arguments = new CommandLineArguments(optionParser, standardOut, standardError, optionsThatMustBePresent, commandLineArguments);
+			arguments = new JoptSimpleCommandLineArguments(optionParser, standardOut, standardError, optionsThatMustBePresent, commandLineArguments);
 		}
 		return arguments;
 	}
 
+	@Override
 	@NotNull
 	public final Supplier<Verbosity> verboseOption()
 	{
-		return () -> newArgumentsOnce().verbosityOptionValue(verbose);
+		return () -> newArgumentsOnce().verbosityOptionValue(verboseOptionName);
 	}
 
+	@Override
 	@SuppressWarnings("unused")
 	@NotNull
 	public final Supplier<Path> extantWritableFolderPathOption(@NotNull @NonNls final String optionName, @NotNull @NonNls final String description, @NotNull @NonNls final String valueExample, @NotNull @NonNls final String defaultsTo, @NotNull @NonNls final String... requireIfTheseOptionsArePresent)
@@ -117,6 +119,7 @@ public class CommandLineArgumentsParser
 		return () -> newArgumentsOnce().extantWritableFolderPathOptionValue(optionName);
 	}
 
+	@Override
 	@NotNull
 	public final Supplier<Path> creatableFolderPathOption(@NotNull @NonNls final String optionName, @NotNull @NonNls final String description, @NotNull @NonNls final String valueExample, @NotNull @NonNls final String defaultsTo, @NotNull @NonNls final String... requireIfTheseOptionsArePresent)
 	{
@@ -124,6 +127,7 @@ public class CommandLineArgumentsParser
 		return () -> newArgumentsOnce().creatableFolderPathOptionValue(optionName);
 	}
 
+	@Override
 	@NotNull
 	public final Supplier<List<Path>> extantWritableFolderPathsOption(@NotNull @NonNls final String optionName, @NotNull @NonNls final String description, @NotNull @NonNls final String valueExample, @NotNull @NonNls final String defaultsTo, @NotNull @NonNls final String... requireIfTheseOptionsArePresent)
 	{
@@ -131,6 +135,7 @@ public class CommandLineArgumentsParser
 		return () -> newArgumentsOnce().extantWritableFolderPathsOptionValue(optionName);
 	}
 
+	@Override
 	@NotNull
 	public final Supplier<Path> pathOption(@NotNull @NonNls final String optionName, @NotNull @NonNls final String description, @NotNull @NonNls final String valueExample, @NotNull @NonNls final String defaultsTo, @NotNull @NonNls final String... requireIfTheseOptionsArePresent)
 	{
@@ -138,6 +143,7 @@ public class CommandLineArgumentsParser
 		return () -> newArgumentsOnce().pathOptionValue(optionName);
 	}
 
+	@Override
 	@NotNull
 	public final Supplier<Charset> charsetOption(@NotNull final OptionMustBe optionMustBePresent, @NotNull @NonNls final String optionName, @NotNull @NonNls final String description, @NotNull @NonNls final String... requireIfTheseOptionsArePresent)
 	{
@@ -145,6 +151,7 @@ public class CommandLineArgumentsParser
 		return () -> newArgumentsOnce().charsetOptionValue(optionName);
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	@NotNull
 	public final <E extends Enum<E>> Supplier<E> enumOption(@NotNull @NonNls final String optionName, @NotNull @NonNls final String description, @NotNull @NonNls final E defaultsTo, @NotNull @NonNls final String... requireIfTheseOptionsArePresent)
@@ -226,12 +233,12 @@ public class CommandLineArgumentsParser
 				}
 				catch (final IllegalArgumentException e)
 				{
-					throw new ValueConversionException(format("No verbosity level '%1$s' is known for option --%2$s", value, verbose), e);
+					throw new ValueConversionException(format("No verbosity level '%1$s' is known for option --%2$s", value, verboseOptionName), e);
 				}
 			}
 			if (integer < 0)
 			{
-				throw new ValueConversionException(format("Verbosity level '%1$s' is negative for option --%2$s", value, verbose));
+				throw new ValueConversionException(format("Verbosity level '%1$s' is negative for option --%2$s", value, verboseOptionName));
 			}
 			Verbosity mostVerbosePossibilityIfValueTooHigh = None;
 			for (final Verbosity verbosity : values())

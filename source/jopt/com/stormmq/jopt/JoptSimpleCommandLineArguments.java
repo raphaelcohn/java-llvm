@@ -35,23 +35,23 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.*;
 
-import static com.stormmq.jopt.CommandLineArgumentsParser.help;
 import static com.stormmq.applications.ExitCode.*;
 import static com.stormmq.applications.Verbosity.None;
+import static com.stormmq.commandLineArgumentsParsing.CommandLineArgumentsParser.helpOptionName;
 import static com.stormmq.path.IsSubFolderFilter.IsSubFolder;
 import static com.stormmq.string.Formatting.formatPrintLineAndFlushWhilstSynchronized;
 import static java.nio.charset.Charset.forName;
 import static java.nio.file.Files.*;
 import static java.nio.file.Paths.get;
 
-final class CommandLineArguments
+final class JoptSimpleCommandLineArguments
 {
 	@NotNull private final OptionParser optionParser;
 	@NotNull private final PrintStream out;
 	@NotNull private final PrintStream error;
 	@NotNull private final OptionSet arguments;
 
-	CommandLineArguments(@NotNull final OptionParser optionParser, @NotNull final PrintStream out, @NotNull final PrintStream error, @SuppressWarnings("TypeMayBeWeakened") @NotNull final Set<String> requiredOptions, @NonNls@NotNull final String... commandLineArguments)
+	JoptSimpleCommandLineArguments(@NotNull final OptionParser optionParser, @NotNull final PrintStream out, @NotNull final PrintStream error, @SuppressWarnings("TypeMayBeWeakened") @NotNull final Set<String> requiredOptions, @NonNls@NotNull final String... commandLineArguments)
 	{
 		this.optionParser = optionParser;
 		this.out = out;
@@ -74,7 +74,7 @@ final class CommandLineArguments
 			throw newShouldHaveExited(e);
 		}
 
-		if (arguments.has(help))
+		if (arguments.has(helpOptionName))
 		{
 			printHelpAndExit(Success);
 			throw newShouldHaveExited();
