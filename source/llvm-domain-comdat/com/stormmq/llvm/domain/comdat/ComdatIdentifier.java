@@ -32,6 +32,12 @@ public final class ComdatIdentifier extends AbstractIdentifier
 
 	public ComdatIdentifier(@NonNls @NotNull final String identifier)
 	{
-		super(Dollar, identifier);
+		super(identifier);
+	}
+
+	@Override
+	protected byte prefix()
+	{
+		return Dollar;
 	}
 }

@@ -31,6 +31,12 @@ public final class GlobalIdentifier extends AbstractIdentifier implements Addres
 
 	public GlobalIdentifier(@NonNls @NotNull final String identifier)
 	{
-		super(At, identifier);
+		super(identifier);
+	}
+
+	@Override
+	protected byte prefix()
+	{
+		return At;
 	}
 }

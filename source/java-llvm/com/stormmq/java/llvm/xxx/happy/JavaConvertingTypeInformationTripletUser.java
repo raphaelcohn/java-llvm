@@ -29,11 +29,12 @@ import com.stormmq.java.llvm.xxx.Process;
 import com.stormmq.java.parsing.utilities.names.PackageName;
 import com.stormmq.llvm.domain.metadata.creation.*;
 import com.stormmq.llvm.domain.target.DataLayoutSpecification;
+import com.stormmq.string.AbstractToString;
 import org.jetbrains.annotations.NotNull;
 
 import static com.stormmq.llvm.domain.metadata.debugging.LlvmDebugLanguage.DW_LANG_Java;
 
-public final class JavaConvertingTypeInformationTripletUser implements TypeInformationTripletUser<ClassToStructureMap>
+public final class JavaConvertingTypeInformationTripletUser extends AbstractToString implements TypeInformationTripletUser<ClassToStructureMap>
 {
 	@NotNull private final ModuleCreatorAndWriter moduleCreatorAndWriter;
 	@NotNull private final NamespaceSplitter<PackageName> namespaceSplitter;
@@ -54,5 +55,12 @@ public final class JavaConvertingTypeInformationTripletUser implements TypeInfor
 		final MetadataCreator<PackageName> metadataCreator = new MetadataCreator<>(DW_LANG_Java, typeInformationTriplet.relativeFilePath, typeInformationTriplet.relativeRootFolderPath, dataLayoutSpecification, namespaceSplitter, cTypeMappings);
 		final Process process = new Process(dataLayoutSpecification, classToStructureMap, metadataCreator, metadataCreator.debuggingTypeDefinitions(), typeInformationTriplet);
 		process.process(moduleCreatorAndWriter);
+	}
+
+	@NotNull
+	@Override
+	protected Object[] fields()
+	{
+		return fields(moduleCreatorAndWriter, namespaceSplitter, dataLayoutSpecification, cTypeMappings);
 	}
 }

@@ -31,6 +31,12 @@ public final class LocalIdentifier extends AbstractIdentifier implements Address
 
 	public LocalIdentifier(@NonNls @NotNull final String identifier)
 	{
-		super(Percent, identifier);
+		super(identifier);
+	}
+
+	@Override
+	protected byte prefix()
+	{
+		return Percent;
 	}
 }

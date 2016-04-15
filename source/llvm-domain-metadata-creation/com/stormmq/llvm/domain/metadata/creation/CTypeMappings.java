@@ -28,6 +28,7 @@ import com.stormmq.llvm.domain.target.*;
 import com.stormmq.llvm.domain.types.SizedType;
 import com.stormmq.llvm.domain.types.firstClassTypes.FloatingPointValueType;
 import com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType;
+import com.stormmq.string.AbstractToString;
 import com.stormmq.string.StringConstants;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -42,7 +43,7 @@ import static com.stormmq.llvm.domain.types.firstClassTypes.FloatingPointValueTy
 import static com.stormmq.llvm.domain.types.firstClassTypes.IntegerValueType.*;
 import static com.stormmq.string.StringConstants.*;
 
-public final class CTypeMappings
+public final class CTypeMappings extends AbstractToString
 {
 	@NotNull @NonNls private static final String _Bool = "_Bool";
 	@NotNull @NonNls private static final String signed_char = "signed char";
@@ -111,6 +112,13 @@ public final class CTypeMappings
 		map(_double, FloatingPointValueType._double, DW_ATE_float, 'd');
 		map(long_double, floatingPointValueType, DW_ATE_float, 'e');
 		map(__float128, fp128, DW_ATE_float, 'g');
+	}
+
+	@NotNull
+	@Override
+	protected Object[] fields()
+	{
+		return fields(cNameThatClosestMatchesASigned32BitInteger, mappings);
 	}
 
 	@NotNull

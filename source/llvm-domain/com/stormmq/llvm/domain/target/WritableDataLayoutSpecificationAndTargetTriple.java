@@ -25,6 +25,7 @@ package com.stormmq.llvm.domain.target;
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.byteWriters.Writable;
 import com.stormmq.llvm.domain.*;
+import com.stormmq.string.AbstractToString;
 import org.jetbrains.annotations.*;
 
 import java.util.Map;
@@ -46,7 +47,7 @@ import static com.stormmq.string.Formatting.format;
 import static com.stormmq.string.Utf8ByteUser.encodeToUtf8ByteArrayWithCertaintyValueIsValid;
 import static java.util.Collections.emptyMap;
 
-public final class WritableDataLayoutSpecificationAndTargetTriple implements Writable, DataLayoutSpecification
+public final class WritableDataLayoutSpecificationAndTargetTriple extends AbstractToString implements Writable, DataLayoutSpecification
 {
 	private static final int EightBits = 8;
 	private static final int SixteenBits = 16;
@@ -114,13 +115,13 @@ public final class WritableDataLayoutSpecificationAndTargetTriple implements Wri
 	@NotNull private final Alignment aggregateTypeAlignment;
 	@NotNull private final SymbolMangling symbolMangling;
 	@NotNull private final Architecture architecture;
-	@NotNull private final CommonCDataModel cDataModel;
+	@NotNull private final CommonCDataModel commonCDataModel;
 	@NotNull private final CxxNameMangling cxxNameMangling;
 	private final int minimumAlignmentInBits;
 	@NotNull private final TargetTriple targetTriple;
 	@NotNull private final ObjectFileFormat objectFileFormat;
 
-	private WritableDataLayoutSpecificationAndTargetTriple(@NotNull final Endianness endianness, final int stackAlignmentSizeInBits, @NotNull final Map<AddressSpace, PointerSizing> alternativeAddressSpacePointerSizings, @NotNull final Alignment int1Alignment, @NotNull final Alignment int8Alignment, @NotNull final Alignment int16Alignment, @NotNull final Alignment int32Alignment, @NotNull final Alignment int64Alignment, @Nullable final Alignment int128Alignment, @NotNull final Alignment halfAlignment, @NotNull final Alignment floatAlignment, @NotNull final Alignment quadAlignment, @NotNull final Alignment vector64Alignment, @NotNull final Alignment vector128Alignment, @NotNull final Alignment aggregateTypeAlignment, @NotNull final SymbolMangling symbolMangling, @NotNull final Architecture architecture, @NotNull final CommonCDataModel cDataModel, @NotNull final TargetOperatingSystem operatingSystem, @NotNull final CxxNameMangling cxxNameMangling, @NonNls @Nullable final String environment)
+	private WritableDataLayoutSpecificationAndTargetTriple(@NotNull final Endianness endianness, final int stackAlignmentSizeInBits, @NotNull final Map<AddressSpace, PointerSizing> alternativeAddressSpacePointerSizings, @NotNull final Alignment int1Alignment, @NotNull final Alignment int8Alignment, @NotNull final Alignment int16Alignment, @NotNull final Alignment int32Alignment, @NotNull final Alignment int64Alignment, @Nullable final Alignment int128Alignment, @NotNull final Alignment halfAlignment, @NotNull final Alignment floatAlignment, @NotNull final Alignment quadAlignment, @NotNull final Alignment vector64Alignment, @NotNull final Alignment vector128Alignment, @NotNull final Alignment aggregateTypeAlignment, @NotNull final SymbolMangling symbolMangling, @NotNull final Architecture architecture, @NotNull final CommonCDataModel commonCDataModel, @NotNull final TargetOperatingSystem operatingSystem, @NotNull final CxxNameMangling cxxNameMangling, @NonNls @Nullable final String environment)
 	{
 		if (stackAlignmentSizeInBits < 0)
 		{
@@ -160,11 +161,18 @@ public final class WritableDataLayoutSpecificationAndTargetTriple implements Wri
 		this.aggregateTypeAlignment = aggregateTypeAlignment;
 		this.symbolMangling = symbolMangling;
 		this.architecture = architecture;
-		this.cDataModel = cDataModel;
+		this.commonCDataModel = commonCDataModel;
 		this.cxxNameMangling = cxxNameMangling;
-		minimumAlignmentInBits = cDataModel.minimumAlignmentInBits();
+		minimumAlignmentInBits = commonCDataModel.minimumAlignmentInBits();
 		targetTriple = new TargetTriple(architecture, operatingSystem, environment);
 		objectFileFormat = symbolMangling.objectFileFormat;
+	}
+
+	@NotNull
+	@Override
+	protected Object[] fields()
+	{
+		return fields(endianness, stackAlignmentSizeInBits, alternativeAddressSpacePointerSizings, int1Alignment, int8Alignment, int16Alignment, int32Alignment, int64Alignment, int128Alignment, halfAlignment, floatAlignment, quadAlignment, vector64Alignment, vector128Alignment, aggregateTypeAlignment, symbolMangling, architecture, commonCDataModel, cxxNameMangling, minimumAlignmentInBits, targetTriple, objectFileFormat);
 	}
 
 	@NotNull
@@ -181,7 +189,7 @@ public final class WritableDataLayoutSpecificationAndTargetTriple implements Wri
 		byteWriter.writeUtf8EncodedStringWithCertainty(endianness.dataLayoutEncoding);
 		writeField(byteWriter, "S", stackAlignmentSizeInBits);
 		architecture.write(byteWriter, this);
-		writePointerSizingField(byteWriter, GlobalAddressSpace, cDataModel.pointerSizing);
+		writePointerSizingField(byteWriter, GlobalAddressSpace, commonCDataModel.pointerSizing);
 		for (final Entry<AddressSpace, PointerSizing> entry : alternativeAddressSpacePointerSizings.entrySet())
 		{
 			writePointerSizingField(byteWriter, entry.getKey(), entry.getValue());
@@ -197,10 +205,10 @@ public final class WritableDataLayoutSpecificationAndTargetTriple implements Wri
 		}
 		halfAlignment.writeAlignmentField(byteWriter, "f16");
 		floatAlignment.writeAlignmentField(byteWriter, "f32");
-		cDataModel.doubleAlignment.writeAlignmentField(byteWriter, "f64");
-		if (cDataModel.doesDataModelSupportEightyBitPrecisionFloatingPoint())
+		commonCDataModel.doubleAlignment.writeAlignmentField(byteWriter, "f64");
+		if (commonCDataModel.doesDataModelSupportEightyBitPrecisionFloatingPoint())
 		{
-			cDataModel.longDoubleAlignment().writeAlignmentField(byteWriter, "f80");
+			commonCDataModel.longDoubleAlignment().writeAlignmentField(byteWriter, "f80");
 		}
 		quadAlignment.writeAlignmentField(byteWriter, "f128");
 		vector64Alignment.writeAlignmentField(byteWriter, "v64");
@@ -275,13 +283,13 @@ public final class WritableDataLayoutSpecificationAndTargetTriple implements Wri
 	@Override
 	public int doubleAbiAlignmentInBits()
 	{
-		return cDataModel.doubleAlignment.abiAlignmentInBits(minimumAlignmentInBits);
+		return commonCDataModel.doubleAlignment.abiAlignmentInBits(minimumAlignmentInBits);
 	}
 
 	@Override
 	public int longDoubleAbiAlignmentInBits()
 	{
-		return cDataModel.longDoubleAlignment().abiAlignmentInBits(minimumAlignmentInBits);
+		return commonCDataModel.longDoubleAlignment().abiAlignmentInBits(minimumAlignmentInBits);
 	}
 	
 	@Override
@@ -306,13 +314,13 @@ public final class WritableDataLayoutSpecificationAndTargetTriple implements Wri
 	@Override
 	public int pointerStorageSizeInBits()
 	{
-		return cDataModel.pointerStorageSizeInBits();
+		return commonCDataModel.pointerStorageSizeInBits();
 	}
 
 	@Override
 	public int pointerAbiAlignmentInBits()
 	{
-		return cDataModel.pointerAbiAlignmentInBits(minimumAlignmentInBits);
+		return commonCDataModel.pointerAbiAlignmentInBits(minimumAlignmentInBits);
 	}
 
 	@NotNull
@@ -325,67 +333,67 @@ public final class WritableDataLayoutSpecificationAndTargetTriple implements Wri
 	@Override
 	public int longDoubleStorageSizeInBits()
 	{
-		return cDataModel.longDoubleStorageSizeInBits();
+		return commonCDataModel.longDoubleStorageSizeInBits();
 	}
 
 	@NotNull
 	@Override
 	public Alignment longDoubleAlignment()
 	{
-		return cDataModel.longDoubleAlignment();
+		return commonCDataModel.longDoubleAlignment();
 	}
 
 	@Override
 	public boolean doesDataModelSupportEightyBitPrecisionFloatingPoint()
 	{
-		return cDataModel.doesDataModelSupportEightyBitPrecisionFloatingPoint();
+		return commonCDataModel.doesDataModelSupportEightyBitPrecisionFloatingPoint();
 	}
 
 	@NotNull
 	@Override
 	public <T> T chooseLongDouble(@NotNull final T doubleType, @NotNull final T x86BitDoubleType, @NotNull final T powerPcDoubleDoubleType, @NotNull final T quadDoubleType, @NotNull final T mipsLongDoubleType)
 	{
-		return cDataModel.chooseLongDouble(doubleType, x86BitDoubleType, powerPcDoubleDoubleType, quadDoubleType, mipsLongDoubleType);
+		return commonCDataModel.chooseLongDouble(doubleType, x86BitDoubleType, powerPcDoubleDoubleType, quadDoubleType, mipsLongDoubleType);
 	}
 
 	@NotNull
 	@Override
 	public <T> T chooseShortSignedAndUnsigned(@NotNull final T sixteen, @NotNull final T thirtyTwo, @NotNull final T sixtyFour)
 	{
-		return cDataModel.chooseShortSignedAndUnsigned(sixteen, thirtyTwo, sixtyFour);
+		return commonCDataModel.chooseShortSignedAndUnsigned(sixteen, thirtyTwo, sixtyFour);
 	}
 
 	@NotNull
 	@Override
 	public <T> T chooseIntSignedAndUnsigned(@NotNull final T sixteen, @NotNull final T thirtyTwo, @NotNull final T sixtyFour)
 	{
-		return cDataModel.chooseIntSignedAndUnsigned(sixteen, thirtyTwo, sixtyFour);
+		return commonCDataModel.chooseIntSignedAndUnsigned(sixteen, thirtyTwo, sixtyFour);
 	}
 
 	@NotNull
 	@Override
 	public <T> T chooseLongIntSignedAndUnsigned(@NotNull final T sixteen, @NotNull final T thirtyTwo, @NotNull final T sixtyFour)
 	{
-		return cDataModel.chooseLongIntSignedAndUnsigned(sixteen, thirtyTwo, sixtyFour);
+		return commonCDataModel.chooseLongIntSignedAndUnsigned(sixteen, thirtyTwo, sixtyFour);
 	}
 
 	@NotNull
 	@Override
 	public <T> T chooseWideCharT(@NotNull final T sixteen, @NotNull final T thirtyTwo, @NotNull final T sixtyFour)
 	{
-		return cDataModel.chooseWideCharT(sixteen, thirtyTwo, sixtyFour);
+		return commonCDataModel.chooseWideCharT(sixteen, thirtyTwo, sixtyFour);
 	}
 
 	@NotNull
 	@Override
 	public String determineCNameThatClosestMatchesAnUnsigned16BitInteger(@NotNull @NonNls final String longIntName, @NotNull @NonNls final String intName)
 	{
-		return cDataModel.determineCNameThatClosestMatchesAnUnsigned16BitInteger(longIntName, intName);
+		return commonCDataModel.determineCNameThatClosestMatchesAnUnsigned16BitInteger(longIntName, intName);
 	}
 
 	@Override
 	public boolean isCShortSizeNotSixteenBits()
 	{
-		return cDataModel.isCShortSizeNotSixteenBits();
+		return commonCDataModel.isCShortSizeNotSixteenBits();
 	}
 }

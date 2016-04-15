@@ -32,6 +32,7 @@ import com.stormmq.llvm.domain.metadata.metadataTuples.AnonymousMetadataTuple;
 import com.stormmq.llvm.domain.metadata.metadataTuples.TypedMetadataTuple;
 import com.stormmq.llvm.domain.metadata.module.LlvmIdentNamedMetadataTuple;
 import com.stormmq.llvm.domain.metadata.module.LlvmModuleFlagsNamedMetadataTuple;
+import com.stormmq.string.AbstractToString;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -43,13 +44,13 @@ import static com.stormmq.llvm.domain.metadata.metadataTuples.AnonymousMetadataT
 import static com.stormmq.llvm.domain.metadata.module.LlvmModuleFlagsNamedMetadataTuple.typicalLlvmModuleFlags;
 import static java.util.Collections.singletonList;
 
-public final class MetadataCreator<N>
+public final class MetadataCreator<N> extends AbstractToString
 {
+	@NotNull private final LlvmDebugLanguage llvmDebugLanguage;
 	@NotNull private final ReferenceTracker referenceTracker;
 	@NotNull private final DIFileKeyedMetadataTuple file;
 	@NotNull private final DICompileUnitKeyedMetadataTuple diCompileUnit;
 	@NotNull private final DebuggingTypeDefinitions<N> debuggingTypeDefinitions;
-	@NotNull private final LlvmDebugLanguage llvmDebugLanguage;
 
 	public MetadataCreator(@NotNull final LlvmDebugLanguage llvmDebugLanguage, @NotNull final String relativeFilePath, @NotNull final Path relativeRootFolderPath, @NotNull final DataLayoutSpecification dataLayoutSpecification, @NotNull final NamespaceSplitter<N> namespaceSplitter, @NotNull final CTypeMappings cTypeMappings)
 	{
@@ -58,6 +59,13 @@ public final class MetadataCreator<N>
 		file = file(relativeFilePath, relativeRootFolderPath.toString());
 		diCompileUnit = new DICompileUnitKeyedMetadataTuple(referenceTracker);
 		debuggingTypeDefinitions = new DebuggingTypeDefinitions<>(dataLayoutSpecification, referenceTracker, file, namespaceSplitter, cTypeMappings);
+	}
+
+	@NotNull
+	@Override
+	protected Object[] fields()
+	{
+		return fields(llvmDebugLanguage, referenceTracker);
 	}
 
 	@NotNull

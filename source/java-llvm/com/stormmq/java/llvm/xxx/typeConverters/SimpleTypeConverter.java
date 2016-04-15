@@ -25,15 +25,23 @@ package com.stormmq.java.llvm.xxx.typeConverters;
 import com.stormmq.java.classfile.domain.InternalTypeName;
 import com.stormmq.java.parsing.utilities.names.typeNames.TypeName;
 import com.stormmq.java.parsing.utilities.names.typeNames.TypeNameVisitor;
+import com.stormmq.string.AbstractToString;
 import org.jetbrains.annotations.*;
 
-public final class SimpleTypeConverter<T> implements TypeConverter<T>
+public final class SimpleTypeConverter<T> extends AbstractToString implements TypeConverter<T>
 {
 	@NotNull private final TypeNameVisitor<T> typeNameVisitor;
 
 	public SimpleTypeConverter(@NotNull final TypeNameVisitor<T> typeNameVisitor)
 	{
 		this.typeNameVisitor = typeNameVisitor;
+	}
+
+	@NotNull
+	@Override
+	protected Object[] fields()
+	{
+		return fields(typeNameVisitor);
 	}
 
 	@Override

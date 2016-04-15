@@ -24,25 +24,26 @@ package com.stormmq.llvm.domain.identifiers;
 
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.target.DataLayoutSpecification;
+import com.stormmq.string.AbstractToString;
 import org.jetbrains.annotations.*;
 
-public abstract class AbstractIdentifier implements Identifier
+public abstract class AbstractIdentifier extends AbstractToString implements Identifier
 {
-	private final byte prefix;
 	@NotNull private final LlvmString identifier;
 
-	protected AbstractIdentifier(final byte prefix, @NotNull @NonNls final String identifier)
+	protected AbstractIdentifier(@NotNull @NonNls final String identifier)
 	{
-		this.prefix = prefix;
 		this.identifier = new LlvmString(identifier);
 	}
 
 	@Override
 	public final <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
-		byteWriter.writeByte(prefix);
+		byteWriter.writeByte(prefix());
 		identifier.write(byteWriter, dataLayoutSpecification);
 	}
+
+	protected abstract byte prefix();
 
 	@NotNull
 	@Override
@@ -51,11 +52,11 @@ public abstract class AbstractIdentifier implements Identifier
 		return identifier.name();
 	}
 
-	@Override
 	@NotNull
-	public final String toString()
+	@Override
+	protected Object[] fields()
 	{
-		return ((char) prefix) + identifier.toString();
+		return fields(identifier);
 	}
 
 	@Override
@@ -72,14 +73,12 @@ public abstract class AbstractIdentifier implements Identifier
 
 		final AbstractIdentifier that = (AbstractIdentifier) o;
 
-		return prefix == that.prefix && identifier.equals(that.identifier);
+		return identifier.equals(that.identifier);
 	}
 
 	@Override
 	public final int hashCode()
 	{
-		int result = prefix;
-		result = 31 * result + identifier.hashCode();
-		return result;
+		return identifier.hashCode();
 	}
 }

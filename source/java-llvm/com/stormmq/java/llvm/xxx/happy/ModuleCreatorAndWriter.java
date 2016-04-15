@@ -23,29 +23,26 @@
 package com.stormmq.java.llvm.xxx.happy;
 
 import com.stormmq.java.classfile.processing.typeInformationUsers.TypeInformationTriplet;
-import com.stormmq.java.parsing.utilities.names.PackageName;
-import com.stormmq.llvm.domain.metadata.creation.MetadataCreator;
 import com.stormmq.llvm.domain.asm.ModuleLevelInlineAsm;
 import com.stormmq.llvm.domain.function.FunctionDeclaration;
 import com.stormmq.llvm.domain.function.FunctionDefinition;
-import com.stormmq.llvm.domain.metadata.creation.NamespaceSplitter;
+import com.stormmq.llvm.domain.metadata.creation.MetadataCreator;
+import com.stormmq.llvm.domain.metadata.debugging.*;
+import com.stormmq.llvm.domain.metadata.metadataTuples.TypedMetadataTuple;
+import com.stormmq.llvm.domain.metadata.module.LlvmIdentNamedMetadataTuple;
+import com.stormmq.llvm.domain.metadata.module.LlvmModuleFlagsNamedMetadataTuple;
 import com.stormmq.llvm.domain.module.*;
 import com.stormmq.llvm.domain.target.Architecture;
 import com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.structureTypes.LocallyIdentifiedStructureType;
 import com.stormmq.llvm.domain.variables.Alias;
 import com.stormmq.llvm.domain.variables.GlobalVariable;
-import com.stormmq.llvm.domain.metadata.debugging.*;
-import com.stormmq.llvm.domain.metadata.metadataTuples.TypedMetadataTuple;
-import com.stormmq.llvm.domain.metadata.module.LlvmIdentNamedMetadataTuple;
-import com.stormmq.llvm.domain.metadata.module.LlvmModuleFlagsNamedMetadataTuple;
+import com.stormmq.string.AbstractToString;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
 import java.util.*;
 
-import static com.stormmq.java.parsing.utilities.names.PackageName.NamespaceSplitter;
-
-public final class ModuleCreatorAndWriter
+public final class ModuleCreatorAndWriter extends AbstractToString
 {
 	@NotNull private final TargetModuleCreator targetModuleCreator;
 	@NotNull private final ModuleWriter moduleWriter;
@@ -54,6 +51,13 @@ public final class ModuleCreatorAndWriter
 	{
 		this.targetModuleCreator = targetModuleCreator;
 		this.moduleWriter = moduleWriter;
+	}
+
+	@NotNull
+	@Override
+	protected Object[] fields()
+	{
+		return fields(targetModuleCreator, moduleWriter);
 	}
 
 	public void createAndWriteModule(@NotNull final TypeInformationTriplet typeInformationTriplet, @NotNull final MetadataCreator<?> metadataCreator, @NotNull final Map<Architecture, List<ModuleLevelInlineAsm>> moduleLevelInlineAssembly, @NotNull final Set<LocallyIdentifiedStructureType> locallyIdentifiedStructureTypes, @NotNull final Set<GlobalVariable<?>> globalVariablesAndConstants, @NotNull final Set<FunctionDeclaration> functionDeclarations, @NotNull final Set<FunctionDefinition> functionsDefinitions, @NotNull final TypedMetadataTuple<DISubprogramKeyedMetadataTuple> subprograms, @NotNull final TypedMetadataTuple<DIGlobalVariableKeyedMetadataTuple> globals, @NotNull final Set<Alias> aliases)
@@ -68,5 +72,4 @@ public final class ModuleCreatorAndWriter
 
 		moduleWriter.writeModule(relativeFilePath, relativeRootFolderPath, module);
 	}
-
 }

@@ -35,6 +35,7 @@ import com.stormmq.llvm.domain.metadata.debugging.DICompositeTypeKeyedMetadataTu
 import com.stormmq.llvm.domain.types.*;
 import com.stormmq.llvm.domain.types.firstClassTypes.PointerValueType;
 import com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.structureTypes.*;
+import com.stormmq.string.AbstractToString;
 import com.stormmq.tuples.Triplet;
 import org.jetbrains.annotations.*;
 
@@ -50,7 +51,7 @@ import static com.stormmq.llvm.domain.AddressSpace.GlobalAddressSpace;
 import static com.stormmq.llvm.domain.metadata.creation.DebuggingFieldDetail.toFieldTypes;
 import static java.util.Collections.reverse;
 
-public final class ClassToStructureMap
+public final class ClassToStructureMap extends AbstractToString
 {
 	private static final int BestGuessOfNumberOfParentFields = 64;
 	@SuppressWarnings("unchecked") @NotNull private static final DebuggingFieldDetail<PackageName>[] EmptyDebuggingFieldDetails = new DebuggingFieldDetail[0];
@@ -70,6 +71,13 @@ public final class ClassToStructureMap
 		classNamesToLocalIdentifiersAndPointers = new ConcurrentHashMap<>(100_000);
 		localIdentifiersToStructureDetails = new ConcurrentHashMap<>(100_000);
 		sizedTypeTypeConverter = new SimpleTypeConverter<>(new ToSizedTypeTypeNameVisitor(this));
+	}
+
+	@NotNull
+	@Override
+	protected Object[] fields()
+	{
+		return fields(usefulRecords, classNamesToLocalIdentifiersAndPointers, localIdentifiersToStructureDetails, sizedTypeTypeConverter);
 	}
 
 	@NotNull

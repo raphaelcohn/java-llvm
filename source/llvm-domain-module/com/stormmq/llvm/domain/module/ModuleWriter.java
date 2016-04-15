@@ -24,6 +24,7 @@ package com.stormmq.llvm.domain.module;
 
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.byteWriters.OutputStreamByteWriter;
+import com.stormmq.string.AbstractToString;
 import org.jetbrains.annotations.*;
 
 import java.io.IOException;
@@ -36,7 +37,7 @@ import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
 
-public final class ModuleWriter
+public final class ModuleWriter extends AbstractToString
 {
 	@NotNull @NonNls private static final String dotLL = ".ll";
 
@@ -45,6 +46,13 @@ public final class ModuleWriter
 	public ModuleWriter(@NotNull final Path outputRootFolderPath)
 	{
 		this.outputRootFolderPath = outputRootFolderPath;
+	}
+
+	@NotNull
+	@Override
+	protected Object[] fields()
+	{
+		return fields(outputRootFolderPath);
 	}
 
 	public void writeModule(@NotNull final String relativeFilePath, @NotNull final Path relativeRootFolderPath, @NotNull final Module module)
