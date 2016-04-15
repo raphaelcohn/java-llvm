@@ -10,3 +10,6 @@
 [submodule "examples/llvm.tmbundle"]
 	path = examples/llvm.tmbundle
 	url = https://github.com/whitequark/llvm.tmbundle
+[submodule "source/tuples"]
+	path = source/tuples
+	url = https://github.com/raphaelcohn/tuples.git
