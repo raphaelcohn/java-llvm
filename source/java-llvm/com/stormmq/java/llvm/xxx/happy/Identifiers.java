@@ -22,14 +22,14 @@
 
 package com.stormmq.java.llvm.xxx.happy;
 
-import com.stormmq.java.classfile.domain.uniqueness.FieldUniqueness;
+import com.stormmq.java.classfile.domain.information.FieldInformation;
 import com.stormmq.java.parsing.utilities.names.typeNames.referenceTypeNames.KnownReferenceTypeName;
 import com.stormmq.llvm.domain.identifiers.*;
 import org.jetbrains.annotations.*;
 
 public final class Identifiers
 {
-	@NonNls @NotNull private static final String FieldIdentifierPrefix = "field.";
+	@NonNls @NotNull private static final String StaticFieldIdentifierPrefix = "field.";
 	@NonNls @NotNull private static final String ClassIdentifierPrefix = "class.";
 
 	private Identifiers()
@@ -43,9 +43,9 @@ public final class Identifiers
 	}
 
 	@NotNull
-	public static GlobalIdentifier createStaticFieldGlobalIdentifier(@NotNull final KnownReferenceTypeName knownReferenceTypeName, @NotNull final FieldUniqueness fieldUniqueness)
+	public static GlobalIdentifier createStaticFieldGlobalIdentifier(@NotNull final KnownReferenceTypeName knownReferenceTypeName, @NotNull final FieldInformation fieldInformation)
 	{
-		return new GlobalIdentifier(fieldIdentifier(knownReferenceTypeName, fieldUniqueness));
+		return new GlobalIdentifier(StaticFieldIdentifierPrefix + knownReferenceTypeName.name() + '.' + fieldInformation.fieldName());
 	}
 
 	@NotNull
@@ -54,9 +54,4 @@ public final class Identifiers
 		return ClassIdentifierPrefix + referencedTypeName.name();
 	}
 
-	@NotNull
-	private static String fieldIdentifier(@NotNull final KnownReferenceTypeName referencedTypeName, @NotNull final FieldUniqueness fieldUniqueness)
-	{
-		return FieldIdentifierPrefix + referencedTypeName.name() + '.' + fieldUniqueness.uniqueName();
-	}
 }

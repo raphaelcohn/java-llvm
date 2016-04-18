@@ -49,7 +49,7 @@ public final class ToTypeMetadataTypeNameVisitor extends AbstractToString implem
 	@Override
 	protected Object[] fields()
 	{
-		return fields("classToStructureMap", "debuggingTypeDefinitions");
+		return fields(classToStructureMap, debuggingTypeDefinitions);
 	}
 
 	@NotNull

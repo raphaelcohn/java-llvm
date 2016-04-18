@@ -123,9 +123,7 @@ public final class Process extends AbstractToString
 	@NotNull
 	private GlobalVariable<SizedType> staticFieldToGlobalVariable(@NotNull final FieldInformation fieldInformation)
 	{
-		final FieldUniqueness fieldUniqueness = fieldInformation.fieldUniqueness;
-
-		final GlobalIdentifier staticFieldName = createStaticFieldGlobalIdentifier(ourKnownReferenceTypeName(), fieldUniqueness);
+		final GlobalIdentifier staticFieldName = createStaticFieldGlobalIdentifier(ourKnownReferenceTypeName(), fieldInformation);
 
 		final SizedType sizedType = sizedTypeTypeConverter.convertField(fieldInformation);
 		@Nullable final ConstantTypedValue<SizedType> initializerConstantTypedValue = toLlvmConstant(fieldInformation, sizedType);

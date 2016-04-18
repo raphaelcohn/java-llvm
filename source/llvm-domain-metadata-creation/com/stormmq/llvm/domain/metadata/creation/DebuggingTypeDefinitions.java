@@ -31,6 +31,7 @@ import com.stormmq.string.AbstractToString;
 import org.jetbrains.annotations.*;
 
 import java.util.*;
+import java.util.concurrent.locks.ReadWriteLock;
 
 import static com.stormmq.functions.collections.CollectionHelper.add;
 import static com.stormmq.functions.collections.ListHelper.newArrayList;
@@ -169,7 +170,8 @@ public final class DebuggingTypeDefinitions<N> extends AbstractToString
 		// Done this way in case of circular references
 		final int storageSizeInBits = sizedStructureSizedType.storageSizeInBits(dataLayoutSpecification);
 		final int abiAlignmentInBits = sizedStructureSizedType.abiAlignmentInBits(dataLayoutSpecification);
-		final DICompositeTypeKeyedMetadataTuple unpopulatedButExtantInCaseOfCircularReferences = knownStructureTypes.put(namespacedTypeName, new DICompositeTypeKeyedMetadataTuple(referenceTracker, storageSizeInBits, abiAlignmentInBits));
+		final DICompositeTypeKeyedMetadataTuple unpopulatedButExtantInCaseOfCircularReferences = new DICompositeTypeKeyedMetadataTuple(referenceTracker, storageSizeInBits, abiAlignmentInBits);
+		knownStructureTypes.put(namespacedTypeName, unpopulatedButExtantInCaseOfCircularReferences);
 
 		final int length = debuggingFieldDetails.length;
 		final List<DIDerivedTypeKeyedMetadataTuple> elements = newArrayList(length << 1, list ->

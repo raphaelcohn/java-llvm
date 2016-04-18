@@ -57,7 +57,7 @@ public final class PackageNameDebuggingFieldDetail extends AbstractToString impl
 	@Override
 	public String fieldName()
 	{
-		return fieldInformation.fieldUniqueness.uniqueName();
+		return fieldInformation.fieldName();
 	}
 
 	@Override
