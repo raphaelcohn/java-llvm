@@ -144,7 +144,8 @@ public final class Process extends AbstractToString
 
 	private void processInstanceFields(@NotNull final Set<LocallyIdentifiedStructureType> structureTypes)
 	{
-		final Triplet<SizedLocallyIdentifiedStructureType, NamespacedTypeName<PackageName>, DebuggingFieldDetail<PackageName>[]> details = classToStructureMap.lookUpClassDetails(ourKnownReferenceTypeName());
+		final KnownReferenceTypeName className = ourKnownReferenceTypeName();
+		final Triplet<SizedLocallyIdentifiedStructureType, NamespacedTypeName<PackageName>, DebuggingFieldDetail<PackageName>[]> details = classToStructureMap.lookUpClassDetails(className);
 		final SizedLocallyIdentifiedStructureType sizedLocallyIdentifiedStructureType = details.a;
 		structureTypes.add(sizedLocallyIdentifiedStructureType);
 	}

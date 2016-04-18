@@ -23,52 +23,46 @@
 package com.stormmq.llvm.domain.target;
 
 import com.stormmq.byteWriters.ByteWriter;
-import com.stormmq.llvm.domain.ObjectFileFormat;
-import com.stormmq.llvm.domain.LlvmWritable;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.*;
 
-import static com.stormmq.llvm.domain.ObjectFileFormat.PECOFF;
 import static com.stormmq.llvm.domain.target.WritableDataLayoutSpecificationAndTargetTriple.writeField;
+import static com.stormmq.primitives.IntHelper.isNotAPowerOfTwoIfGreaterThanZero;
+import static com.stormmq.string.Formatting.format;
+import static com.stormmq.string.Utf8ByteUser.encodeToUtf8ByteArrayWithCertaintyValueIsValid;
 
-public enum SymbolMangling
+public enum StackAlignment
 {
-	ELF(ObjectFileFormat.ELF, 'e'),
-	MIPS(ObjectFileFormat.ELF, 'm'),
-	MachO(ObjectFileFormat.MachO, 'o'),
-	WindowsCOFF(PECOFF, 'w'),
-	WindowsCOFFPrefix(PECOFF, 'x'),
-	NoSymbolMangling(),
+	Unspecified(0), // This is the default
+	SixtyFourBitsStackAlignment(64),
+	OneHundredAndTwentyEightBitsStackAlignment(128),
 	;
 
-	@Nullable public final ObjectFileFormat objectFileFormat;
-	@Nullable private final byte[] dataLayoutEncoding;
+	@NotNull private final byte[] stackAlignmentSizeInBitsEncoded;
 
-	SymbolMangling()
+	StackAlignment(final int stackAlignmentSizeInBits)
 	{
-		objectFileFormat = null;
-		dataLayoutEncoding = null;
-	}
+		if (stackAlignmentSizeInBits < 0)
+		{
+			throw new IllegalArgumentException(format("stackAlignmentSizeInBits '%1$s' can not be negative", stackAlignmentSizeInBits));
+		}
 
-	@SuppressWarnings("NumericCastThatLosesPrecision")
-	SymbolMangling(@NotNull final ObjectFileFormat objectFileFormat, final char dataLayoutEncoding)
-	{
-		this.objectFileFormat = objectFileFormat;
-		this.dataLayoutEncoding = new byte[]{(byte) dataLayoutEncoding};
-	}
+		if (stackAlignmentSizeInBits > 0)
+		{
+			if (isNotAPowerOfTwoIfGreaterThanZero(stackAlignmentSizeInBits))
+			{
+				throw new IllegalStateException(format("stackAlignmentSizeInBits '%1$s' is not a power of two or zero", stackAlignmentSizeInBits));
+			}
+		}
 
-	@NotNull
-	public ObjectFileFormat objectFileFormat(@NotNull final ObjectFileFormat defaultObjectFileFormat)
-	{
-		return (objectFileFormat == null) ? defaultObjectFileFormat : objectFileFormat;
+		stackAlignmentSizeInBitsEncoded = encodeToUtf8ByteArrayWithCertaintyValueIsValid(Integer.toString(stackAlignmentSizeInBits));
 	}
 
 	public <X extends Exception> void writeIfNotDefault(@NotNull final ByteWriter<X> byteWriter) throws X
 	{
-		if (dataLayoutEncoding == null)
+		if (this == Unspecified)
 		{
 			return;
 		}
-		writeField(byteWriter, "m:", dataLayoutEncoding);
+		writeField(byteWriter, "S", stackAlignmentSizeInBitsEncoded);
 	}
 }

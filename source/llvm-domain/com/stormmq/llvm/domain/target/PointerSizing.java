@@ -23,6 +23,8 @@
 package com.stormmq.llvm.domain.target;
 
 import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.byteWriters.Writable;
+import com.stormmq.llvm.domain.AddressSpace;
 import com.stormmq.string.AbstractToString;
 import org.jetbrains.annotations.*;
 
@@ -87,8 +89,18 @@ public final class PointerSizing extends AbstractToString
 		return alignment.abiAlignmentInBits(minimumAlignmentInBits);
 	}
 
-	public <X extends Exception> void writeAlignmentField(final ByteWriter<X> byteWriter, @NonNls @NotNull final String abbreviatedName) throws X
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter, @NotNull final AddressSpace addressSpace) throws X
+	{
+		writeAlignmentField(byteWriter, addressSpace.pointerTargetLayoutPrefix(storageSizeInBits()));
+	}
+
+	private <X extends Exception> void writeAlignmentField(final ByteWriter<X> byteWriter, @NonNls @NotNull final String abbreviatedName) throws X
 	{
 		alignment.writeAlignmentField(byteWriter, abbreviatedName);
+	}
+
+	public boolean isDefaultForGlobalAddressSpace()
+	{
+		return sizing.isSixtyFour() && alignment.equals(SixtyFourBitAlignment);
 	}
 }

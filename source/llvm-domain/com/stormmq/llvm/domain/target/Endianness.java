@@ -22,18 +22,26 @@
 
 package com.stormmq.llvm.domain.target;
 
+import com.stormmq.byteWriters.ByteWriter;
+import com.stormmq.byteWriters.Writable;
 import org.jetbrains.annotations.NotNull;
 
-public enum Endianness
+public enum Endianness implements Writable
 {
-	LittleEndian('e'),
-	BigEndian('E'),
+	LittleEndian((byte) 'e'),
+	BigEndian((byte) 'E'),
 	;
 
-	@NotNull public final String dataLayoutEncoding;
+	private final int dataLayoutEncoding;
 
-	Endianness(final char dataLayoutEncoding)
+	Endianness(final byte dataLayoutEncoding)
 	{
-		this.dataLayoutEncoding = String.valueOf(dataLayoutEncoding);
+		this.dataLayoutEncoding = dataLayoutEncoding;
+	}
+
+	@Override
+	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter) throws X
+	{
+		byteWriter.writeByte(dataLayoutEncoding);
 	}
 }

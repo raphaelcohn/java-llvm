@@ -29,9 +29,9 @@ import org.jetbrains.annotations.NotNull;
 
 public final class UnidentifiedStructureType extends AbstractSizedStructureType
 {
-	public UnidentifiedStructureType(final boolean isPacked, @NotNull final SizedType... typesWithSize)
+	public UnidentifiedStructureType(final boolean isPacked, @NotNull final SizedType... fields)
 	{
-		super(isPacked, typesWithSize);
+		super(isPacked, fields);
 	}
 
 	// when defining, needs to have 'type '
@@ -39,5 +39,12 @@ public final class UnidentifiedStructureType extends AbstractSizedStructureType
 	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
 	{
 		writeBody(byteWriter, dataLayoutSpecification);
+	}
+
+	@NotNull
+	@Override
+	protected Object[] fields()
+	{
+		return fields(isPacked, fields);
 	}
 }

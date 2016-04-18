@@ -25,15 +25,47 @@ package com.stormmq.llvm.domain.types;
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.identifiers.AddressableIdentifier;
 import com.stormmq.llvm.domain.target.DataLayoutSpecification;
+import com.stormmq.string.AbstractToString;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public final class AddressableIdentifierType<I extends AddressableIdentifier> implements AddressableIdentifiedMixin<I>
+public final class AddressableIdentifierType<I extends AddressableIdentifier> extends AbstractToString implements AddressableIdentifiedMixin<I>
 {
 	@NotNull private final I addressableIdentifier;
 
 	public AddressableIdentifierType(@NotNull final I addressableIdentifier)
 	{
 		this.addressableIdentifier = addressableIdentifier;
+	}
+
+	@NotNull
+	@Override
+	protected Object[] fields()
+	{
+		return fields(addressableIdentifier);
+	}
+
+	@Override
+	public boolean equals(@Nullable final Object o)
+	{
+		if (this == o)
+		{
+			return true;
+		}
+		if (o == null || getClass() != o.getClass())
+		{
+			return false;
+		}
+
+		final AddressableIdentifierType<?> that = (AddressableIdentifierType<?>) o;
+
+		return addressableIdentifier.equals(that.addressableIdentifier);
+	}
+
+	@Override
+	public int hashCode()
+	{
+		return addressableIdentifier.hashCode();
 	}
 
 	@Override

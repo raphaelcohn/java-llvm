@@ -47,6 +47,7 @@ import java.util.function.IntFunction;
 
 import static com.stormmq.functions.collections.ListHelper.listToArray;
 import static com.stormmq.functions.collections.ListHelper.newArrayList;
+import static com.stormmq.java.llvm.xxx.happy.Identifiers.createClassIdentifier;
 import static com.stormmq.llvm.domain.AddressSpace.GlobalAddressSpace;
 import static com.stormmq.llvm.domain.metadata.creation.DebuggingFieldDetail.toFieldTypes;
 import static java.util.Collections.reverse;
@@ -77,7 +78,7 @@ public final class ClassToStructureMap extends AbstractToString
 	@Override
 	protected Object[] fields()
 	{
-		return fields(usefulRecords, classNamesToLocalIdentifiersAndPointers, localIdentifiersToStructureDetails);
+		return fields(usefulRecords, classNamesToLocalIdentifiersAndPointers.size(), localIdentifiersToStructureDetails.size());
 	}
 
 	@NotNull
@@ -105,7 +106,7 @@ public final class ClassToStructureMap extends AbstractToString
 		{
 			// Done at this point, because it will fail if a className is missing
 			final TypeInformationTriplet typeInformationTriplet = usefulRecords.retrieve(className);
-			final LocalIdentifier localIdentifier = classIdentifier(knownReferenceTypeName);
+			final LocalIdentifier localIdentifier = createClassIdentifier(knownReferenceTypeName);
 			final PointerValueType<AddressableIdentifiedMixin<LocalIdentifier>> addressableIdentifierTypePointerValueType = new PointerValueType<>(new AddressableIdentifierType<>(localIdentifier), GlobalAddressSpace);
 			return new Triplet<>(typeInformationTriplet, localIdentifier, addressableIdentifierTypePointerValueType);
 		});

@@ -25,9 +25,10 @@ package com.stormmq.llvm.domain.metadata.creation;
 import com.stormmq.llvm.domain.ReferenceTracker;
 import com.stormmq.llvm.domain.metadata.debugging.DIFileKeyedMetadataTuple;
 import com.stormmq.llvm.domain.metadata.debugging.DINamespaceKeyedMetadataTuple;
+import com.stormmq.string.AbstractToString;
 import org.jetbrains.annotations.*;
 
-public final class NamespacedTypeName<N>
+public final class NamespacedTypeName<N> extends AbstractToString
 {
 	@NotNull private final N namespace;
 	@NotNull public final String simpleName;
@@ -36,6 +37,13 @@ public final class NamespacedTypeName<N>
 	{
 		this.namespace = namespace;
 		this.simpleName = simpleName;
+	}
+
+	@NotNull
+	@Override
+	protected Object[] fields()
+	{
+		return fields(namespace, simpleName);
 	}
 
 	@Override

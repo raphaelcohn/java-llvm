@@ -431,20 +431,28 @@ _set_paths()
 	cd - 1>/dev/null 2>/dev/null
 }
 
+_set_globals()
+{
+	llvmVersion=3.8
+
+	#clangTarget='x86_64-apple-darwin14.5.0'
+	#clangTarget='x86_64-pc-linux'
+	#clangTarget='i686-pc-linux'
+	clangTarget='aarch64-pc-linux'
+	#clangTarget='aarch64_be-pc-linux'
+	#clangTarget='mips64-pc-linux'
+	#clangTarget='mips64el-pc-linux'
+	#clangTarget='ppc64-pc-linux'
+	#clangTarget='ppc64le-pc-linux'
+	#clangTarget='sparcv9-pc-linux'
+	#clangTarget='armv7-pc-linux-eabi'
+}
+
 main()
 {
-	local llvmVersion=3.8
-	#local clangTarget='x86_64-apple-darwin14.5.0'
-	#local clangTarget='x86_64-pc-linux'
-	#local clangTarget='i686-pc-linux'
-	#local clangTarget='aarch64-pc-linux'
-	#local clangTarget='aarch64_be-pc-linux'
-	local clangTarget='mips64-pc-linux'
-	#local clangTarget='mips64el-pc-linux'
-	#local clangTarget='ppc64-pc-linux'
-	#local clangTarget='ppc64le-pc-linux'
-	#local clangTarget='sparcv9-pc-linux'
-	#local clangTarget='armv7-pc-linux-eabi'
+	local llvmVersion
+	local clangTarget
+	_set_globals
 	
 	#local toolsPath='/usr/local/opt/llvm38/lib/llvm-3.8/bin'
 	local systemHeadersPath='/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/usr/include'

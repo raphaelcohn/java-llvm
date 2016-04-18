@@ -26,6 +26,7 @@ import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.ReferenceTracker;
 import com.stormmq.llvm.domain.metadata.Metadata;
 import com.stormmq.llvm.domain.target.DataLayoutSpecification;
+import com.stormmq.string.AbstractToString;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,7 +36,7 @@ import static com.stormmq.llvm.domain.metadata.metadataTuples.NamedMetadataTuple
 import static com.stormmq.string.Utf8ByteUser.encodeToUtf8ByteArrayWithCertaintyValueIsValid;
 import static java.util.Collections.emptyList;
 
-public class AnonymousMetadataTuple implements Metadata
+public class AnonymousMetadataTuple extends AbstractToString implements Metadata
 {
 	@NotNull private static final List<Metadata> EmptyList = emptyList();
 
@@ -52,6 +53,13 @@ public class AnonymousMetadataTuple implements Metadata
 	{
 		this.referenceTracker = referenceTracker;
 		this.tuple = tuple;
+	}
+
+	@NotNull
+	@Override
+	protected final Object[] fields()
+	{
+		return fields(referenceTracker, tuple);
 	}
 
 	@Override

@@ -22,24 +22,29 @@
 
 package com.stormmq.llvm.domain.target;
 
+import com.stormmq.llvm.domain.ObjectFileFormat;
 import com.stormmq.string.Formatting;
 import org.jetbrains.annotations.*;
 
+import static com.stormmq.llvm.domain.ObjectFileFormat.ELF;
+import static com.stormmq.llvm.domain.ObjectFileFormat.MachO;
 import static com.stormmq.llvm.domain.target.Vendor.apple;
 import static com.stormmq.llvm.domain.target.Vendor.pc;
 
-public final class TargetOperatingSystem
+public enum TargetOperatingSystem
 {
-	@SuppressWarnings("SpellCheckingInspection") @NotNull public static final TargetOperatingSystem MacOsXMavericks = new TargetOperatingSystem(apple, "macosx10.9.0");
-	@SuppressWarnings("SpellCheckingInspection") @NotNull public static final TargetOperatingSystem MacOsXYosemite = new TargetOperatingSystem(apple, "macosx10.10.0"); // AKA x86_64-apple-darwin14.5.0
-	@SuppressWarnings("SpellCheckingInspection") @NotNull public static final TargetOperatingSystem MacOsXElCapitan = new TargetOperatingSystem(apple, "macosx10.11.0");
-	@SuppressWarnings("SpellCheckingInspection") @NotNull public static final TargetOperatingSystem Linux = new TargetOperatingSystem(pc, "linux");
+	MacOsXMavericks(MachO, apple, "macosx10.9.0"),
+	MacOsXYosemite(MachO, apple, "macosx10.10.0"), // AKA x86_64-apple-darwin14.5.0
+	MacOsXElCapitan(MachO, apple, "macosx10.11.0"),
+	Linux(ELF, pc, "linux"),
+	;
 
+	@NotNull private final ObjectFileFormat objectFileFormat;
 	@NotNull private final Vendor vendor;
 	@NotNull private final String versionedName;
-
+	
 	@SuppressWarnings("WeakerAccess")
-	public TargetOperatingSystem(@NotNull final Vendor vendor, @NonNls @NotNull final String versionedName)
+	TargetOperatingSystem(@NotNull final ObjectFileFormat objectFileFormat, @NotNull final Vendor vendor, @NonNls @NotNull final String versionedName)
 	{
 		if (versionedName.isEmpty())
 		{
@@ -51,45 +56,24 @@ public final class TargetOperatingSystem
 			throw new IllegalArgumentException("versionedName contains a hyphen");
 		}
 
+		this.objectFileFormat = objectFileFormat;
 		this.vendor = vendor;
 		this.versionedName = versionedName;
 	}
 
-	@Override
-	public boolean equals(@Nullable final Object o)
-	{
-		if (this == o)
-		{
-			return true;
-		}
-		if (o == null || getClass() != o.getClass())
-		{
-			return false;
-		}
-
-		final TargetOperatingSystem that = (TargetOperatingSystem) o;
-
-		return vendor == that.vendor && versionedName.equals(that.versionedName);
-	}
-
-	@Override
-	public int hashCode()
-	{
-		int result = vendor.hashCode();
-		result = 31 * result + versionedName.hashCode();
-		return result;
-	}
-
-	@Override
-	public String toString()
+	public String toPartialTuple()
 	{
 		return Formatting.format("%1$s-%2$s", vendor, versionedName);
 	}
-
 
 	public boolean doesNotSupport(@NotNull final Architecture architecture)
 	{
 		return vendor.doesNotSupport(architecture);
 	}
-
+	
+	@NotNull
+	public ObjectFileFormat objectFileFormat()
+	{
+		return objectFileFormat;
+	}
 }

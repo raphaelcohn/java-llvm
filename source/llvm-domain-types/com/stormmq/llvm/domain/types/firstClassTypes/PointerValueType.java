@@ -26,11 +26,13 @@ import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.AddressSpace;
 import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import com.stormmq.llvm.domain.types.CanBePointedToType;
+import com.stormmq.string.AbstractToString;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static com.stormmq.llvm.domain.AddressSpace.GlobalAddressSpace;
 
-public final class PointerValueType<T extends CanBePointedToType> implements PrimitiveSingleValueType
+public final class PointerValueType<T extends CanBePointedToType> extends AbstractToString implements PrimitiveSingleValueType
 {
 	@NotNull
 	public static <T extends CanBePointedToType> PointerValueType<T> pointedToInGlobalAddressSpace(@NotNull final T pointsTo)
@@ -39,12 +41,44 @@ public final class PointerValueType<T extends CanBePointedToType> implements Pri
 	}
 
 	@NotNull private final T pointsTo;
-	private final AddressSpace addressSpace;
+	@NotNull private final AddressSpace addressSpace;
 
 	public PointerValueType(@NotNull final T pointsTo, @NotNull final AddressSpace addressSpace)
 	{
 		this.pointsTo = pointsTo;
 		this.addressSpace = addressSpace;
+	}
+
+	@NotNull
+	@Override
+	protected Object[] fields()
+	{
+		return fields(pointsTo, addressSpace);
+	}
+
+	@Override
+	public boolean equals(@Nullable final Object o)
+	{
+		if (this == o)
+		{
+			return true;
+		}
+		if (o == null || getClass() != o.getClass())
+		{
+			return false;
+		}
+
+		final PointerValueType<?> that = (PointerValueType<?>) o;
+
+		return pointsTo.equals(that.pointsTo) && addressSpace.equals(that.addressSpace);
+	}
+
+	@Override
+	public int hashCode()
+	{
+		int result = pointsTo.hashCode();
+		result = 31 * result + addressSpace.hashCode();
+		return result;
 	}
 
 	@Override

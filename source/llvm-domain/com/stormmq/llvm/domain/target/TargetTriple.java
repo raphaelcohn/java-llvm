@@ -87,7 +87,7 @@ public final class TargetTriple implements Writable
 	@NotNull
 	private String toTargetTriple()
 	{
-		return environment == null ? format("%1$s-%2$s", architecture, operatingSystem) : format("%1$s-%2$s-%3$s", architecture, operatingSystem, environment);
+		return format("%1$s-%2$s%3$s", architecture, operatingSystem.toPartialTuple(), environment == null ? "" : '-' + environment);
 	}
 
 	@SuppressWarnings("RedundantIfStatement")
@@ -109,7 +109,7 @@ public final class TargetTriple implements Writable
 		{
 			return false;
 		}
-		if (!operatingSystem.equals(that.operatingSystem))
+		if (operatingSystem != that.operatingSystem)
 		{
 			return false;
 		}

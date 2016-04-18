@@ -28,6 +28,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.lang.System.identityHashCode;
+
 public final class ReferenceTracker extends AbstractToString
 {
 	@NotNull private final Map<Object, Integer> references;
@@ -43,7 +45,7 @@ public final class ReferenceTracker extends AbstractToString
 	@Override
 	protected Object[] fields()
 	{
-		return fields(references, nextReferenceIndex);
+		return fields(references.size(), nextReferenceIndex);
 	}
 
 	public boolean hasBeenWritten(@NotNull final Object reference)

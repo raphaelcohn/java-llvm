@@ -46,7 +46,7 @@ public final class ToSizedTypeTypeNameVisitor extends AbstractToString implement
 	@Override
 	protected Object[] fields()
 	{
-		return fields(classToStructureMap);
+		return fields("classToStructureMap");
 	}
 
 	@NotNull

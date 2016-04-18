@@ -22,9 +22,12 @@
 
 package com.stormmq.llvm.domain.target;
 
+import com.stormmq.byteWriters.ByteWriter;
 import org.jetbrains.annotations.*;
 
+import static com.stormmq.llvm.domain.AddressSpace.GlobalAddressSpace;
 import static com.stormmq.llvm.domain.target.Alignment.*;
+import static com.stormmq.llvm.domain.target.Alignments.isDoubleAlignmentLlvmDefault;
 import static com.stormmq.llvm.domain.target.CLongDoublePermutation.*;
 import static com.stormmq.llvm.domain.target.PointerSizing.SixtyFourBitPointerSizing;
 import static com.stormmq.llvm.domain.target.PointerSizing.ThirtyTwoBitPointerSizing;
@@ -52,7 +55,7 @@ public enum CommonCDataModel implements CDataModel
 	@NotNull private final Sizing cShortSize;
 	@NotNull private final Sizing cIntSize;
 	@NotNull private final Sizing cLongSize;
-	@NotNull public final PointerSizing pointerSizing;
+	@NotNull private final PointerSizing pointerSizing;
 	@NotNull public final Sizing cWideCharT;
 	@NotNull private final CLongDoublePermutation cLongDoublePermutation;
 	@NotNull public final Alignment doubleAlignment;
@@ -73,9 +76,8 @@ public enum CommonCDataModel implements CDataModel
 		this.doubleAlignment = doubleAlignment;
 	}
 
-	@Override
 	@NotNull
-	public Alignment longDoubleAlignment()
+	public Alignment longDoubleAbiAlignment()
 	{
 		return cLongDoublePermutation.alignment;
 	}
@@ -87,9 +89,14 @@ public enum CommonCDataModel implements CDataModel
 	}
 
 	@Override
-	public boolean doesDataModelSupportEightyBitPrecisionFloatingPoint()
+	public int pointerStorageSizeInBits()
 	{
-		return cLongDoublePermutation.doesDataModelSupportEightyBitPrecisionFloatingPoint();
+		return pointerSizing.storageSizeInBits();
+	}
+
+	public int pointerAbiAlignmentInBits(final int minimumAlignmentInBits)
+	{
+		return pointerSizing.abiAlignmentInBits(minimumAlignmentInBits);
 	}
 
 	@Override
@@ -140,7 +147,7 @@ public enum CommonCDataModel implements CDataModel
 	{
 		if (isCIntSizeSixteenBits())
 		{
-			if (this.isCLongSizeNotThirtyTwoBits())
+			if (isCLongSizeNotThirtyTwoBits())
 			{
 				throw new UnsupportedOperationException("The data model does not support a signed 32-bit integer in a compatible way (it uses 16-bit integers)");
 			}
@@ -151,17 +158,6 @@ public enum CommonCDataModel implements CDataModel
 			throw new UnsupportedOperationException("The data model does not support a signed 32-bit integer in a compatible way (it uses 64-bit integers)");
 		}
 		return intName;
-	}
-
-	@Override
-	public int pointerStorageSizeInBits()
-	{
-		return pointerSizing.storageSizeInBits();
-	}
-
-	public int pointerAbiAlignmentInBits(final int minimumAlignmentInBits)
-	{
-		return pointerSizing.abiAlignmentInBits(minimumAlignmentInBits);
 	}
 
 	@Override
@@ -185,10 +181,29 @@ public enum CommonCDataModel implements CDataModel
 		return cLongSize.isNotThirtyTwo();
 	}
 
-	// Closely related to CHAR_BIT
-	@SuppressWarnings("MethodMayBeStatic")
-	public int minimumAlignmentInBits()
+	public <X extends Exception> void writeDoubleAlignmentIfNotDefault(@NotNull final ByteWriter<X> byteWriter) throws X
 	{
-		return 8;
+		if (isDoubleAlignmentLlvmDefault(doubleAlignment))
+		{
+			return;
+		}
+		doubleAlignment.writeAlignmentField(byteWriter, "f64");
+	}
+
+	public <X extends Exception> void writeLongDoubleAlignmentIfHasEightyBitPrecision(@NotNull final ByteWriter<X> byteWriter) throws X
+	{
+		if (cLongDoublePermutation.doesDataModelSupportEightyBitPrecisionFloatingPoint())
+		{
+			longDoubleAbiAlignment().writeAlignmentField(byteWriter, "f80");
+		}
+	}
+
+	public <X extends Exception> void writeGlobalAddressSpacePointerSizingIfNotDefault(@NotNull final ByteWriter<X> byteWriter) throws X
+	{
+		if (pointerSizing.isDefaultForGlobalAddressSpace())
+		{
+			return;
+		}
+		pointerSizing.write(byteWriter, GlobalAddressSpace);
 	}
 }

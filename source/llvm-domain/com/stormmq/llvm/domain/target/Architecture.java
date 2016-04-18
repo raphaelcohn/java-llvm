@@ -27,28 +27,30 @@ import com.stormmq.llvm.domain.LlvmWritable;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import static com.stormmq.llvm.domain.target.Alignment.writeField;
+import static com.stormmq.llvm.domain.target.WritableDataLayoutSpecificationAndTargetTriple.writeField;
 import static com.stormmq.string.Utf8ByteUser.encodeToUtf8ByteArrayWithCertaintyValueIsValid;
 
-public enum Architecture implements LlvmWritable
+public enum Architecture
 {
-	x86_64(8, 16, 32, 64),
-	mips64el(32, 64),
-	mips64(32, 64),
-	aarch64(32, 64),
-	aarch64_be(32, 64),
-	ppc64le(32, 64),
-	ppc64(32, 64),
-	sparcv9(32, 64),
+	x86_64(8, 8, 16, 32, 64),
+	mips64el(32, 32, 64),
+	mips64(32, 32, 64),
+	aarch64(8, 32, 64),
+	aarch64_be(8, 32, 64),
+	ppc64le(8, 32, 64),
+	ppc64(8, 32, 64),
+	sparcv9(8, 32, 64),
 
 	i686(8, 16, 32),
-	armv7(32),
+	armv7(8, 32),
 	;
 
-	@NonNls @NotNull public final byte[] nativeIntegerWidths;
+	private final int minimumAlignmentInBits;
+	@NonNls @NotNull private final byte[] nativeIntegerWidths;
 
-	Architecture(@NotNull final int... nativeIntegerWidths)
+	Architecture(final int minimumAlignmentInBits, @NotNull final int... nativeIntegerWidths)
 	{
+		this.minimumAlignmentInBits = minimumAlignmentInBits;
 		this.nativeIntegerWidths = encodeToUtf8ByteArrayWithCertaintyValueIsValid(calculateNativeIntegerWidths(nativeIntegerWidths));
 	}
 
@@ -73,8 +75,12 @@ public enum Architecture implements LlvmWritable
 		return stringBuilder.toString();
 	}
 
-	@Override
-	public <X extends Exception> void write(@NotNull final ByteWriter<X> byteWriter, @NotNull final DataLayoutSpecification dataLayoutSpecification) throws X
+	public int minimumAlignmentInBits()
+	{
+		return minimumAlignmentInBits;
+	}
+
+	public <X extends Exception> void writeNativeIntegerWidths(@NotNull final ByteWriter<X> byteWriter) throws X
 	{
 		writeField(byteWriter, "n", nativeIntegerWidths);
 	}

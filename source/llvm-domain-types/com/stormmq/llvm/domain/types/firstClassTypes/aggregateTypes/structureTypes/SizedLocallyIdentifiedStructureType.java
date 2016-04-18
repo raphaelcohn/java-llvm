@@ -27,6 +27,7 @@ import com.stormmq.llvm.domain.identifiers.LocalIdentifier;
 import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import com.stormmq.llvm.domain.types.SizedType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static com.stormmq.string.Utf8ByteUser.encodeToUtf8ByteArrayWithCertaintyValueIsValid;
 
@@ -36,10 +37,46 @@ public final class SizedLocallyIdentifiedStructureType extends AbstractSizedStru
 
 	@NotNull private final LocalIdentifier localIdentifier;
 
-	public SizedLocallyIdentifiedStructureType(@NotNull final LocalIdentifier localIdentifier, final boolean isPacked, @NotNull final SizedType... typesWithSize)
+	public SizedLocallyIdentifiedStructureType(@NotNull final LocalIdentifier localIdentifier, final boolean isPacked, @NotNull final SizedType... sizedTypes)
 	{
-		super(isPacked, typesWithSize);
+		super(isPacked, sizedTypes);
 		this.localIdentifier = localIdentifier;
+	}
+
+	@Override
+	public boolean equals(@Nullable final Object o)
+	{
+		if (this == o)
+		{
+			return true;
+		}
+		if (o == null || getClass() != o.getClass())
+		{
+			return false;
+		}
+		if (!super.equals(o))
+		{
+			return false;
+		}
+
+		final SizedLocallyIdentifiedStructureType that = (SizedLocallyIdentifiedStructureType) o;
+
+		return localIdentifier.equals(that.localIdentifier);
+	}
+
+	@Override
+	public int hashCode()
+	{
+		int result = super.hashCode();
+		result = 31 * result + localIdentifier.hashCode();
+		return result;
+	}
+
+	@NotNull
+	@Override
+	protected Object[] fields()
+	{
+		return fields(localIdentifier, isPacked, fields);
 	}
 
 	@Override

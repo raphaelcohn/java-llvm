@@ -30,7 +30,7 @@ import java.util.Map;
 
 public interface DataLayoutSpecification extends CDataModel
 {
-	int aggregateTypeAbiAlignmentInBits();
+	int pointerAbiAlignmentInBits();
 
 	int int1AbiAlignmentInBits();
 
@@ -54,12 +54,16 @@ public interface DataLayoutSpecification extends CDataModel
 
 	int quadAbiAlignmentInBits();
 
+	int vector64AbiAlignmentInBits();
+
+	int vector128AbiAlignmentInBits();
+
+	int aggregateAbiAlignmentInBits();
+
 	@NotNull
 	ObjectFileFormat objectFileFormat();
 
 	boolean doesInt128RequireExplicitPadding();
-
-	int pointerAbiAlignmentInBits();
 
 	@NotNull
 	<T> T chooseForArchitecture(@NotNull final Map<Architecture, T> knownValues, @NotNull final T defaultValue);

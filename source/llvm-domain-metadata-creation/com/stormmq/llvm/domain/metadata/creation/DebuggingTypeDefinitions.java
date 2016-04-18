@@ -27,6 +27,7 @@ import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import com.stormmq.llvm.domain.metadata.debugging.*;
 import com.stormmq.llvm.domain.types.SizedType;
 import com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.structureTypes.SizedStructureSizedType;
+import com.stormmq.string.AbstractToString;
 import org.jetbrains.annotations.*;
 
 import java.util.*;
@@ -37,8 +38,9 @@ import static com.stormmq.llvm.domain.metadata.debugging.DIDerivedTypeKeyedMetad
 import static com.stormmq.llvm.domain.metadata.debugging.DIDerivedTypeKeyedMetadataTuple.pointer;
 import static com.stormmq.llvm.domain.metadata.debugging.DIDerivedTypeKeyedMetadataTuple.structMember;
 import static com.stormmq.llvm.domain.metadata.debugging.ScopeMetadata.UnknownLineNumber;
+import static java.lang.System.identityHashCode;
 
-public final class DebuggingTypeDefinitions<N>
+public final class DebuggingTypeDefinitions<N> extends AbstractToString
 {
 	@NotNull private final DataLayoutSpecification dataLayoutSpecification;
 	@NotNull private final ReferenceTracker referenceTracker;
@@ -61,6 +63,13 @@ public final class DebuggingTypeDefinitions<N>
 		knownStructureTypes = new HashMap<>(64);
 
 		this.cTypeMappings = cTypeMappings;
+	}
+
+	@NotNull
+	@Override
+	protected Object[] fields()
+	{
+		return fields(dataLayoutSpecification, identityHashCode(referenceTracker), file, cTypeMappings);
 	}
 
 	@NotNull

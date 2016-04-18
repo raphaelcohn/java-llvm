@@ -27,16 +27,17 @@ import com.stormmq.llvm.domain.ReferenceTracker;
 import com.stormmq.llvm.domain.metadata.KeyWithMetadataField;
 import com.stormmq.llvm.domain.metadata.Metadata;
 import com.stormmq.llvm.domain.target.DataLayoutSpecification;
+import com.stormmq.string.AbstractToString;
 import org.jetbrains.annotations.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static com.stormmq.string.Utf8ByteUser.encodeToUtf8ByteArrayWithCertaintyValueIsValid;
+import static java.lang.System.identityHashCode;
 import static java.util.Arrays.asList;
 import static java.util.Collections.addAll;
 
-public class KeyedMetadataTuple implements Metadata
+public class KeyedMetadataTuple extends AbstractToString implements Metadata
 {
 	@NotNull private static final byte[] distinctSpace = encodeToUtf8ByteArrayWithCertaintyValueIsValid("distinct ");
 
@@ -71,10 +72,17 @@ public class KeyedMetadataTuple implements Metadata
 		{
 			return;
 		}
-		List<KeyWithMetadataField> original = this.fields;
+		final List<KeyWithMetadataField> original = this.fields;
 		this.fields = new ArrayList<>(original.size() + length);
 		this.fields.addAll(original);
 		addAll(this.fields, fields);
+	}
+
+	@NotNull
+	@Override
+	protected Object[] fields()
+	{
+		return fields(identityHashCode(referenceTracker), isDistinct, name, fields);
 	}
 
 	@Override

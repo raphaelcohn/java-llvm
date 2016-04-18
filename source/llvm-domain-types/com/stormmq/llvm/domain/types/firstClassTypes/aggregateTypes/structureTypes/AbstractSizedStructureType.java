@@ -25,17 +25,51 @@ package com.stormmq.llvm.domain.types.firstClassTypes.aggregateTypes.structureTy
 import com.stormmq.byteWriters.ByteWriter;
 import com.stormmq.llvm.domain.target.DataLayoutSpecification;
 import com.stormmq.llvm.domain.types.SizedType;
+import com.stormmq.string.AbstractToString;
 import org.jetbrains.annotations.*;
 
-public abstract class AbstractSizedStructureType implements SizedStructureSizedType
+import java.util.Arrays;
+
+public abstract class AbstractSizedStructureType extends AbstractToString implements SizedStructureSizedType
 {
-	private final boolean isPacked;
-	@NotNull private final SizedType[] fields;
+	protected final boolean isPacked;
+	@NotNull protected final SizedType[] fields;
 
 	protected AbstractSizedStructureType(final boolean isPacked, @NotNull final SizedType... fields)
 	{
 		this.isPacked = isPacked;
 		this.fields = fields;
+	}
+
+	@Override
+	public boolean equals(@Nullable final Object o)
+	{
+		if (this == o)
+		{
+			return true;
+		}
+		if (o == null || getClass() != o.getClass())
+		{
+			return false;
+		}
+
+		final AbstractSizedStructureType that = (AbstractSizedStructureType) o;
+
+		if (isPacked != that.isPacked)
+		{
+			return false;
+		}
+		// Probably incorrect - comparing Object[] arrays with Arrays.equals
+		return Arrays.equals(fields, that.fields);
+
+	}
+
+	@Override
+	public int hashCode()
+	{
+		int result = (isPacked ? 1 : 0);
+		result = 31 * result + Arrays.hashCode(fields);
+		return result;
 	}
 
 	@Override

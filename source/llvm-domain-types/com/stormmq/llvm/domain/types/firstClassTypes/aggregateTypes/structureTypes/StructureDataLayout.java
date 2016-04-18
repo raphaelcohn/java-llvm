@@ -55,7 +55,7 @@ public enum StructureDataLayout
 		@Override
 		public int abiAlignmentInBits(@NotNull final DataLayoutSpecification dataLayoutSpecification, @NotNull final SizedType... fields)
 		{
-			return dataLayoutSpecification.aggregateTypeAbiAlignmentInBits();
+			return dataLayoutSpecification.aggregateAbiAlignmentInBits();
 		}
 
 		@Override
@@ -97,7 +97,7 @@ public enum StructureDataLayout
 		public int storageSizeInBits(@NotNull final DataLayoutSpecification dataLayoutSpecification, @NotNull final SizedType... fields)
 		{
 			int currentSize = 0;
-			int largestAlignmentInBits = dataLayoutSpecification.aggregateTypeAbiAlignmentInBits();
+			int largestAlignmentInBits = dataLayoutSpecification.aggregateAbiAlignmentInBits();
 
 			for (final SizedType field : fields)
 			{
@@ -131,7 +131,7 @@ public enum StructureDataLayout
 		@Override
 		public int abiAlignmentInBits(@NotNull final DataLayoutSpecification dataLayoutSpecification, @NotNull final SizedType... fields)
 		{
-			int largestAlignmentInBits = dataLayoutSpecification.aggregateTypeAbiAlignmentInBits();
+			int largestAlignmentInBits = dataLayoutSpecification.aggregateAbiAlignmentInBits();
 
 			for (final SizedType field : fields)
 			{
@@ -159,7 +159,7 @@ public enum StructureDataLayout
 			final int[] offsets = new int[length];
 
 			int currentSize = 0;
-			int largestAlignmentInBits = dataLayoutSpecification.aggregateTypeAbiAlignmentInBits();
+			int largestAlignmentInBits = dataLayoutSpecification.aggregateAbiAlignmentInBits();
 
 			final int lastIndex = length - 1;
 			for (int index = 0; index < length; index++)

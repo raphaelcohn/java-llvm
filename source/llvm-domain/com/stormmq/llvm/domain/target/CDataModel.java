@@ -26,12 +26,11 @@ import org.jetbrains.annotations.*;
 
 public interface CDataModel
 {
-	@NotNull
-	Alignment longDoubleAlignment();
-
 	int longDoubleStorageSizeInBits();
 
-	boolean doesDataModelSupportEightyBitPrecisionFloatingPoint();
+	int pointerStorageSizeInBits();
+
+	boolean isCShortSizeNotSixteenBits();
 
 	@NotNull
 	<T> T chooseLongDouble(@NotNull T doubleType, @NotNull T x86BitDoubleType, @NotNull T powerPcDoubleDoubleType, @NotNull T quadDoubleType, @NotNull T mipsLongDoubleType);
@@ -51,8 +50,4 @@ public interface CDataModel
 	@NonNls
 	@NotNull
 	String determineCNameThatClosestMatchesAnUnsigned16BitInteger(@NotNull @NonNls String longIntName, @NotNull @NonNls String intName);
-
-	int pointerStorageSizeInBits();
-
-	boolean isCShortSizeNotSixteenBits();
 }
